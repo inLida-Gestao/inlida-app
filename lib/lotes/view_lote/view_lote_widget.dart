@@ -3017,13 +3017,19 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
                                                     builder: (context) =>
                                                         FFButtonWidget(
                                                       onPressed: () async {
-                                                        Navigator.pop(context);
+                                                        final navigator =
+                                                            Navigator.of(
+                                                                context);
+                                                        navigator.pop();
+                                                        await Future.delayed(
+                                                            Duration.zero);
                                                         await showDialog(
                                                           barrierColor: Colors
                                                               .transparent,
                                                           barrierDismissible:
                                                               false,
-                                                          context: context,
+                                                          context:
+                                                              navigator.context,
                                                           builder:
                                                               (dialogContext) {
                                                             return Dialog(
@@ -3038,7 +3044,7 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
                                                                       0.0, 0.0)
                                                                   .resolve(
                                                                       Directionality.of(
-                                                                          context)),
+                                                                      navigator.context)),
                                                               child:
                                                                   EditLoteWidget(
                                                                 idLote: widget!

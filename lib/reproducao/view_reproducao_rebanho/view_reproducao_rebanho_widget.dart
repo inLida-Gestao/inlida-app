@@ -1889,17 +1889,23 @@ class _ViewReproducaoRebanhoWidgetState
                                                 children: [
                                                   Text(
                                                     valueOrDefault<String>(
-                                                      dateTimeFormat(
-                                                        "d/M/y",
-                                                        functions.converterParaData(
+                                                      functions.converterParaData(
                                                             rAddInseminacaoBuscarReproducaoRowList
-                                                                .firstOrNull
-                                                                ?.dataStatus),
-                                                        locale:
+                                                              .firstOrNull
+                                                              ?.dataStatus) !=
+                                                          null
+                                                        ? dateTimeFormat(
+                                                          "d/M/y",
+                                                          functions.converterParaData(
+                                                            rAddInseminacaoBuscarReproducaoRowList
+                                                              .firstOrNull
+                                                              ?.dataStatus),
+                                                          locale:
                                                             FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      ),
+                                                                context)
+                                                              .languageCode,
+                                                        )
+                                                        : 'N/A',
                                                       'N/A',
                                                     ),
                                                     style: FlutterFlowTheme.of(
@@ -2192,18 +2198,14 @@ class _ViewReproducaoRebanhoWidgetState
                                 ].divide(SizedBox(height: 8.0)),
                               ),
                             ),
-                        if ((rAddInseminacaoBuscarReproducaoRowList
-                                        .firstOrNull?.dataInseminacao !=
-                                    null &&
-                                rAddInseminacaoBuscarReproducaoRowList
-                                        .firstOrNull?.dataInseminacao !=
-                                    '') &&
-                            (rAddInseminacaoBuscarReproducaoRowList
-                                        .firstOrNull?.dataParto !=
-                                    null &&
-                                rAddInseminacaoBuscarReproducaoRowList
-                                        .firstOrNull?.dataParto !=
-                                    ''))
+                        if ((functions.converterParaData(
+                              rAddInseminacaoBuscarReproducaoRowList
+                                .firstOrNull?.dataInseminacao) !=
+                            null) &&
+                          (functions.converterParaData(
+                              rAddInseminacaoBuscarReproducaoRowList
+                                .firstOrNull?.dataParto) !=
+                            null))
                           Padding(
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 0.0, 0.0),
@@ -2229,16 +2231,28 @@ class _ViewReproducaoRebanhoWidgetState
                                   ),
                                   TextSpan(
                                     text: valueOrDefault<String>(
-                                      functions
+                                      functions.converterParaData(
+                                              rAddInseminacaoBuscarReproducaoRowList
+                                                .firstOrNull
+                                                ?.dataInseminacao) !=
+                                            null &&
+                                          functions.converterParaData(
+                                              rAddInseminacaoBuscarReproducaoRowList
+                                                .firstOrNull
+                                                ?.dataParto) !=
+                                            null
+                                        ? functions
                                           .diasEntreDatas(
-                                              functions.converterParaData(
-                                                  rAddInseminacaoBuscarReproducaoRowList
-                                                      .firstOrNull
-                                                      ?.dataInseminacao)!,
-                                              functions.converterParaData(
-                                                  rAddInseminacaoBuscarReproducaoRowList
-                                                      .firstOrNull?.dataParto)!)
-                                          .toString(),
+                                            functions.converterParaData(
+                                              rAddInseminacaoBuscarReproducaoRowList
+                                                .firstOrNull
+                                                ?.dataInseminacao)!,
+                                            functions.converterParaData(
+                                              rAddInseminacaoBuscarReproducaoRowList
+                                                .firstOrNull
+                                                ?.dataParto)!)
+                                          .toString()
+                                        : '-',
                                       '-',
                                     ),
                                     style: TextStyle(
@@ -2408,10 +2422,14 @@ class _ViewReproducaoRebanhoWidgetState
                                     child: Builder(
                                       builder: (context) => FFButtonWidget(
                                         onPressed: () async {
+                                          final navigator = Navigator.of(context);
+                                          navigator.pop();
+                                          await Future.delayed(Duration.zero);
+
                                           await showDialog(
                                             barrierColor: Colors.transparent,
                                             barrierDismissible: false,
-                                            context: context,
+                                            context: navigator.context,
                                             builder: (dialogContext) {
                                               return Dialog(
                                                 elevation: 0,
@@ -2421,11 +2439,11 @@ class _ViewReproducaoRebanhoWidgetState
                                                 alignment: AlignmentDirectional(
                                                         0.0, 0.0)
                                                     .resolve(Directionality.of(
-                                                        context)),
+                                                        navigator.context)),
                                                 child:
                                                     EditReproducaoRebanhoWidget(
                                                   idReproducao:
-                                                      widget!.idReproducao!,
+                                                      widget.idReproducao!,
                                                 ),
                                               );
                                             },

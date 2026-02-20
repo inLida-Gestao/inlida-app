@@ -65,11 +65,12 @@ class _EditReproducaoRebanhoWidgetState
                   idReproducao: widget!.idReproducao,
                 );
                 _model.tipoReproducao =
-                    _model.editReproducao!.firstOrNull!.tipoReproducao!;
+                  _model.editReproducao?.firstOrNull?.tipoReproducao ??
+                    'Inseminação';
                 _model.score =
-                    _model.editReproducao!.firstOrNull!.scoreCorporal!;
+                  _model.editReproducao?.firstOrNull?.scoreCorporal ?? 0.5;
                 _model.partidaSemen =
-                    _model.editReproducao!.firstOrNull!.partidaSemen!;
+                  _model.editReproducao?.firstOrNull?.partidaSemen ?? 1;
                 _model.ressinc =
                     _model.editReproducao?.firstOrNull?.ressinc == 'SIM'
                         ? true
@@ -2254,8 +2255,9 @@ class _EditReproducaoRebanhoWidgetState
                                               initialValue: TextEditingValue(
                                                   text:
                                                       containerBuscarReproducaoRowList
-                                                          .firstOrNull!
-                                                          .inseminador!),
+                                                    .firstOrNull
+                                                    ?.inseminador ??
+                                                  ''),
                                               optionsBuilder:
                                                   (textEditingValue) {
                                                 if (textEditingValue.text ==
@@ -2557,59 +2559,112 @@ class _EditReproducaoRebanhoWidgetState
                                     Column(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
-                                        Expanded(
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            children: [
-                                              Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
-                                                child: Text(
-                                                  'Diagnóstico*',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
-                                                ),
+                                        Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  -1.0, 0.0),
+                                              child: Text(
+                                                'Diagnóstico*',
+                                                style: FlutterFlowTheme.of(
+                                                        context)
+                                                    .bodyMedium
+                                                    .override(
+                                                      fontFamily:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .bodyMediumFamily,
+                                                      color: Color(0xFF474747),
+                                                      fontSize: 16.0,
+                                                      letterSpacing: 0.0,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      useGoogleFonts:
+                                                          !FlutterFlowTheme.of(
+                                                                  context)
+                                                              .bodyMediumIsCustom,
+                                                    ),
                                               ),
-                                              FlutterFlowDropDown<String>(
-                                                controller: _model
-                                                        .dropdownStatusValueController ??=
-                                                    FormFieldController<String>(
-                                                  _model.dropdownStatusValue ??=
-                                                      containerBuscarReproducaoRowList
-                                                          .firstOrNull
-                                                          ?.statusReproducao,
-                                                ),
-                                                options: [
-                                                  'Não diagnosticado',
-                                                  'Absorção',
-                                                  'Aborto',
-                                                  'Prenhez',
-                                                  'Vazio'
-                                                ],
-                                                onChanged: (val) =>
-                                                    safeSetState(() => _model
-                                                            .dropdownStatusValue =
-                                                        val),
-                                                width: double.infinity,
-                                                height: 56.0,
-                                                textStyle: FlutterFlowTheme.of(
+                                            ),
+                                            FlutterFlowDropDown<String>(
+                                              controller: _model
+                                                      .dropdownStatusValueController ??=
+                                                  FormFieldController<String>(
+                                                _model.dropdownStatusValue ??=
+                                                    containerBuscarReproducaoRowList
+                                                        .firstOrNull
+                                                        ?.statusReproducao,
+                                              ),
+                                              options: [
+                                                'Não diagnosticado',
+                                                'Absorção',
+                                                'Aborto',
+                                                'Prenhez',
+                                                'Vazio'
+                                              ],
+                                              onChanged: (val) => safeSetState(
+                                                  () => _model
+                                                      .dropdownStatusValue = val),
+                                              width: double.infinity,
+                                              height: 56.0,
+                                              textStyle: FlutterFlowTheme.of(
+                                                      context)
+                                                  .bodyMedium
+                                                  .override(
+                                                    fontFamily:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumFamily,
+                                                    color:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .secondaryText,
+                                                    fontSize: 16.0,
+                                                    letterSpacing: 0.0,
+                                                    fontWeight: FontWeight.w600,
+                                                    useGoogleFonts:
+                                                        !FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumIsCustom,
+                                                  ),
+                                              hintText: 'Diagnóstico...',
+                                              icon: Icon(
+                                                Icons
+                                                    .keyboard_arrow_down_rounded,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
+                                                size: 24.0,
+                                              ),
+                                              fillColor:
+                                                  FlutterFlowTheme.of(context)
+                                                      .customColor3,
+                                              elevation: 2.0,
+                                              borderColor: Colors.transparent,
+                                              borderWidth: 0.0,
+                                              borderRadius: 8.0,
+                                              margin: EdgeInsetsDirectional
+                                                  .fromSTEB(
+                                                      12.0, 0.0, 12.0, 0.0),
+                                              hidesUnderline: true,
+                                              isOverButton: false,
+                                              isSearchable: false,
+                                              isMultiSelect: false,
+                                            ),
+                                          ].divide(SizedBox(height: 8.0)),
+                                        ),
+                                        if (_model.dropdownStatusValue !=
+                                                null &&
+                                            _model.dropdownStatusValue != '')
+                                          Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Data do diagnóstico',
+                                                style: FlutterFlowTheme.of(
                                                         context)
                                                     .bodyMedium
                                                     .override(
@@ -2620,7 +2675,7 @@ class _EditReproducaoRebanhoWidgetState
                                                       color:
                                                           FlutterFlowTheme.of(
                                                                   context)
-                                                              .secondaryText,
+                                                              .primaryText,
                                                       fontSize: 16.0,
                                                       letterSpacing: 0.0,
                                                       fontWeight:
@@ -2630,67 +2685,8 @@ class _EditReproducaoRebanhoWidgetState
                                                                   context)
                                                               .bodyMediumIsCustom,
                                                     ),
-                                                hintText: 'Diagnóstico...',
-                                                icon: Icon(
-                                                  Icons
-                                                      .keyboard_arrow_down_rounded,
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .secondaryText,
-                                                  size: 24.0,
-                                                ),
-                                                fillColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .customColor3,
-                                                elevation: 2.0,
-                                                borderColor: Colors.transparent,
-                                                borderWidth: 0.0,
-                                                borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        12.0, 0.0, 12.0, 0.0),
-                                                hidesUnderline: true,
-                                                isOverButton: false,
-                                                isSearchable: false,
-                                                isMultiSelect: false,
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
-                                          ),
-                                        ),
-                                        if (_model.dropdownStatusValue !=
-                                                null &&
-                                            _model.dropdownStatusValue != '')
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Data do diagnóstico',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .primaryText,
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
-                                                ),
-                                                InkWell(
+                                              InkWell(
                                                   splashColor:
                                                       Colors.transparent,
                                                   focusColor:
@@ -2886,7 +2882,6 @@ class _EditReproducaoRebanhoWidgetState
                                                 ),
                                               ].divide(SizedBox(height: 8.0)),
                                             ),
-                                          ),
                                       ].divide(SizedBox(height: 24.0)),
                                     ),
                                   ].divide(SizedBox(height: 8.0)),
@@ -3254,33 +3249,32 @@ class _EditReproducaoRebanhoWidgetState
                                 ].divide(SizedBox(width: 8.0)),
                               ),
                             ),
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    24.0, 0.0, 24.0, 0.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Data de parto',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMediumFamily,
-                                            color: FlutterFlowTheme.of(context)
-                                                .primaryText,
-                                            fontSize: 16.0,
-                                            letterSpacing: 0.0,
-                                            fontWeight: FontWeight.w600,
-                                            useGoogleFonts:
-                                                !FlutterFlowTheme.of(context)
-                                                    .bodyMediumIsCustom,
-                                          ),
-                                    ),
-                                    InkWell(
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  24.0, 0.0, 24.0, 0.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Data de parto',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMediumFamily,
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryText,
+                                          fontSize: 16.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w600,
+                                          useGoogleFonts:
+                                              !FlutterFlowTheme.of(context)
+                                                  .bodyMediumIsCustom,
+                                        ),
+                                  ),
+                                  InkWell(
                                       splashColor: Colors.transparent,
                                       focusColor: Colors.transparent,
                                       hoverColor: Colors.transparent,
@@ -3437,20 +3431,17 @@ class _EditReproducaoRebanhoWidgetState
                                     ),
                                   ].divide(SizedBox(height: 8.0)),
                                 ),
-                              ),
                             ),
-                            if ((_model.editReproducao?.firstOrNull
-                                            ?.dataInseminacao !=
-                                        null &&
-                                    _model.editReproducao?.firstOrNull
-                                            ?.dataInseminacao !=
-                                        '') &&
-                                (_model.editReproducao?.firstOrNull
-                                            ?.dataParto !=
-                                        null &&
-                                    _model.editReproducao?.firstOrNull
-                                            ?.dataParto !=
-                                        ''))
+                            if ((functions.converterParaData(_model
+                                  .editReproducao
+                                  ?.firstOrNull
+                                  ?.dataInseminacao) !=
+                                null) &&
+                              (functions.converterParaData(_model
+                                  .editReproducao
+                                  ?.firstOrNull
+                                  ?.dataParto) !=
+                                null))
                               Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 0.0, 0.0),
@@ -3477,19 +3468,31 @@ class _EditReproducaoRebanhoWidgetState
                                       ),
                                       TextSpan(
                                         text: valueOrDefault<String>(
-                                          functions
+                                          functions.converterParaData(_model
+                                                  .editReproducao
+                                                  ?.firstOrNull
+                                                  ?.dataInseminacao) !=
+                                                null &&
+                                              functions.converterParaData(
+                                                  _model
+                                                    .editReproducao
+                                                    ?.firstOrNull
+                                                    ?.dataParto) !=
+                                                null
+                                            ? functions
                                               .diasEntreDatas(
-                                                  functions.converterParaData(
-                                                      _model
-                                                          .editReproducao
-                                                          ?.firstOrNull
-                                                          ?.dataInseminacao)!,
-                                                  functions.converterParaData(
-                                                      _model
-                                                          .editReproducao
-                                                          ?.firstOrNull
-                                                          ?.dataParto)!)
-                                              .toString(),
+                                                functions.converterParaData(
+                                                  _model
+                                                    .editReproducao
+                                                    ?.firstOrNull
+                                                    ?.dataInseminacao)!,
+                                                functions.converterParaData(
+                                                  _model
+                                                    .editReproducao
+                                                    ?.firstOrNull
+                                                    ?.dataParto)!)
+                                              .toString()
+                                            : '-',
                                           '-',
                                         ),
                                         style: TextStyle(

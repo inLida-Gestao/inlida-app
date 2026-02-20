@@ -5147,12 +5147,20 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                         () {});
                                                                   }
                                                                 }
+                                                                final navigator =
+                                                                  Navigator.of(
+                                                                    context);
+                                                                navigator.pop();
+                                                                await Future.delayed(
+                                                                  Duration
+                                                                    .zero);
                                                                 await showDialog(
                                                                   barrierColor:
                                                                       Colors
                                                                           .transparent,
                                                                   context:
-                                                                      context,
+                                                                    navigator
+                                                                      .context,
                                                                   builder:
                                                                       (dialogContext) {
                                                                     return Dialog(
@@ -5168,7 +5176,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               0.0,
                                                                               0.0)
                                                                           .resolve(
-                                                                              Directionality.of(context)),
+                                                                            Directionality.of(navigator.context)),
                                                                       child:
                                                                           EditRebanhoWidget(),
                                                                     );

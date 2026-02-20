@@ -45,9 +45,10 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
       _model.reproducao = await SQLiteManager.instance.buscarReproducao(
         idReproducao: widget!.idReproducao,
       );
-      _model.tipoReproducao = _model.reproducao!.firstOrNull!.tipoReproducao!;
-      _model.score = _model.reproducao!.firstOrNull!.scoreCorporal!;
-      _model.partidaSemen = _model.reproducao!.firstOrNull!.partidaSemen!;
+      _model.tipoReproducao =
+          _model.reproducao?.firstOrNull?.tipoReproducao ?? 'Inseminação';
+      _model.score = _model.reproducao?.firstOrNull?.scoreCorporal ?? 0.5;
+      _model.partidaSemen = _model.reproducao?.firstOrNull?.partidaSemen ?? 1;
       safeSetState(() {});
     });
 
@@ -1791,11 +1792,13 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                   child: Builder(
                                     builder: (context) => FFButtonWidget(
                                       onPressed: () async {
-                                        Navigator.pop(context);
+                                        final navigator = Navigator.of(context);
+                                        navigator.pop();
+                                        await Future.delayed(Duration.zero);
                                         await showDialog(
                                           barrierColor: Colors.transparent,
                                           barrierDismissible: false,
-                                          context: context,
+                                          context: navigator.context,
                                           builder: (dialogContext) {
                                             return Dialog(
                                               elevation: 0,
@@ -1806,7 +1809,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                   AlignmentDirectional(0.0, 0.0)
                                                       .resolve(
                                                           Directionality.of(
-                                                              context)),
+                                                              navigator.context)),
                                               child: EditReproducaoLoteWidget(
                                                 idReproducao:
                                                     widget!.idReproducao!,

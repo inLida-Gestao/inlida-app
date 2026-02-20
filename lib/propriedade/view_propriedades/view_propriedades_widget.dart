@@ -1856,11 +1856,15 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                               FFAppState().cidadeSelecionada =
                                                   '';
                                               safeSetState(() {});
-                                              Navigator.pop(context);
+                                              final navigator =
+                                                Navigator.of(context);
+                                              navigator.pop();
+                                              await Future.delayed(
+                                                Duration.zero);
                                               await showDialog(
                                                 barrierColor:
                                                     Colors.transparent,
-                                                context: context,
+                                              context: navigator.context,
                                                 builder: (dialogContext) {
                                                   return Dialog(
                                                     elevation: 0,
@@ -1873,7 +1877,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                 0.0, 0.0)
                                                             .resolve(
                                                                 Directionality.of(
-                                                                    context)),
+                                                        navigator.context)),
                                                     child:
                                                         EditPropriedadeWidget(),
                                                   );

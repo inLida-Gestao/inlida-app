@@ -1051,15 +1051,19 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                 '${valueOrDefault<String>(
                                                                                   reproducaoItem.tipoReproducao,
                                                                                   '--',
-                                                                                )} (${reproducaoItem.tipoReproducao == 'Inseminação' ? dateTimeFormat(
-                                                                                    "dd/MM/yy",
-                                                                                    functions.converterParaData(reproducaoItem.dataInseminacao),
-                                                                                    locale: FFLocalizations.of(context).languageCode,
-                                                                                  ) : dateTimeFormat(
-                                                                                    "dd/MM/yy",
-                                                                                    functions.converterParaData(reproducaoItem.dataInicial),
-                                                                                    locale: FFLocalizations.of(context).languageCode,
-                                                                                  )})',
+                                                                                )} (${reproducaoItem.tipoReproducao == 'Inseminação' ? (functions.converterParaData(reproducaoItem.dataInseminacao) != null
+                                                                                    ? dateTimeFormat(
+                                                                                        "dd/MM/yy",
+                                                                                        functions.converterParaData(reproducaoItem.dataInseminacao),
+                                                                                        locale: FFLocalizations.of(context).languageCode,
+                                                                                      )
+                                                                                    : 'N/A') : (functions.converterParaData(reproducaoItem.dataInicial) != null
+                                                                                    ? dateTimeFormat(
+                                                                                        "dd/MM/yy",
+                                                                                        functions.converterParaData(reproducaoItem.dataInicial),
+                                                                                        locale: FFLocalizations.of(context).languageCode,
+                                                                                      )
+                                                                                    : 'N/A')})',
                                                                                 textAlign: TextAlign.center,
                                                                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                                       font: GoogleFonts.poppins(
@@ -1233,10 +1237,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                     reproducaoItem.nomeMatriz,
                                                                                     '--',
                                                                                   )} • ${reproducaoItem.nascimentoMatriz == 'null' ? 'N/A' : dateTimeFormat(
-                                                                                    "dd/MM/yyyy",
-                                                                                    functions.converterParaData(reproducaoItem.nascimentoMatriz),
-                                                                                    locale: FFLocalizations.of(context).languageCode,
-                                                                                  )}',
+                                                                                      "dd/MM/yyyy",
+                                                                                      functions.converterParaData(reproducaoItem.nascimentoMatriz),
+                                                                                      locale: FFLocalizations.of(context).languageCode,
+                                                                                    )}',
                                                                                 '--',
                                                                               ),
                                                                               style: FlutterFlowTheme.of(context).bodyLarge.override(
@@ -1335,7 +1339,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
                                                                                   ),
-                                                                                  if (reproducaoItem.statusReproducao != 'Não diagnosticado')
+                                                                                  if ((reproducaoItem.statusReproducao != null &&
+                                                                                          reproducaoItem.statusReproducao != '' &&
+                                                                                          reproducaoItem.statusReproducao != 'Não diagnosticado') &&
+                                                                                      (functions.converterParaData(reproducaoItem.dataStatus) != null))
                                                                                     Text(
                                                                                       valueOrDefault<String>(
                                                                                         ' (${dateTimeFormat(
@@ -1403,11 +1410,13 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                 child: Text(
                                                                                   valueOrDefault<String>(
                                                                                     'Parida em (${valueOrDefault<String>(
-                                                                                      dateTimeFormat(
-                                                                                        "dd/MM/yy",
-                                                                                        functions.converterParaData(reproducaoItem.dataParto),
-                                                                                        locale: FFLocalizations.of(context).languageCode,
-                                                                                      ),
+                                                                                      functions.converterParaData(reproducaoItem.dataParto) != null
+                                                                                          ? dateTimeFormat(
+                                                                                              "dd/MM/yy",
+                                                                                              functions.converterParaData(reproducaoItem.dataParto),
+                                                                                              locale: FFLocalizations.of(context).languageCode,
+                                                                                            )
+                                                                                          : 'S/D',
                                                                                       'S/D',
                                                                                     )})',
                                                                                     '--',
@@ -1562,11 +1571,14 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                           ),
                                                                           Text(
                                                                             valueOrDefault<String>(
-                                                                              dateTimeFormat(
-                                                                                "dd/MM/yy",
-                                                                                functions.converterParaData(reproducaoItem.previsaoParto),
-                                                                                locale: FFLocalizations.of(context).languageCode,
-                                                                              ),
+                                                                              functions.converterParaData(reproducaoItem.previsaoParto) !=
+                                                                                      null
+                                                                                  ? dateTimeFormat(
+                                                                                      "dd/MM/yy",
+                                                                                      functions.converterParaData(reproducaoItem.previsaoParto),
+                                                                                      locale: FFLocalizations.of(context).languageCode,
+                                                                                    )
+                                                                                  : 'S/D',
                                                                               'S/D',
                                                                             ),
                                                                             style: FlutterFlowTheme.of(context).bodyLarge.override(
@@ -2117,15 +2129,19 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                 '${valueOrDefault<String>(
                                                                                   reproducaoItem.tipoReproducao,
                                                                                   '--',
-                                                                                )} (${reproducaoItem.tipoReproducao == 'Inseminação' ? dateTimeFormat(
-                                                                                    "dd/MM/yy",
-                                                                                    functions.converterParaData(reproducaoItem.dataInseminacao),
-                                                                                    locale: FFLocalizations.of(context).languageCode,
-                                                                                  ) : dateTimeFormat(
-                                                                                    "dd/MM/yy",
-                                                                                    functions.converterParaData(reproducaoItem.dataInicial),
-                                                                                    locale: FFLocalizations.of(context).languageCode,
-                                                                                  )})',
+                                                                                )} (${reproducaoItem.tipoReproducao == 'Inseminação' ? (functions.converterParaData(reproducaoItem.dataInseminacao) != null
+                                                                                    ? dateTimeFormat(
+                                                                                        "dd/MM/yy",
+                                                                                        functions.converterParaData(reproducaoItem.dataInseminacao),
+                                                                                        locale: FFLocalizations.of(context).languageCode,
+                                                                                      )
+                                                                                    : 'N/A') : (functions.converterParaData(reproducaoItem.dataInicial) != null
+                                                                                    ? dateTimeFormat(
+                                                                                        "dd/MM/yy",
+                                                                                        functions.converterParaData(reproducaoItem.dataInicial),
+                                                                                        locale: FFLocalizations.of(context).languageCode,
+                                                                                      )
+                                                                                    : 'N/A')})',
                                                                                 textAlign: TextAlign.center,
                                                                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                                       font: GoogleFonts.poppins(
@@ -2316,14 +2332,16 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                 )} • ${valueOrDefault<String>(
                                                                                   reproducaoItem.nascimentoMatriz == 'null'
                                                                                       ? 'N/A'
-                                                                                      : valueOrDefault<String>(
-                                                                                          dateTimeFormat(
-                                                                                            "dd/MM/yyyy",
-                                                                                            functions.converterParaData(reproducaoItem.nascimentoMatriz),
-                                                                                            locale: FFLocalizations.of(context).languageCode,
-                                                                                          ),
-                                                                                          'N/A',
-                                                                                        ),
+                                                                                      : (functions.converterParaData(reproducaoItem.nascimentoMatriz) != null
+                                                                                          ? valueOrDefault<String>(
+                                                                                              dateTimeFormat(
+                                                                                                "dd/MM/yyyy",
+                                                                                                functions.converterParaData(reproducaoItem.nascimentoMatriz),
+                                                                                                locale: FFLocalizations.of(context).languageCode,
+                                                                                              ),
+                                                                                              'N/A',
+                                                                                            )
+                                                                                          : 'N/A'),
                                                                                   'N/A',
                                                                                 )}',
                                                                                 '--',
@@ -2418,7 +2436,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                           ),
                                                                                     ),
-                                                                                    if (reproducaoItem.statusReproducao != 'Não diagnosticado')
+                                                                                    if ((reproducaoItem.statusReproducao != null &&
+                                                                                            reproducaoItem.statusReproducao != '' &&
+                                                                                            reproducaoItem.statusReproducao != 'Não diagnosticado') &&
+                                                                                        (functions.converterParaData(reproducaoItem.dataStatus) != null))
                                                                                       Text(
                                                                                         valueOrDefault<String>(
                                                                                           ' (${dateTimeFormat(
@@ -2485,11 +2506,13 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                 child: Text(
                                                                                   valueOrDefault<String>(
                                                                                     'Parida em (${valueOrDefault<String>(
-                                                                                      dateTimeFormat(
-                                                                                        "dd/MM/yy",
-                                                                                        functions.converterParaData(reproducaoItem.dataParto),
-                                                                                        locale: FFLocalizations.of(context).languageCode,
-                                                                                      ),
+                                                                                      functions.converterParaData(reproducaoItem.dataParto) != null
+                                                                                          ? dateTimeFormat(
+                                                                                              "dd/MM/yy",
+                                                                                              functions.converterParaData(reproducaoItem.dataParto),
+                                                                                              locale: FFLocalizations.of(context).languageCode,
+                                                                                            )
+                                                                                          : 'S/D',
                                                                                       'S/D',
                                                                                     )})',
                                                                                     '--',
@@ -2644,11 +2667,14 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                           ),
                                                                           Text(
                                                                             valueOrDefault<String>(
-                                                                              dateTimeFormat(
-                                                                                "dd/MM/yy",
-                                                                                functions.converterParaData(reproducaoItem.previsaoParto),
-                                                                                locale: FFLocalizations.of(context).languageCode,
-                                                                              ),
+                                                                              functions.converterParaData(reproducaoItem.previsaoParto) !=
+                                                                                      null
+                                                                                  ? dateTimeFormat(
+                                                                                      "dd/MM/yy",
+                                                                                      functions.converterParaData(reproducaoItem.previsaoParto),
+                                                                                      locale: FFLocalizations.of(context).languageCode,
+                                                                                    )
+                                                                                  : 'S/D',
                                                                               'S/D',
                                                                             ),
                                                                             style: FlutterFlowTheme.of(context).bodyLarge.override(

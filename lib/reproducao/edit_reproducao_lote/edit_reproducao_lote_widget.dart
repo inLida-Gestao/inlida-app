@@ -48,9 +48,10 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
         idReproducao: widget!.idReproducao,
       );
       _model.tipoReproducao =
-          _model.editReproducao!.firstOrNull!.tipoReproducao!;
-      _model.score = _model.editReproducao!.firstOrNull!.scoreCorporal!;
-      _model.partidaSemen = _model.editReproducao!.firstOrNull!.partidaSemen!;
+          _model.editReproducao?.firstOrNull?.tipoReproducao ?? 'Inseminação';
+      _model.score = _model.editReproducao?.firstOrNull?.scoreCorporal ?? 0.5;
+      _model.partidaSemen =
+          _model.editReproducao?.firstOrNull?.partidaSemen ?? 1;
       safeSetState(() {});
     });
 
