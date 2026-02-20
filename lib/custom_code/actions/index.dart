@@ -6,3 +6,5 @@ export 'batch_insert_local_reproducao.dart' show batchInsertLocalReproducao;
 export 'batch_insert_local_pesagens.dart' show batchInsertLocalPesagens;
 export 'count_rebanhos_por_lote.dart' show countRebanhosPorLote;
 export 'batch_insert_local_sanidade.dart' show batchInsertLocalSanidade;
+export 'batch_insert_local_lotes.dart' show batchInsertLocalLotes;
+export 'batch_insert_local_propriedades.dart' show batchInsertLocalPropriedades;

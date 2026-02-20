@@ -25,154 +25,47 @@ Future refreshPropriedades(BuildContext context) async {
       pUserId: currentUserUid,
     );
 
-    FFAppState().propriedadesIndex = 0;
-    while (FFAppState().propriedadesIndex <
-        ((propriedade?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            .length) {
-      await SQLiteManager.instance.insertPropriedade(
-        userID: ((propriedade?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            .elementAtOrNull(FFAppState().propriedadesIndex)!
-            .userID,
-        anotacoes: (((propriedade?.jsonBody ?? '')
-                    .toList()
-                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                    .toList() as Iterable<PropriedadesStruct?>)
-                .withoutNulls
-                ?.elementAtOrNull(FFAppState().propriedadesIndex))
-            ?.anotacoes,
-        areaAgricultura: (((propriedade?.jsonBody ?? '')
-                    .toList()
-                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                    .toList() as Iterable<PropriedadesStruct?>)
-                .withoutNulls
-                ?.elementAtOrNull(FFAppState().propriedadesIndex))
-            ?.areaAgricultura,
-        areaBenfeitoria: (((propriedade?.jsonBody ?? '')
-                    .toList()
-                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                    .toList() as Iterable<PropriedadesStruct?>)
-                .withoutNulls
-                ?.elementAtOrNull(FFAppState().propriedadesIndex))
-            ?.areaBenfeitoria,
-        areaPastagem: ((propriedade?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            .elementAtOrNull(FFAppState().propriedadesIndex)!
-            .areaPastagem,
-        areaReserva: (((propriedade?.jsonBody ?? '')
-                    .toList()
-                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                    .toList() as Iterable<PropriedadesStruct?>)
-                .withoutNulls
-                ?.elementAtOrNull(FFAppState().propriedadesIndex))
-            ?.areaReserva,
-        areaTotal: ((propriedade?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            .elementAtOrNull(FFAppState().propriedadesIndex)!
-            .areaTotal,
-        cidade: ((propriedade?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            .elementAtOrNull(FFAppState().propriedadesIndex)!
-            .cidade,
-        estado: ((propriedade?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            .elementAtOrNull(FFAppState().propriedadesIndex)!
-            .estado,
-        icone: (((propriedade?.jsonBody ?? '')
-                    .toList()
-                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                    .toList() as Iterable<PropriedadesStruct?>)
-                .withoutNulls
-                ?.elementAtOrNull(FFAppState().propriedadesIndex))
-            ?.icone,
-        idPropriedade: ((propriedade?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            .elementAtOrNull(FFAppState().propriedadesIndex)!
-            .idPropriedade,
-        atividades: (((propriedade?.jsonBody ?? '')
-                    .toList()
-                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                    .toList() as Iterable<PropriedadesStruct?>)
-                .withoutNulls
-                ?.elementAtOrNull(FFAppState().propriedadesIndex))
-            ?.atividades,
-        nome: ((propriedade?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            .elementAtOrNull(FFAppState().propriedadesIndex)!
-            .nome,
-        updatedat: dateTimeFormat(
+    final propriedadesList = ((propriedade?.jsonBody ?? '')
+            .toList()
+            .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+            .toList() as Iterable<PropriedadesStruct?>)
+        .withoutNulls;
+
+    // Converter para lista de maps para batch insert
+    final records = <Map<String, dynamic>>[];
+    for (final prop in propriedadesList) {
+      records.add({
+        'userID': prop.userID,
+        'anotacoes': prop.anotacoes,
+        'areaAgricultura': prop.areaAgricultura,
+        'areaBenfeitoria': prop.areaBenfeitoria,
+        'areaPastagem': prop.areaPastagem,
+        'areaReserva': prop.areaReserva,
+        'areaTotal': prop.areaTotal,
+        'cidade': prop.cidade,
+        'estado': prop.estado,
+        'icone': prop.icone,
+        'idPropriedade': prop.idPropriedade,
+        'atividades': prop.atividades,
+        'nome': prop.nome,
+        'updated_at': dateTimeFormat(
           "yyyy-MM-dd HH:mm:ss",
-          functions.remover3hs(functions.converterTimestamp(
-              ((propriedade?.jsonBody ?? '')
-                      .toList()
-                      .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                      .toList() as Iterable<PropriedadesStruct?>)
-                  .withoutNulls
-                  .elementAtOrNull(FFAppState().propriedadesIndex)!
-                  .updatedAt)),
+          functions.remover3hs(functions.converterTimestamp(prop.updatedAt)),
           locale: FFLocalizations.of(context).languageCode,
         ),
-        createdat: dateTimeFormat(
+        'created_at': dateTimeFormat(
           "yyyy-MM-dd  HH:mm:ss",
-          functions.remover3hs(functions.converterTimestamp(
-              ((propriedade?.jsonBody ?? '')
-                      .toList()
-                      .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                      .toList() as Iterable<PropriedadesStruct?>)
-                  .withoutNulls
-                  .elementAtOrNull(FFAppState().propriedadesIndex)!
-                  .createdAt)),
+          functions.remover3hs(functions.converterTimestamp(prop.createdAt)),
           locale: FFLocalizations.of(context).languageCode,
         ),
-        usersID: ((propriedade?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            .elementAtOrNull(FFAppState().propriedadesIndex)!
-            .usersID,
-        rebanhosID: ((propriedade?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            .elementAtOrNull(FFAppState().propriedadesIndex)!
-            .rebanhosID,
-        deletado: (((propriedade?.jsonBody ?? '')
-                    .toList()
-                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                    .toList() as Iterable<PropriedadesStruct?>)
-                .withoutNulls
-                ?.elementAtOrNull(FFAppState().propriedadesIndex))
-            ?.deletado,
-      );
-      FFAppState().propriedadesIndex = FFAppState().propriedadesIndex + 1;
+        'usersID': prop.usersID,
+        'rebanhosID': prop.rebanhosID,
+        'deletado': prop.deletado,
+      });
     }
+
+    await actions.batchInsertLocalPropriedades(records);
+
     FFAppState().propriedadesChangeDateTime =
         lastChangeResult?.firstOrNull?.lastChange;
     FFAppState().propriedadesIndex = 0;
@@ -924,35 +817,32 @@ Future refreshLotes(BuildContext context) async {
             'NAO',
           ),
     );
-    while (FFAppState().lotesIndex < lotes!.length) {
-      await SQLiteManager.instance.insertLote(
-        idPropriedade:
-            lotes?.elementAtOrNull(FFAppState().lotesIndex)?.idPropriedade,
-        idAnimais: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.idAnimais,
-        nome: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.nome,
-        anotacoes: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.anotacoes,
-        ativo: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.ativo,
-        motivo: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.motivo,
-        dataMotivo: lotes
-            ?.elementAtOrNull(FFAppState().lotesIndex)
-            ?.dataMotivo
-            ?.toString(),
-        idLote: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
-        deletado: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.deletado,
-        createdat: dateTimeFormat(
+
+    // Converter para lista de maps para batch insert
+    final records = <Map<String, dynamic>>[];
+    for (final lote in lotes!) {
+      records.add({
+        'id_propriedade': lote.idPropriedade,
+        'id_animais': lote.idAnimais,
+        'nome': lote.nome,
+        'anotacoes': lote.anotacoes,
+        'ativo': lote.ativo,
+        'motivo': lote.motivo,
+        'data_motivo': lote.dataMotivo?.toString(),
+        'id_lote': lote.idLote,
+        'deletado': lote.deletado,
+        'created_at': dateTimeFormat(
           "yyyy-MM-dd HH:mm:ss",
-          functions.remover3hs(
-              lotes!.elementAtOrNull(FFAppState().lotesIndex)!.createdAt),
+          functions.remover3hs(lote.createdAt),
           locale: FFLocalizations.of(context).languageCode,
         ),
-        updatedat: lotes
-            ?.elementAtOrNull(FFAppState().lotesIndex)
-            ?.updatedAt
-            ?.toString(),
-        valorVenda: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.valorVenda,
-      );
-      FFAppState().lotesIndex = FFAppState().lotesIndex + 1;
+        'updated_at': lote.updatedAt?.toString(),
+        'valorVenda': lote.valorVenda,
+      });
     }
+
+    await actions.batchInsertLocalLotes(records);
+
     FFAppState().lotesChangeDateTime =
         lastChangeResult?.firstOrNull?.lastChange;
     FFAppState().lotesIndex = 0;
@@ -1085,29 +975,27 @@ Future countLotesCadastrados(BuildContext context) async {
 }
 
 Future qTDReproducoes(BuildContext context) async {
-  List<QTDReproducoesRow>? qtd;
-  List<QTDInseminacaoRow>? qtdIns;
-  List<QTDMontaNaturalRow>? qtdMon;
-
-  qtd = await SQLiteManager.instance.qTDReproducoes(
-    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
-  );
+  final results = await Future.wait([
+    SQLiteManager.instance.qTDReproducoes(
+      idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+    ),
+    SQLiteManager.instance.qTDInseminacao(
+      idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+    ),
+    SQLiteManager.instance.qTDMontaNatural(
+      idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+    ),
+  ]);
   FFAppState().countReproducoes = valueOrDefault<int>(
-    qtd?.length,
+    results[0].length,
     0,
-  );
-  qtdIns = await SQLiteManager.instance.qTDInseminacao(
-    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
   );
   FFAppState().countInseminacoes = valueOrDefault<int>(
-    qtdIns?.length,
+    results[1].length,
     0,
   );
-  qtdMon = await SQLiteManager.instance.qTDMontaNatural(
-    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
-  );
   FFAppState().countMontaNatural = valueOrDefault<int>(
-    qtdMon?.length,
+    results[2].length,
     0,
   );
 }
@@ -1415,129 +1303,45 @@ Future putUpdtReproducao(BuildContext context) async {
 
 Future countSanidades(BuildContext context) async {
   List<ListarSanidadesRow>? listaSanidades;
-  List<ListarSanidadesRow>? listaSanidades2;
-  List<ListarSanidadesRow>? listaSanidades3;
-  List<ListarSanidadesRow>? listaSanidades4;
 
-  FFAppState().indexCountSanidades = 0;
-  FFAppState().indexCountSanidades2 = 0;
-  FFAppState().indexCountSanidades3 = 0;
-  FFAppState().indexCountSanidades4 = 0;
   FFAppState().qtdVacinas = 0;
   FFAppState().qtdAntiparasitarios = 0;
   FFAppState().qtdTratamento = 0;
   FFAppState().qtdProtocoloReprodutivo = 0;
-  await Future.wait([
-    Future(() async {
-      listaSanidades = await SQLiteManager.instance.listarSanidades(
-        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+
+  listaSanidades = await SQLiteManager.instance.listarSanidades(
+    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+  );
+
+  final validRecords = listaSanidades!
+      .where((e) => e.idRebanho != null && e.idRebanho != '')
+      .toList();
+
+  for (final record in validRecords) {
+    if (record.vacinacao != null && record.vacinacao != 'null') {
+      FFAppState().qtdVacinas += valueOrDefault<int>(
+        functions.converterJSONparaLista(record.vacinacao!).length,
+        0,
       );
-      while (FFAppState().indexCountSanidades <
-          listaSanidades!
-              .where((e) => e.idRebanho != null && e.idRebanho != '')
-              .toList()
-              .length) {
-        FFAppState().qtdVacinas = FFAppState().qtdVacinas +
-            valueOrDefault<int>(
-              functions
-                  .converterJSONparaLista(listaSanidades!
-                      .where((e) =>
-                          (e.vacinacao != 'null') &&
-                          (e.idRebanho != null && e.idRebanho != ''))
-                      .toList()
-                      .elementAtOrNull(FFAppState().indexCountSanidades)!
-                      .vacinacao!)
-                  .length,
-              0,
-            );
-        FFAppState().indexCountSanidades = FFAppState().indexCountSanidades + 1;
-      }
-      FFAppState().indexCountSanidades = 0;
-    }),
-    Future(() async {
-      listaSanidades2 = await SQLiteManager.instance.listarSanidades(
-        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+    }
+    if (record.antiparasitario != null && record.antiparasitario != 'null') {
+      FFAppState().qtdAntiparasitarios += valueOrDefault<int>(
+        functions.converterJSONparaLista(record.antiparasitario!).length,
+        0,
       );
-      while (FFAppState().indexCountSanidades2 <
-          listaSanidades2!
-              .where((e) => e.idRebanho != null && e.idRebanho != '')
-              .toList()
-              .length) {
-        FFAppState().qtdAntiparasitarios = FFAppState().qtdAntiparasitarios +
-            valueOrDefault<int>(
-              functions
-                  .converterJSONparaLista(listaSanidades2!
-                      .where((e) =>
-                          (e.antiparasitario != 'null') &&
-                          (e.idRebanho != null && e.idRebanho != ''))
-                      .toList()
-                      .elementAtOrNull(FFAppState().indexCountSanidades2)!
-                      .antiparasitario!)
-                  .length,
-              0,
-            );
-        FFAppState().indexCountSanidades2 =
-            FFAppState().indexCountSanidades2 + 1;
-      }
-      FFAppState().indexCountSanidades2 = 0;
-    }),
-    Future(() async {
-      listaSanidades3 = await SQLiteManager.instance.listarSanidades(
-        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+    }
+    if (record.tratamento != null && record.tratamento != 'null') {
+      FFAppState().qtdTratamento += valueOrDefault<int>(
+        functions.converterJSONparaLista(record.tratamento!).length,
+        0,
       );
-      while (FFAppState().indexCountSanidades3 <
-          listaSanidades3!
-              .where((e) => e.idRebanho != null && e.idRebanho != '')
-              .toList()
-              .length) {
-        FFAppState().qtdTratamento = FFAppState().qtdTratamento +
-            valueOrDefault<int>(
-              functions
-                  .converterJSONparaLista(listaSanidades3!
-                      .where((e) =>
-                          (e.tratamento != 'null') &&
-                          (e.idRebanho != null && e.idRebanho != ''))
-                      .toList()
-                      .elementAtOrNull(FFAppState().indexCountSanidades3)!
-                      .tratamento!)
-                  .length,
-              0,
-            );
-        FFAppState().indexCountSanidades3 =
-            FFAppState().indexCountSanidades3 + 1;
-      }
-      FFAppState().indexCountSanidades3 = FFAppState().indexCountSanidades3 + 0;
-    }),
-    Future(() async {
-      listaSanidades4 = await SQLiteManager.instance.listarSanidades(
-        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
-      );
-      while (FFAppState().indexCountSanidades4 <
-          listaSanidades4!
-              .where((e) => e.idRebanho != null && e.idRebanho != '')
-              .toList()
-              .length) {
-        if ((listaSanidades4
-                    ?.elementAtOrNull(FFAppState().indexCountSanidades4)
-                    ?.protocoloReprodutivo !=
-                'null') ||
-            (listaSanidades4
-                        ?.elementAtOrNull(FFAppState().indexCountSanidades4)
-                        ?.protocoloReprodutivo ==
-                    null ||
-                listaSanidades4
-                        ?.elementAtOrNull(FFAppState().indexCountSanidades4)
-                        ?.protocoloReprodutivo ==
-                    '')) {
-          FFAppState().qtdProtocoloReprodutivo =
-              FFAppState().qtdProtocoloReprodutivo + 1;
-        }
-        FFAppState().indexCountSanidades4 =
-            FFAppState().indexCountSanidades4 + 1;
-      }
-      FFAppState().indexCountSanidades4 = FFAppState().indexCountSanidades4 + 0;
-    }),
-  ]);
+    }
+    if (record.protocoloReprodutivo != null &&
+        record.protocoloReprodutivo != 'null' &&
+        record.protocoloReprodutivo != '') {
+      FFAppState().qtdProtocoloReprodutivo += 1;
+    }
+  }
 }
 
 Future putUpdtSanidades(BuildContext context) async {
@@ -1782,15 +1586,12 @@ Future refreshRebanhoOtimizada(BuildContext context) async {
       await actions.batchInsertLocalRebanho(
         (rebanhosAPIO?.jsonBody ?? ''),
       );
-      await action_blocks.animaisRegistrados(context);
-      await action_blocks.animaisPropriedade(context);
-      await Future.delayed(
-        Duration(
-          milliseconds: 100,
-        ),
-      );
       FFAppState().indexRebPaginacao = FFAppState().indexRebPaginacao + 999;
     }
+    await Future.wait([
+      action_blocks.animaisRegistrados(context),
+      action_blocks.animaisPropriedade(context),
+    ]);
     FFAppState().rebanhosIndex = 0;
     FFAppState().rebanhosChangeDateTime =
         lastChangeResultt?.firstOrNull?.lastChange;
@@ -1846,7 +1647,6 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
       await actions.batchInsertLocalReproducao(
         (reproducaoAPI?.jsonBody ?? ''),
       );
-      await action_blocks.qTDReproducoes(context);
       FFAppState().indexReproPaginacao = FFAppState().indexReproPaginacao + 999;
     }
     FFAppState().indexReproPaginacao = 0;
@@ -1896,16 +1696,11 @@ Future refreshPesagens(BuildContext context) async {
             ?.map((e) => e.idPropriedade)
             .toList(),
         pLimite: 999,
-        pOffset: 0,
+        pOffset: FFAppState().indexPesagens,
       );
 
       await actions.batchInsertLocalPesagens(
         (pesagensAPI?.jsonBody ?? ''),
-      );
-      await Future.delayed(
-        Duration(
-          milliseconds: 100,
-        ),
       );
       FFAppState().indexPesagens = FFAppState().indexPesagens + 999;
     }
@@ -1963,12 +1758,10 @@ Future refresSanidadeOtimizada(BuildContext context) async {
       await actions.batchInsertLocalSanidade(
         (sanidadesAPI?.jsonBody ?? ''),
       );
-      await action_blocks.qTDSanidades(context);
       FFAppState().indexSanidadePaginacao =
           FFAppState().indexSanidadePaginacao + 999;
     }
-    FFAppState().indexSanidadePaginacao =
-        FFAppState().indexSanidadePaginacao + 0;
+    FFAppState().indexSanidadePaginacao = 0;
     await action_blocks.qTDSanidades(context);
     FFAppState().sanidadeChangeDateTime =
         lastChangeResult?.firstOrNull?.lastChange;

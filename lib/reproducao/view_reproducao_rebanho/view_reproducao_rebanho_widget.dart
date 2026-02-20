@@ -55,11 +55,13 @@ class _ViewReproducaoRebanhoWidgetState
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
 
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Expanded(
-          child: FutureBuilder<List<BuscarReproducaoRow>>(
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Expanded(
+            child: FutureBuilder<List<BuscarReproducaoRow>>(
             future: SQLiteManager.instance.buscarReproducao(
               idReproducao: widget!.idReproducao,
             ),
@@ -82,7 +84,6 @@ class _ViewReproducaoRebanhoWidgetState
 
               return Container(
                 width: double.infinity,
-                height: double.infinity,
                 decoration: BoxDecoration(
                   color: FlutterFlowTheme.of(context).secondaryBackground,
                 ),
@@ -1748,8 +1749,7 @@ class _ViewReproducaoRebanhoWidgetState
                                 Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    Expanded(
-                                      child: Column(
+                                      Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Align(
@@ -1835,9 +1835,7 @@ class _ViewReproducaoRebanhoWidgetState
                                           ),
                                         ].divide(SizedBox(height: 8.0)),
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: Column(
+                                      Column(
                                         mainAxisSize: MainAxisSize.max,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -1937,7 +1935,6 @@ class _ViewReproducaoRebanhoWidgetState
                                           ),
                                         ].divide(SizedBox(height: 8.0)),
                                       ),
-                                    ),
                                   ].divide(SizedBox(height: 24.0)),
                                 ),
                               ].divide(SizedBox(height: 8.0)),
@@ -1975,8 +1972,7 @@ class _ViewReproducaoRebanhoWidgetState
                                   rAddInseminacaoBuscarReproducaoRowList
                                           .firstOrNull?.previsaoParto !=
                                       '')
-                                Expanded(
-                                  child: Container(
+                                  Container(
                                     width: double.infinity,
                                     height: 56.0,
                                     decoration: BoxDecoration(
@@ -2052,7 +2048,6 @@ class _ViewReproducaoRebanhoWidgetState
                                       ),
                                     ),
                                   ),
-                                ),
                             ].divide(SizedBox(height: 8.0)),
                           ),
                         ),
@@ -2108,8 +2103,7 @@ class _ViewReproducaoRebanhoWidgetState
                               'N/A',
                             ) ==
                             'SIM')
-                          Expanded(
-                            child: Padding(
+                            Padding(
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
@@ -2198,7 +2192,6 @@ class _ViewReproducaoRebanhoWidgetState
                                 ].divide(SizedBox(height: 8.0)),
                               ),
                             ),
-                          ),
                         if ((rAddInseminacaoBuscarReproducaoRowList
                                         .firstOrNull?.dataInseminacao !=
                                     null &&
@@ -2493,6 +2486,7 @@ class _ViewReproducaoRebanhoWidgetState
           ),
         ),
       ],
+    ),
     );
   }
 }

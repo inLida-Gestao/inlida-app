@@ -280,10 +280,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                               .secondary,
                                     ),
                                   );
-                                  await action_blocks.putUpdtRebanhos(context);
-                                  await action_blocks.putUpdtLotes(context);
-                                  await action_blocks
-                                      .putUpdtReproducao(context);
+                                  await Future.wait([
+                                    action_blocks.putUpdtRebanhos(context),
+                                    action_blocks.putUpdtLotes(context),
+                                    action_blocks
+                                        .putUpdtReproducao(context),
+                                  ]);
                                   FFAppState().dataDadosNaoSyncRepro = null;
                                   safeSetState(() {});
                                   await action_blocks.putUpdtSanidades(context);
@@ -292,18 +294,16 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                   await action_blocks
                                       .putUpdtPropriedades(context);
                                   await action_blocks.refreshLotes(context);
-                                  await action_blocks
-                                      .refreshRebanhoOtimizada(context);
-                                  await action_blocks
-                                      .refreshReproducaoOtimizada(context);
-                                  unawaited(
-                                    () async {
-                                      await action_blocks
-                                          .refreshPesagens(context);
-                                    }(),
-                                  );
-                                  await action_blocks
-                                      .refresSanidadeOtimizada(context);
+                                  await Future.wait([
+                                    action_blocks
+                                        .refreshRebanhoOtimizada(context),
+                                    action_blocks
+                                        .refreshReproducaoOtimizada(context),
+                                    action_blocks
+                                        .refreshPesagens(context),
+                                    action_blocks
+                                        .refresSanidadeOtimizada(context),
+                                  ]);
                                   await action_blocks
                                       .countLotesCadastrados(context);
                                   FFAppState().ultimaSincronizacao =
