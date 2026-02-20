@@ -69,3 +69,8 @@ ios/Flutter/Flutter.podspec
 ios/Flutter/Generated.xcconfig
 ios/Flutter/flutter_export_environment.sh
 ios/Pods/
+
+# Android signing secrets
+android/key.properties
+*.jks
+*.keystore
