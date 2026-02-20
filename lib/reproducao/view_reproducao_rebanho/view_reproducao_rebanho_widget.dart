@@ -1,0 +1,2498 @@
+import '/backend/sqlite/sqlite_manager.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+import '/reproducao/edit_reproducao_rebanho/edit_reproducao_rebanho_widget.dart';
+import 'dart:ui';
+import '/flutter_flow/custom_functions.dart' as functions;
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'view_reproducao_rebanho_model.dart';
+export 'view_reproducao_rebanho_model.dart';
+
+class ViewReproducaoRebanhoWidget extends StatefulWidget {
+  const ViewReproducaoRebanhoWidget({
+    super.key,
+    required this.idReproducao,
+  });
+
+  final String? idReproducao;
+
+  @override
+  State<ViewReproducaoRebanhoWidget> createState() =>
+      _ViewReproducaoRebanhoWidgetState();
+}
+
+class _ViewReproducaoRebanhoWidgetState
+    extends State<ViewReproducaoRebanhoWidget> {
+  late ViewReproducaoRebanhoModel _model;
+
+  @override
+  void setState(VoidCallback callback) {
+    super.setState(callback);
+    _model.onUpdate();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => ViewReproducaoRebanhoModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _model.maybeDispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Expanded(
+          child: FutureBuilder<List<BuscarReproducaoRow>>(
+            future: SQLiteManager.instance.buscarReproducao(
+              idReproducao: widget!.idReproducao,
+            ),
+            builder: (context, snapshot) {
+              // Customize what your widget looks like when it's loading.
+              if (!snapshot.hasData) {
+                return Center(
+                  child: SizedBox(
+                    width: 50.0,
+                    height: 50.0,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        FlutterFlowTheme.of(context).primary,
+                      ),
+                    ),
+                  ),
+                );
+              }
+              final rAddInseminacaoBuscarReproducaoRowList = snapshot.data!;
+
+              return Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  color: FlutterFlowTheme.of(context).secondaryBackground,
+                ),
+                child: Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                  child: SingleChildScrollView(
+                    primary: false,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              24.0, 0.0, 24.0, 0.0),
+                          child: InkWell(
+                            splashColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () async {
+                              Navigator.pop(context);
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Icon(
+                                  Icons.arrow_back_ios_sharp,
+                                  color:
+                                      FlutterFlowTheme.of(context).primaryText,
+                                  size: 24.0,
+                                ),
+                                Text(
+                                  'Reprodução',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: FlutterFlowTheme.of(context)
+                                            .bodyMediumFamily,
+                                        fontSize: 22.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w500,
+                                        useGoogleFonts:
+                                            !FlutterFlowTheme.of(context)
+                                                .bodyMediumIsCustom,
+                                      ),
+                                ),
+                              ].divide(SizedBox(width: 16.0)),
+                            ),
+                          ),
+                        ),
+                        Divider(
+                          thickness: 2.0,
+                          color: Color(0xFFEDEDED),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              24.0, 0.0, 24.0, 0.0),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Reprodução',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: FlutterFlowTheme.of(context)
+                                            .bodyMediumFamily,
+                                        color: FlutterFlowTheme.of(context)
+                                            .accent3,
+                                        fontSize: 18.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w500,
+                                        useGoogleFonts:
+                                            !FlutterFlowTheme.of(context)
+                                                .bodyMediumIsCustom,
+                                      ),
+                                ),
+                                Text(
+                                  '${rAddInseminacaoBuscarReproducaoRowList.firstOrNull?.numMatriz} • ${valueOrDefault<String>(
+                                    rAddInseminacaoBuscarReproducaoRowList
+                                                .firstOrNull?.nomeMatriz ==
+                                            'null'
+                                        ? 'S/N'
+                                        : rAddInseminacaoBuscarReproducaoRowList
+                                            .firstOrNull?.nomeMatriz,
+                                    'S/N',
+                                  )} • ${rAddInseminacaoBuscarReproducaoRowList.firstOrNull?.nascimentoMatriz == 'null' ? 'N/A' : dateTimeFormat(
+                                      "d/M/y",
+                                      functions.converterParaData(
+                                          rAddInseminacaoBuscarReproducaoRowList
+                                              .firstOrNull?.nascimentoMatriz),
+                                      locale: FFLocalizations.of(context)
+                                          .languageCode,
+                                    )}',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: FlutterFlowTheme.of(context)
+                                            .bodyMediumFamily,
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryText,
+                                        fontSize: 24.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w500,
+                                        useGoogleFonts:
+                                            !FlutterFlowTheme.of(context)
+                                                .bodyMediumIsCustom,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              24.0, 0.0, 24.0, 0.0),
+                          child: Container(
+                            width: double.infinity,
+                            height: 189.0,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Align(
+                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                  child: Text(
+                                    'Tipo de reprodução',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMediumFamily,
+                                          color: Color(0xFF474747),
+                                          fontSize: 16.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w600,
+                                          useGoogleFonts:
+                                              !FlutterFlowTheme.of(context)
+                                                  .bodyMediumIsCustom,
+                                        ),
+                                  ),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  height: 74.0,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFF1F1F1),
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(6.0),
+                                      bottomRight: Radius.circular(6.0),
+                                      topLeft: Radius.circular(6.0),
+                                      topRight: Radius.circular(6.0),
+                                    ),
+                                    border: Border.all(
+                                      color:
+                                          _model.tipoReproducao == 'Inseminação'
+                                              ? FlutterFlowTheme.of(context)
+                                                  .secondary
+                                              : Color(0x00000000),
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        24.0, 0.0, 24.0, 0.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        if (rAddInseminacaoBuscarReproducaoRowList
+                                                .firstOrNull?.tipoReproducao ==
+                                            'Inseminação')
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: Image.asset(
+                                              'assets/images/Radio_button.png',
+                                              width: 24.0,
+                                              height: 24.0,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        if (rAddInseminacaoBuscarReproducaoRowList
+                                                .firstOrNull?.tipoReproducao !=
+                                            'Inseminação')
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: Image.asset(
+                                              'assets/images/Radio_button78.png',
+                                              width: 24.0,
+                                              height: 24.0,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        Text(
+                                          'Inseminação',
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                color: Color(0xFF474747),
+                                                fontSize: 20.0,
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w500,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMediumIsCustom,
+                                              ),
+                                        ),
+                                      ].divide(SizedBox(width: 10.0)),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  height: 74.0,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFF1F1F1),
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(6.0),
+                                      bottomRight: Radius.circular(6.0),
+                                      topLeft: Radius.circular(6.0),
+                                      topRight: Radius.circular(6.0),
+                                    ),
+                                    border: Border.all(
+                                      color: _model.tipoReproducao ==
+                                              'Monta Natural'
+                                          ? FlutterFlowTheme.of(context)
+                                              .secondary
+                                          : Color(0x00000000),
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        24.0, 0.0, 24.0, 0.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        if (rAddInseminacaoBuscarReproducaoRowList
+                                                .firstOrNull?.tipoReproducao ==
+                                            'Monta Natural')
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: Image.asset(
+                                              'assets/images/Radio_button.png',
+                                              width: 24.0,
+                                              height: 24.0,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        if (rAddInseminacaoBuscarReproducaoRowList
+                                                .firstOrNull?.tipoReproducao !=
+                                            'Monta Natural')
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: Image.asset(
+                                              'assets/images/Radio_button78.png',
+                                              width: 24.0,
+                                              height: 24.0,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        Text(
+                                          'Monta natural',
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                color: Color(0xFF474747),
+                                                fontSize: 20.0,
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w500,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMediumIsCustom,
+                                              ),
+                                        ),
+                                      ].divide(SizedBox(width: 10.0)),
+                                    ),
+                                  ),
+                                ),
+                              ].divide(SizedBox(height: 8.0)),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.of(context)
+                                .secondaryBackground,
+                          ),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                24.0, 0.0, 24.0, 0.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Align(
+                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                  child: Text(
+                                    'Matriz*',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMediumFamily,
+                                          color: Color(0xFF474747),
+                                          fontSize: 16.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w600,
+                                          useGoogleFonts:
+                                              !FlutterFlowTheme.of(context)
+                                                  .bodyMediumIsCustom,
+                                        ),
+                                  ),
+                                ),
+                                if (rAddInseminacaoBuscarReproducaoRowList
+                                            .firstOrNull?.numMatriz !=
+                                        null &&
+                                    rAddInseminacaoBuscarReproducaoRowList
+                                            .firstOrNull?.numMatriz !=
+                                        '')
+                                  Container(
+                                    width: double.infinity,
+                                    height: 56.0,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFF1F1F1),
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(6.0),
+                                        bottomRight: Radius.circular(6.0),
+                                        topLeft: Radius.circular(6.0),
+                                        topRight: Radius.circular(6.0),
+                                      ),
+                                      border: Border.all(
+                                        color: Color(0x001E7A4C),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          8.0, 0.0, 0.0, 0.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Text(
+                                            '${valueOrDefault<String>(
+                                              rAddInseminacaoBuscarReproducaoRowList
+                                                          .firstOrNull
+                                                          ?.numMatriz ==
+                                                      'null'
+                                                  ? 'S/N'
+                                                  : valueOrDefault<String>(
+                                                      rAddInseminacaoBuscarReproducaoRowList
+                                                          .firstOrNull
+                                                          ?.numMatriz,
+                                                      'S/N',
+                                                    ),
+                                              'S/N',
+                                            )} • ${valueOrDefault<String>(
+                                              rAddInseminacaoBuscarReproducaoRowList
+                                                          .firstOrNull
+                                                          ?.nomeMatriz ==
+                                                      'null'
+                                                  ? 'S/N'
+                                                  : valueOrDefault<String>(
+                                                      rAddInseminacaoBuscarReproducaoRowList
+                                                          .firstOrNull
+                                                          ?.nomeMatriz,
+                                                      'S/N',
+                                                    ),
+                                              'S/N',
+                                            )} • ${rAddInseminacaoBuscarReproducaoRowList.firstOrNull?.nascimentoMatriz == 'null' ? 'S/D' : dateTimeFormat(
+                                                "d/M/y",
+                                                functions.converterParaData(
+                                                    rAddInseminacaoBuscarReproducaoRowList
+                                                        .firstOrNull
+                                                        ?.nascimentoMatriz),
+                                                locale:
+                                                    FFLocalizations.of(context)
+                                                        .languageCode,
+                                              )}',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumFamily,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .secondaryText,
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumIsCustom,
+                                                ),
+                                          ),
+                                        ].divide(SizedBox(width: 10.0)),
+                                      ),
+                                    ),
+                                  ),
+                                if (rAddInseminacaoBuscarReproducaoRowList
+                                            .firstOrNull?.numMatriz ==
+                                        null ||
+                                    rAddInseminacaoBuscarReproducaoRowList
+                                            .firstOrNull?.numMatriz ==
+                                        '')
+                                  Align(
+                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    child: Text(
+                                      'Nenhuma matriz foi adicionada.',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                  ),
+                              ].divide(SizedBox(height: 8.0)),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              24.0, 0.0, 24.0, 0.0),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Align(
+                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                  child: Text(
+                                    'Escore corporal',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMediumFamily,
+                                          color: Color(0xFF474747),
+                                          fontSize: 16.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w600,
+                                          useGoogleFonts:
+                                              !FlutterFlowTheme.of(context)
+                                                  .bodyMediumIsCustom,
+                                        ),
+                                  ),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  height: 56.0,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFF1F1F1),
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(6.0),
+                                      bottomRight: Radius.circular(6.0),
+                                      topLeft: Radius.circular(6.0),
+                                      topRight: Radius.circular(6.0),
+                                    ),
+                                    border: Border.all(
+                                      color: Color(0x001E7A4C),
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        8.0, 0.0, 8.0, 0.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          width: 48.0,
+                                          decoration: BoxDecoration(),
+                                          child: Visibility(
+                                            visible: _model.score > 1.0,
+                                            child: Container(
+                                              width: 48.0,
+                                              height: 48.0,
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .accent4,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        100.0),
+                                              ),
+                                              child: Align(
+                                                alignment: AlignmentDirectional(
+                                                    0.0, 0.0),
+                                                child: FaIcon(
+                                                  FontAwesomeIcons.minus,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryText,
+                                                  size: 24.0,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          valueOrDefault<String>(
+                                            rAddInseminacaoBuscarReproducaoRowList
+                                                .firstOrNull?.scoreCorporal
+                                                ?.toString(),
+                                            '0.5',
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                letterSpacing: 0.0,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMediumIsCustom,
+                                              ),
+                                        ),
+                                        Container(
+                                          width: 48.0,
+                                          decoration: BoxDecoration(),
+                                          child: Visibility(
+                                            visible: _model.score < 5.0,
+                                            child: Container(
+                                              width: 48.0,
+                                              height: 48.0,
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .accent4,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        100.0),
+                                              ),
+                                              child: Icon(
+                                                Icons.add,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryText,
+                                                size: 24.0,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ].divide(SizedBox(width: 10.0)),
+                                    ),
+                                  ),
+                                ),
+                              ].divide(SizedBox(height: 8.0)),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.of(context)
+                                .secondaryBackground,
+                          ),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                24.0, 0.0, 24.0, 0.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Align(
+                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                  child: Text(
+                                    'Reprodutor*',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMediumFamily,
+                                          color: Color(0xFF474747),
+                                          fontSize: 16.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w600,
+                                          useGoogleFonts:
+                                              !FlutterFlowTheme.of(context)
+                                                  .bodyMediumIsCustom,
+                                        ),
+                                  ),
+                                ),
+                                if (FFAppState()
+                                            .reprodutorSelecionado
+                                            .idRebanho !=
+                                        null &&
+                                    FFAppState()
+                                            .reprodutorSelecionado
+                                            .idRebanho !=
+                                        '')
+                                  Container(
+                                    width: double.infinity,
+                                    height: 56.0,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFF1F1F1),
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(6.0),
+                                        bottomRight: Radius.circular(6.0),
+                                        topLeft: Radius.circular(6.0),
+                                        topRight: Radius.circular(6.0),
+                                      ),
+                                      border: Border.all(
+                                        color: Color(0x001E7A4C),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          8.0, 0.0, 0.0, 0.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Text(
+                                            '${valueOrDefault<String>(
+                                              rAddInseminacaoBuscarReproducaoRowList
+                                                          .firstOrNull
+                                                          ?.numReprodutor ==
+                                                      'null'
+                                                  ? 'S/N'
+                                                  : valueOrDefault<String>(
+                                                      rAddInseminacaoBuscarReproducaoRowList
+                                                          .firstOrNull
+                                                          ?.numReprodutor,
+                                                      'S/N',
+                                                    ),
+                                              'S/N',
+                                            )} • ${valueOrDefault<String>(
+                                              rAddInseminacaoBuscarReproducaoRowList
+                                                          .firstOrNull
+                                                          ?.nomeReprodutor ==
+                                                      'null'
+                                                  ? 'S/N'
+                                                  : valueOrDefault<String>(
+                                                      rAddInseminacaoBuscarReproducaoRowList
+                                                          .firstOrNull
+                                                          ?.nomeReprodutor,
+                                                      'S/N',
+                                                    ),
+                                              'S/N',
+                                            )} • ${valueOrDefault<String>(
+                                              rAddInseminacaoBuscarReproducaoRowList
+                                                          .firstOrNull
+                                                          ?.nascimentoReprodutor ==
+                                                      'null'
+                                                  ? 'N/A'
+                                                  : dateTimeFormat(
+                                                      "d/M/y",
+                                                      functions.converterParaData(
+                                                          rAddInseminacaoBuscarReproducaoRowList
+                                                              .firstOrNull
+                                                              ?.nascimentoReprodutor),
+                                                      locale:
+                                                          FFLocalizations.of(
+                                                                  context)
+                                                              .languageCode,
+                                                    ),
+                                              'N/A',
+                                            )}',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumFamily,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .secondaryText,
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumIsCustom,
+                                                ),
+                                          ),
+                                        ].divide(SizedBox(width: 10.0)),
+                                      ),
+                                    ),
+                                  ),
+                                if (FFAppState()
+                                            .reprodutorSelecionado
+                                            .idRebanho ==
+                                        null ||
+                                    FFAppState()
+                                            .reprodutorSelecionado
+                                            .idRebanho ==
+                                        '')
+                                  Align(
+                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    child: Text(
+                                      'Nenhum reprodutor foi adicionado.',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                  ),
+                              ].divide(SizedBox(height: 8.0)),
+                            ),
+                          ),
+                        ),
+                        if (rAddInseminacaoBuscarReproducaoRowList
+                                .firstOrNull?.tipoReproducao ==
+                            'Inseminação')
+                          Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  24.0, 0.0, 24.0, 0.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Align(
+                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    child: Text(
+                                      'Data da inseminação*',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            color: Color(0xFF474747),
+                                            fontSize: 16.0,
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.w600,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 56.0,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFF1F1F1),
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(6.0),
+                                        bottomRight: Radius.circular(6.0),
+                                        topLeft: Radius.circular(6.0),
+                                        topRight: Radius.circular(6.0),
+                                      ),
+                                      border: Border.all(
+                                        color: Color(0x001E7A4C),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          8.0, 0.0, 8.0, 0.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            dateTimeFormat(
+                                              "d/M/y",
+                                              functions.converterParaData(
+                                                  rAddInseminacaoBuscarReproducaoRowList
+                                                      .firstOrNull
+                                                      ?.dataInseminacao),
+                                              locale:
+                                                  FFLocalizations.of(context)
+                                                      .languageCode,
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumFamily,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .secondaryText,
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumIsCustom,
+                                                ),
+                                          ),
+                                          Icon(
+                                            Icons.calendar_month_rounded,
+                                            color: Color(0xFF181818),
+                                            size: 24.0,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ].divide(SizedBox(height: 8.0)),
+                              ),
+                            ),
+                          ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              24.0, 0.0, 24.0, 0.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Align(
+                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                child: Text(
+                                  'Ressinc',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: FlutterFlowTheme.of(context)
+                                            .bodyMediumFamily,
+                                        color: Color(0xFF474747),
+                                        fontSize: 16.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w600,
+                                        useGoogleFonts:
+                                            !FlutterFlowTheme.of(context)
+                                                .bodyMediumIsCustom,
+                                      ),
+                                ),
+                              ),
+                              if (rAddInseminacaoBuscarReproducaoRowList
+                                          .firstOrNull?.numMatriz !=
+                                      null &&
+                                  rAddInseminacaoBuscarReproducaoRowList
+                                          .firstOrNull?.numMatriz !=
+                                      '')
+                                Container(
+                                  width: double.infinity,
+                                  height: 56.0,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFF1F1F1),
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(6.0),
+                                      bottomRight: Radius.circular(6.0),
+                                      topLeft: Radius.circular(6.0),
+                                      topRight: Radius.circular(6.0),
+                                    ),
+                                    border: Border.all(
+                                      color: Color(0x001E7A4C),
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        8.0, 0.0, 0.0, 0.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Text(
+                                          valueOrDefault<String>(
+                                            rAddInseminacaoBuscarReproducaoRowList
+                                                .firstOrNull?.ressinc,
+                                            'N/A',
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
+                                                fontSize: 16.0,
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w600,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMediumIsCustom,
+                                              ),
+                                        ),
+                                      ].divide(SizedBox(width: 10.0)),
+                                    ),
+                                  ),
+                                ),
+                            ].divide(SizedBox(height: 8.0)),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              24.0, 0.0, 24.0, 0.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Align(
+                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                child: Text(
+                                  'GnRH',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: FlutterFlowTheme.of(context)
+                                            .bodyMediumFamily,
+                                        color: Color(0xFF474747),
+                                        fontSize: 16.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w600,
+                                        useGoogleFonts:
+                                            !FlutterFlowTheme.of(context)
+                                                .bodyMediumIsCustom,
+                                      ),
+                                ),
+                              ),
+                              if (rAddInseminacaoBuscarReproducaoRowList
+                                          .firstOrNull?.numMatriz !=
+                                      null &&
+                                  rAddInseminacaoBuscarReproducaoRowList
+                                          .firstOrNull?.numMatriz !=
+                                      '')
+                                Container(
+                                  width: double.infinity,
+                                  height: 56.0,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFF1F1F1),
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(6.0),
+                                      bottomRight: Radius.circular(6.0),
+                                      topLeft: Radius.circular(6.0),
+                                      topRight: Radius.circular(6.0),
+                                    ),
+                                    border: Border.all(
+                                      color: Color(0x001E7A4C),
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        8.0, 0.0, 0.0, 0.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Text(
+                                          valueOrDefault<String>(
+                                            rAddInseminacaoBuscarReproducaoRowList
+                                                .firstOrNull?.gnrh,
+                                            'N/A',
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
+                                                fontSize: 16.0,
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w600,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMediumIsCustom,
+                                              ),
+                                        ),
+                                      ].divide(SizedBox(width: 10.0)),
+                                    ),
+                                  ),
+                                ),
+                            ].divide(SizedBox(height: 8.0)),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              24.0, 0.0, 24.0, 0.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Align(
+                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                child: Text(
+                                  'Cio',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: FlutterFlowTheme.of(context)
+                                            .bodyMediumFamily,
+                                        color: Color(0xFF474747),
+                                        fontSize: 16.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w600,
+                                        useGoogleFonts:
+                                            !FlutterFlowTheme.of(context)
+                                                .bodyMediumIsCustom,
+                                      ),
+                                ),
+                              ),
+                              if (rAddInseminacaoBuscarReproducaoRowList
+                                          .firstOrNull?.numMatriz !=
+                                      null &&
+                                  rAddInseminacaoBuscarReproducaoRowList
+                                          .firstOrNull?.numMatriz !=
+                                      '')
+                                Container(
+                                  width: double.infinity,
+                                  height: 56.0,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFF1F1F1),
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(6.0),
+                                      bottomRight: Radius.circular(6.0),
+                                      topLeft: Radius.circular(6.0),
+                                      topRight: Radius.circular(6.0),
+                                    ),
+                                    border: Border.all(
+                                      color: Color(0x001E7A4C),
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        8.0, 0.0, 0.0, 0.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Text(
+                                          valueOrDefault<String>(
+                                            rAddInseminacaoBuscarReproducaoRowList
+                                                .firstOrNull?.cio,
+                                            'N/A',
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
+                                                fontSize: 16.0,
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w600,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMediumIsCustom,
+                                              ),
+                                        ),
+                                      ].divide(SizedBox(width: 10.0)),
+                                    ),
+                                  ),
+                                ),
+                            ].divide(SizedBox(height: 8.0)),
+                          ),
+                        ),
+                        if (rAddInseminacaoBuscarReproducaoRowList
+                                .firstOrNull?.tipoReproducao ==
+                            'Inseminação')
+                          Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  24.0, 0.0, 24.0, 0.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Align(
+                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    child: Text(
+                                      'Data de partida do sêmen',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            color: Color(0xFF474747),
+                                            fontSize: 16.0,
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.w600,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 56.0,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFF1F1F1),
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(6.0),
+                                        bottomRight: Radius.circular(6.0),
+                                        topLeft: Radius.circular(6.0),
+                                        topRight: Radius.circular(6.0),
+                                      ),
+                                      border: Border.all(
+                                        color: Color(0x001E7A4C),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          8.0, 0.0, 8.0, 0.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            valueOrDefault<String>(
+                                              dateTimeFormat(
+                                                "d/M/y",
+                                                functions.converterParaData(
+                                                    rAddInseminacaoBuscarReproducaoRowList
+                                                        .firstOrNull
+                                                        ?.dataPartidaSemen),
+                                                locale:
+                                                    FFLocalizations.of(context)
+                                                        .languageCode,
+                                              ),
+                                              'N/A',
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumFamily,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .secondaryText,
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumIsCustom,
+                                                ),
+                                          ),
+                                          Icon(
+                                            Icons.calendar_month_rounded,
+                                            color: Color(0xFF181818),
+                                            size: 24.0,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ].divide(SizedBox(height: 8.0)),
+                              ),
+                            ),
+                          ),
+                        if (rAddInseminacaoBuscarReproducaoRowList
+                                .firstOrNull?.tipoReproducao ==
+                            'Inseminação')
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                24.0, 0.0, 24.0, 0.0),
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Align(
+                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    child: Text(
+                                      'Partida do sêmen',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            color: Color(0xFF474747),
+                                            fontSize: 16.0,
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.w600,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 60.0,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFF1F1F1),
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(6.0),
+                                        bottomRight: Radius.circular(6.0),
+                                        topLeft: Radius.circular(6.0),
+                                        topRight: Radius.circular(6.0),
+                                      ),
+                                      border: Border.all(
+                                        color: Color(0x001E7A4C),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          8.0, 0.0, 8.0, 0.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            width: 48.0,
+                                            decoration: BoxDecoration(),
+                                            child: Visibility(
+                                              visible: _model.partidaSemen > 1,
+                                              child: Container(
+                                                width: 48.0,
+                                                height: 48.0,
+                                                decoration: BoxDecoration(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .accent4,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          100.0),
+                                                ),
+                                                child: Align(
+                                                  alignment:
+                                                      AlignmentDirectional(
+                                                          0.0, 0.0),
+                                                  child: FaIcon(
+                                                    FontAwesomeIcons.minus,
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .primaryText,
+                                                    size: 24.0,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            valueOrDefault<String>(
+                                              rAddInseminacaoBuscarReproducaoRowList
+                                                  .firstOrNull?.partidaSemen
+                                                  ?.toString(),
+                                              '1',
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumFamily,
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumIsCustom,
+                                                ),
+                                          ),
+                                          Container(
+                                            width: 48.0,
+                                            decoration: BoxDecoration(),
+                                            child: Visibility(
+                                              visible: _model.partidaSemen < 5,
+                                              child: Container(
+                                                width: 48.0,
+                                                height: 48.0,
+                                                decoration: BoxDecoration(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .accent4,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          100.0),
+                                                ),
+                                                child: Icon(
+                                                  Icons.add,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryText,
+                                                  size: 24.0,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ].divide(SizedBox(width: 10.0)),
+                                      ),
+                                    ),
+                                  ),
+                                ].divide(SizedBox(height: 8.0)),
+                              ),
+                            ),
+                          ),
+                        if (rAddInseminacaoBuscarReproducaoRowList
+                                .firstOrNull?.tipoReproducao ==
+                            'Monta Natural')
+                          Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  24.0, 0.0, 24.0, 0.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Align(
+                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    child: Text(
+                                      'Data inicial*',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            color: Color(0xFF474747),
+                                            fontSize: 16.0,
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.w600,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 56.0,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFF1F1F1),
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(6.0),
+                                        bottomRight: Radius.circular(6.0),
+                                        topLeft: Radius.circular(6.0),
+                                        topRight: Radius.circular(6.0),
+                                      ),
+                                      border: Border.all(
+                                        color: Color(0x001E7A4C),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          8.0, 0.0, 8.0, 0.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            valueOrDefault<String>(
+                                              dateTimeFormat(
+                                                "d/M/y",
+                                                functions.converterParaData(
+                                                    rAddInseminacaoBuscarReproducaoRowList
+                                                        .firstOrNull
+                                                        ?.dataInicial),
+                                                locale:
+                                                    FFLocalizations.of(context)
+                                                        .languageCode,
+                                              ),
+                                              'N/A',
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumFamily,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .secondaryText,
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumIsCustom,
+                                                ),
+                                          ),
+                                          Icon(
+                                            Icons.calendar_month_rounded,
+                                            color: Color(0xFF181818),
+                                            size: 24.0,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ].divide(SizedBox(height: 8.0)),
+                              ),
+                            ),
+                          ),
+                        if (rAddInseminacaoBuscarReproducaoRowList
+                                .firstOrNull?.tipoReproducao ==
+                            'Monta Natural')
+                          Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  24.0, 0.0, 24.0, 0.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Align(
+                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    child: Text(
+                                      'Data final*',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            color: Color(0xFF474747),
+                                            fontSize: 16.0,
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.w600,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 56.0,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFF1F1F1),
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(6.0),
+                                        bottomRight: Radius.circular(6.0),
+                                        topLeft: Radius.circular(6.0),
+                                        topRight: Radius.circular(6.0),
+                                      ),
+                                      border: Border.all(
+                                        color: Color(0x001E7A4C),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          8.0, 0.0, 8.0, 0.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            valueOrDefault<String>(
+                                              dateTimeFormat(
+                                                "d/M/y",
+                                                functions.converterParaData(
+                                                    rAddInseminacaoBuscarReproducaoRowList
+                                                        .firstOrNull
+                                                        ?.dataFinal),
+                                                locale:
+                                                    FFLocalizations.of(context)
+                                                        .languageCode,
+                                              ),
+                                              'N/A',
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumFamily,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .secondaryText,
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumIsCustom,
+                                                ),
+                                          ),
+                                          Icon(
+                                            Icons.calendar_month_rounded,
+                                            color: Color(0xFF181818),
+                                            size: 24.0,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ].divide(SizedBox(height: 8.0)),
+                              ),
+                            ),
+                          ),
+                        if (rAddInseminacaoBuscarReproducaoRowList
+                                .firstOrNull?.tipoReproducao ==
+                            'Inseminação')
+                          Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  24.0, 0.0, 24.0, 0.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Align(
+                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    child: Text(
+                                      'Inseminador',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            color: Color(0xFF474747),
+                                            fontSize: 16.0,
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.w600,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 56.0,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFF1F1F1),
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(6.0),
+                                        bottomRight: Radius.circular(6.0),
+                                        topLeft: Radius.circular(6.0),
+                                        topRight: Radius.circular(6.0),
+                                      ),
+                                      border: Border.all(
+                                        color: Color(0x001E7A4C),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          8.0, 0.0, 8.0, 0.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Flexible(
+                                            child: Align(
+                                              alignment: AlignmentDirectional(
+                                                  -1.0, 0.0),
+                                              child: Text(
+                                                valueOrDefault<String>(
+                                                  rAddInseminacaoBuscarReproducaoRowList
+                                                      .firstOrNull?.inseminador,
+                                                  'N/A',
+                                                ),
+                                                style: FlutterFlowTheme.of(
+                                                        context)
+                                                    .bodyMedium
+                                                    .override(
+                                                      fontFamily:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .bodyMediumFamily,
+                                                      color: Color(0xFF474747),
+                                                      fontSize: 16.0,
+                                                      letterSpacing: 0.0,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      useGoogleFonts:
+                                                          !FlutterFlowTheme.of(
+                                                                  context)
+                                                              .bodyMediumIsCustom,
+                                                    ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ].divide(SizedBox(height: 8.0)),
+                              ),
+                            ),
+                          ),
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.of(context)
+                                .secondaryBackground,
+                          ),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                24.0, 0.0, 24.0, 0.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Align(
+                                            alignment:
+                                                AlignmentDirectional(-1.0, 0.0),
+                                            child: Text(
+                                              'Diagnóstico*',
+                                              style: FlutterFlowTheme.of(
+                                                      context)
+                                                  .bodyMedium
+                                                  .override(
+                                                    fontFamily:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumFamily,
+                                                    color: Color(0xFF474747),
+                                                    fontSize: 16.0,
+                                                    letterSpacing: 0.0,
+                                                    fontWeight: FontWeight.w600,
+                                                    useGoogleFonts:
+                                                        !FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumIsCustom,
+                                                  ),
+                                            ),
+                                          ),
+                                          Container(
+                                            width: double.infinity,
+                                            height: 56.0,
+                                            decoration: BoxDecoration(
+                                              color: rAddInseminacaoBuscarReproducaoRowList
+                                                          .firstOrNull
+                                                          ?.statusReproducao ==
+                                                      'Prenhez'
+                                                  ? FlutterFlowTheme.of(context)
+                                                      .customColor7
+                                                  : Color(0xFFF5D7D4),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: [
+                                                  Text(
+                                                    valueOrDefault<String>(
+                                                      rAddInseminacaoBuscarReproducaoRowList
+                                                          .firstOrNull
+                                                          ?.statusReproducao,
+                                                      'Não diagnosticado',
+                                                    ),
+                                                    style:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium
+                                                            .override(
+                                                              fontFamily:
+                                                                  FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMediumFamily,
+                                                              color: rAddInseminacaoBuscarReproducaoRowList
+                                                                          .firstOrNull
+                                                                          ?.statusReproducao ==
+                                                                      'Prenhez'
+                                                                  ? FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .secondary
+                                                                  : Color(
+                                                                      0xFFCC3729),
+                                                              letterSpacing:
+                                                                  0.0,
+                                                              useGoogleFonts:
+                                                                  !FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMediumIsCustom,
+                                                            ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ].divide(SizedBox(height: 8.0)),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Data do diagnóstico',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumFamily,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryText,
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumIsCustom,
+                                                ),
+                                          ),
+                                          Container(
+                                            width: double.infinity,
+                                            height: 56.0,
+                                            decoration: BoxDecoration(
+                                              color: Color(0xFFF1F1F1),
+                                              borderRadius: BorderRadius.only(
+                                                bottomLeft:
+                                                    Radius.circular(6.0),
+                                                bottomRight:
+                                                    Radius.circular(6.0),
+                                                topLeft: Radius.circular(6.0),
+                                                topRight: Radius.circular(6.0),
+                                              ),
+                                              border: Border.all(
+                                                color: Color(0x001E7A4C),
+                                              ),
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    valueOrDefault<String>(
+                                                      dateTimeFormat(
+                                                        "d/M/y",
+                                                        functions.converterParaData(
+                                                            rAddInseminacaoBuscarReproducaoRowList
+                                                                .firstOrNull
+                                                                ?.dataStatus),
+                                                        locale:
+                                                            FFLocalizations.of(
+                                                                    context)
+                                                                .languageCode,
+                                                      ),
+                                                      'N/A',
+                                                    ),
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .secondaryText,
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
+                                                  ),
+                                                  Icon(
+                                                    Icons
+                                                        .calendar_month_rounded,
+                                                    color: Color(0xFF181818),
+                                                    size: 24.0,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ].divide(SizedBox(height: 8.0)),
+                                      ),
+                                    ),
+                                  ].divide(SizedBox(height: 24.0)),
+                                ),
+                              ].divide(SizedBox(height: 8.0)),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              24.0, 0.0, 24.0, 0.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Align(
+                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                child: Text(
+                                  'Previsão do parto',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: FlutterFlowTheme.of(context)
+                                            .bodyMediumFamily,
+                                        color: Color(0xFF474747),
+                                        fontSize: 16.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w600,
+                                        useGoogleFonts:
+                                            !FlutterFlowTheme.of(context)
+                                                .bodyMediumIsCustom,
+                                      ),
+                                ),
+                              ),
+                              if (rAddInseminacaoBuscarReproducaoRowList
+                                          .firstOrNull?.previsaoParto !=
+                                      null &&
+                                  rAddInseminacaoBuscarReproducaoRowList
+                                          .firstOrNull?.previsaoParto !=
+                                      '')
+                                Expanded(
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 56.0,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                    ),
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 56.0,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFF1F1F1),
+                                        borderRadius: BorderRadius.only(
+                                          bottomLeft: Radius.circular(6.0),
+                                          bottomRight: Radius.circular(6.0),
+                                          topLeft: Radius.circular(6.0),
+                                          topRight: Radius.circular(6.0),
+                                        ),
+                                        border: Border.all(
+                                          color: Color(0x001E7A4C),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            8.0, 0.0, 8.0, 0.0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              valueOrDefault<String>(
+                                                dateTimeFormat(
+                                                  "d/M/y",
+                                                  functions.converterParaData(
+                                                      rAddInseminacaoBuscarReproducaoRowList
+                                                          .firstOrNull
+                                                          ?.previsaoParto),
+                                                  locale: FFLocalizations.of(
+                                                          context)
+                                                      .languageCode,
+                                                ),
+                                                'N/A',
+                                              ),
+                                              style: FlutterFlowTheme.of(
+                                                      context)
+                                                  .bodyMedium
+                                                  .override(
+                                                    fontFamily:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumFamily,
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryText,
+                                                    fontSize: 16.0,
+                                                    letterSpacing: 0.0,
+                                                    fontWeight: FontWeight.w600,
+                                                    useGoogleFonts:
+                                                        !FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumIsCustom,
+                                                  ),
+                                            ),
+                                            Icon(
+                                              Icons.calendar_month_rounded,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryText,
+                                              size: 24.0,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ].divide(SizedBox(height: 8.0)),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              24.0, 0.0, 24.0, 0.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              if (valueOrDefault<String>(
+                                    rAddInseminacaoBuscarReproducaoRowList
+                                        .firstOrNull?.parida,
+                                    'N/A',
+                                  ) ==
+                                  'Sim')
+                                Icon(
+                                  Icons.check_box_rounded,
+                                  color: FlutterFlowTheme.of(context).primary,
+                                  size: 24.0,
+                                ),
+                              if (valueOrDefault<String>(
+                                    rAddInseminacaoBuscarReproducaoRowList
+                                        .firstOrNull?.parida,
+                                    'N/A',
+                                  ) ==
+                                  'Não')
+                                Icon(
+                                  Icons.check_box_outline_blank,
+                                  color: FlutterFlowTheme.of(context).accent3,
+                                  size: 24.0,
+                                ),
+                              Text(
+                                'Parto confirmado',
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .override(
+                                      fontFamily: FlutterFlowTheme.of(context)
+                                          .bodyMediumFamily,
+                                      fontSize: 16.0,
+                                      letterSpacing: 0.0,
+                                      fontWeight: FontWeight.w500,
+                                      useGoogleFonts:
+                                          !FlutterFlowTheme.of(context)
+                                              .bodyMediumIsCustom,
+                                    ),
+                              ),
+                            ].divide(SizedBox(width: 8.0)),
+                          ),
+                        ),
+                        if (valueOrDefault<String>(
+                              rAddInseminacaoBuscarReproducaoRowList
+                                  .firstOrNull?.parida,
+                              'N/A',
+                            ) ==
+                            'SIM')
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  24.0, 0.0, 24.0, 0.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Data de parto',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMediumFamily,
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryText,
+                                          fontSize: 16.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w600,
+                                          useGoogleFonts:
+                                              !FlutterFlowTheme.of(context)
+                                                  .bodyMediumIsCustom,
+                                        ),
+                                  ),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 56.0,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFF1F1F1),
+                                      borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(6.0),
+                                        bottomRight: Radius.circular(6.0),
+                                        topLeft: Radius.circular(6.0),
+                                        topRight: Radius.circular(6.0),
+                                      ),
+                                      border: Border.all(
+                                        color: Color(0x001E7A4C),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          8.0, 0.0, 8.0, 0.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            dateTimeFormat(
+                                              "d/M/y",
+                                              functions.converterParaData(
+                                                  rAddInseminacaoBuscarReproducaoRowList
+                                                      .firstOrNull?.dataParto),
+                                              locale:
+                                                  FFLocalizations.of(context)
+                                                      .languageCode,
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumFamily,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .secondaryText,
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumIsCustom,
+                                                ),
+                                          ),
+                                          Icon(
+                                            Icons.calendar_month_rounded,
+                                            color: Color(0xFF181818),
+                                            size: 24.0,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ].divide(SizedBox(height: 8.0)),
+                              ),
+                            ),
+                          ),
+                        if ((rAddInseminacaoBuscarReproducaoRowList
+                                        .firstOrNull?.dataInseminacao !=
+                                    null &&
+                                rAddInseminacaoBuscarReproducaoRowList
+                                        .firstOrNull?.dataInseminacao !=
+                                    '') &&
+                            (rAddInseminacaoBuscarReproducaoRowList
+                                        .firstOrNull?.dataParto !=
+                                    null &&
+                                rAddInseminacaoBuscarReproducaoRowList
+                                        .firstOrNull?.dataParto !=
+                                    ''))
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                24.0, 0.0, 0.0, 0.0),
+                            child: RichText(
+                              textScaler: MediaQuery.of(context).textScaler,
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Dias entre inseminação e parto: ',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMediumFamily,
+                                          fontSize: 16.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w600,
+                                          useGoogleFonts:
+                                              !FlutterFlowTheme.of(context)
+                                                  .bodyMediumIsCustom,
+                                        ),
+                                  ),
+                                  TextSpan(
+                                    text: valueOrDefault<String>(
+                                      functions
+                                          .diasEntreDatas(
+                                              functions.converterParaData(
+                                                  rAddInseminacaoBuscarReproducaoRowList
+                                                      .firstOrNull
+                                                      ?.dataInseminacao)!,
+                                              functions.converterParaData(
+                                                  rAddInseminacaoBuscarReproducaoRowList
+                                                      .firstOrNull?.dataParto)!)
+                                          .toString(),
+                                      '-',
+                                    ),
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                    ),
+                                  )
+                                ],
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .override(
+                                      fontFamily: FlutterFlowTheme.of(context)
+                                          .bodyMediumFamily,
+                                      fontSize: 16.0,
+                                      letterSpacing: 0.0,
+                                      fontWeight: FontWeight.normal,
+                                      useGoogleFonts:
+                                          !FlutterFlowTheme.of(context)
+                                              .bodyMediumIsCustom,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.of(context)
+                                .secondaryBackground,
+                          ),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                24.0, 0.0, 24.0, 0.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Align(
+                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                  child: Text(
+                                    'Anotações',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMediumFamily,
+                                          color: Color(0xFF474747),
+                                          fontSize: 16.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w600,
+                                          useGoogleFonts:
+                                              !FlutterFlowTheme.of(context)
+                                                  .bodyMediumIsCustom,
+                                        ),
+                                  ),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  height: 104.0,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFF1F1F1),
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(6.0),
+                                      bottomRight: Radius.circular(6.0),
+                                      topLeft: Radius.circular(6.0),
+                                      topRight: Radius.circular(6.0),
+                                    ),
+                                    border: Border.all(
+                                      color: Color(0x001E7A4C),
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            valueOrDefault<String>(
+                                              rAddInseminacaoBuscarReproducaoRowList
+                                                  .firstOrNull?.anotacoes,
+                                              'N/A',
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumFamily,
+                                                  color: Color(0xFF474747),
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumIsCustom,
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ].divide(SizedBox(height: 8.0)),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              0.0, 0.0, 0.0, 24.0),
+                          child: Container(
+                            width: double.infinity,
+                            height: 56.0,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  24.0, 0.0, 24.0, 0.0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: FFButtonWidget(
+                                      onPressed: () async {
+                                        Navigator.pop(context);
+                                      },
+                                      text: 'Voltar',
+                                      options: FFButtonOptions(
+                                        width: 156.0,
+                                        height: 56.0,
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            24.0, 0.0, 24.0, 0.0),
+                                        iconPadding:
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                0.0, 0.0, 0.0, 0.0),
+                                        color: Color(0x004B39EF),
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .override(
+                                              fontFamily:
+                                                  FlutterFlowTheme.of(context)
+                                                      .titleSmallFamily,
+                                              color: Color(0xFF1E7A4C),
+                                              fontSize: 18.0,
+                                              letterSpacing: 0.0,
+                                              fontWeight: FontWeight.w600,
+                                              useGoogleFonts:
+                                                  !FlutterFlowTheme.of(context)
+                                                      .titleSmallIsCustom,
+                                            ),
+                                        elevation: 0.0,
+                                        borderSide: BorderSide(
+                                          color: Color(0xFF1E7A4C),
+                                          width: 2.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Builder(
+                                      builder: (context) => FFButtonWidget(
+                                        onPressed: () async {
+                                          await showDialog(
+                                            barrierColor: Colors.transparent,
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (dialogContext) {
+                                              return Dialog(
+                                                elevation: 0,
+                                                insetPadding: EdgeInsets.zero,
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                alignment: AlignmentDirectional(
+                                                        0.0, 0.0)
+                                                    .resolve(Directionality.of(
+                                                        context)),
+                                                child:
+                                                    EditReproducaoRebanhoWidget(
+                                                  idReproducao:
+                                                      widget!.idReproducao!,
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        text: 'Editar',
+                                        icon: Icon(
+                                          Icons.edit,
+                                          size: 24.0,
+                                        ),
+                                        options: FFButtonOptions(
+                                          height: 56.0,
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  24.0, 0.0, 24.0, 0.0),
+                                          iconPadding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 0.0, 0.0, 0.0),
+                                          color: Color(0xFF28A365),
+                                          textStyle: FlutterFlowTheme.of(
+                                                  context)
+                                              .titleSmall
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .titleSmallFamily,
+                                                color: Colors.white,
+                                                fontSize: 18.0,
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w600,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .titleSmallIsCustom,
+                                              ),
+                                          elevation: 0.0,
+                                          borderSide: BorderSide(
+                                            color: Colors.transparent,
+                                            width: 1.0,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ].divide(SizedBox(width: 16.0)),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ].divide(SizedBox(height: 24.0)),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}

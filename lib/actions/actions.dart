@@ -1,0 +1,1977 @@
+import '/auth/supabase_auth/auth_util.dart';
+import '/backend/api_requests/api_calls.dart';
+import '/backend/api_requests/api_manager.dart';
+import '/backend/schema/structs/index.dart';
+import '/backend/sqlite/sqlite_manager.dart';
+import '/backend/supabase/supabase.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/actions/actions.dart' as action_blocks;
+import '/custom_code/actions/index.dart' as actions;
+import '/flutter_flow/custom_functions.dart' as functions;
+import 'package:flutter/material.dart';
+
+Future refreshPropriedades(BuildContext context) async {
+  List<PropriedadesChangeTrackerRow>? lastChangeResult;
+  ApiCallResponse? propriedade;
+
+  lastChangeResult = await PropriedadesChangeTrackerTable().queryRows(
+    queryFn: (q) => q,
+  );
+  if (lastChangeResult!.firstOrNull!.lastChange! >
+      FFAppState().propriedadesChangeDateTime!) {
+    await SQLiteManager.instance.deletarTodasPropriedades();
+    propriedade = await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+      pUserId: currentUserUid,
+    );
+
+    FFAppState().propriedadesIndex = 0;
+    while (FFAppState().propriedadesIndex <
+        ((propriedade?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            .length) {
+      await SQLiteManager.instance.insertPropriedade(
+        userID: ((propriedade?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            .elementAtOrNull(FFAppState().propriedadesIndex)!
+            .userID,
+        anotacoes: (((propriedade?.jsonBody ?? '')
+                    .toList()
+                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                    .toList() as Iterable<PropriedadesStruct?>)
+                .withoutNulls
+                ?.elementAtOrNull(FFAppState().propriedadesIndex))
+            ?.anotacoes,
+        areaAgricultura: (((propriedade?.jsonBody ?? '')
+                    .toList()
+                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                    .toList() as Iterable<PropriedadesStruct?>)
+                .withoutNulls
+                ?.elementAtOrNull(FFAppState().propriedadesIndex))
+            ?.areaAgricultura,
+        areaBenfeitoria: (((propriedade?.jsonBody ?? '')
+                    .toList()
+                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                    .toList() as Iterable<PropriedadesStruct?>)
+                .withoutNulls
+                ?.elementAtOrNull(FFAppState().propriedadesIndex))
+            ?.areaBenfeitoria,
+        areaPastagem: ((propriedade?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            .elementAtOrNull(FFAppState().propriedadesIndex)!
+            .areaPastagem,
+        areaReserva: (((propriedade?.jsonBody ?? '')
+                    .toList()
+                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                    .toList() as Iterable<PropriedadesStruct?>)
+                .withoutNulls
+                ?.elementAtOrNull(FFAppState().propriedadesIndex))
+            ?.areaReserva,
+        areaTotal: ((propriedade?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            .elementAtOrNull(FFAppState().propriedadesIndex)!
+            .areaTotal,
+        cidade: ((propriedade?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            .elementAtOrNull(FFAppState().propriedadesIndex)!
+            .cidade,
+        estado: ((propriedade?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            .elementAtOrNull(FFAppState().propriedadesIndex)!
+            .estado,
+        icone: (((propriedade?.jsonBody ?? '')
+                    .toList()
+                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                    .toList() as Iterable<PropriedadesStruct?>)
+                .withoutNulls
+                ?.elementAtOrNull(FFAppState().propriedadesIndex))
+            ?.icone,
+        idPropriedade: ((propriedade?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            .elementAtOrNull(FFAppState().propriedadesIndex)!
+            .idPropriedade,
+        atividades: (((propriedade?.jsonBody ?? '')
+                    .toList()
+                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                    .toList() as Iterable<PropriedadesStruct?>)
+                .withoutNulls
+                ?.elementAtOrNull(FFAppState().propriedadesIndex))
+            ?.atividades,
+        nome: ((propriedade?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            .elementAtOrNull(FFAppState().propriedadesIndex)!
+            .nome,
+        updatedat: dateTimeFormat(
+          "yyyy-MM-dd HH:mm:ss",
+          functions.remover3hs(functions.converterTimestamp(
+              ((propriedade?.jsonBody ?? '')
+                      .toList()
+                      .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                      .toList() as Iterable<PropriedadesStruct?>)
+                  .withoutNulls
+                  .elementAtOrNull(FFAppState().propriedadesIndex)!
+                  .updatedAt)),
+          locale: FFLocalizations.of(context).languageCode,
+        ),
+        createdat: dateTimeFormat(
+          "yyyy-MM-dd  HH:mm:ss",
+          functions.remover3hs(functions.converterTimestamp(
+              ((propriedade?.jsonBody ?? '')
+                      .toList()
+                      .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                      .toList() as Iterable<PropriedadesStruct?>)
+                  .withoutNulls
+                  .elementAtOrNull(FFAppState().propriedadesIndex)!
+                  .createdAt)),
+          locale: FFLocalizations.of(context).languageCode,
+        ),
+        usersID: ((propriedade?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            .elementAtOrNull(FFAppState().propriedadesIndex)!
+            .usersID,
+        rebanhosID: ((propriedade?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            .elementAtOrNull(FFAppState().propriedadesIndex)!
+            .rebanhosID,
+        deletado: (((propriedade?.jsonBody ?? '')
+                    .toList()
+                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                    .toList() as Iterable<PropriedadesStruct?>)
+                .withoutNulls
+                ?.elementAtOrNull(FFAppState().propriedadesIndex))
+            ?.deletado,
+      );
+      FFAppState().propriedadesIndex = FFAppState().propriedadesIndex + 1;
+    }
+    FFAppState().propriedadesChangeDateTime =
+        lastChangeResult?.firstOrNull?.lastChange;
+    FFAppState().propriedadesIndex = 0;
+  }
+}
+
+Future putUpdtPropriedades(BuildContext context) async {
+  List<BuscaPropriedadesPUTRow>? localPropriedades;
+  List<BuscaPropriedadesUPDATEDRow>? localPropriedadesUPT;
+
+  if (FFAppState().dataDadosNaoSyncProp != null) {
+    localPropriedades = await SQLiteManager.instance.buscaPropriedadesPUT(
+      datePUT: dateTimeFormat(
+        "yyyy-MM-dd HH:mm:ss",
+        FFAppState().dataDadosNaoSyncProp,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+    );
+    if (localPropriedades!.length > 0) {
+      while (FFAppState().propriedadesIndex < localPropriedades!.length) {
+        await PropriedadesTable().insert({
+          'userID': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.userID,
+          'anotacoes': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.anotacoes,
+          'areaAgricultura': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.areaAgricultura,
+          'areaBenfeitoria': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.areaBenfeitoria,
+          'areaPastagem': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.areaPastagem,
+          'areaReserva': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.areaReserva,
+          'areaTotal': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.areaTotal,
+          'cidade': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.cidade,
+          'estado': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.estado,
+          'icone': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.icone,
+          'idPropriedade': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.idPropriedade,
+          'nome': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.nome,
+          'usersID': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.usersID,
+          'rebanhosID': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.rebanhosID,
+          'atividades': localPropriedades
+              ?.elementAtOrNull(FFAppState().propriedadesIndex)
+              ?.atividades,
+        });
+        FFAppState().propriedadesIndex = FFAppState().propriedadesIndex + 1;
+      }
+    }
+    FFAppState().propriedadesIndex = 0;
+    localPropriedadesUPT =
+        await SQLiteManager.instance.buscaPropriedadesUPDATED(
+      dateUPT: dateTimeFormat(
+        "yyyy-MM-dd HH:mm:ss",
+        FFAppState().dataDadosNaoSyncProp,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+    );
+    if (localPropriedadesUPT!.length > 0) {
+      while (FFAppState().propriedadesIndex < localPropriedadesUPT!.length) {
+        await PropriedadesTable().update(
+          data: {
+            'anotacoes': localPropriedadesUPT
+                ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                ?.anotacoes,
+            'areaAgricultura': localPropriedadesUPT
+                ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                ?.areaAgricultura,
+            'areaBenfeitoria': localPropriedadesUPT
+                ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                ?.areaBenfeitoria,
+            'areaPastagem': localPropriedadesUPT
+                ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                ?.areaPastagem,
+            'areaReserva': localPropriedadesUPT
+                ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                ?.areaReserva,
+            'areaTotal': localPropriedadesUPT
+                ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                ?.areaTotal,
+            'cidade': localPropriedadesUPT
+                ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                ?.cidade,
+            'estado': localPropriedadesUPT
+                ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                ?.estado,
+            'icone': localPropriedadesUPT
+                ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                ?.icone,
+            'atividades': localPropriedadesUPT
+                ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                ?.atividades,
+            'nome': localPropriedadesUPT
+                ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                ?.nome,
+            'usersID': localPropriedadesUPT
+                ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                ?.usersID,
+          },
+          matchingRows: (rows) => rows.eqOrNull(
+            'idPropriedade',
+            localPropriedadesUPT
+                ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                ?.idPropriedade,
+          ),
+        );
+        FFAppState().propriedadesIndex = FFAppState().propriedadesIndex + 1;
+      }
+    }
+    FFAppState().propriedadesIndex = 0;
+  }
+}
+
+Future buscaPropriedade(
+  BuildContext context, {
+  String? idPropriedade,
+}) async {
+  List<BuscaPropriedadeRow>? actBuscaPropriedade;
+  bool? temNet;
+  List<UsersPropriedadesRow>? usersProp;
+
+  actBuscaPropriedade = await SQLiteManager.instance.buscaPropriedade(
+    idPropriedade: idPropriedade,
+  );
+  FFAppState().updatePropriedadeBuscadaStruct(
+    (e) => e
+      ..nome = actBuscaPropriedade?.firstOrNull?.nome
+      ..idPropriedade = idPropriedade
+      ..usersID = actBuscaPropriedade?.firstOrNull?.usersID
+      ..anotacoes = actBuscaPropriedade?.firstOrNull?.anotacoes
+      ..areaAgricultura = actBuscaPropriedade?.firstOrNull?.areaAgricultura
+      ..areaBenfeitoria = actBuscaPropriedade?.firstOrNull?.areaBenfeitoria
+      ..areaPastagem = actBuscaPropriedade?.firstOrNull?.areaPastagem
+      ..areaReserva = actBuscaPropriedade?.firstOrNull?.areaReserva
+      ..areaTotal = actBuscaPropriedade?.firstOrNull?.areaTotal
+      ..cidade = actBuscaPropriedade?.firstOrNull?.cidade
+      ..estado = actBuscaPropriedade?.firstOrNull?.estado
+      ..icone = actBuscaPropriedade?.firstOrNull?.icone
+      ..atividades = actBuscaPropriedade?.firstOrNull?.atividades
+      ..userID = actBuscaPropriedade?.firstOrNull?.userID,
+  );
+  temNet = await actions.checkInternetConnection();
+  if (temNet == true) {
+    FFAppState().usersPropriedade = [];
+    usersProp = await UsersPropriedadesTable().queryRows(
+      queryFn: (q) => q
+          .eqOrNull(
+            'idPropriedade',
+            idPropriedade,
+          )
+          .eqOrNull(
+            'deletado',
+            'NAO',
+          ),
+    );
+    while (FFAppState().usersPropIndex < usersProp!.length) {
+      FFAppState().addToUsersPropriedade(UsersPropriedadeStruct(
+        userId: usersProp?.elementAtOrNull(FFAppState().usersPropIndex)?.userId,
+        nome: usersProp?.elementAtOrNull(FFAppState().usersPropIndex)?.nome,
+        email: usersProp?.elementAtOrNull(FFAppState().usersPropIndex)?.email,
+        foto: usersProp?.elementAtOrNull(FFAppState().usersPropIndex)?.foto,
+        permissao:
+            usersProp?.elementAtOrNull(FFAppState().usersPropIndex)?.permissao,
+        idPropriedade: usersProp
+            ?.elementAtOrNull(FFAppState().usersPropIndex)
+            ?.idPropriedade,
+        deletado:
+            usersProp?.elementAtOrNull(FFAppState().usersPropIndex)?.deletado,
+      ));
+      FFAppState().usersPropIndex = FFAppState().usersPropIndex + 1;
+    }
+    FFAppState().usersPropIndex = 0;
+  }
+}
+
+Future animaisRegistrados(BuildContext context) async {
+  List<QTDAnimaisTotalPropriedadeRow>? qtdAnimais;
+
+  qtdAnimais = await SQLiteManager.instance.qTDAnimaisTotalPropriedade(
+    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+  );
+  FFAppState().animaisRegistrados = valueOrDefault<int>(
+    qtdAnimais?.length,
+    0,
+  );
+}
+
+Future animaisPropriedade(BuildContext context) async {
+  List<QTDAnimaisPropriedadeRow>? animais;
+
+  animais = await SQLiteManager.instance.qTDAnimaisPropriedade(
+    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+  );
+  FFAppState().qtdAnimaisPropriedade = valueOrDefault<int>(
+    animais?.length,
+    0,
+  );
+}
+
+Future putUpdtRebanhos(BuildContext context) async {
+  List<BuscarRebanhoPUTRow>? localRebanhos;
+  List<RebanhoRow>? animalExiste;
+  List<BuscarRebanhoUPDATEDRow>? localRebanhosUPDT;
+  List<BuscaHistPesagensPUTRow>? localHistPesPUT;
+  List<BuscaHistPesagensUPDTRow>? localPesagensUPDT;
+
+  if (FFAppState().dataDadosNaoSyncRebanho != null) {
+    localRebanhos = await SQLiteManager.instance.buscarRebanhoPUT(
+      data: dateTimeFormat(
+        "yyyy-MM-dd HH:mm:ss",
+        FFAppState().dataDadosNaoSyncRebanho,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+    );
+    if (localRebanhos!.length > 0) {
+      FFAppState().rebanhosIndex = 0;
+      while (FFAppState().rebanhosIndex < localRebanhos!.length) {
+        animalExiste = await RebanhoTable().queryRows(
+          queryFn: (q) => q.eqOrNull(
+            'idRebanho',
+            localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.idRebanho,
+          ),
+        );
+        if (!(animalExiste != null && (animalExiste)!.isNotEmpty)) {
+          await RebanhoTable().insert({
+            'idPropriedade': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.idPropriedade,
+            'numeroAnimal': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.numeroAnimal,
+            'chip': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.chip,
+            'codRegistro': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.codRegistro,
+            'nome': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.nome,
+            'sexo': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.sexo,
+            'categoria': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.categoria,
+            'dataNascimento': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhos
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataNascimento)),
+            'pesoNascimento': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.pesoNascimento,
+            'porte': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.porte,
+            'raca': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.raca,
+            'loteID': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.loteID,
+            'dataEntradaLote': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhos
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataEntradaLote)),
+            'rebanhoIdMatriz': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.rebanhoIdMatriz,
+            'rebanhoIdReprodutor': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.rebanhoIdReprodutor,
+            'dataDesmama': supaSerialize<DateTime>(functions.converterParaData(
+                localRebanhos
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataDesmama)),
+            'pesoDesmama': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.pesoDesmama,
+            'pesoAtual': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.pesoAtual,
+            'status': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.statusRebanho,
+            'origem': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.origem,
+            'anotacoes': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.anotacoes,
+            'idRebanho': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.idRebanho,
+            'deletado': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.deletado,
+            'loteNome': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.loteNome,
+            'tipo': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.tipo,
+            'dataAcao': supaSerialize<DateTime>(functions.converterParaData(
+                localRebanhos
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataAcao)),
+            'valorCompra': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.valorCompra,
+            'dataUltimaPesagem': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhos
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataUltimaPesagem)),
+            'nomeConcat': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.nomeConcat,
+            'dataVenda': supaSerialize<DateTime>(functions.converterParaData(
+                localRebanhos
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataVenda)),
+            'valorVenda': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.valorVenda,
+            'numeroMatriz': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.numeroMatriz,
+            'nomeMatriz': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.nomeMatriz,
+            'dataNascMatriz': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhos
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataNascMatriz)),
+            'racaMatriz': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.racaMatriz,
+            'numeroReprodutor': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.numeroReprodutor,
+            'nomeReprodutor': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.nomeReprodutor,
+            'dataNascReprodutor': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhos
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataNascReprodutor)),
+            'racaReprodutor': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.racaReprodutor,
+            'movimentacao_entrada': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhos
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.movimentacaoEntrada)),
+            'movimentacao_saida': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhos
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.movimentacaoSaida)),
+            'data_morte': supaSerialize<DateTime>(functions.converterParaData(
+                localRebanhos
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataMorte)),
+            'motivo_morte': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.motivoMorte,
+            'categoria_matriz': localRebanhos
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.categoriaMatriz,
+          });
+        }
+        FFAppState().rebanhosIndex = FFAppState().rebanhosIndex + 1;
+      }
+    }
+    FFAppState().rebanhosIndex = 0;
+    localRebanhosUPDT = await SQLiteManager.instance.buscarRebanhoUPDATED(
+      data: dateTimeFormat(
+        "yyyy-MM-dd HH:mm:ss",
+        FFAppState().dataDadosNaoSyncRebanho,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+    );
+    if (localRebanhosUPDT!.length > 0) {
+      while (FFAppState().rebanhosIndex < localRebanhosUPDT!.length) {
+        await RebanhoTable().update(
+          data: {
+            'numeroAnimal': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.numeroAnimal,
+            'chip': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.chip,
+            'codRegistro': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.codRegistro,
+            'nome': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.nome,
+            'sexo': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.sexo,
+            'categoria': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.categoria,
+            'dataNascimento': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhosUPDT
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataNascimento)),
+            'pesoNascimento': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.pesoNascimento,
+            'porte': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.porte,
+            'raca': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.raca,
+            'loteID': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.loteID,
+            'dataEntradaLote': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhosUPDT
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataEntradaLote)),
+            'rebanhoIdMatriz': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.rebanhoIdMatriz,
+            'rebanhoIdReprodutor': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.rebanhoIdReprodutor,
+            'dataDesmama': supaSerialize<DateTime>(functions.converterParaData(
+                localRebanhosUPDT
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataDesmama)),
+            'pesoDesmama': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.pesoDesmama,
+            'pesoAtual': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.pesoAtual,
+            'status': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.statusRebanho,
+            'origem': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.origem,
+            'anotacoes': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.anotacoes,
+            'deletado': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.deletado,
+            'loteNome': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.loteNome,
+            'tipo': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.tipo,
+            'dataAcao': supaSerialize<DateTime>(functions.converterParaData(
+                localRebanhosUPDT
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataAcao)),
+            'valorCompra': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.valorCompra,
+            'dataUltimaPesagem': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhosUPDT
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataUltimaPesagem)),
+            'nomeConcat': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.nomeConcat,
+            'dataVenda': supaSerialize<DateTime>(functions.converterParaData(
+                localRebanhosUPDT
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataVenda)),
+            'valorVenda': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.valorVenda,
+            'numeroMatriz': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.numeroMatriz,
+            'nomeMatriz': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.nomeMatriz,
+            'dataNascMatriz': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhosUPDT
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataNascMatriz)),
+            'racaMatriz': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.racaMatriz,
+            'numeroReprodutor': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.numeroReprodutor,
+            'nomeReprodutor': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.nomeReprodutor,
+            'dataNascReprodutor': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhosUPDT
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataNascReprodutor)),
+            'racaReprodutor': localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.racaReprodutor,
+            'movimentacao_entrada': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhosUPDT
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.movimentacaoEntrada)),
+            'movimentacao_saida': supaSerialize<DateTime>(
+                functions.converterParaData(localRebanhosUPDT
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.movimentacaoSaida)),
+            'data_morte': supaSerialize<DateTime>(functions.converterParaData(
+                localRebanhosUPDT
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.dataMorte)),
+          },
+          matchingRows: (rows) => rows.eqOrNull(
+            'idRebanho',
+            localRebanhosUPDT
+                ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                ?.idRebanho,
+          ),
+        );
+        FFAppState().rebanhosIndex = FFAppState().rebanhosIndex + 1;
+      }
+    }
+    FFAppState().rebanhosIndex = 0;
+    localHistPesPUT = await SQLiteManager.instance.buscaHistPesagensPUT(
+      data: dateTimeFormat(
+        "yyyy-MM-dd HH:mm:ss",
+        FFAppState().dataDadosNaoSyncRebanho,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+    );
+    FFAppState().pesagensIndex = 0;
+    if (localHistPesPUT!.length > 0) {
+      while (FFAppState().pesagensIndex < localHistPesPUT!.length) {
+        await HistoricoPesagensTable().insert({
+          'idRebanho': localHistPesPUT
+              ?.elementAtOrNull(FFAppState().pesagensIndex)
+              ?.idRebanho,
+          'dataPesagem': supaSerialize<DateTime>(functions.converterParaData(
+              localHistPesPUT
+                  ?.elementAtOrNull(FFAppState().pesagensIndex)
+                  ?.dataPesagem)),
+          'tipo': localHistPesPUT
+              ?.elementAtOrNull(FFAppState().pesagensIndex)
+              ?.tipo,
+          'peso': localHistPesPUT
+              ?.elementAtOrNull(FFAppState().pesagensIndex)
+              ?.peso,
+          'deletado': localHistPesPUT
+              ?.elementAtOrNull(FFAppState().pesagensIndex)
+              ?.deletado,
+        });
+        FFAppState().pesagensIndex = FFAppState().pesagensIndex + 1;
+      }
+    }
+    FFAppState().pesagensIndex = 0;
+    localPesagensUPDT = await SQLiteManager.instance.buscaHistPesagensUPDT();
+    if (localPesagensUPDT!.length > 0) {
+      while (FFAppState().pesagensIndex < localPesagensUPDT!.length) {
+        await HistoricoPesagensTable().update(
+          data: {
+            'deletado': localPesagensUPDT
+                ?.elementAtOrNull(FFAppState().pesagensIndex)
+                ?.deletado,
+          },
+          matchingRows: (rows) => rows.eqOrNull(
+            'id',
+            localPesagensUPDT?.elementAtOrNull(FFAppState().pesagensIndex)?.id,
+          ),
+        );
+        FFAppState().pesagensIndex = FFAppState().pesagensIndex + 1;
+      }
+    }
+    FFAppState().pesagensIndex = 0;
+  }
+}
+
+Future countLotesAtivoInativo(BuildContext context) async {
+  List<LotesAtivoRow>? qtdAtivos;
+  List<LotesInativosRow>? qtdInativos;
+  List<AnimaisNoLoteRow>? qtdAnimaisLote;
+
+  await Future.wait([
+    Future(() async {
+      qtdAtivos = await SQLiteManager.instance.lotesAtivo(
+        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+      );
+      FFAppState().qtdLotesAtivos = valueOrDefault<int>(
+        qtdAtivos?.length,
+        0,
+      );
+    }),
+    Future(() async {
+      qtdInativos = await SQLiteManager.instance.lotesInativos(
+        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+      );
+      FFAppState().qtdLotesInativos = valueOrDefault<int>(
+        qtdInativos?.length,
+        0,
+      );
+    }),
+    Future(() async {
+      qtdAnimaisLote = await SQLiteManager.instance.animaisNoLote(
+        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+      );
+      FFAppState().qtdAnimaisLote = valueOrDefault<int>(
+        qtdAnimaisLote?.length,
+        0,
+      );
+    }),
+  ]);
+}
+
+Future buscaRebanhosLote(
+  BuildContext context, {
+  String? idLote,
+}) async {
+  List<BuscarRebanhoLoteRow>? rebanhosLote;
+
+  FFAppState().rebanhosLote = [];
+  rebanhosLote = await SQLiteManager.instance.buscarRebanhoLote(
+    idLote: idLote,
+  );
+  FFAppState().rebanhosIndex = 0;
+  while (FFAppState().rebanhosIndex < rebanhosLote!.length) {
+    FFAppState().addToRebanhosLote(RebanhoStruct(
+      idPropriedade: rebanhosLote
+          ?.elementAtOrNull(FFAppState().rebanhosIndex)
+          ?.idPropriedade,
+      numeroAnimal: rebanhosLote
+          ?.elementAtOrNull(FFAppState().rebanhosIndex)
+          ?.numeroAnimal,
+      chip: rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.chip,
+      codRegistro: rebanhosLote
+          ?.elementAtOrNull(FFAppState().rebanhosIndex)
+          ?.codRegistro,
+      nome: rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.nome,
+      sexo: rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.sexo,
+      categoria:
+          rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.categoria,
+      dataNascimento: rebanhosLote
+          ?.elementAtOrNull(FFAppState().rebanhosIndex)
+          ?.dataNascimento,
+      pesoNascimento: rebanhosLote
+          ?.elementAtOrNull(FFAppState().rebanhosIndex)
+          ?.pesoNascimento,
+      porte: rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.porte,
+      raca: rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.raca,
+      loteId: rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.loteID,
+      dataEntradaLote: rebanhosLote
+          ?.elementAtOrNull(FFAppState().rebanhosIndex)
+          ?.dataEntradaLote,
+      rebanhoIdMatriz: rebanhosLote
+          ?.elementAtOrNull(FFAppState().rebanhosIndex)
+          ?.rebanhoIdMatriz,
+      rebanhoIdReprodutor: rebanhosLote
+          ?.elementAtOrNull(FFAppState().rebanhosIndex)
+          ?.rebanhoIdReprodutor,
+      dataDesmama: rebanhosLote
+          ?.elementAtOrNull(FFAppState().rebanhosIndex)
+          ?.dataDesmama,
+      pesoDesmama: rebanhosLote
+          ?.elementAtOrNull(FFAppState().rebanhosIndex)
+          ?.pesoDesmama,
+      pesoAtual:
+          rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.pesoAtual,
+      status: rebanhosLote
+          ?.elementAtOrNull(FFAppState().rebanhosIndex)
+          ?.statusRebanho,
+      origem: rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.origem,
+      anotacoes:
+          rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.anotacoes,
+      idRebanho:
+          rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.idRebanho,
+      tipo: rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.tipo,
+      dataAcao:
+          rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.dataAcao,
+      valorCompra: rebanhosLote
+          ?.elementAtOrNull(FFAppState().rebanhosIndex)
+          ?.valorCompra,
+      dataUltimaPesagem: rebanhosLote
+          ?.elementAtOrNull(FFAppState().rebanhosIndex)
+          ?.dataUltimaPesagem,
+      nomeConcat:
+          rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.nomeConcat,
+      loteNome:
+          rebanhosLote?.elementAtOrNull(FFAppState().rebanhosIndex)?.loteNome,
+    ));
+    FFAppState().rebanhosIndex = FFAppState().rebanhosIndex + 1;
+  }
+}
+
+Future refreshLotes(BuildContext context) async {
+  List<LotesChangeTrackerRow>? lastChangeResult;
+  ApiCallResponse? propriedades;
+  List<LotesRow>? lotes;
+
+  lastChangeResult = await LotesChangeTrackerTable().queryRows(
+    queryFn: (q) => q,
+  );
+  if (lastChangeResult!.firstOrNull!.lastChange! >
+      FFAppState().lotesChangeDateTime!) {
+    await SQLiteManager.instance.deleteAllLotes();
+    propriedades = await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+      pUserId: currentUserUid,
+    );
+
+    lotes = await LotesTable().queryRows(
+      queryFn: (q) => q
+          .inFilterOrNull(
+            'id_propriedade',
+            ((propriedades?.jsonBody ?? '')
+                    .toList()
+                    .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                    .toList() as Iterable<PropriedadesStruct?>)
+                .withoutNulls
+                ?.map((e) => e.idPropriedade)
+                .toList(),
+          )
+          .eqOrNull(
+            'deletado',
+            'NAO',
+          ),
+    );
+    while (FFAppState().lotesIndex < lotes!.length) {
+      await SQLiteManager.instance.insertLote(
+        idPropriedade:
+            lotes?.elementAtOrNull(FFAppState().lotesIndex)?.idPropriedade,
+        idAnimais: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.idAnimais,
+        nome: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.nome,
+        anotacoes: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.anotacoes,
+        ativo: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.ativo,
+        motivo: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.motivo,
+        dataMotivo: lotes
+            ?.elementAtOrNull(FFAppState().lotesIndex)
+            ?.dataMotivo
+            ?.toString(),
+        idLote: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
+        deletado: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.deletado,
+        createdat: dateTimeFormat(
+          "yyyy-MM-dd HH:mm:ss",
+          functions.remover3hs(
+              lotes!.elementAtOrNull(FFAppState().lotesIndex)!.createdAt),
+          locale: FFLocalizations.of(context).languageCode,
+        ),
+        updatedat: lotes
+            ?.elementAtOrNull(FFAppState().lotesIndex)
+            ?.updatedAt
+            ?.toString(),
+        valorVenda: lotes?.elementAtOrNull(FFAppState().lotesIndex)?.valorVenda,
+      );
+      FFAppState().lotesIndex = FFAppState().lotesIndex + 1;
+    }
+    FFAppState().lotesChangeDateTime =
+        lastChangeResult?.firstOrNull?.lastChange;
+    FFAppState().lotesIndex = 0;
+  }
+}
+
+Future putUpdtLotes(BuildContext context) async {
+  List<BuscarLotePUTRow>? localLotes;
+  List<BuscarLoteUPDTRow>? localLotesUPT;
+
+  if (FFAppState().dataDadosNaoSyncLotes != null) {
+    localLotes = await SQLiteManager.instance.buscarLotePUT(
+      datePUT: dateTimeFormat(
+        "yyyy-MM-dd HH:mm:ss",
+        FFAppState().dataDadosNaoSyncLotes,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+    );
+    FFAppState().lotesIndex = 0;
+    if (localLotes!.length > 0) {
+      while (FFAppState().lotesIndex < localLotes!.length) {
+        await LotesTable().insert({
+          'id_propriedade': localLotes
+              ?.elementAtOrNull(FFAppState().lotesIndex)
+              ?.idPropriedade,
+          'id_animais':
+              localLotes?.elementAtOrNull(FFAppState().lotesIndex)?.idAnimais,
+          'nome': localLotes?.elementAtOrNull(FFAppState().lotesIndex)?.nome,
+          'anotacoes':
+              localLotes?.elementAtOrNull(FFAppState().lotesIndex)?.anotacoes,
+          'ativo': localLotes?.elementAtOrNull(FFAppState().lotesIndex)?.ativo,
+          'motivo':
+              localLotes?.elementAtOrNull(FFAppState().lotesIndex)?.motivo,
+          'data_motivo': supaSerialize<DateTime>(functions.converterParaData(
+              localLotes
+                  ?.elementAtOrNull(FFAppState().lotesIndex)
+                  ?.dataMotivo)),
+          'id_lote':
+              localLotes?.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
+          'deletado':
+              localLotes?.elementAtOrNull(FFAppState().lotesIndex)?.deletado,
+          'data_entrada_piquete': supaSerialize<DateTime>(
+              functions.converterParaData(localLotes
+                  ?.elementAtOrNull(FFAppState().lotesIndex)
+                  ?.dataEntradaPiquete)),
+          'data_saida_piquete': supaSerialize<DateTime>(
+              functions.converterParaData(localLotes
+                  ?.elementAtOrNull(FFAppState().lotesIndex)
+                  ?.dataSaidaPiquete)),
+          'valorVenda':
+              localLotes?.elementAtOrNull(FFAppState().lotesIndex)?.valorVenda,
+        });
+        FFAppState().lotesIndex = FFAppState().lotesIndex + 1;
+      }
+    }
+    FFAppState().lotesIndex = 0;
+    localLotesUPT = await SQLiteManager.instance.buscarLoteUPDT(
+      dateUPDT: dateTimeFormat(
+        "yyyy-MM-dd HH:mm:ss",
+        FFAppState().dataDadosNaoSyncLotes,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+    );
+    if (localLotesUPT!.length > 0) {
+      while (FFAppState().lotesIndex < localLotesUPT!.length) {
+        await LotesTable().update(
+          data: {
+            'id_propriedade': localLotesUPT
+                ?.elementAtOrNull(FFAppState().lotesIndex)
+                ?.idPropriedade,
+            'id_animais': localLotesUPT
+                ?.elementAtOrNull(FFAppState().lotesIndex)
+                ?.idAnimais,
+            'nome':
+                localLotesUPT?.elementAtOrNull(FFAppState().lotesIndex)?.nome,
+            'anotacoes': localLotesUPT
+                ?.elementAtOrNull(FFAppState().lotesIndex)
+                ?.anotacoes,
+            'ativo':
+                localLotesUPT?.elementAtOrNull(FFAppState().lotesIndex)?.ativo,
+            'motivo':
+                localLotesUPT?.elementAtOrNull(FFAppState().lotesIndex)?.motivo,
+            'data_motivo': supaSerialize<DateTime>(functions.converterParaData(
+                localLotesUPT
+                    ?.elementAtOrNull(FFAppState().lotesIndex)
+                    ?.dataMotivo)),
+            'id_lote':
+                localLotesUPT?.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
+            'deletado': localLotesUPT
+                ?.elementAtOrNull(FFAppState().lotesIndex)
+                ?.deletado,
+            'updated_at': supaSerialize<DateTime>(functions.converterParaData(
+                localLotesUPT
+                    ?.elementAtOrNull(FFAppState().lotesIndex)
+                    ?.updatedAt)),
+            'data_entrada_piquete': supaSerialize<DateTime>(
+                functions.converterParaData(localLotesUPT
+                    ?.elementAtOrNull(FFAppState().lotesIndex)
+                    ?.dataEntradaPiquete)),
+            'data_saida_piquete': supaSerialize<DateTime>(
+                functions.converterParaData(localLotesUPT
+                    ?.elementAtOrNull(FFAppState().lotesIndex)
+                    ?.dataSaidaPiquete)),
+            'valorVenda': localLotesUPT
+                ?.elementAtOrNull(FFAppState().lotesIndex)
+                ?.valorVenda,
+          },
+          matchingRows: (rows) => rows.eqOrNull(
+            'id_lote',
+            localLotesUPT?.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
+          ),
+        );
+        FFAppState().lotesIndex = FFAppState().lotesIndex + 1;
+      }
+    }
+    FFAppState().lotesIndex = 0;
+  }
+}
+
+Future countLotesCadastrados(BuildContext context) async {
+  List<CountLotesCadastradosRow>? qtdLotes;
+
+  qtdLotes = await SQLiteManager.instance.countLotesCadastrados(
+    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+  );
+  FFAppState().lotesCadastrados = valueOrDefault<int>(
+    qtdLotes?.length,
+    0,
+  );
+}
+
+Future qTDReproducoes(BuildContext context) async {
+  List<QTDReproducoesRow>? qtd;
+  List<QTDInseminacaoRow>? qtdIns;
+  List<QTDMontaNaturalRow>? qtdMon;
+
+  qtd = await SQLiteManager.instance.qTDReproducoes(
+    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+  );
+  FFAppState().countReproducoes = valueOrDefault<int>(
+    qtd?.length,
+    0,
+  );
+  qtdIns = await SQLiteManager.instance.qTDInseminacao(
+    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+  );
+  FFAppState().countInseminacoes = valueOrDefault<int>(
+    qtdIns?.length,
+    0,
+  );
+  qtdMon = await SQLiteManager.instance.qTDMontaNatural(
+    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+  );
+  FFAppState().countMontaNatural = valueOrDefault<int>(
+    qtdMon?.length,
+    0,
+  );
+}
+
+Future putUpdtReproducao(BuildContext context) async {
+  List<BuscarReproducaoPUTRow>? localReproducao;
+  List<BuscarReproducaoUPDTRow>? localReproducaoUPDT;
+
+  if (FFAppState().dataDadosNaoSyncRepro != null) {
+    localReproducao = await SQLiteManager.instance.buscarReproducaoPUT(
+      datePUT: dateTimeFormat(
+        "yyyy-MM-dd HH:mm:ss",
+        FFAppState().dataDadosNaoSyncRepro,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+    );
+    FFAppState().reproducaoIndex = 0;
+    if (localReproducao!.length > 0) {
+      while (FFAppState().reproducaoIndex < localReproducao!.length) {
+        await ReproducaoTable().insert({
+          'id_propriedade': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.idPropriedade,
+          'tipo_reproducao': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.tipoReproducao,
+          'score_corporal': valueOrDefault<double>(
+            localReproducao
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.scoreCorporal,
+            0.5,
+          ),
+          'data_inseminacao': supaSerialize<DateTime>(
+              functions.converterParaData(localReproducao
+                  ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.dataInseminacao)),
+          'data_partida_semen': supaSerialize<DateTime>(localReproducao
+                          ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                          ?.dataPartidaSemen !=
+                      null &&
+                  localReproducao
+                          ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                          ?.dataPartidaSemen !=
+                      ''
+              ? functions.converterParaData(localReproducao
+                  ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.dataPartidaSemen)
+              : FFAppState().dateDefault),
+          'partida_semen': valueOrDefault<int>(
+            localReproducao
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.partidaSemen,
+            1,
+          ),
+          'previsao_parto': supaSerialize<DateTime>(functions.converterParaData(
+              localReproducao
+                  ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.previsaoParto)),
+          'id_lote': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.idLote,
+          'data_inicial': supaSerialize<DateTime>(functions.converterParaData(
+              localReproducao
+                  ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.dataInicial)),
+          'data_final': supaSerialize<DateTime>(functions.converterParaData(
+              localReproducao
+                  ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.dataFinal)),
+          'status_reproducao': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.statusReproducao,
+          'inseminador': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.inseminador,
+          'anotacoes': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.anotacoes,
+          'deletado': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.deletado,
+          'updated_at': supaSerialize<DateTime>(functions.converterParaData(
+              localReproducao
+                  ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.updatedAt)),
+          'categoria': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.categoria,
+          'numMatriz': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.numMatriz,
+          'nomeMatriz': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.nomeMatriz,
+          'nascimentoMatriz': supaSerialize<DateTime>(
+              functions.converterParaData(localReproducao
+                  ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.nascimentoMatriz)),
+          'numReprodutor': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.numReprodutor,
+          'nomeReprodutor': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.nomeReprodutor,
+          'nascimentoReprodutor': supaSerialize<DateTime>(
+              functions.converterParaData(localReproducao
+                  ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.nascimentoReprodutor)),
+          'loteNome': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.loteNome,
+          'data_status': supaSerialize<DateTime>(functions.converterParaData(
+              localReproducao
+                  ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.dataStatus)),
+          'chipReprodutor': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.chipReprodutor,
+          'chipMatriz': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.chipMatriz,
+          'racaMatriz': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.racaMatriz,
+          'racaReprodutor': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.racaReprodutor,
+          'ressinc': valueOrDefault<String>(
+            localReproducao
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.ressinc,
+            'NAO',
+          ),
+          'parida': valueOrDefault<String>(
+            localReproducao
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.parida,
+            'NAO',
+          ),
+          'data_parto': supaSerialize<DateTime>(functions.converterParaData(
+              localReproducao
+                  ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.dataParto)),
+          'gnrh': valueOrDefault<String>(
+            localReproducao
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.gnrh,
+            'Não',
+          ),
+          'cio': valueOrDefault<String>(
+            localReproducao?.elementAtOrNull(FFAppState().reproducaoIndex)?.cio,
+            'Não',
+          ),
+          'id_rebanho_matriz': valueOrDefault<String>(
+            localReproducao
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.idRebanhoMatriz,
+            'Não',
+          ),
+          'id_rebanho_reprodutor': valueOrDefault<String>(
+            localReproducao
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.idRebanhoReprodutor,
+            'Não',
+          ),
+          'id_reproducao': localReproducao
+              ?.elementAtOrNull(FFAppState().reproducaoIndex)
+              ?.idReproducao,
+        });
+        FFAppState().reproducaoIndex = FFAppState().reproducaoIndex + 1;
+      }
+    }
+    FFAppState().reproducaoIndex = 0;
+    localReproducaoUPDT = await SQLiteManager.instance.buscarReproducaoUPDT(
+      datePUT: dateTimeFormat(
+        "yyyy-MM-dd HH:mm:ss",
+        FFAppState().dataDadosNaoSyncRepro,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+    );
+    if (localReproducaoUPDT!.length > 0) {
+      while (FFAppState().reproducaoIndex < localReproducaoUPDT!.length) {
+        await ReproducaoTable().update(
+          data: {
+            'tipo_reproducao': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.tipoReproducao,
+            'id_rebanho_matriz': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.idRebanhoMatriz,
+            'score_corporal': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.scoreCorporal,
+            'id_rebanho_reprodutor': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.idRebanhoReprodutor,
+            'data_inseminacao': supaSerialize<DateTime>(
+                functions.converterParaData(localReproducaoUPDT
+                    ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.dataInseminacao)),
+            'data_partida_semen': supaSerialize<DateTime>(
+                functions.converterParaData(localReproducaoUPDT
+                    ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.dataPartidaSemen)),
+            'partida_semen': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.partidaSemen,
+            'previsao_parto': supaSerialize<DateTime>(
+                functions.converterParaData(localReproducaoUPDT
+                    ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.previsaoParto)),
+            'id_lote': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.idLote,
+            'data_inicial': supaSerialize<DateTime>(functions.converterParaData(
+                localReproducaoUPDT
+                    ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.dataInicial)),
+            'data_final': supaSerialize<DateTime>(functions.converterParaData(
+                localReproducaoUPDT
+                    ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.dataFinal)),
+            'inseminador': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.inseminador,
+            'anotacoes': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.anotacoes,
+            'deletado': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.deletado,
+            'updated_at': supaSerialize<DateTime>(functions.converterParaData(
+                localReproducaoUPDT
+                    ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.updatedAt)),
+            'categoria': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.categoria,
+            'numMatriz': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.numMatriz,
+            'nomeMatriz': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.nomeMatriz,
+            'nascimentoMatriz': supaSerialize<DateTime>(
+                functions.converterParaData(localReproducaoUPDT
+                    ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.nascimentoMatriz)),
+            'status_reproducao': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.statusReproducao,
+            'numReprodutor': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.numReprodutor,
+            'nomeReprodutor': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.nomeReprodutor,
+            'nascimentoReprodutor': supaSerialize<DateTime>(
+                functions.converterParaData(localReproducaoUPDT
+                    ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.nascimentoReprodutor)),
+            'loteNome': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.loteNome,
+            'data_status': supaSerialize<DateTime>(functions.converterParaData(
+                localReproducaoUPDT
+                    ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.dataStatus)),
+            'ressinc': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.ressinc,
+            'chipReprodutor': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.chipReprodutor,
+            'chipMatriz': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.chipMatriz,
+            'parida': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.parida,
+            'data_parto': supaSerialize<DateTime>(functions.converterParaData(
+                localReproducaoUPDT
+                    ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.dataParto)),
+            'gnrh': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.gnrh,
+            'cio': localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.cio,
+          },
+          matchingRows: (rows) => rows.eqOrNull(
+            'id_reproducao',
+            localReproducaoUPDT
+                ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                ?.idReproducao,
+          ),
+        );
+        FFAppState().reproducaoIndex = FFAppState().reproducaoIndex + 1;
+      }
+    }
+    FFAppState().reproducaoIndex = 0;
+  }
+}
+
+Future countSanidades(BuildContext context) async {
+  List<ListarSanidadesRow>? listaSanidades;
+  List<ListarSanidadesRow>? listaSanidades2;
+  List<ListarSanidadesRow>? listaSanidades3;
+  List<ListarSanidadesRow>? listaSanidades4;
+
+  FFAppState().indexCountSanidades = 0;
+  FFAppState().indexCountSanidades2 = 0;
+  FFAppState().indexCountSanidades3 = 0;
+  FFAppState().indexCountSanidades4 = 0;
+  FFAppState().qtdVacinas = 0;
+  FFAppState().qtdAntiparasitarios = 0;
+  FFAppState().qtdTratamento = 0;
+  FFAppState().qtdProtocoloReprodutivo = 0;
+  await Future.wait([
+    Future(() async {
+      listaSanidades = await SQLiteManager.instance.listarSanidades(
+        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+      );
+      while (FFAppState().indexCountSanidades <
+          listaSanidades!
+              .where((e) => e.idRebanho != null && e.idRebanho != '')
+              .toList()
+              .length) {
+        FFAppState().qtdVacinas = FFAppState().qtdVacinas +
+            valueOrDefault<int>(
+              functions
+                  .converterJSONparaLista(listaSanidades!
+                      .where((e) =>
+                          (e.vacinacao != 'null') &&
+                          (e.idRebanho != null && e.idRebanho != ''))
+                      .toList()
+                      .elementAtOrNull(FFAppState().indexCountSanidades)!
+                      .vacinacao!)
+                  .length,
+              0,
+            );
+        FFAppState().indexCountSanidades = FFAppState().indexCountSanidades + 1;
+      }
+      FFAppState().indexCountSanidades = 0;
+    }),
+    Future(() async {
+      listaSanidades2 = await SQLiteManager.instance.listarSanidades(
+        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+      );
+      while (FFAppState().indexCountSanidades2 <
+          listaSanidades2!
+              .where((e) => e.idRebanho != null && e.idRebanho != '')
+              .toList()
+              .length) {
+        FFAppState().qtdAntiparasitarios = FFAppState().qtdAntiparasitarios +
+            valueOrDefault<int>(
+              functions
+                  .converterJSONparaLista(listaSanidades2!
+                      .where((e) =>
+                          (e.antiparasitario != 'null') &&
+                          (e.idRebanho != null && e.idRebanho != ''))
+                      .toList()
+                      .elementAtOrNull(FFAppState().indexCountSanidades2)!
+                      .antiparasitario!)
+                  .length,
+              0,
+            );
+        FFAppState().indexCountSanidades2 =
+            FFAppState().indexCountSanidades2 + 1;
+      }
+      FFAppState().indexCountSanidades2 = 0;
+    }),
+    Future(() async {
+      listaSanidades3 = await SQLiteManager.instance.listarSanidades(
+        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+      );
+      while (FFAppState().indexCountSanidades3 <
+          listaSanidades3!
+              .where((e) => e.idRebanho != null && e.idRebanho != '')
+              .toList()
+              .length) {
+        FFAppState().qtdTratamento = FFAppState().qtdTratamento +
+            valueOrDefault<int>(
+              functions
+                  .converterJSONparaLista(listaSanidades3!
+                      .where((e) =>
+                          (e.tratamento != 'null') &&
+                          (e.idRebanho != null && e.idRebanho != ''))
+                      .toList()
+                      .elementAtOrNull(FFAppState().indexCountSanidades3)!
+                      .tratamento!)
+                  .length,
+              0,
+            );
+        FFAppState().indexCountSanidades3 =
+            FFAppState().indexCountSanidades3 + 1;
+      }
+      FFAppState().indexCountSanidades3 = FFAppState().indexCountSanidades3 + 0;
+    }),
+    Future(() async {
+      listaSanidades4 = await SQLiteManager.instance.listarSanidades(
+        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+      );
+      while (FFAppState().indexCountSanidades4 <
+          listaSanidades4!
+              .where((e) => e.idRebanho != null && e.idRebanho != '')
+              .toList()
+              .length) {
+        if ((listaSanidades4
+                    ?.elementAtOrNull(FFAppState().indexCountSanidades4)
+                    ?.protocoloReprodutivo !=
+                'null') ||
+            (listaSanidades4
+                        ?.elementAtOrNull(FFAppState().indexCountSanidades4)
+                        ?.protocoloReprodutivo ==
+                    null ||
+                listaSanidades4
+                        ?.elementAtOrNull(FFAppState().indexCountSanidades4)
+                        ?.protocoloReprodutivo ==
+                    '')) {
+          FFAppState().qtdProtocoloReprodutivo =
+              FFAppState().qtdProtocoloReprodutivo + 1;
+        }
+        FFAppState().indexCountSanidades4 =
+            FFAppState().indexCountSanidades4 + 1;
+      }
+      FFAppState().indexCountSanidades4 = FFAppState().indexCountSanidades4 + 0;
+    }),
+  ]);
+}
+
+Future putUpdtSanidades(BuildContext context) async {
+  List<BuscarSanidadePUTRow>? localSanidade;
+  List<BuscarSanidadeUPDTRow>? localSanidadeUPDT;
+
+  if (FFAppState().dataDadosNaoSyncSanidade != null) {
+    localSanidade = await SQLiteManager.instance.buscarSanidadePUT(
+      datePUT: dateTimeFormat(
+        "yyyy-MM-dd HH:mm:ss",
+        FFAppState().dataDadosNaoSyncSanidade,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+    );
+    if (localSanidade!.length > 0) {
+      while (FFAppState().sanidadeIndex < localSanidade!.length) {
+        await SanidadeTable().insert({
+          'id_propriedade': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.idPropriedade,
+          'deletado': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.deletado,
+          'updated_at': supaSerialize<DateTime>(functions.converterParaData(
+              localSanidade
+                  ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.updatedAt)),
+          'created_at': supaSerialize<DateTime>(functions.converterParaData(
+              localSanidade
+                  ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.createdAt)),
+          'id_rebanho': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.idRebanho,
+          'data_sanidade': supaSerialize<DateTime>(functions.converterParaData(
+              localSanidade
+                  ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.dataSanidade)),
+          'id_lote': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.idLote,
+          'porcentagem_lote': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.porcentagemLote,
+          'id_sanidade': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.idSanidade,
+          'vacinacao': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.vacinacao,
+          'vacinacao_outros': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.vacinacaoOutros,
+          'vacinacao_obs': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.vacinacaoObs,
+          'antiparasitario': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.antiparasitario,
+          'antiparasitario_outros': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.antiparasitarioOutros,
+          'antiparasitario_obs': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.antiparasitarioObs,
+          'tratamento': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.tratamento,
+          'tratamento_outros': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.tratamentoOutros,
+          'tratamento_obs': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.tratamentoObs,
+          'protocolo_reprodutivo': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.protocoloReprodutivo,
+          'protocolo_reprodutivo_outros': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.protocoloReprodutivoOutros,
+          'protocolo_reprodutivo_obs': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.protocoloReprodutivoObs,
+          'protocolo_d0': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.protocoloD0,
+          'protocolo_retirada': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.protocoloRetirada,
+          'protocolo_iatf': localSanidade
+              ?.elementAtOrNull(FFAppState().sanidadeIndex)
+              ?.protocoloIatf,
+        });
+        FFAppState().sanidadeIndex = FFAppState().sanidadeIndex + 1;
+      }
+    }
+    FFAppState().sanidadeIndex = 0;
+    localSanidadeUPDT = await SQLiteManager.instance.buscarSanidadeUPDT(
+      dateUPDT: dateTimeFormat(
+        "yyyy-MM-dd HH:mm:ss",
+        FFAppState().dataDadosNaoSyncSanidade,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+    );
+    if (localSanidadeUPDT!.length > 0) {
+      while (FFAppState().sanidadeIndex < localSanidadeUPDT!.length) {
+        await SanidadeTable().update(
+          data: {
+            'data_sanidade': supaSerialize<DateTime>(
+                functions.converterParaData(localSanidadeUPDT
+                    ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.dataSanidade)),
+            'porcentagem_lote': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.porcentagemLote,
+            'updated_at': supaSerialize<DateTime>(functions.converterParaData(
+                localSanidadeUPDT
+                    ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.updatedAt)),
+            'deletado': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.deletado,
+            'vacinacao': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.vacinacao,
+            'vacinacao_outros': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.vacinacaoOutros,
+            'vacinacao_obs': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.vacinacaoObs,
+            'antiparasitario': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.antiparasitario,
+            'antiparasitario_outros': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.antiparasitarioOutros,
+            'antiparasitario_obs': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.antiparasitarioObs,
+            'tratamento': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.tratamento,
+            'tratamento_outros': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.tratamentoOutros,
+            'tratamento_obs': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.tratamentoObs,
+            'protocolo_reprodutivo': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.protocoloReprodutivo,
+            'protocolo_reprodutivo_outros': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.protocoloReprodutivoOutros,
+            'protocolo_reprodutivo_obs': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.protocoloReprodutivoObs,
+            'protocolo_d0': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.protocoloD0,
+            'protocolo_retirada': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.protocoloRetirada,
+            'protocolo_iatf': localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.protocoloIatf,
+          },
+          matchingRows: (rows) => rows.eqOrNull(
+            'id_sanidade',
+            localSanidadeUPDT
+                ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                ?.idSanidade,
+          ),
+        );
+        FFAppState().sanidadeIndex = FFAppState().sanidadeIndex + 1;
+      }
+    }
+    FFAppState().sanidadeIndex = 0;
+  }
+}
+
+Future qTDSanidades(BuildContext context) async {
+  List<QTDSanidadesRow>? qtdSanidades;
+
+  qtdSanidades = await SQLiteManager.instance.qTDSanidades(
+    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+  );
+  FFAppState().qtdSanidades = valueOrDefault<int>(
+    qtdSanidades?.length,
+    0,
+  );
+}
+
+Future refreshRebanhoOtimizada(BuildContext context) async {
+  List<RebanhoChangeTrackerRow>? lastChangeResultt;
+  ApiCallResponse? propriedadessO;
+  ApiCallResponse? qtdRebanhosO;
+  ApiCallResponse? rebanhosAPIO;
+
+  lastChangeResultt = await RebanhoChangeTrackerTable().queryRows(
+    queryFn: (q) => q,
+  );
+  if (lastChangeResultt!.firstOrNull!.lastChange >
+      FFAppState().rebanhosChangeDateTime!) {
+    propriedadessO =
+        await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+      pUserId: currentUserUid,
+    );
+
+    qtdRebanhosO = await SupabaseFunctionsGroup.qTDRebanhosCall.call(
+      pIdsPropriedadesList: ((propriedadessO?.jsonBody ?? '')
+              .toList()
+              .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+              .toList() as Iterable<PropriedadesStruct?>)
+          .withoutNulls
+          ?.map((e) => e.idPropriedade)
+          .toList(),
+    );
+
+    FFAppState().totalRebanhos = (qtdRebanhosO?.jsonBody ?? '');
+    FFAppState().indexRebPaginacao = 0;
+    FFAppState().visibleProgressBar = true;
+    FFAppState().update(() {});
+    await SQLiteManager.instance.deletarTodosRebanhos();
+    while (FFAppState().indexRebPaginacao < (qtdRebanhosO?.jsonBody ?? '')) {
+      rebanhosAPIO = await SupabaseFunctionsGroup.buscarRebanhosCall.call(
+        pIdPropriedadeList: ((propriedadessO?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            ?.map((e) => e.idPropriedade)
+            .toList(),
+        pLimite: 999,
+        pOffset: valueOrDefault<int>(
+          FFAppState().indexRebPaginacao,
+          0,
+        ),
+      );
+
+      await actions.batchInsertLocalRebanho(
+        (rebanhosAPIO?.jsonBody ?? ''),
+      );
+      await action_blocks.animaisRegistrados(context);
+      await action_blocks.animaisPropriedade(context);
+      await Future.delayed(
+        Duration(
+          milliseconds: 100,
+        ),
+      );
+      FFAppState().indexRebPaginacao = FFAppState().indexRebPaginacao + 999;
+    }
+    FFAppState().rebanhosIndex = 0;
+    FFAppState().rebanhosChangeDateTime =
+        lastChangeResultt?.firstOrNull?.lastChange;
+    FFAppState().indexRebPaginacao = 0;
+    FFAppState().visibleProgressBar = false;
+  }
+}
+
+Future refreshReproducaoOtimizada(BuildContext context) async {
+  List<ReproducaoChangeTrackerRow>? lastChangeResultO;
+  ApiCallResponse? propriedades;
+  ApiCallResponse? qtdReproducoes;
+  ApiCallResponse? reproducaoAPI;
+
+  lastChangeResultO = await ReproducaoChangeTrackerTable().queryRows(
+    queryFn: (q) => q,
+  );
+  if (lastChangeResultO!.firstOrNull!.lastChange >
+      FFAppState().reproducaoChangeDateTime!) {
+    propriedades = await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+      pUserId: currentUserUid,
+    );
+
+    qtdReproducoes = await SupabaseFunctionsGroup.qTDReproducoesCall.call(
+      pIdsPropriedadesList: ((propriedades?.jsonBody ?? '')
+              .toList()
+              .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+              .toList() as Iterable<PropriedadesStruct?>)
+          .withoutNulls
+          ?.map((e) => e.idPropriedade)
+          .toList(),
+    );
+
+    FFAppState().totalReproducoes = (qtdReproducoes?.jsonBody ?? '');
+    FFAppState().indexReproPaginacao = 0;
+    FFAppState().visibilidadeProgressBarRepro = true;
+    FFAppState().update(() {});
+    await SQLiteManager.instance.deleteAllReproducao();
+    while (
+        FFAppState().indexReproPaginacao < (qtdReproducoes?.jsonBody ?? '')) {
+      reproducaoAPI = await SupabaseFunctionsGroup.buscarReproducoesCall.call(
+        pIdPropriedadeList: ((propriedades?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            ?.map((e) => e.idPropriedade)
+            .toList(),
+        pLimite: 999,
+        pOffset: FFAppState().indexReproPaginacao,
+      );
+
+      await actions.batchInsertLocalReproducao(
+        (reproducaoAPI?.jsonBody ?? ''),
+      );
+      await action_blocks.qTDReproducoes(context);
+      FFAppState().indexReproPaginacao = FFAppState().indexReproPaginacao + 999;
+    }
+    FFAppState().indexReproPaginacao = 0;
+    await action_blocks.qTDReproducoes(context);
+    FFAppState().reproducaoChangeDateTime =
+        lastChangeResultO?.firstOrNull?.lastChange;
+    FFAppState().visibilidadeProgressBarRepro = false;
+  }
+}
+
+Future refreshPesagens(BuildContext context) async {
+  List<HistoricoPesagensChangeTrackerRow>? lastChangeResultt;
+  ApiCallResponse? propriedadessO;
+  ApiCallResponse? qtdPesagens;
+  ApiCallResponse? pesagensAPI;
+
+  lastChangeResultt = await HistoricoPesagensChangeTrackerTable().queryRows(
+    queryFn: (q) => q,
+  );
+  if (lastChangeResultt!.firstOrNull!.lastChange >
+      FFAppState().pesagensChangeDateTime!) {
+    propriedadessO =
+        await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+      pUserId: currentUserUid,
+    );
+
+    qtdPesagens = await SupabaseFunctionsGroup.qTDPesagensPropriedadeCall.call(
+      pIdsPropriedadesList: ((propriedadessO?.jsonBody ?? '')
+              .toList()
+              .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+              .toList() as Iterable<PropriedadesStruct?>)
+          .withoutNulls
+          ?.map((e) => e.idPropriedade)
+          .toList(),
+    );
+
+    FFAppState().totalPesagens = (qtdPesagens?.jsonBody ?? '');
+    FFAppState().indexPesagens = 0;
+    await SQLiteManager.instance.deletarTodasPesagens();
+    while (FFAppState().indexPesagens < (qtdPesagens?.jsonBody ?? '')) {
+      pesagensAPI = await SupabaseFunctionsGroup.buscarPesagensCall.call(
+        pIdPropriedadeList: ((propriedadessO?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            ?.map((e) => e.idPropriedade)
+            .toList(),
+        pLimite: 999,
+        pOffset: 0,
+      );
+
+      await actions.batchInsertLocalPesagens(
+        (pesagensAPI?.jsonBody ?? ''),
+      );
+      await Future.delayed(
+        Duration(
+          milliseconds: 100,
+        ),
+      );
+      FFAppState().indexPesagens = FFAppState().indexPesagens + 999;
+    }
+    FFAppState().indexPesagens = 0;
+    FFAppState().pesagensChangeDateTime =
+        lastChangeResultt?.firstOrNull?.lastChange;
+  }
+}
+
+Future refresSanidadeOtimizada(BuildContext context) async {
+  List<SanidadeChangeTrackerRow>? lastChangeResult;
+  ApiCallResponse? propriedades;
+  ApiCallResponse? qtdSanidades;
+  ApiCallResponse? sanidadesAPI;
+
+  lastChangeResult = await SanidadeChangeTrackerTable().queryRows(
+    queryFn: (q) => q,
+  );
+  if (lastChangeResult!.firstOrNull!.lastChange >
+      FFAppState().sanidadeChangeDateTime!) {
+    propriedades = await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+      pUserId: currentUserUid,
+    );
+
+    qtdSanidades = await SupabaseFunctionsGroup.qTDSanidadeCall.call(
+      pIdsPropriedadesList: ((propriedades?.jsonBody ?? '')
+              .toList()
+              .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+              .toList() as Iterable<PropriedadesStruct?>)
+          .withoutNulls
+          ?.map((e) => e.idPropriedade)
+          .toList(),
+    );
+
+    FFAppState().sanidadeIndex = 0;
+    FFAppState().indexSanidadePaginacao = 0;
+    FFAppState().totalSanidades = (qtdSanidades?.jsonBody ?? '');
+    FFAppState().visbilidadeProgressBarSan = true;
+    FFAppState().update(() {});
+    await SQLiteManager.instance.deleteAllSanidades();
+    while (
+        FFAppState().indexSanidadePaginacao < (qtdSanidades?.jsonBody ?? '')) {
+      sanidadesAPI = await SupabaseFunctionsGroup.buscarSanidadesCall.call(
+        pIdPropriedadeList: ((propriedades?.jsonBody ?? '')
+                .toList()
+                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+                .toList() as Iterable<PropriedadesStruct?>)
+            .withoutNulls
+            ?.map((e) => e.idPropriedade)
+            .toList(),
+        pLimite: 999,
+        pOffset: FFAppState().indexSanidadePaginacao,
+      );
+
+      await actions.batchInsertLocalSanidade(
+        (sanidadesAPI?.jsonBody ?? ''),
+      );
+      await action_blocks.qTDSanidades(context);
+      FFAppState().indexSanidadePaginacao =
+          FFAppState().indexSanidadePaginacao + 999;
+    }
+    FFAppState().indexSanidadePaginacao =
+        FFAppState().indexSanidadePaginacao + 0;
+    await action_blocks.qTDSanidades(context);
+    FFAppState().sanidadeChangeDateTime =
+        lastChangeResult?.firstOrNull?.lastChange;
+    FFAppState().visbilidadeProgressBarSan = false;
+  }
+}

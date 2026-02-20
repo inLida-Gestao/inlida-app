@@ -1,0 +1,193 @@
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+import '/propriedade/selecao_propriedade/selecao_propriedade_widget.dart';
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'selecionar_propriedade_model.dart';
+export 'selecionar_propriedade_model.dart';
+
+class SelecionarPropriedadeWidget extends StatefulWidget {
+  const SelecionarPropriedadeWidget({super.key});
+
+  @override
+  State<SelecionarPropriedadeWidget> createState() =>
+      _SelecionarPropriedadeWidgetState();
+}
+
+class _SelecionarPropriedadeWidgetState
+    extends State<SelecionarPropriedadeWidget> {
+  late SelecionarPropriedadeModel _model;
+
+  @override
+  void setState(VoidCallback callback) {
+    super.setState(callback);
+    _model.onUpdate();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => SelecionarPropriedadeModel());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _model.maybeDispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    context.watch<FFAppState>();
+
+    return Container(
+      decoration: BoxDecoration(),
+      child: InkWell(
+        splashColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        onTap: () async {
+          await showModalBottomSheet(
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            enableDrag: false,
+            context: context,
+            builder: (context) {
+              return Padding(
+                padding: MediaQuery.viewInsetsOf(context),
+                child: SelecaoPropriedadeWidget(),
+              );
+            },
+          ).then((value) => safeSetState(() {}));
+        },
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Color(0xFFF1F1F1),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(100.0),
+              bottomRight: Radius.circular(100.0),
+              topLeft: Radius.circular(100.0),
+              topRight: Radius.circular(100.0),
+            ),
+            border: Border.all(
+              color: Color(0xFFBEBEBE),
+              width: 2.0,
+            ),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Color(0x00FFFFFF),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(100.0),
+                bottomRight: Radius.circular(100.0),
+                topLeft: Radius.circular(100.0),
+                topRight: Radius.circular(100.0),
+              ),
+              border: Border.all(
+                color: FlutterFlowTheme.of(context).primaryBackground,
+                width: 2.0,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFF1F1F1),
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(100.0),
+                        bottomRight: Radius.circular(100.0),
+                        topLeft: Radius.circular(100.0),
+                        topRight: Radius.circular(100.0),
+                      ),
+                      border: Border.all(
+                        color: Color(0x00FFFFFF),
+                        width: 2.0,
+                      ),
+                    ),
+                    child: Padding(
+                      padding:
+                          EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Image.network(
+                              'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/in-lida-ki7iwq/assets/zdkcvi82omdl/mdi_farm6556.png',
+                              width: 23.0,
+                              height: 24.0,
+                              fit: BoxFit.scaleDown,
+                            ),
+                          ),
+                          Flexible(
+                            child: Text(
+                              valueOrDefault<String>(
+                                FFAppState().propriedadeSelecionada != null
+                                    ? FFAppState().propriedadeSelecionada.nome
+                                    : 'Nenhuma propriedade selecionada.',
+                                'Nenhuma propriedade selecionada.',
+                              ).maybeHandleOverflow(
+                                maxChars: 32,
+                                replacement: '…',
+                              ),
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    font: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w600,
+                                      fontStyle: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .fontStyle,
+                                    ),
+                                    color: FFAppState()
+                                                .propriedadeSelecionada !=
+                                            null
+                                        ? FlutterFlowTheme.of(context)
+                                            .primaryText
+                                        : FlutterFlowTheme.of(context).accent4,
+                                    fontSize:
+                                        FFAppState().propriedadeSelecionada !=
+                                                null
+                                            ? 14.0
+                                            : 12.0,
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.w600,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .fontStyle,
+                                  ),
+                            ),
+                          ),
+                        ].divide(SizedBox(width: 8.0)),
+                      ),
+                    ),
+                  ),
+                ),
+                if (FFAppState().propriedadeSelecionada != null)
+                  Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
+                    child: Icon(
+                      Icons.arrow_drop_down_sharp,
+                      color: FlutterFlowTheme.of(context).primaryText,
+                      size: 24.0,
+                    ),
+                  ),
+              ].divide(SizedBox(width: 8.0)),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
