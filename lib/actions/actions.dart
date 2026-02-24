@@ -11,6 +11,126 @@ import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:flutter/material.dart';
 
+void _syncLog(String flow, String message) {
+  debugPrint('[SYNC][$flow] $message');
+}
+
+int _safeTotalFromApi(dynamic body) {
+  if (body == null) return 0;
+  if (body is num) return body.toInt();
+  if (body is String) return int.tryParse(body.trim()) ?? 0;
+
+  if (body is List && body.isNotEmpty) {
+    return _safeTotalFromApi(body.first);
+  }
+
+  if (body is Map) {
+    for (final key in const ['total', 'count', 'qtd', 'qtde', 'value']) {
+      if (body.containsKey(key)) {
+        return _safeTotalFromApi(body[key]);
+      }
+    }
+  }
+
+  return 0;
+}
+
+List<dynamic> _safeRecordsFromApi(dynamic body) {
+  if (body is List) return List<dynamic>.from(body);
+  if (body is Map && body['data'] is List) {
+    return List<dynamic>.from(body['data'] as List);
+  }
+  return <dynamic>[];
+}
+
+List<String> _safePropertyIds(dynamic body) {
+  if (body is! List) return <String>[];
+
+  return body
+      .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
+      .whereType<PropriedadesStruct>()
+      .map((e) => e.idPropriedade)
+      .whereType<String>()
+      .where((e) => e.isNotEmpty)
+      .toList();
+}
+
+/// Exibe um popup com a lista de registros que falharam durante a sincronização.
+Future<void> _showSyncErrorsDialog(
+  BuildContext context,
+  String flowName,
+  List<Map<String, String>> errors,
+) async {
+  if (errors.isEmpty) return;
+  if (!context.mounted) return;
+
+  try {
+    await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(
+          'Erros na sincronização - $flowName',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: 400,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${errors.length} registro(s) com erro:',
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: errors.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (_, i) {
+                    final err = errors[i];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'ID: ${err['id'] ?? '-'}',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 13),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            err['error'] ?? 'Erro desconhecido',
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.red),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  } catch (e) {
+    debugPrint('[SYNC] Não foi possível exibir popup de erros: $e');
+  }
+}
+
 Future refreshPropriedades(BuildContext context) async {
   List<PropriedadesChangeTrackerRow>? lastChangeResult;
   ApiCallResponse? propriedade;
@@ -1537,234 +1657,573 @@ Future qTDSanidades(BuildContext context) async {
 }
 
 Future refreshRebanhoOtimizada(BuildContext context) async {
-  List<RebanhoChangeTrackerRow>? lastChangeResultt;
-  ApiCallResponse? propriedadessO;
-  ApiCallResponse? qtdRebanhosO;
-  ApiCallResponse? rebanhosAPIO;
+  try {
+    _syncLog('rebanho', 'Iniciando verificação do change tracker...');
+    List<RebanhoChangeTrackerRow>? lastChangeResultt;
+    ApiCallResponse? propriedadessO;
+    ApiCallResponse? qtdRebanhosO;
+    ApiCallResponse? rebanhosAPIO;
 
-  lastChangeResultt = await RebanhoChangeTrackerTable().queryRows(
-    queryFn: (q) => q,
-  );
-  if (lastChangeResultt!.firstOrNull!.lastChange >
-      FFAppState().rebanhosChangeDateTime!) {
-    propriedadessO =
-        await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
-      pUserId: currentUserUid,
-    );
-
-    qtdRebanhosO = await SupabaseFunctionsGroup.qTDRebanhosCall.call(
-      pIdsPropriedadesList: ((propriedadessO?.jsonBody ?? '')
-              .toList()
-              .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-              .toList() as Iterable<PropriedadesStruct?>)
-          .withoutNulls
-          ?.map((e) => e.idPropriedade)
-          .toList(),
-    );
-
-    FFAppState().totalRebanhos = (qtdRebanhosO?.jsonBody ?? '');
-    FFAppState().indexRebPaginacao = 0;
-    FFAppState().visibleProgressBar = true;
-    FFAppState().update(() {});
-    await SQLiteManager.instance.deletarTodosRebanhos();
-    while (FFAppState().indexRebPaginacao < (qtdRebanhosO?.jsonBody ?? '')) {
-      rebanhosAPIO = await SupabaseFunctionsGroup.buscarRebanhosCall.call(
-        pIdPropriedadeList: ((propriedadessO?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            ?.map((e) => e.idPropriedade)
-            .toList(),
-        pLimite: 999,
-        pOffset: valueOrDefault<int>(
-          FFAppState().indexRebPaginacao,
-          0,
-        ),
+    try {
+      lastChangeResultt = await RebanhoChangeTrackerTable().queryRows(
+        queryFn: (q) => q,
       );
-
-      await actions.batchInsertLocalRebanho(
-        (rebanhosAPIO?.jsonBody ?? ''),
-      );
-      FFAppState().indexRebPaginacao = FFAppState().indexRebPaginacao + 999;
+    } catch (e, s) {
+      _syncLog('rebanho', 'ERRO ao consultar change tracker: $e\n$s');
+      lastChangeResultt = [];
     }
-    await Future.wait([
-      action_blocks.animaisRegistrados(context),
-      action_blocks.animaisPropriedade(context),
-    ]);
-    FFAppState().rebanhosIndex = 0;
-    FFAppState().rebanhosChangeDateTime =
-        lastChangeResultt?.firstOrNull?.lastChange;
-    FFAppState().indexRebPaginacao = 0;
-    FFAppState().visibleProgressBar = false;
+    final remoteLastChange = lastChangeResultt.firstOrNull?.lastChange;
+    final localLastChange = FFAppState().rebanhosChangeDateTime;
+    final shouldSync = remoteLastChange == null ||
+        localLastChange == null ||
+        remoteLastChange.isAfter(localLastChange);
+    _syncLog('rebanho',
+        'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
+
+    if (shouldSync) {
+      _syncLog('rebanho', 'Iniciando sincronização otimizada.');
+      var syncOk = true;
+      final List<Map<String, String>> syncErrors = [];
+      int totalInserted = 0;
+      FFAppState().indexRebPaginacao = 0;
+      FFAppState().visibleProgressBar = true;
+      FFAppState().update(() {});
+
+      try {
+        propriedadessO =
+            await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+          pUserId: currentUserUid,
+        );
+
+        final propertyIds = _safePropertyIds(propriedadessO?.jsonBody);
+        _syncLog('rebanho', 'Propriedades encontradas: ${propertyIds.length}. IDs: $propertyIds');
+
+        if (propertyIds.isEmpty) {
+          _syncLog('rebanho', 'Nenhuma propriedade encontrada. Abortando sync.');
+          return;
+        }
+
+        qtdRebanhosO = await SupabaseFunctionsGroup.qTDRebanhosCall.call(
+          pIdsPropriedadesList: propertyIds,
+        );
+        _syncLog('rebanho', 'Resposta qtdRebanhos raw: ${qtdRebanhosO?.jsonBody}');
+
+        final totalRebanhos = _safeTotalFromApi(qtdRebanhosO?.jsonBody);
+        FFAppState().totalRebanhos = totalRebanhos;
+        _syncLog('rebanho', 'Total remoto informado: $totalRebanhos.');
+
+        await SQLiteManager.instance.deletarTodosRebanhos();
+        _syncLog('rebanho', 'Tabela local limpa. Iniciando paginação...');
+        while (FFAppState().indexRebPaginacao < totalRebanhos) {
+          final offsetAtual = FFAppState().indexRebPaginacao;
+          try {
+            rebanhosAPIO = await SupabaseFunctionsGroup.buscarRebanhosCall.call(
+              pIdPropriedadeList: propertyIds,
+              pLimite: 999,
+              pOffset: offsetAtual,
+            );
+
+            final pageRecords = _safeRecordsFromApi(rebanhosAPIO?.jsonBody);
+            _syncLog('rebanho',
+                'Página recebida. offset=$offsetAtual, tamanho=${pageRecords.length}.');
+            if (pageRecords.isEmpty) {
+              _syncLog('rebanho',
+                  'Página vazia recebida antes do total esperado. Encerrando paginação.');
+              break;
+            }
+
+            final result = await actions.batchInsertLocalRebanho(pageRecords);
+            final pageErrors =
+                result['errors'] as List<Map<String, String>>? ?? [];
+            if (pageErrors.isNotEmpty) {
+              _syncLog('rebanho',
+                  '${pageErrors.length} erro(s) ao inserir. offset=$offsetAtual.');
+              syncErrors.addAll(pageErrors);
+            }
+            totalInserted += (result['inserted'] as int? ?? 0);
+            _syncLog('rebanho',
+                '${result['inserted']} registros inseridos nesta página.');
+
+            FFAppState().indexRebPaginacao =
+                FFAppState().indexRebPaginacao + pageRecords.length;
+            if (pageRecords.length < 999) {
+              _syncLog('rebanho',
+                  'Última página detectada (tamanho < 999). Encerrando paginação.');
+              break;
+            }
+          } catch (e, s) {
+            _syncLog('rebanho',
+                'Erro ao processar página offset=$offsetAtual: $e\n$s');
+            syncErrors.add({
+              'id': 'página offset=$offsetAtual',
+              'error': 'Erro na requisição ou processamento: $e',
+            });
+            FFAppState().indexRebPaginacao =
+                FFAppState().indexRebPaginacao + 999;
+          }
+        }
+
+        try {
+          await Future.wait([
+            action_blocks.animaisRegistrados(context),
+            action_blocks.animaisPropriedade(context),
+          ]);
+        } catch (e) {
+          _syncLog('rebanho', 'Erro ao atualizar contadores: $e');
+        }
+
+        FFAppState().rebanhosIndex = 0;
+        if (syncErrors.isNotEmpty) {
+          syncOk = false;
+          _syncLog('rebanho',
+              'Total de erros acumulados: ${syncErrors.length}.');
+        }
+        if (totalInserted > 0 || syncErrors.isEmpty) {
+          FFAppState().rebanhosChangeDateTime =
+          remoteLastChange ?? DateTime.now();
+        }
+        if (syncOk) {
+          _syncLog('rebanho', 'Sincronização finalizada com sucesso. $totalInserted registros inseridos.');
+        } else {
+          _syncLog('rebanho',
+              'Sincronização finalizada com erros. ${syncErrors.length} registro(s) falharam.');
+        }
+        await _showSyncErrorsDialog(context, 'Rebanho', syncErrors);
+      } catch (e, s) {
+        _syncLog('rebanho', 'ERRO FATAL na sincronização: $e\n$s');
+      } finally {
+        FFAppState().indexRebPaginacao = 0;
+        FFAppState().visibleProgressBar = false;
+        FFAppState().update(() {});
+      }
+    } else {
+      _syncLog('rebanho', 'Sem necessidade de sincronização.');
+    }
+  } catch (e, s) {
+    _syncLog('rebanho', 'EXCEÇÃO NÃO TRATADA: $e\n$s');
   }
 }
 
 Future refreshReproducaoOtimizada(BuildContext context) async {
-  List<ReproducaoChangeTrackerRow>? lastChangeResultO;
-  ApiCallResponse? propriedades;
-  ApiCallResponse? qtdReproducoes;
-  ApiCallResponse? reproducaoAPI;
+  try {
+    _syncLog('reproducao', 'Iniciando verificação do change tracker...');
+    List<ReproducaoChangeTrackerRow>? lastChangeResultO;
+    ApiCallResponse? propriedades;
+    ApiCallResponse? qtdReproducoes;
+    ApiCallResponse? reproducaoAPI;
 
-  lastChangeResultO = await ReproducaoChangeTrackerTable().queryRows(
-    queryFn: (q) => q,
-  );
-  if (lastChangeResultO!.firstOrNull!.lastChange >
-      FFAppState().reproducaoChangeDateTime!) {
-    propriedades = await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
-      pUserId: currentUserUid,
-    );
-
-    qtdReproducoes = await SupabaseFunctionsGroup.qTDReproducoesCall.call(
-      pIdsPropriedadesList: ((propriedades?.jsonBody ?? '')
-              .toList()
-              .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-              .toList() as Iterable<PropriedadesStruct?>)
-          .withoutNulls
-          ?.map((e) => e.idPropriedade)
-          .toList(),
-    );
-
-    FFAppState().totalReproducoes = (qtdReproducoes?.jsonBody ?? '');
-    FFAppState().indexReproPaginacao = 0;
-    FFAppState().visibilidadeProgressBarRepro = true;
-    FFAppState().update(() {});
-    await SQLiteManager.instance.deleteAllReproducao();
-    while (
-        FFAppState().indexReproPaginacao < (qtdReproducoes?.jsonBody ?? '')) {
-      reproducaoAPI = await SupabaseFunctionsGroup.buscarReproducoesCall.call(
-        pIdPropriedadeList: ((propriedades?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            ?.map((e) => e.idPropriedade)
-            .toList(),
-        pLimite: 999,
-        pOffset: FFAppState().indexReproPaginacao,
+    try {
+      lastChangeResultO = await ReproducaoChangeTrackerTable().queryRows(
+        queryFn: (q) => q,
       );
-
-      await actions.batchInsertLocalReproducao(
-        (reproducaoAPI?.jsonBody ?? ''),
-      );
-      FFAppState().indexReproPaginacao = FFAppState().indexReproPaginacao + 999;
+    } catch (e, s) {
+      _syncLog('reproducao', 'ERRO ao consultar change tracker: $e\n$s');
+      lastChangeResultO = [];
     }
-    FFAppState().indexReproPaginacao = 0;
-    await action_blocks.qTDReproducoes(context);
-    FFAppState().reproducaoChangeDateTime =
-        lastChangeResultO?.firstOrNull?.lastChange;
-    FFAppState().visibilidadeProgressBarRepro = false;
+    final remoteLastChange = lastChangeResultO.firstOrNull?.lastChange;
+    final localLastChange = FFAppState().reproducaoChangeDateTime;
+    final shouldSync = remoteLastChange == null ||
+        localLastChange == null ||
+        remoteLastChange.isAfter(localLastChange);
+    _syncLog('reproducao',
+        'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
+
+    if (shouldSync) {
+      _syncLog('reproducao', 'Iniciando sincronização otimizada.');
+      var syncOk = true;
+      final List<Map<String, String>> syncErrors = [];
+      int totalInserted = 0;
+      FFAppState().indexReproPaginacao = 0;
+      FFAppState().visibilidadeProgressBarRepro = true;
+      FFAppState().update(() {});
+
+      try {
+        propriedades =
+            await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+          pUserId: currentUserUid,
+        );
+
+        final propertyIds = _safePropertyIds(propriedades?.jsonBody);
+        _syncLog('reproducao', 'Propriedades encontradas: ${propertyIds.length}. IDs: $propertyIds');
+
+        if (propertyIds.isEmpty) {
+          _syncLog('reproducao', 'Nenhuma propriedade encontrada. Abortando sync.');
+          return;
+        }
+
+        qtdReproducoes = await SupabaseFunctionsGroup.qTDReproducoesCall.call(
+          pIdsPropriedadesList: propertyIds,
+        );
+        _syncLog('reproducao', 'Resposta qtdReproducoes raw: ${qtdReproducoes?.jsonBody}');
+
+        final totalReproducoes = _safeTotalFromApi(qtdReproducoes?.jsonBody);
+        FFAppState().totalReproducoes = totalReproducoes;
+        _syncLog('reproducao', 'Total remoto informado: $totalReproducoes.');
+
+        await SQLiteManager.instance.deleteAllReproducao();
+        _syncLog('reproducao', 'Tabela local limpa. Iniciando paginação...');
+        while (FFAppState().indexReproPaginacao < totalReproducoes) {
+          final offsetAtual = FFAppState().indexReproPaginacao;
+          try {
+            reproducaoAPI =
+                await SupabaseFunctionsGroup.buscarReproducoesCall.call(
+              pIdPropriedadeList: propertyIds,
+              pLimite: 999,
+              pOffset: offsetAtual,
+            );
+
+            final pageRecords = _safeRecordsFromApi(reproducaoAPI?.jsonBody);
+            _syncLog('reproducao',
+                'Página recebida. offset=$offsetAtual, tamanho=${pageRecords.length}.');
+            if (pageRecords.isEmpty) {
+              _syncLog('reproducao',
+                  'Página vazia recebida antes do total esperado. Encerrando paginação.');
+              break;
+            }
+
+            final result =
+                await actions.batchInsertLocalReproducao(pageRecords);
+            final pageErrors =
+                result['errors'] as List<Map<String, String>>? ?? [];
+            if (pageErrors.isNotEmpty) {
+              _syncLog('reproducao',
+                  '${pageErrors.length} erro(s) ao inserir. offset=$offsetAtual.');
+              syncErrors.addAll(pageErrors);
+            }
+            totalInserted += (result['inserted'] as int? ?? 0);
+            _syncLog('reproducao',
+                '${result['inserted']} registros inseridos nesta página.');
+
+            FFAppState().indexReproPaginacao =
+                FFAppState().indexReproPaginacao + pageRecords.length;
+            if (pageRecords.length < 999) {
+              _syncLog('reproducao',
+                  'Última página detectada (tamanho < 999). Encerrando paginação.');
+              break;
+            }
+          } catch (e, s) {
+            _syncLog('reproducao',
+                'Erro ao processar página offset=$offsetAtual: $e\n$s');
+            syncErrors.add({
+              'id': 'página offset=$offsetAtual',
+              'error': 'Erro na requisição ou processamento: $e',
+            });
+            FFAppState().indexReproPaginacao =
+                FFAppState().indexReproPaginacao + 999;
+          }
+        }
+
+        try {
+          await action_blocks.qTDReproducoes(context);
+        } catch (e) {
+          _syncLog('reproducao', 'Erro ao atualizar contadores: $e');
+        }
+        if (syncErrors.isNotEmpty) {
+          syncOk = false;
+          _syncLog('reproducao',
+              'Total de erros acumulados: ${syncErrors.length}.');
+        }
+        if (totalInserted > 0 || syncErrors.isEmpty) {
+          FFAppState().reproducaoChangeDateTime =
+          remoteLastChange ?? DateTime.now();
+        }
+        if (syncOk) {
+          _syncLog('reproducao', 'Sincronização finalizada com sucesso. $totalInserted registros inseridos.');
+        } else {
+          _syncLog('reproducao',
+              'Sincronização finalizada com erros. ${syncErrors.length} registro(s) falharam.');
+        }
+        await _showSyncErrorsDialog(context, 'Reprodução', syncErrors);
+      } catch (e, s) {
+        _syncLog('reproducao', 'ERRO FATAL na sincronização: $e\n$s');
+      } finally {
+        FFAppState().indexReproPaginacao = 0;
+        FFAppState().visibilidadeProgressBarRepro = false;
+        FFAppState().update(() {});
+      }
+    } else {
+      _syncLog('reproducao', 'Sem necessidade de sincronização.');
+    }
+  } catch (e, s) {
+    _syncLog('reproducao', 'EXCEÇÃO NÃO TRATADA: $e\n$s');
   }
 }
 
 Future refreshPesagens(BuildContext context) async {
-  List<HistoricoPesagensChangeTrackerRow>? lastChangeResultt;
-  ApiCallResponse? propriedadessO;
-  ApiCallResponse? qtdPesagens;
-  ApiCallResponse? pesagensAPI;
+  try {
+    _syncLog('pesagens', 'Iniciando verificação do change tracker...');
+    List<HistoricoPesagensChangeTrackerRow>? lastChangeResultt;
+    ApiCallResponse? propriedadessO;
+    ApiCallResponse? qtdPesagens;
+    ApiCallResponse? pesagensAPI;
 
-  lastChangeResultt = await HistoricoPesagensChangeTrackerTable().queryRows(
-    queryFn: (q) => q,
-  );
-  if (lastChangeResultt!.firstOrNull!.lastChange >
-      FFAppState().pesagensChangeDateTime!) {
-    propriedadessO =
-        await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
-      pUserId: currentUserUid,
-    );
-
-    qtdPesagens = await SupabaseFunctionsGroup.qTDPesagensPropriedadeCall.call(
-      pIdsPropriedadesList: ((propriedadessO?.jsonBody ?? '')
-              .toList()
-              .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-              .toList() as Iterable<PropriedadesStruct?>)
-          .withoutNulls
-          ?.map((e) => e.idPropriedade)
-          .toList(),
-    );
-
-    FFAppState().totalPesagens = (qtdPesagens?.jsonBody ?? '');
-    FFAppState().indexPesagens = 0;
-    await SQLiteManager.instance.deletarTodasPesagens();
-    while (FFAppState().indexPesagens < (qtdPesagens?.jsonBody ?? '')) {
-      pesagensAPI = await SupabaseFunctionsGroup.buscarPesagensCall.call(
-        pIdPropriedadeList: ((propriedadessO?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            ?.map((e) => e.idPropriedade)
-            .toList(),
-        pLimite: 999,
-        pOffset: FFAppState().indexPesagens,
+    try {
+      lastChangeResultt = await HistoricoPesagensChangeTrackerTable().queryRows(
+        queryFn: (q) => q,
       );
-
-      await actions.batchInsertLocalPesagens(
-        (pesagensAPI?.jsonBody ?? ''),
-      );
-      FFAppState().indexPesagens = FFAppState().indexPesagens + 999;
+    } catch (e, s) {
+      _syncLog('pesagens', 'ERRO ao consultar change tracker: $e\n$s');
+      lastChangeResultt = [];
     }
-    FFAppState().indexPesagens = 0;
-    FFAppState().pesagensChangeDateTime =
-        lastChangeResultt?.firstOrNull?.lastChange;
+    final remoteLastChange = lastChangeResultt.firstOrNull?.lastChange;
+    final localLastChange = FFAppState().pesagensChangeDateTime;
+    final shouldSync = remoteLastChange == null ||
+        localLastChange == null ||
+        remoteLastChange.isAfter(localLastChange);
+    _syncLog('pesagens',
+        'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
+
+    if (shouldSync) {
+      _syncLog('pesagens', 'Iniciando sincronização otimizada.');
+      var syncOk = true;
+      final List<Map<String, String>> syncErrors = [];
+      int totalInserted = 0;
+
+      try {
+        propriedadessO =
+            await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+          pUserId: currentUserUid,
+        );
+
+        final propertyIds = _safePropertyIds(propriedadessO?.jsonBody);
+        _syncLog('pesagens', 'Propriedades encontradas: ${propertyIds.length}. IDs: $propertyIds');
+
+        if (propertyIds.isEmpty) {
+          _syncLog('pesagens', 'Nenhuma propriedade encontrada. Abortando sync.');
+          return;
+        }
+
+        qtdPesagens =
+            await SupabaseFunctionsGroup.qTDPesagensPropriedadeCall.call(
+          pIdsPropriedadesList: propertyIds,
+        );
+        _syncLog('pesagens', 'Resposta qtdPesagens raw: ${qtdPesagens?.jsonBody}');
+
+        final totalPesagens = _safeTotalFromApi(qtdPesagens?.jsonBody);
+        FFAppState().totalPesagens = totalPesagens;
+        FFAppState().indexPesagens = 0;
+        _syncLog('pesagens', 'Total remoto informado: $totalPesagens.');
+
+        await SQLiteManager.instance.deletarTodasPesagens();
+        _syncLog('pesagens', 'Tabela local limpa. Iniciando paginação...');
+        while (FFAppState().indexPesagens < totalPesagens) {
+          final offsetAtual = FFAppState().indexPesagens;
+          try {
+            pesagensAPI = await SupabaseFunctionsGroup.buscarPesagensCall.call(
+              pIdPropriedadeList: propertyIds,
+              pLimite: 999,
+              pOffset: offsetAtual,
+            );
+
+            final pageRecords = _safeRecordsFromApi(pesagensAPI?.jsonBody);
+            _syncLog('pesagens',
+                'Página recebida. offset=$offsetAtual, tamanho=${pageRecords.length}.');
+            if (pageRecords.isEmpty) {
+              _syncLog('pesagens',
+                  'Página vazia recebida antes do total esperado. Encerrando paginação.');
+              break;
+            }
+
+            final result = await actions.batchInsertLocalPesagens(pageRecords);
+            final pageErrors =
+                result['errors'] as List<Map<String, String>>? ?? [];
+            if (pageErrors.isNotEmpty) {
+              _syncLog('pesagens',
+                  '${pageErrors.length} erro(s) ao inserir. offset=$offsetAtual.');
+              syncErrors.addAll(pageErrors);
+            }
+            totalInserted += (result['inserted'] as int? ?? 0);
+            _syncLog('pesagens',
+                '${result['inserted']} registros inseridos nesta página.');
+
+            FFAppState().indexPesagens =
+                FFAppState().indexPesagens + pageRecords.length;
+            if (pageRecords.length < 999) {
+              _syncLog('pesagens',
+                  'Última página detectada (tamanho < 999). Encerrando paginação.');
+              break;
+            }
+          } catch (e, s) {
+            _syncLog('pesagens',
+                'Erro ao processar página offset=$offsetAtual: $e\n$s');
+            syncErrors.add({
+              'id': 'página offset=$offsetAtual',
+              'error': 'Erro na requisição ou processamento: $e',
+            });
+            FFAppState().indexPesagens =
+                FFAppState().indexPesagens + 999;
+          }
+        }
+
+        if (syncErrors.isNotEmpty) {
+          syncOk = false;
+          _syncLog('pesagens',
+              'Total de erros acumulados: ${syncErrors.length}.');
+        }
+        if (totalInserted > 0 || syncErrors.isEmpty) {
+          FFAppState().pesagensChangeDateTime =
+          remoteLastChange ?? DateTime.now();
+        }
+        if (syncOk) {
+          _syncLog('pesagens', 'Sincronização finalizada com sucesso. $totalInserted registros inseridos.');
+        } else {
+          _syncLog('pesagens',
+              'Sincronização finalizada com erros. ${syncErrors.length} registro(s) falharam.');
+        }
+        await _showSyncErrorsDialog(context, 'Pesagens', syncErrors);
+      } catch (e, s) {
+        _syncLog('pesagens', 'ERRO FATAL na sincronização: $e\n$s');
+      } finally {
+        FFAppState().indexPesagens = 0;
+      }
+    } else {
+      _syncLog('pesagens', 'Sem necessidade de sincronização.');
+    }
+  } catch (e, s) {
+    _syncLog('pesagens', 'EXCEÇÃO NÃO TRATADA: $e\n$s');
   }
 }
 
 Future refresSanidadeOtimizada(BuildContext context) async {
-  List<SanidadeChangeTrackerRow>? lastChangeResult;
-  ApiCallResponse? propriedades;
-  ApiCallResponse? qtdSanidades;
-  ApiCallResponse? sanidadesAPI;
+  try {
+    _syncLog('sanidade', 'Iniciando verificação do change tracker...');
+    List<SanidadeChangeTrackerRow>? lastChangeResult;
+    ApiCallResponse? propriedades;
+    ApiCallResponse? qtdSanidades;
+    ApiCallResponse? sanidadesAPI;
 
-  lastChangeResult = await SanidadeChangeTrackerTable().queryRows(
-    queryFn: (q) => q,
-  );
-  if (lastChangeResult!.firstOrNull!.lastChange >
-      FFAppState().sanidadeChangeDateTime!) {
-    propriedades = await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
-      pUserId: currentUserUid,
-    );
-
-    qtdSanidades = await SupabaseFunctionsGroup.qTDSanidadeCall.call(
-      pIdsPropriedadesList: ((propriedades?.jsonBody ?? '')
-              .toList()
-              .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-              .toList() as Iterable<PropriedadesStruct?>)
-          .withoutNulls
-          ?.map((e) => e.idPropriedade)
-          .toList(),
-    );
-
-    FFAppState().sanidadeIndex = 0;
-    FFAppState().indexSanidadePaginacao = 0;
-    FFAppState().totalSanidades = (qtdSanidades?.jsonBody ?? '');
-    FFAppState().visbilidadeProgressBarSan = true;
-    FFAppState().update(() {});
-    await SQLiteManager.instance.deleteAllSanidades();
-    while (
-        FFAppState().indexSanidadePaginacao < (qtdSanidades?.jsonBody ?? '')) {
-      sanidadesAPI = await SupabaseFunctionsGroup.buscarSanidadesCall.call(
-        pIdPropriedadeList: ((propriedades?.jsonBody ?? '')
-                .toList()
-                .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
-                .toList() as Iterable<PropriedadesStruct?>)
-            .withoutNulls
-            ?.map((e) => e.idPropriedade)
-            .toList(),
-        pLimite: 999,
-        pOffset: FFAppState().indexSanidadePaginacao,
+    try {
+      lastChangeResult = await SanidadeChangeTrackerTable().queryRows(
+        queryFn: (q) => q,
       );
-
-      await actions.batchInsertLocalSanidade(
-        (sanidadesAPI?.jsonBody ?? ''),
-      );
-      FFAppState().indexSanidadePaginacao =
-          FFAppState().indexSanidadePaginacao + 999;
+    } catch (e, s) {
+      _syncLog('sanidade', 'ERRO ao consultar change tracker: $e\n$s');
+      lastChangeResult = [];
     }
-    FFAppState().indexSanidadePaginacao = 0;
-    await action_blocks.qTDSanidades(context);
-    FFAppState().sanidadeChangeDateTime =
-        lastChangeResult?.firstOrNull?.lastChange;
-    FFAppState().visbilidadeProgressBarSan = false;
+    final remoteLastChange = lastChangeResult.firstOrNull?.lastChange;
+    final localLastChange = FFAppState().sanidadeChangeDateTime;
+    final shouldSync = remoteLastChange == null ||
+        localLastChange == null ||
+        remoteLastChange.isAfter(localLastChange);
+    _syncLog('sanidade',
+        'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
+
+    if (shouldSync) {
+      _syncLog('sanidade', 'Iniciando sincronização otimizada.');
+      var syncOk = true;
+      final List<Map<String, String>> syncErrors = [];
+      int totalInserted = 0;
+      FFAppState().sanidadeIndex = 0;
+      FFAppState().indexSanidadePaginacao = 0;
+      FFAppState().visbilidadeProgressBarSan = true;
+      FFAppState().update(() {});
+
+      try {
+        propriedades =
+            await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+          pUserId: currentUserUid,
+        );
+
+        final propertyIds = _safePropertyIds(propriedades?.jsonBody);
+        _syncLog('sanidade', 'Propriedades encontradas: ${propertyIds.length}. IDs: $propertyIds');
+
+        if (propertyIds.isEmpty) {
+          _syncLog('sanidade', 'Nenhuma propriedade encontrada. Abortando sync.');
+          return;
+        }
+
+        qtdSanidades = await SupabaseFunctionsGroup.qTDSanidadeCall.call(
+          pIdsPropriedadesList: propertyIds,
+        );
+        _syncLog('sanidade', 'Resposta qtdSanidades raw: ${qtdSanidades?.jsonBody}');
+
+        final totalSanidades = _safeTotalFromApi(qtdSanidades?.jsonBody);
+        FFAppState().totalSanidades = totalSanidades;
+        _syncLog('sanidade', 'Total remoto informado: $totalSanidades.');
+
+        await SQLiteManager.instance.deleteAllSanidades();
+        _syncLog('sanidade', 'Tabela local limpa. Iniciando paginação...');
+        while (FFAppState().indexSanidadePaginacao < totalSanidades) {
+          final offsetAtual = FFAppState().indexSanidadePaginacao;
+          try {
+            sanidadesAPI = await SupabaseFunctionsGroup.buscarSanidadesCall.call(
+              pIdPropriedadeList: propertyIds,
+              pLimite: 999,
+              pOffset: offsetAtual,
+            );
+
+            final pageRecords = _safeRecordsFromApi(sanidadesAPI?.jsonBody);
+            _syncLog('sanidade',
+                'Página recebida. offset=$offsetAtual, tamanho=${pageRecords.length}.');
+            if (pageRecords.isEmpty) {
+              _syncLog('sanidade',
+                  'Página vazia recebida antes do total esperado. Encerrando paginação.');
+              break;
+            }
+
+            final result = await actions.batchInsertLocalSanidade(pageRecords);
+            final pageErrors =
+                result['errors'] as List<Map<String, String>>? ?? [];
+            if (pageErrors.isNotEmpty) {
+              _syncLog('sanidade',
+                  '${pageErrors.length} erro(s) ao inserir. offset=$offsetAtual.');
+              syncErrors.addAll(pageErrors);
+            }
+            totalInserted += (result['inserted'] as int? ?? 0);
+            _syncLog('sanidade',
+                '${result['inserted']} registros inseridos nesta página.');
+
+            FFAppState().indexSanidadePaginacao =
+                FFAppState().indexSanidadePaginacao + pageRecords.length;
+            if (pageRecords.length < 999) {
+              _syncLog('sanidade',
+                  'Última página detectada (tamanho < 999). Encerrando paginação.');
+              break;
+            }
+          } catch (e, s) {
+            _syncLog('sanidade',
+                'Erro ao processar página offset=$offsetAtual: $e\n$s');
+            syncErrors.add({
+              'id': 'página offset=$offsetAtual',
+              'error': 'Erro na requisição ou processamento: $e',
+            });
+            FFAppState().indexSanidadePaginacao =
+                FFAppState().indexSanidadePaginacao + 999;
+          }
+        }
+
+        try {
+          await action_blocks.qTDSanidades(context);
+        } catch (e) {
+          _syncLog('sanidade', 'Erro ao atualizar contadores: $e');
+        }
+        if (syncErrors.isNotEmpty) {
+          syncOk = false;
+          _syncLog('sanidade',
+              'Total de erros acumulados: ${syncErrors.length}.');
+        }
+        if (totalInserted > 0 || syncErrors.isEmpty) {
+          FFAppState().sanidadeChangeDateTime =
+          remoteLastChange ?? DateTime.now();
+        }
+        if (syncOk) {
+          _syncLog('sanidade', 'Sincronização finalizada com sucesso. $totalInserted registros inseridos.');
+        } else {
+          _syncLog('sanidade',
+              'Sincronização finalizada com erros. ${syncErrors.length} registro(s) falharam.');
+        }
+        await _showSyncErrorsDialog(context, 'Sanidade', syncErrors);
+      } catch (e, s) {
+        _syncLog('sanidade', 'ERRO FATAL na sincronização: $e\n$s');
+      } finally {
+        FFAppState().indexSanidadePaginacao = 0;
+        FFAppState().visbilidadeProgressBarSan = false;
+        FFAppState().update(() {});
+      }
+    } else {
+      _syncLog('sanidade', 'Sem necessidade de sincronização.');
+    }
+  } catch (e, s) {
+    _syncLog('sanidade', 'EXCEÇÃO NÃO TRATADA: $e\n$s');
   }
 }

@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/propriedade/selecionar_propriedade/selecionar_propriedade_widget.dart';
+import '/reproducao/edit_reproducao_rebanho/edit_reproducao_rebanho_widget.dart';
 import '/reproducao/filtros_reproducao/filtros_reproducao_widget.dart';
 import '/reproducao/view_reproducao_rebanho/view_reproducao_rebanho_widget.dart';
 import 'dart:ui';
@@ -30,6 +31,96 @@ class PageReproducoesWidget extends StatefulWidget {
 
 class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
   late PageReproducoesModel _model;
+
+  Future<void> _prepareReproducaoContext({
+    required String? idRebanhoReprodutor,
+    required String? idRebanhoMatriz,
+  }) async {
+    final reprodutor = await SQLiteManager.instance.buscarRebanho(
+      idRebanho: idRebanhoReprodutor,
+    );
+    final matriz = await SQLiteManager.instance.buscarRebanho(
+      idRebanho: idRebanhoMatriz,
+    );
+
+    FFAppState().reprodutorSelecionado = AnimalSelecionadoStruct(
+      numAnimal: reprodutor.firstOrNull?.numeroAnimal,
+      nomeAnimal: reprodutor.firstOrNull?.nome,
+      dataNascAnimal: reprodutor.firstOrNull?.dataNascimento,
+      racaAnimal: reprodutor.firstOrNull?.raca,
+      idRebanho: reprodutor.firstOrNull?.idRebanho,
+    );
+
+    FFAppState().matrizSelecionada = AnimalSelecionadoStruct(
+      numAnimal: matriz.firstOrNull?.numeroAnimal,
+      nomeAnimal: matriz.firstOrNull?.nome,
+      dataNascAnimal: matriz.firstOrNull?.dataNascimento,
+      racaAnimal: matriz.firstOrNull?.raca,
+      idRebanho: matriz.firstOrNull?.idRebanho,
+    );
+
+    safeSetState(() {});
+  }
+
+  Future<void> _openViewReproducao({
+    required BuildContext ctx,
+    required String idReproducao,
+    required String? idRebanhoReprodutor,
+    required String? idRebanhoMatriz,
+  }) async {
+    await _prepareReproducaoContext(
+      idRebanhoReprodutor: idRebanhoReprodutor,
+      idRebanhoMatriz: idRebanhoMatriz,
+    );
+
+    await showDialog(
+      barrierColor: Colors.transparent,
+      barrierDismissible: false,
+      context: ctx,
+      builder: (dialogContext) {
+        return Dialog(
+          elevation: 0,
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          alignment:
+              AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(ctx)),
+          child: ViewReproducaoRebanhoWidget(
+            idReproducao: idReproducao,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _openEditReproducao({
+    required BuildContext ctx,
+    required String idReproducao,
+    required String? idRebanhoReprodutor,
+    required String? idRebanhoMatriz,
+  }) async {
+    await _prepareReproducaoContext(
+      idRebanhoReprodutor: idRebanhoReprodutor,
+      idRebanhoMatriz: idRebanhoMatriz,
+    );
+
+    await showDialog(
+      barrierColor: Colors.transparent,
+      barrierDismissible: false,
+      context: ctx,
+      builder: (dialogContext) {
+        return Dialog(
+          elevation: 0,
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          alignment:
+              AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(ctx)),
+          child: EditReproducaoRebanhoWidget(
+            idReproducao: idReproducao,
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void setState(VoidCallback callback) {
@@ -871,114 +962,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                     8.0,
                                                                     24.0,
                                                                     8.0),
-                                                        child: InkWell(
-                                                          splashColor: Colors
-                                                              .transparent,
-                                                          focusColor: Colors
-                                                              .transparent,
-                                                          hoverColor: Colors
-                                                              .transparent,
-                                                          highlightColor: Colors
-                                                              .transparent,
-                                                          onTap: () async {
-                                                            _model.reprodutor =
-                                                                await SQLiteManager
-                                                                    .instance
-                                                                    .buscarRebanho(
-                                                              idRebanho:
-                                                                  reproducaoItem
-                                                                      .idRebanhoReprodutor,
-                                                            );
-                                                            FFAppState()
-                                                                    .reprodutorSelecionado =
-                                                                AnimalSelecionadoStruct(
-                                                              numAnimal: _model
-                                                                  .reprodutor
-                                                                  ?.firstOrNull
-                                                                  ?.numeroAnimal,
-                                                              nomeAnimal: _model
-                                                                  .reprodutor
-                                                                  ?.firstOrNull
-                                                                  ?.nome,
-                                                              dataNascAnimal: _model
-                                                                  .reprodutor
-                                                                  ?.firstOrNull
-                                                                  ?.dataNascimento,
-                                                              racaAnimal: _model
-                                                                  .reprodutor
-                                                                  ?.firstOrNull
-                                                                  ?.raca,
-                                                              idRebanho: _model
-                                                                  .reprodutor
-                                                                  ?.firstOrNull
-                                                                  ?.idRebanho,
-                                                            );
-                                                            safeSetState(() {});
-                                                            _model.matriz =
-                                                                await SQLiteManager
-                                                                    .instance
-                                                                    .buscarRebanho(
-                                                              idRebanho:
-                                                                  reproducaoItem
-                                                                      .idRebanhoMatriz,
-                                                            );
-                                                            FFAppState()
-                                                                    .matrizSelecionada =
-                                                                AnimalSelecionadoStruct(
-                                                              numAnimal: _model
-                                                                  .matriz
-                                                                  ?.firstOrNull
-                                                                  ?.numeroAnimal,
-                                                              nomeAnimal: _model
-                                                                  .matriz
-                                                                  ?.firstOrNull
-                                                                  ?.nome,
-                                                              dataNascAnimal: _model
-                                                                  .matriz
-                                                                  ?.firstOrNull
-                                                                  ?.dataNascimento,
-                                                              racaAnimal: _model
-                                                                  .matriz
-                                                                  ?.firstOrNull
-                                                                  ?.raca,
-                                                              idRebanho: _model
-                                                                  .matriz
-                                                                  ?.firstOrNull
-                                                                  ?.idRebanho,
-                                                            );
-                                                            safeSetState(() {});
-                                                            await showDialog(
-                                                              barrierColor: Colors
-                                                                  .transparent,
-                                                              context: context,
-                                                              builder:
-                                                                  (dialogContext) {
-                                                                return Dialog(
-                                                                  elevation: 0,
-                                                                  insetPadding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  alignment: AlignmentDirectional(
-                                                                          0.0,
-                                                                          0.0)
-                                                                      .resolve(
-                                                                          Directionality.of(
-                                                                              context)),
-                                                                  child:
-                                                                      ViewReproducaoRebanhoWidget(
-                                                                    idReproducao:
-                                                                        reproducaoItem
-                                                                            .idReproducao!,
-                                                                  ),
-                                                                );
-                                                              },
-                                                            );
-
-                                                            safeSetState(() {});
-                                                          },
+                                                        child: Container(
                                                           child: Row(
                                                             mainAxisSize:
                                                                 MainAxisSize
@@ -1600,14 +1584,79 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                           4.0)),
                                                                 ),
                                                               ),
-                                                              Icon(
-                                                                Icons
-                                                                    .chevron_right,
-                                                                color: FlutterFlowTheme.of(
+                                                                Row(
+                                                                mainAxisSize:
+                                                                  MainAxisSize
+                                                                    .min,
+                                                                children: [
+                                                                  InkWell(
+                                                                  splashColor:
+                                                                    Colors.transparent,
+                                                                  focusColor:
+                                                                    Colors.transparent,
+                                                                  hoverColor:
+                                                                    Colors.transparent,
+                                                                  highlightColor:
+                                                                    Colors.transparent,
+                                                                  onTap:
+                                                                    () async {
+                                                                    await _openViewReproducao(
+                                                                    ctx: context,
+                                                                    idReproducao:
+                                                                      reproducaoItem.idReproducao!,
+                                                                    idRebanhoReprodutor:
+                                                                      reproducaoItem.idRebanhoReprodutor,
+                                                                    idRebanhoMatriz:
+                                                                      reproducaoItem.idRebanhoMatriz,
+                                                                    );
+                                                                  },
+                                                                  child:
+                                                                    Icon(
+                                                                    Icons
+                                                                      .visibility_outlined,
+                                                                    color: FlutterFlowTheme.of(
                                                                         context)
-                                                                    .primaryText,
-                                                                size: 24.0,
-                                                              ),
+                                                                      .primaryText,
+                                                                    size:
+                                                                      24.0,
+                                                                  ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width:
+                                                                      16.0),
+                                                                  InkWell(
+                                                                  splashColor:
+                                                                    Colors.transparent,
+                                                                  focusColor:
+                                                                    Colors.transparent,
+                                                                  hoverColor:
+                                                                    Colors.transparent,
+                                                                  highlightColor:
+                                                                    Colors.transparent,
+                                                                  onTap:
+                                                                    () async {
+                                                                    await _openEditReproducao(
+                                                                    ctx: context,
+                                                                    idReproducao:
+                                                                      reproducaoItem.idReproducao!,
+                                                                    idRebanhoReprodutor:
+                                                                      reproducaoItem.idRebanhoReprodutor,
+                                                                    idRebanhoMatriz:
+                                                                      reproducaoItem.idRebanhoMatriz,
+                                                                    );
+                                                                  },
+                                                                  child:
+                                                                    Icon(
+                                                                    Icons
+                                                                      .edit_outlined,
+                                                                    color: Color(
+                                                                      0xFF1E7A4C),
+                                                                    size:
+                                                                      24.0,
+                                                                  ),
+                                                                  ),
+                                                                ],
+                                                                ),
                                                             ],
                                                           ),
                                                         ),
@@ -1948,115 +1997,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                     8.0,
                                                                     24.0,
                                                                     8.0),
-                                                        child: InkWell(
-                                                          splashColor: Colors
-                                                              .transparent,
-                                                          focusColor: Colors
-                                                              .transparent,
-                                                          hoverColor: Colors
-                                                              .transparent,
-                                                          highlightColor: Colors
-                                                              .transparent,
-                                                          onTap: () async {
-                                                            _model.reprodutor2 =
-                                                                await SQLiteManager
-                                                                    .instance
-                                                                    .buscarRebanho(
-                                                              idRebanho:
-                                                                  reproducaoItem
-                                                                      .idRebanhoReprodutor,
-                                                            );
-                                                            _model.matriz2 =
-                                                                await SQLiteManager
-                                                                    .instance
-                                                                    .buscarRebanho(
-                                                              idRebanho:
-                                                                  reproducaoItem
-                                                                      .idRebanhoMatriz,
-                                                            );
-                                                            FFAppState()
-                                                                    .reprodutorSelecionado =
-                                                                AnimalSelecionadoStruct(
-                                                              numAnimal: _model
-                                                                  .reprodutor2
-                                                                  ?.firstOrNull
-                                                                  ?.numeroAnimal,
-                                                              nomeAnimal: _model
-                                                                  .reprodutor2
-                                                                  ?.firstOrNull
-                                                                  ?.nome,
-                                                              dataNascAnimal: _model
-                                                                  .reprodutor2
-                                                                  ?.firstOrNull
-                                                                  ?.dataNascimento,
-                                                              racaAnimal: _model
-                                                                  .reprodutor2
-                                                                  ?.firstOrNull
-                                                                  ?.raca,
-                                                              idRebanho: _model
-                                                                  .reprodutor2
-                                                                  ?.firstOrNull
-                                                                  ?.idRebanho,
-                                                            );
-                                                            FFAppState()
-                                                                    .matrizSelecionada =
-                                                                AnimalSelecionadoStruct(
-                                                              numAnimal: _model
-                                                                  .matriz2
-                                                                  ?.firstOrNull
-                                                                  ?.numeroAnimal,
-                                                              nomeAnimal: _model
-                                                                  .matriz2
-                                                                  ?.firstOrNull
-                                                                  ?.nome,
-                                                              dataNascAnimal: _model
-                                                                  .matriz2
-                                                                  ?.firstOrNull
-                                                                  ?.dataNascimento,
-                                                              racaAnimal: _model
-                                                                  .matriz2
-                                                                  ?.firstOrNull
-                                                                  ?.raca,
-                                                              idRebanho: _model
-                                                                  .matriz2
-                                                                  ?.firstOrNull
-                                                                  ?.idRebanho,
-                                                            );
-                                                            safeSetState(() {});
-                                                            await showDialog(
-                                                              barrierColor: Colors
-                                                                  .transparent,
-                                                              barrierDismissible:
-                                                                  false,
-                                                              context: context,
-                                                              builder:
-                                                                  (dialogContext) {
-                                                                return Dialog(
-                                                                  elevation: 0,
-                                                                  insetPadding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  alignment: AlignmentDirectional(
-                                                                          0.0,
-                                                                          0.0)
-                                                                      .resolve(
-                                                                          Directionality.of(
-                                                                              context)),
-                                                                  child:
-                                                                      ViewReproducaoRebanhoWidget(
-                                                                    idReproducao:
-                                                                        reproducaoItem
-                                                                            .idReproducao!,
-                                                                  ),
-                                                                );
-                                                              },
-                                                            );
-
-                                                            safeSetState(() {});
-                                                          },
+                                                        child: Container(
                                                           child: Row(
                                                             mainAxisSize:
                                                                 MainAxisSize
@@ -2696,14 +2637,79 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                           4.0)),
                                                                 ),
                                                               ),
-                                                              Icon(
-                                                                Icons
-                                                                    .chevron_right,
-                                                                color: FlutterFlowTheme.of(
+                                                                Row(
+                                                                mainAxisSize:
+                                                                  MainAxisSize
+                                                                    .min,
+                                                                children: [
+                                                                  InkWell(
+                                                                  splashColor:
+                                                                    Colors.transparent,
+                                                                  focusColor:
+                                                                    Colors.transparent,
+                                                                  hoverColor:
+                                                                    Colors.transparent,
+                                                                  highlightColor:
+                                                                    Colors.transparent,
+                                                                  onTap:
+                                                                    () async {
+                                                                    await _openViewReproducao(
+                                                                    ctx: context,
+                                                                    idReproducao:
+                                                                      reproducaoItem.idReproducao!,
+                                                                    idRebanhoReprodutor:
+                                                                      reproducaoItem.idRebanhoReprodutor,
+                                                                    idRebanhoMatriz:
+                                                                      reproducaoItem.idRebanhoMatriz,
+                                                                    );
+                                                                  },
+                                                                  child:
+                                                                    Icon(
+                                                                    Icons
+                                                                      .visibility_outlined,
+                                                                    color: FlutterFlowTheme.of(
                                                                         context)
-                                                                    .primaryText,
-                                                                size: 24.0,
-                                                              ),
+                                                                      .primaryText,
+                                                                    size:
+                                                                      24.0,
+                                                                  ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width:
+                                                                      16.0),
+                                                                  InkWell(
+                                                                  splashColor:
+                                                                    Colors.transparent,
+                                                                  focusColor:
+                                                                    Colors.transparent,
+                                                                  hoverColor:
+                                                                    Colors.transparent,
+                                                                  highlightColor:
+                                                                    Colors.transparent,
+                                                                  onTap:
+                                                                    () async {
+                                                                    await _openEditReproducao(
+                                                                    ctx: context,
+                                                                    idReproducao:
+                                                                      reproducaoItem.idReproducao!,
+                                                                    idRebanhoReprodutor:
+                                                                      reproducaoItem.idRebanhoReprodutor,
+                                                                    idRebanhoMatriz:
+                                                                      reproducaoItem.idRebanhoMatriz,
+                                                                    );
+                                                                  },
+                                                                  child:
+                                                                    Icon(
+                                                                    Icons
+                                                                      .edit_outlined,
+                                                                    color: Color(
+                                                                      0xFF1E7A4C),
+                                                                    size:
+                                                                      24.0,
+                                                                  ),
+                                                                  ),
+                                                                ],
+                                                                ),
                                                             ],
                                                           ),
                                                         ),

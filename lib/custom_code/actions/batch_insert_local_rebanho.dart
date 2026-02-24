@@ -13,18 +13,20 @@ import 'package:flutter/material.dart';
 
 import 'package:sqflite/sqflite.dart';
 
-Future<bool> batchInsertLocalRebanho(List<dynamic> records) async {
-  if (records.isEmpty) return true;
+Future<Map<String, dynamic>> batchInsertLocalRebanho(
+    List<dynamic> records) async {
+  if (records.isEmpty) {
+    return {'inserted': 0, 'errors': <Map<String, String>>[]};
+  }
 
-  try {
-    final db = SQLiteManager.instance.database;
+  final List<Map<String, dynamic>> mappedRecords = [];
+  final List<Map<String, String>> errors = [];
 
-    await db.transaction((txn) async {
-      final batch = txn.batch();
-
-      for (final record in records) {
-        final Map<String, dynamic> source = Map<String, dynamic>.from(record);
-        final Map<String, dynamic> mapped = {};
+  // Fase 1: Mapear todos os registros
+  for (int i = 0; i < records.length; i++) {
+    try {
+      final Map<String, dynamic> source = Map<String, dynamic>.from(records[i]);
+      final Map<String, dynamic> mapped = {};
 
         // Mapeamento específico Supabase -> SQLite
         if (source['idPropriedade'] != null)
@@ -120,19 +122,94 @@ Future<bool> batchInsertLocalRebanho(List<dynamic> records) async {
         if (source['categoria_matriz'] != null)
           mapped['categoria_matriz'] = _cleanNull(source['categoria_matriz']);
 
+      mappedRecords.add(mapped);
+    } catch (e) {
+      final id = _extractRebanhoId(records[i]);
+      errors.add({'id': id, 'error': 'Erro ao mapear: $e'});
+    }
+  }
+
+  // Fase 2: Garantir que triggers FTS5 não bloqueiem o insert (Android)
+  final db = SQLiteManager.instance.database;
+  await _disableFtsTriggersSafely(db);
+
+  // Fase 3: Tentar batch insert
+  try {
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+      for (final mapped in mappedRecords) {
         batch.insert('local_rebanho', mapped,
             conflictAlgorithm: ConflictAlgorithm.replace);
       }
-
       await batch.commit(noResult: true);
     });
+    return {'inserted': mappedRecords.length, 'errors': errors};
+  } catch (batchError) {
+    debugPrint(
+        '[SYNC][rebanho] Batch falhou ($batchError). Inserindo individualmente...');
+    int insertedCount = 0;
 
-    return true;
-  } catch (e) {
-    return false;
+    for (final mapped in mappedRecords) {
+      try {
+        await db.insert('local_rebanho', mapped,
+            conflictAlgorithm: ConflictAlgorithm.replace);
+        insertedCount++;
+      } catch (e) {
+        final id = mapped['idRebanho']?.toString() ??
+            mapped['numeroAnimal']?.toString() ??
+            'desconhecido';
+        errors.add({'id': id, 'error': e.toString()});
+      }
+    }
+
+    return {'inserted': insertedCount, 'errors': errors};
   }
+}
+
+String _extractRebanhoId(dynamic record) {
+  if (record is Map) {
+    return record['idRebanho']?.toString() ??
+        record['numeroAnimal']?.toString() ??
+        record['nome']?.toString() ??
+        'desconhecido';
+  }
+  return 'desconhecido';
 }
 
 dynamic _cleanNull(dynamic value) {
   return (value == "null") ? null : value;
+}
+
+/// Remove triggers FTS5 que podem falhar no Android (sistema SQLite sem FTS5).
+/// Operação idempotente e segura — se os triggers já foram removidos, não faz nada.
+Future<void> _disableFtsTriggersSafely(Database db) async {
+  try {
+    // Verificar se algum trigger FTS existe
+    final triggers = await db.rawQuery(
+      "SELECT name FROM sqlite_master WHERE type='trigger' AND name LIKE 'rebanho_fts_%'",
+    );
+    if (triggers.isEmpty) return; // Já foram removidos
+
+    // Testar se FTS5 está funcional
+    try {
+      await db.rawQuery('SELECT * FROM local_rebanho_fts LIMIT 1');
+      // FTS5 funciona — não precisa remover triggers
+      return;
+    } catch (_) {
+      // FTS5 não funciona — remover triggers
+    }
+
+    debugPrint('[SYNC][rebanho] FTS5 não disponível. Removendo triggers...');
+    for (final trigger in triggers) {
+      final name = trigger['name'] as String;
+      try {
+        await db.execute('DROP TRIGGER IF EXISTS $name');
+        debugPrint('[SYNC][rebanho] Trigger "$name" removido.');
+      } catch (e) {
+        debugPrint('[SYNC][rebanho] Erro ao remover trigger "$name": $e');
+      }
+    }
+  } catch (e) {
+    debugPrint('[SYNC][rebanho] Erro ao verificar triggers FTS: $e');
+  }
 }

@@ -23,7 +23,7 @@ class SQLiteManager {
     }
     _database = await initializeDatabaseFromDbFile(
       'inlida',
-      'inlida_v48.db',
+      'inlida_v51.db',
     );
   }
 

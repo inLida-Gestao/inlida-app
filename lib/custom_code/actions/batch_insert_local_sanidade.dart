@@ -13,18 +13,20 @@ import 'package:flutter/material.dart';
 
 import 'package:sqflite/sqflite.dart';
 
-Future<bool> batchInsertLocalSanidade(List<dynamic> records) async {
-  if (records.isEmpty) return true;
+Future<Map<String, dynamic>> batchInsertLocalSanidade(
+    List<dynamic> records) async {
+  if (records.isEmpty) {
+    return {'inserted': 0, 'errors': <Map<String, String>>[]};
+  }
 
-  try {
-    final db = SQLiteManager.instance.database;
+  final List<Map<String, dynamic>> mappedRecords = [];
+  final List<Map<String, String>> errors = [];
 
-    await db.transaction((txn) async {
-      final batch = txn.batch();
-
-      for (final record in records) {
-        final Map<String, dynamic> source = Map<String, dynamic>.from(record);
-        final Map<String, dynamic> mapped = {};
+  // Fase 1: Mapear todos os registros
+  for (int i = 0; i < records.length; i++) {
+    try {
+      final Map<String, dynamic> source = Map<String, dynamic>.from(records[i]);
+      final Map<String, dynamic> mapped = {};
 
         // Mapeamento específico Supabase -> SQLite
         if (source['created_at'] != null)
@@ -82,17 +84,55 @@ Future<bool> batchInsertLocalSanidade(List<dynamic> records) async {
         if (source['protocolo_iatf'] != null)
           mapped['protocolo_iatf'] = _cleanNull(source['protocolo_iatf']);
 
+      mappedRecords.add(mapped);
+    } catch (e) {
+      final id = _extractSanidadeId(records[i]);
+      errors.add({'id': id, 'error': 'Erro ao mapear: $e'});
+    }
+  }
+
+  // Fase 2: Tentar batch insert
+  try {
+    final db = SQLiteManager.instance.database;
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+      for (final mapped in mappedRecords) {
         batch.insert('local_sanidade', mapped,
             conflictAlgorithm: ConflictAlgorithm.replace);
       }
-
       await batch.commit(noResult: true);
     });
+    return {'inserted': mappedRecords.length, 'errors': errors};
+  } catch (batchError) {
+    debugPrint(
+        '[SYNC][sanidade] Batch falhou ($batchError). Inserindo individualmente...');
+    final db = SQLiteManager.instance.database;
+    int insertedCount = 0;
 
-    return true;
-  } catch (e) {
-    return false;
+    for (final mapped in mappedRecords) {
+      try {
+        await db.insert('local_sanidade', mapped,
+            conflictAlgorithm: ConflictAlgorithm.replace);
+        insertedCount++;
+      } catch (e) {
+        final id = mapped['id_sanidade']?.toString() ??
+            mapped['id_rebanho']?.toString() ??
+            'desconhecido';
+        errors.add({'id': id, 'error': e.toString()});
+      }
+    }
+
+    return {'inserted': insertedCount, 'errors': errors};
   }
+}
+
+String _extractSanidadeId(dynamic record) {
+  if (record is Map) {
+    return record['id_sanidade']?.toString() ??
+        record['id_rebanho']?.toString() ??
+        'desconhecido';
+  }
+  return 'desconhecido';
 }
 
 dynamic _cleanNull(dynamic value) {

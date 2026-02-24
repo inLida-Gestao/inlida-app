@@ -1825,7 +1825,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                 16.0, 4.0),
                                                     hidesUnderline: true,
                                                     isOverButton: true,
-                                                    isSearchable: false,
+                                                    isSearchable: true,
                                                     isMultiSelect: false,
                                                   ),
                                                 ),

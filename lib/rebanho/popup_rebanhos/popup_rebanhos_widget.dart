@@ -2054,7 +2054,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                   .where((e) =>
                                                       (e.sexo == 'Fêmea') &&
                                                       (e.categoria !=
-                                                          'Bezerra'))
+                                                          'Bezerra') &&
+                                                      (e.statusRebanho ==
+                                                          'Na propriedade'))
                                                   .toList()
                                                   .take(20)
                                                   .toList();

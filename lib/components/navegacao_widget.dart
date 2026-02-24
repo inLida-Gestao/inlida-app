@@ -293,7 +293,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       .refreshPropriedades(context);
                                   await action_blocks
                                       .putUpdtPropriedades(context);
-                                  await action_blocks.refreshLotes(context);
+                                  try { await action_blocks.refreshLotes(context); } catch (e) { debugPrint('[SYNC] Erro nav1 lotes: $e'); }
                                   await Future.wait([
                                     action_blocks
                                         .refreshRebanhoOtimizada(context),
@@ -303,7 +303,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         .refreshPesagens(context),
                                     action_blocks
                                         .refresSanidadeOtimizada(context),
-                                  ]);
+                                  ]).catchError((e) { debugPrint('[SYNC] Erro no Future.wait nav1: $e'); return <void>[]; });
                                   await action_blocks
                                       .countLotesCadastrados(context);
                                   FFAppState().ultimaSincronizacao =
@@ -1448,16 +1448,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                               await action_blocks.putUpdtLotes(context);
                               await action_blocks.putUpdtReproducao(context);
                               await action_blocks.putUpdtSanidades(context);
-                              await action_blocks.refreshPropriedades(context);
-                              await action_blocks.refreshLotes(context);
-                              await action_blocks
-                                  .refreshRebanhoOtimizada(context);
-                              await action_blocks
-                                  .refreshReproducaoOtimizada(context);
-                              await action_blocks
-                                  .refresSanidadeOtimizada(context);
-                              await action_blocks
-                                  .countLotesCadastrados(context);
+                              try { await action_blocks.refreshPropriedades(context); } catch (e) { debugPrint('[SYNC] Erro nav2 propriedades: $e'); }
+                              try { await action_blocks.refreshLotes(context); } catch (e) { debugPrint('[SYNC] Erro nav2 lotes: $e'); }
+                              try { await action_blocks.refreshRebanhoOtimizada(context); } catch (e) { debugPrint('[SYNC] Erro nav2 rebanho: $e'); }
+                              try { await action_blocks.refreshReproducaoOtimizada(context); } catch (e) { debugPrint('[SYNC] Erro nav2 reproducao: $e'); }
+                              try { await action_blocks.refresSanidadeOtimizada(context); } catch (e) { debugPrint('[SYNC] Erro nav2 sanidade: $e'); }
+                              try { await action_blocks.countLotesCadastrados(context); } catch (e) { debugPrint('[SYNC] Erro nav2 contadores: $e'); }
                               FFAppState().dataDadosNaoSyncProp = null;
                               FFAppState().dataDadosNaoSyncRebanho = null;
                               FFAppState().dataDadosNaoSyncLotes = null;

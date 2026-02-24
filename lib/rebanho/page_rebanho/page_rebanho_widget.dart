@@ -8,6 +8,7 @@ import '/propriedade/selecionar_propriedade/selecionar_propriedade_widget.dart';
 import '/rebanho/filtros_ordenacao_rebanho/filtros_ordenacao_rebanho_widget.dart';
 import '/rebanho/filtros_rebanho/filtros_rebanho_widget.dart';
 import '/rebanho/view_rebanho/view_rebanho_widget.dart';
+import '/rebanho/edit_rebanho/edit_rebanho_widget.dart';
 import 'dart:ui';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:easy_debounce/easy_debounce.dart';
@@ -56,6 +57,124 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
     _model.maybeDispose();
 
     super.dispose();
+  }
+
+  Future<void> _openEditRebanho(BuildContext ctx, String? idRebanho) async {
+    if (idRebanho == null) return;
+
+    final rebanhoData = await SQLiteManager.instance.buscarRebanho(
+      idRebanho: idRebanho,
+    );
+    if (rebanhoData.isEmpty) return;
+
+    final reb = rebanhoData.first;
+
+    final matrizData = await SQLiteManager.instance.buscarRebanho(
+      idRebanho: reb.rebanhoIdMatriz,
+    );
+    final reprodutorData = await SQLiteManager.instance.buscarRebanho(
+      idRebanho: reb.rebanhoIdReprodutor,
+    );
+
+    FFAppState().updateRebanhoSelecionadoStruct(
+      (e) => e
+        ..idPropriedade = reb.idPropriedade
+        ..numeroAnimal = reb.numeroAnimal
+        ..chip = reb.chip
+        ..codRegistro = reb.codRegistro
+        ..nome = reb.nome
+        ..sexo = reb.sexo
+        ..categoria = reb.categoria
+        ..dataNascimento = reb.dataNascimento
+        ..pesoNascimento = reb.pesoNascimento
+        ..porte = reb.porte
+        ..raca = reb.raca
+        ..loteId = reb.loteID
+        ..dataEntradaLote = reb.dataEntradaLote
+        ..rebanhoIdMatriz = reb.rebanhoIdMatriz
+        ..rebanhoIdReprodutor = reb.rebanhoIdReprodutor
+        ..dataDesmama = reb.dataDesmama
+        ..pesoDesmama = reb.pesoDesmama
+        ..pesoAtual = reb.pesoAtual
+        ..status = reb.statusRebanho
+        ..origem = reb.origem
+        ..anotacoes = reb.anotacoes
+        ..idRebanho = reb.idRebanho
+        ..tipo = reb.tipo
+        ..dataAcao = reb.dataAcao
+        ..valorCompra = reb.valorCompra
+        ..dataUltimaPesagem = reb.dataUltimaPesagem
+        ..loteNome = reb.loteNome
+        ..movimentacaoentrada = reb.movimentacaoEntrada
+        ..dataVenda = reb.dataVenda
+        ..valorVenda = reb.valorVenda
+        ..numeroMatriz = reb.numeroMatriz
+        ..nomeMatriz = reb.nomeMatriz
+        ..dataNascMatriz = reb.dataNascMatriz
+        ..racaMatriz = reb.racaMatriz
+        ..numeroReprodutor = reb.numeroReprodutor
+        ..nomeReprodutor = reb.nomeReprodutor
+        ..dataNascReprodutor = reb.dataNascReprodutor
+        ..racaReprodutor = reb.racaReprodutor
+        ..movimentacaosaida = reb.movimentacaoSaida
+        ..datamorte = reb.dataMorte
+        ..motivoMorte = reb.motivoMorte
+        ..categoriaMatriz = reb.categoriaMatriz,
+    );
+
+    FFAppState().matrizSelecionada = AnimalSelecionadoStruct(
+      numAnimal: matrizData.firstOrNull?.numeroAnimal,
+      nomeAnimal: matrizData.firstOrNull?.nome,
+      dataNascAnimal: matrizData.firstOrNull?.dataNascimento,
+      racaAnimal: matrizData.firstOrNull?.raca,
+      categoria: matrizData.firstOrNull?.categoria,
+    );
+
+    FFAppState().reprodutorSelecionado = AnimalSelecionadoStruct(
+      numAnimal: reprodutorData.firstOrNull?.numeroAnimal,
+      nomeAnimal: reprodutorData.firstOrNull?.nome,
+      dataNascAnimal: reprodutorData.firstOrNull?.dataNascimento,
+      racaAnimal: reprodutorData.firstOrNull?.raca,
+      categoria: reprodutorData.firstOrNull?.categoria,
+    );
+
+    safeSetState(() {});
+
+    final lotesData = await SQLiteManager.instance.buscarLotes(
+      idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+    );
+
+    FFAppState().rebanhoLotesSelecionar = [];
+    safeSetState(() {});
+
+    if (lotesData.isNotEmpty) {
+      for (final lote in lotesData) {
+        FFAppState().addToRebanhoLotesSelecionar(LocalLotesStruct(
+          idLote: lote.idLote,
+          nome: lote.nome,
+        ));
+      }
+      safeSetState(() {});
+    }
+
+    if (!ctx.mounted) return;
+
+    await showDialog(
+      barrierColor: Colors.transparent,
+      context: ctx,
+      builder: (dialogContext) {
+        return Dialog(
+          elevation: 0,
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          alignment:
+              AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(ctx)),
+          child: EditRebanhoWidget(),
+        );
+      },
+    );
+
+    safeSetState(() {});
   }
 
   @override
@@ -1495,13 +1614,53 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                             2.0)),
                                                                   ),
                                                                 ),
-                                                                Icon(
-                                                                  Icons
-                                                                      .arrow_forward_ios_rounded,
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .customColor9,
-                                                                  size: 16.0,
+                                                                Row(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  children: [
+                                                                    Icon(
+                                                                      Icons
+                                                                          .visibility_outlined,
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .customColor9,
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            16.0),
+                                                                    InkWell(
+                                                                      splashColor:
+                                                                          Colors
+                                                                              .transparent,
+                                                                      focusColor:
+                                                                          Colors
+                                                                              .transparent,
+                                                                      hoverColor:
+                                                                          Colors
+                                                                              .transparent,
+                                                                      highlightColor:
+                                                                          Colors
+                                                                              .transparent,
+                                                                      onTap:
+                                                                          () async {
+                                                                        await _openEditRebanho(
+                                                                            context,
+                                                                            animaisItem.idRebanho);
+                                                                      },
+                                                                      child:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .edit_outlined,
+                                                                        color: Color(
+                                                                            0xFF1E7A4C),
+                                                                        size:
+                                                                            24.0,
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ],
                                                             ),
@@ -2388,13 +2547,53 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                           2.0)),
                                                                 ),
                                                               ),
-                                                              Icon(
-                                                                Icons
-                                                                    .arrow_forward_ios_rounded,
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .customColor9,
-                                                                size: 16.0,
+                                                              Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons
+                                                                        .visibility_outlined,
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .customColor9,
+                                                                    size:
+                                                                        24.0,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width:
+                                                                          16.0),
+                                                                  InkWell(
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
+                                                                        () async {
+                                                                      await _openEditRebanho(
+                                                                          context,
+                                                                          animaisItem.idRebanho);
+                                                                    },
+                                                                    child:
+                                                                        Icon(
+                                                                      Icons
+                                                                          .edit_outlined,
+                                                                      color: Color(
+                                                                          0xFF1E7A4C),
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ],
                                                           ),
@@ -3280,13 +3479,53 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                           2.0)),
                                                                 ),
                                                               ),
-                                                              Icon(
-                                                                Icons
-                                                                    .arrow_forward_ios_rounded,
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .customColor9,
-                                                                size: 16.0,
+                                                              Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons
+                                                                        .visibility_outlined,
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .customColor9,
+                                                                    size:
+                                                                        24.0,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width:
+                                                                          16.0),
+                                                                  InkWell(
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
+                                                                        () async {
+                                                                      await _openEditRebanho(
+                                                                          context,
+                                                                          animaisItem.idRebanho);
+                                                                    },
+                                                                    child:
+                                                                        Icon(
+                                                                      Icons
+                                                                          .edit_outlined,
+                                                                      color: Color(
+                                                                          0xFF1E7A4C),
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ],
                                                           ),
@@ -4172,13 +4411,53 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                           2.0)),
                                                                 ),
                                                               ),
-                                                              Icon(
-                                                                Icons
-                                                                    .arrow_forward_ios_rounded,
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .customColor9,
-                                                                size: 16.0,
+                                                              Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons
+                                                                        .visibility_outlined,
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .customColor9,
+                                                                    size:
+                                                                        24.0,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width:
+                                                                          16.0),
+                                                                  InkWell(
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
+                                                                        () async {
+                                                                      await _openEditRebanho(
+                                                                          context,
+                                                                          animaisItem.idRebanho);
+                                                                    },
+                                                                    child:
+                                                                        Icon(
+                                                                      Icons
+                                                                          .edit_outlined,
+                                                                      color: Color(
+                                                                          0xFF1E7A4C),
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ],
                                                           ),
@@ -5064,13 +5343,53 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                           2.0)),
                                                                 ),
                                                               ),
-                                                              Icon(
-                                                                Icons
-                                                                    .arrow_forward_ios_rounded,
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .customColor9,
-                                                                size: 16.0,
+                                                              Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons
+                                                                        .visibility_outlined,
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .customColor9,
+                                                                    size:
+                                                                        24.0,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width:
+                                                                          16.0),
+                                                                  InkWell(
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
+                                                                        () async {
+                                                                      await _openEditRebanho(
+                                                                          context,
+                                                                          animaisItem.idRebanho);
+                                                                    },
+                                                                    child:
+                                                                        Icon(
+                                                                      Icons
+                                                                          .edit_outlined,
+                                                                      color: Color(
+                                                                          0xFF1E7A4C),
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ],
                                                           ),
@@ -5956,13 +6275,53 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                           2.0)),
                                                                 ),
                                                               ),
-                                                              Icon(
-                                                                Icons
-                                                                    .arrow_forward_ios_rounded,
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .customColor9,
-                                                                size: 16.0,
+                                                              Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons
+                                                                        .visibility_outlined,
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .customColor9,
+                                                                    size:
+                                                                        24.0,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width:
+                                                                          16.0),
+                                                                  InkWell(
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
+                                                                        () async {
+                                                                      await _openEditRebanho(
+                                                                          context,
+                                                                          animaisItem.idRebanho);
+                                                                    },
+                                                                    child:
+                                                                        Icon(
+                                                                      Icons
+                                                                          .edit_outlined,
+                                                                      color: Color(
+                                                                          0xFF1E7A4C),
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ],
                                                           ),
@@ -6848,13 +7207,53 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                           2.0)),
                                                                 ),
                                                               ),
-                                                              Icon(
-                                                                Icons
-                                                                    .arrow_forward_ios_rounded,
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .customColor9,
-                                                                size: 16.0,
+                                                              Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons
+                                                                        .visibility_outlined,
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .customColor9,
+                                                                    size:
+                                                                        24.0,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width:
+                                                                          16.0),
+                                                                  InkWell(
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
+                                                                        () async {
+                                                                      await _openEditRebanho(
+                                                                          context,
+                                                                          animaisItem.idRebanho);
+                                                                    },
+                                                                    child:
+                                                                        Icon(
+                                                                      Icons
+                                                                          .edit_outlined,
+                                                                      color: Color(
+                                                                          0xFF1E7A4C),
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ],
                                                           ),
@@ -7769,13 +8168,50 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         2.0)),
                                                               ),
                                                             ),
-                                                            Icon(
-                                                              Icons
-                                                                  .arrow_forward_ios_rounded,
-                                                              color: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .customColor9,
-                                                              size: 16.0,
+                                                            Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              children: [
+                                                                Icon(
+                                                                  Icons
+                                                                      .visibility_outlined,
+                                                                  color: FlutterFlowTheme
+                                                                          .of(context)
+                                                                      .customColor9,
+                                                                  size: 24.0,
+                                                                ),
+                                                                SizedBox(
+                                                                    width:
+                                                                        16.0),
+                                                                InkWell(
+                                                                  splashColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  focusColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  hoverColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  highlightColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  onTap:
+                                                                      () async {
+                                                                    await _openEditRebanho(
+                                                                        context,
+                                                                        animaisItem.idRebanho);
+                                                                  },
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .edit_outlined,
+                                                                    color: Color(
+                                                                        0xFF1E7A4C),
+                                                                    size: 24.0,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ],
                                                         ),

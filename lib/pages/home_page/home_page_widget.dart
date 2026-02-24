@@ -117,16 +117,16 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               FFAppState().qtdAntiparasitarios = 0;
               FFAppState().lotesCadastrados = 0;
               safeSetState(() {});
-              await action_blocks.refreshPropriedades(context);
-              await action_blocks.refreshLotes(context);
-              await action_blocks.refreshRebanhoOtimizada(context);
-              await action_blocks.refreshReproducaoOtimizada(context);
+              try { await action_blocks.refreshPropriedades(context); } catch (e) { debugPrint('[SYNC][propriedades] Erro na home: $e'); }
+              try { await action_blocks.refreshLotes(context); } catch (e) { debugPrint('[SYNC][lotes] Erro na home: $e'); }
+              try { await action_blocks.refreshRebanhoOtimizada(context); } catch (e) { debugPrint('[SYNC][rebanho] Erro na home: $e'); }
+              try { await action_blocks.refreshReproducaoOtimizada(context); } catch (e) { debugPrint('[SYNC][reproducao] Erro na home: $e'); }
               unawaited(
                 () async {
-                  await action_blocks.refreshPesagens(context);
+                  try { await action_blocks.refreshPesagens(context); } catch (e) { debugPrint('[SYNC][pesagens] Erro na home: $e'); }
                 }(),
               );
-              await action_blocks.refresSanidadeOtimizada(context);
+              try { await action_blocks.refresSanidadeOtimizada(context); } catch (e) { debugPrint('[SYNC][sanidade] Erro na home: $e'); }
               FFAppState().firstRunUserEmail = currentUserEmail;
               FFAppState().ultimaSincronizacao = getCurrentTimestamp;
               safeSetState(() {});

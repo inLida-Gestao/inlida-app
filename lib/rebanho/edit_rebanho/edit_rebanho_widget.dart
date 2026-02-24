@@ -1918,7 +1918,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         16.0, 4.0, 16.0, 4.0),
                                                 hidesUnderline: true,
                                                 isOverButton: true,
-                                                isSearchable: false,
+                                                isSearchable: true,
                                                 isMultiSelect: false,
                                               ),
                                             ),

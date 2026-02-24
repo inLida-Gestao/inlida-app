@@ -5,6 +5,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/lotes/filtro_lotes/filtro_lotes_widget.dart';
+import '/lotes/edit_lote/edit_lote_widget.dart';
 import '/lotes/view_lote/view_lote_widget.dart';
 import '/propriedade/selecionar_propriedade/selecionar_propriedade_widget.dart';
 import 'dart:ui';
@@ -26,6 +27,64 @@ class PageLotesWidget extends StatefulWidget {
 
 class _PageLotesWidgetState extends State<PageLotesWidget> {
   late PageLotesModel _model;
+
+  Future<void> _openViewLote({
+    required BuildContext ctx,
+    required String idLote,
+  }) async {
+    await action_blocks.animaisPropriedade(ctx);
+    await action_blocks.buscaRebanhosLote(
+      ctx,
+      idLote: idLote,
+    );
+
+    await showDialog(
+      barrierColor: Colors.transparent,
+      barrierDismissible: false,
+      context: ctx,
+      builder: (dialogContext) {
+        return Dialog(
+          elevation: 0,
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          alignment:
+              AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(ctx)),
+          child: ViewLoteWidget(
+            idLote: idLote,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _openEditLote({
+    required BuildContext ctx,
+    required String idLote,
+  }) async {
+    await action_blocks.animaisPropriedade(ctx);
+    await action_blocks.buscaRebanhosLote(
+      ctx,
+      idLote: idLote,
+    );
+
+    await showDialog(
+      barrierColor: Colors.transparent,
+      barrierDismissible: false,
+      context: ctx,
+      builder: (dialogContext) {
+        return Dialog(
+          elevation: 0,
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          alignment: AlignmentDirectional(0.0, 0.0)
+              .resolve(Directionality.of(ctx)),
+          child: EditLoteWidget(
+            idLote: idLote,
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void setState(VoidCallback callback) {
@@ -639,59 +698,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                                         0.0,
                                                                         24.0,
                                                                         24.0),
-                                                            child: InkWell(
-                                                              splashColor: Colors
-                                                                  .transparent,
-                                                              focusColor: Colors
-                                                                  .transparent,
-                                                              hoverColor: Colors
-                                                                  .transparent,
-                                                              highlightColor:
-                                                                  Colors
-                                                                      .transparent,
-                                                              onTap: () async {
-                                                                await action_blocks
-                                                                    .animaisPropriedade(
-                                                                        context);
-                                                                await action_blocks
-                                                                    .buscaRebanhosLote(
-                                                                  context,
-                                                                  idLote: loteItem
-                                                                      .idLote,
-                                                                );
-                                                                await showDialog(
-                                                                  barrierColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  barrierDismissible:
-                                                                      false,
-                                                                  context:
-                                                                      context,
-                                                                  builder:
-                                                                      (dialogContext) {
-                                                                    return Dialog(
-                                                                      elevation:
-                                                                          0,
-                                                                      insetPadding:
-                                                                          EdgeInsets
-                                                                              .zero,
-                                                                      backgroundColor:
-                                                                          Colors
-                                                                              .transparent,
-                                                                      alignment: AlignmentDirectional(
-                                                                              0.0,
-                                                                              0.0)
-                                                                          .resolve(
-                                                                              Directionality.of(context)),
-                                                                      child:
-                                                                          ViewLoteWidget(
-                                                                        idLote:
-                                                                            loteItem.idLote!,
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                );
-                                                              },
+                                                            child: Container(
                                                               child: Row(
                                                                 mainAxisSize:
                                                                     MainAxisSize
@@ -804,20 +811,67 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                                               height: 2.0)),
                                                                     ),
                                                                   ),
-                                                                  ClipRRect(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            8.0),
-                                                                    child: Image
-                                                                        .asset(
-                                                                      'assets/images/Arrowterert.png',
-                                                                      width:
-                                                                          24.0,
-                                                                      height:
-                                                                          24.0,
-                                                                      fit: BoxFit
-                                                                          .contain,
-                                                                    ),
+                                                                  Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min,
+                                                                    children: [
+                                                                        InkWell(
+                                                                        splashColor:
+                                                                          Colors.transparent,
+                                                                        focusColor:
+                                                                          Colors.transparent,
+                                                                        hoverColor:
+                                                                          Colors.transparent,
+                                                                        highlightColor:
+                                                                          Colors.transparent,
+                                                                        onTap:
+                                                                          () async {
+                                                                          await _openViewLote(
+                                                                          ctx: context,
+                                                                          idLote: loteItem.idLote!,
+                                                                          );
+                                                                        },
+                                                                        child:
+                                                                          Icon(
+                                                                          Icons
+                                                                            .visibility_outlined,
+                                                                          color: FlutterFlowTheme.of(context)
+                                                                            .primaryText,
+                                                                          size:
+                                                                            24.0,
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(
+                                                                          width:
+                                                                              16.0),
+                                                                      InkWell(
+                                                                        splashColor:
+                                                                            Colors.transparent,
+                                                                        focusColor:
+                                                                            Colors.transparent,
+                                                                        hoverColor:
+                                                                            Colors.transparent,
+                                                                        highlightColor:
+                                                                            Colors.transparent,
+                                                                        onTap:
+                                                                            () async {
+                                                                          await _openEditLote(
+                                                                            ctx: context,
+                                                                            idLote: loteItem.idLote!,
+                                                                          );
+                                                                        },
+                                                                        child:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .edit_outlined,
+                                                                          color:
+                                                                              Color(0xFF1E7A4C),
+                                                                          size:
+                                                                              24.0,
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
                                                                 ],
                                                               ),

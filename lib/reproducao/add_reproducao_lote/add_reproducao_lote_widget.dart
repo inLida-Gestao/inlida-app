@@ -102,7 +102,9 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                   ),
                 );
               }
-              final containerListarLotesRowList = snapshot.data!;
+              final containerListarLotesRowList = snapshot.data!
+                  .where((lote) => lote.ativo == 'Ativo')
+                  .toList();
 
               return Container(
                 decoration: BoxDecoration(),

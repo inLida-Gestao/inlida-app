@@ -19,19 +19,6 @@ void main() async {
   GoRouter.optionURLReflectsImperativeAPIs = true;
   usePathUrlStrategy();
 
-  // Captura o primeiro erro Flutter e imprime uma vez no console
-  bool _firstErrorLogged = false;
-  FlutterError.onError = (FlutterErrorDetails details) {
-    if (!_firstErrorLogged) {
-      _firstErrorLogged = true;
-      debugPrint('========== PRIMEIRO ERRO FLUTTER ==========');
-      debugPrint(details.exceptionAsString());
-      debugPrint(details.stack?.toString() ?? 'Sem stack trace');
-      debugPrint('============================================');
-    }
-    // Não repropaga para evitar flood no console
-  };
-
   await SupaFlow.initialize();
 
   await SQLiteManager.initialize();
