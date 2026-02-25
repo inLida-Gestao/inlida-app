@@ -39,6 +39,80 @@ class _EditReproducaoRebanhoWidgetState
     extends State<EditReproducaoRebanhoWidget> {
   late EditReproducaoRebanhoModel _model;
 
+  String? _normalizeRessincValue(String? value) {
+    if (value == null) return null;
+    final normalized = value.trim().toLowerCase();
+    if (normalized.isEmpty || normalized == '-' || normalized == 'null') {
+      return null;
+    }
+    if (normalized == 'tradicional') return 'Tradicional';
+    if (normalized == 'precoce') return 'Precoce';
+    if (normalized == 'superprecoce') return 'Superprecoce';
+    return null;
+  }
+
+  String? _normalizeSimNaoValue(String? value) {
+    if (value == null) return null;
+    final normalized = value.trim().toLowerCase();
+    if (normalized.isEmpty || normalized == '-' || normalized == 'null') {
+      return null;
+    }
+    if (normalized == 'sim' || normalized == 's' || normalized == 'yes') {
+      return 'Sim';
+    }
+    if (normalized == 'não' ||
+        normalized == 'nao' ||
+        normalized == 'n' ||
+        normalized == 'no') {
+      return 'Não';
+    }
+    return null;
+  }
+
+  String _normalizeDisplayText(String? value, String fallback) {
+    if (value == null) return fallback;
+    final normalized = value.trim();
+    if (normalized.isEmpty || normalized.toLowerCase() == 'null') {
+      return fallback;
+    }
+    return normalized;
+  }
+
+  String _formatDisplayDate(BuildContext context, String? value) {
+    if (value == null) return 'N/A';
+    final normalized = value.trim();
+    if (normalized.isEmpty || normalized.toLowerCase() == 'null') {
+      return 'N/A';
+    }
+    return dateTimeFormat(
+      "d/M/y",
+      functions.converterParaData(normalized),
+      locale: FFLocalizations.of(context).languageCode,
+    );
+  }
+
+  String _buildReprodutorLabel(
+      BuildContext context, BuscarReproducaoRow? reproducao) {
+    final appStateNum = FFAppState().reprodutorSelecionado.numAnimal;
+    final hasAppStateSelection =
+      appStateNum.trim().isNotEmpty && appStateNum.toLowerCase() != 'null';
+
+    final numero = hasAppStateSelection
+        ? _normalizeDisplayText(appStateNum, 'S/N')
+        : _normalizeDisplayText(reproducao?.numReprodutor, 'S/N');
+
+    final nome = hasAppStateSelection
+        ? _normalizeDisplayText(FFAppState().reprodutorSelecionado.nomeAnimal, 'S/N')
+        : _normalizeDisplayText(reproducao?.nomeReprodutor, 'S/N');
+
+    final nascimento = hasAppStateSelection
+        ? _formatDisplayDate(
+            context, FFAppState().reprodutorSelecionado.dataNascAnimal)
+        : _formatDisplayDate(context, reproducao?.nascimentoReprodutor);
+
+    return '$numero • $nome • $nascimento';
+  }
+
   @override
   void setState(VoidCallback callback) {
     super.setState(callback);
@@ -65,12 +139,12 @@ class _EditReproducaoRebanhoWidgetState
                   idReproducao: widget!.idReproducao,
                 );
                 _model.tipoReproducao =
-                  _model.editReproducao?.firstOrNull?.tipoReproducao ??
-                    'Inseminação';
+                    _model.editReproducao?.firstOrNull?.tipoReproducao ??
+                        'Inseminação';
                 _model.score =
-                  _model.editReproducao?.firstOrNull?.scoreCorporal ?? 0.5;
+                    _model.editReproducao?.firstOrNull?.scoreCorporal ?? 0.5;
                 _model.partidaSemen =
-                  _model.editReproducao?.firstOrNull?.partidaSemen ?? 1;
+                    _model.editReproducao?.firstOrNull?.partidaSemen ?? 1;
                 _model.ressinc =
                     _model.editReproducao?.firstOrNull?.ressinc == 'SIM'
                         ? true
@@ -815,44 +889,10 @@ class _EditReproducaoRebanhoWidgetState
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  valueOrDefault<String>(
-                                                    '${valueOrDefault<String>(
-                                                      FFAppState()
-                                                          .reprodutorSelecionado
-                                                          .numAnimal,
-                                                      'S/N',
-                                                    )} • ${valueOrDefault<String>(
-                                                          FFAppState()
-                                                              .reprodutorSelecionado
-                                                              .nomeAnimal,
-                                                          'S/N',
-                                                        ) == 'null' ? 'S/N' : valueOrDefault<String>(
-                                                        FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .nomeAnimal,
-                                                        'S/N',
-                                                      )} • ${valueOrDefault<String>(
-                                                          FFAppState()
-                                                              .reprodutorSelecionado
-                                                              .dataNascAnimal,
-                                                          'N/A',
-                                                        ) == 'null' ? 'N/A' : dateTimeFormat(
-                                                        "d/M/y",
-                                                        functions
-                                                            .converterParaData(
-                                                                valueOrDefault<
-                                                                    String>(
-                                                          FFAppState()
-                                                              .reprodutorSelecionado
-                                                              .dataNascAnimal,
-                                                          'N/A',
-                                                        )),
-                                                        locale:
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      )}',
-                                                    'Selecionar Reprodutor',
+                                                  _buildReprodutorLabel(
+                                                    context,
+                                                    containerBuscarReproducaoRowList
+                                                        .firstOrNull,
                                                   ),
                                                   style: FlutterFlowTheme.of(
                                                           context)
@@ -1130,7 +1170,12 @@ class _EditReproducaoRebanhoWidgetState
                                         child: FlutterFlowDropDown<String>(
                                           controller: _model
                                                   .dropdownRessincValueController ??=
-                                              FormFieldController<String>(null),
+                                              FormFieldController<String>(
+                                            _model.dropdownRessincValue ??=
+                                                _normalizeRessincValue(
+                                                    containerBuscarReproducaoRowList
+                                                        .firstOrNull?.ressinc),
+                                          ),
                                           options: [
                                             'Tradicional',
                                             'Precoce',
@@ -1199,7 +1244,7 @@ class _EditReproducaoRebanhoWidgetState
                                             safeSetState(() {
                                               _model
                                                   .dropdownRessincValueController
-                                                  ?.reset();
+                                                  ?.value = null;
                                               _model.dropdownRessincValue =
                                                   null;
                                             });
@@ -1240,8 +1285,10 @@ class _EditReproducaoRebanhoWidgetState
                                     controller:
                                         _model.dropdownGnrhValueController ??=
                                             FormFieldController<String>(
-                                      _model.dropdownGnrhValue ??= _model
-                                          .editReproducao?.firstOrNull?.gnrh,
+                                      _model.dropdownGnrhValue ??=
+                                          _normalizeSimNaoValue(
+                                              containerBuscarReproducaoRowList
+                                                  .firstOrNull?.gnrh),
                                     ),
                                     options: ['Sim', 'Não'],
                                     onChanged: (val) => safeSetState(
@@ -1316,8 +1363,10 @@ class _EditReproducaoRebanhoWidgetState
                                     controller:
                                         _model.dropdownCioValueController ??=
                                             FormFieldController<String>(
-                                      _model.dropdownCioValue ??= _model
-                                          .editReproducao?.firstOrNull?.cio,
+                                      _model.dropdownCioValue ??=
+                                          _normalizeSimNaoValue(
+                                              containerBuscarReproducaoRowList
+                                                  .firstOrNull?.cio),
                                     ),
                                     options: ['Sim', 'Não'],
                                     onChanged: (val) => safeSetState(
@@ -2255,9 +2304,9 @@ class _EditReproducaoRebanhoWidgetState
                                               initialValue: TextEditingValue(
                                                   text:
                                                       containerBuscarReproducaoRowList
-                                                    .firstOrNull
-                                                    ?.inseminador ??
-                                                  ''),
+                                                              .firstOrNull
+                                                              ?.inseminador ??
+                                                          ''),
                                               optionsBuilder:
                                                   (textEditingValue) {
                                                 if (textEditingValue.text ==
@@ -2605,7 +2654,8 @@ class _EditReproducaoRebanhoWidgetState
                                               ],
                                               onChanged: (val) => safeSetState(
                                                   () => _model
-                                                      .dropdownStatusValue = val),
+                                                          .dropdownStatusValue =
+                                                      val),
                                               width: double.infinity,
                                               height: 56.0,
                                               textStyle: FlutterFlowTheme.of(
@@ -2616,10 +2666,9 @@ class _EditReproducaoRebanhoWidgetState
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .secondaryText,
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryText,
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -2687,176 +2736,41 @@ class _EditReproducaoRebanhoWidgetState
                                                     ),
                                               ),
                                               InkWell(
-                                                  splashColor:
-                                                      Colors.transparent,
-                                                  focusColor:
-                                                      Colors.transparent,
-                                                  hoverColor:
-                                                      Colors.transparent,
-                                                  highlightColor:
-                                                      Colors.transparent,
-                                                  onTap: () async {
-                                                    final _datePicked5Date =
-                                                        await showDatePicker(
-                                                      context: context,
-                                                      initialDate:
-                                                          getCurrentTimestamp,
-                                                      firstDate: DateTime(1900),
-                                                      lastDate: DateTime(2050),
-                                                      builder:
-                                                          (context, child) {
-                                                        return wrapInMaterialDatePickerTheme(
-                                                          context,
-                                                          child!,
-                                                          headerBackgroundColor:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .primary,
-                                                          headerForegroundColor:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .info,
-                                                          headerTextStyle:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .headlineLarge
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        FlutterFlowTheme.of(context)
-                                                                            .headlineLargeFamily,
-                                                                    fontSize:
-                                                                        32.0,
-                                                                    letterSpacing:
-                                                                        0.0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    useGoogleFonts:
-                                                                        !FlutterFlowTheme.of(context)
-                                                                            .headlineLargeIsCustom,
-                                                                  ),
-                                                          pickerBackgroundColor:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .secondaryBackground,
-                                                          pickerForegroundColor:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .primaryText,
-                                                          selectedDateTimeBackgroundColor:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .primary,
-                                                          selectedDateTimeForegroundColor:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .info,
-                                                          actionButtonForegroundColor:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .primaryText,
-                                                          iconSize: 24.0,
-                                                        );
-                                                      },
-                                                    );
-
-                                                    if (_datePicked5Date !=
-                                                        null) {
-                                                      safeSetState(() {
-                                                        _model.datePicked5 =
-                                                            DateTime(
-                                                          _datePicked5Date.year,
-                                                          _datePicked5Date
-                                                              .month,
-                                                          _datePicked5Date.day,
-                                                        );
-                                                      });
-                                                    } else if (_model
-                                                            .datePicked5 !=
-                                                        null) {
-                                                      safeSetState(() {
-                                                        _model.datePicked5 =
-                                                            getCurrentTimestamp;
-                                                      });
-                                                    }
-                                                  },
-                                                  child: Container(
-                                                    width: double.infinity,
-                                                    height: 56.0,
-                                                    decoration: BoxDecoration(
-                                                      color: Color(0xFFF1F1F1),
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        bottomLeft:
-                                                            Radius.circular(
-                                                                6.0),
-                                                        bottomRight:
-                                                            Radius.circular(
-                                                                6.0),
-                                                        topLeft:
-                                                            Radius.circular(
-                                                                6.0),
-                                                        topRight:
-                                                            Radius.circular(
-                                                                6.0),
-                                                      ),
-                                                      border: Border.all(
-                                                        color:
-                                                            Color(0x001E7A4C),
-                                                      ),
-                                                    ),
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  8.0,
-                                                                  0.0,
-                                                                  8.0,
-                                                                  0.0),
-                                                      child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            _model.datePicked5 !=
-                                                                    null
-                                                                ? valueOrDefault<
-                                                                    String>(
-                                                                    dateTimeFormat(
-                                                                      "d/M/y",
-                                                                      _model
-                                                                          .datePicked5,
-                                                                      locale: FFLocalizations.of(
-                                                                              context)
-                                                                          .languageCode,
-                                                                    ),
-                                                                    'Data',
-                                                                  )
-                                                                : dateTimeFormat(
-                                                                    "d/M/y",
-                                                                    functions.converterParaData(_model
-                                                                        .editReproducao
-                                                                        ?.firstOrNull
-                                                                        ?.dataStatus),
-                                                                    locale: FFLocalizations.of(
-                                                                            context)
-                                                                        .languageCode,
-                                                                  ),
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMedium
+                                                splashColor: Colors.transparent,
+                                                focusColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                highlightColor:
+                                                    Colors.transparent,
+                                                onTap: () async {
+                                                  final _datePicked5Date =
+                                                      await showDatePicker(
+                                                    context: context,
+                                                    initialDate:
+                                                        getCurrentTimestamp,
+                                                    firstDate: DateTime(1900),
+                                                    lastDate: DateTime(2050),
+                                                    builder: (context, child) {
+                                                      return wrapInMaterialDatePickerTheme(
+                                                        context,
+                                                        child!,
+                                                        headerBackgroundColor:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primary,
+                                                        headerForegroundColor:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .info,
+                                                        headerTextStyle:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .headlineLarge
                                                                 .override(
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
-                                                                      .bodyMediumFamily,
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .secondaryText,
+                                                                      .headlineLargeFamily,
                                                                   fontSize:
-                                                                      16.0,
+                                                                      32.0,
                                                                   letterSpacing:
                                                                       0.0,
                                                                   fontWeight:
@@ -2865,23 +2779,145 @@ class _EditReproducaoRebanhoWidgetState
                                                                   useGoogleFonts:
                                                                       !FlutterFlowTheme.of(
                                                                               context)
-                                                                          .bodyMediumIsCustom,
+                                                                          .headlineLargeIsCustom,
                                                                 ),
-                                                          ),
-                                                          Icon(
-                                                            Icons
-                                                                .calendar_month_rounded,
-                                                            color: Color(
-                                                                0xFF181818),
-                                                            size: 24.0,
-                                                          ),
-                                                        ],
-                                                      ),
+                                                        pickerBackgroundColor:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .secondaryBackground,
+                                                        pickerForegroundColor:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primaryText,
+                                                        selectedDateTimeBackgroundColor:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primary,
+                                                        selectedDateTimeForegroundColor:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .info,
+                                                        actionButtonForegroundColor:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primaryText,
+                                                        iconSize: 24.0,
+                                                      );
+                                                    },
+                                                  );
+
+                                                  if (_datePicked5Date !=
+                                                      null) {
+                                                    safeSetState(() {
+                                                      _model.datePicked5 =
+                                                          DateTime(
+                                                        _datePicked5Date.year,
+                                                        _datePicked5Date.month,
+                                                        _datePicked5Date.day,
+                                                      );
+                                                    });
+                                                  } else if (_model
+                                                          .datePicked5 !=
+                                                      null) {
+                                                    safeSetState(() {
+                                                      _model.datePicked5 =
+                                                          getCurrentTimestamp;
+                                                    });
+                                                  }
+                                                },
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  height: 56.0,
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xFFF1F1F1),
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      bottomLeft:
+                                                          Radius.circular(6.0),
+                                                      bottomRight:
+                                                          Radius.circular(6.0),
+                                                      topLeft:
+                                                          Radius.circular(6.0),
+                                                      topRight:
+                                                          Radius.circular(6.0),
+                                                    ),
+                                                    border: Border.all(
+                                                      color: Color(0x001E7A4C),
+                                                    ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(8.0, 0.0,
+                                                                8.0, 0.0),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          _model.datePicked5 !=
+                                                                  null
+                                                              ? valueOrDefault<
+                                                                  String>(
+                                                                  dateTimeFormat(
+                                                                    "d/M/y",
+                                                                    _model
+                                                                        .datePicked5,
+                                                                    locale: FFLocalizations.of(
+                                                                            context)
+                                                                        .languageCode,
+                                                                  ),
+                                                                  'Data',
+                                                                )
+                                                              : dateTimeFormat(
+                                                                  "d/M/y",
+                                                                  functions.converterParaData(_model
+                                                                      .editReproducao
+                                                                      ?.firstOrNull
+                                                                      ?.dataStatus),
+                                                                  locale: FFLocalizations.of(
+                                                                          context)
+                                                                      .languageCode,
+                                                                ),
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium
+                                                              .override(
+                                                                fontFamily: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .secondaryText,
+                                                                fontSize: 16.0,
+                                                                letterSpacing:
+                                                                    0.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                useGoogleFonts:
+                                                                    !FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMediumIsCustom,
+                                                              ),
+                                                        ),
+                                                        Icon(
+                                                          Icons
+                                                              .calendar_month_rounded,
+                                                          color:
+                                                              Color(0xFF181818),
+                                                          size: 24.0,
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
-                                              ].divide(SizedBox(height: 8.0)),
-                                            ),
+                                              ),
+                                            ].divide(SizedBox(height: 8.0)),
+                                          ),
                                       ].divide(SizedBox(height: 24.0)),
                                     ),
                                   ].divide(SizedBox(height: 8.0)),
@@ -3275,173 +3311,170 @@ class _EditReproducaoRebanhoWidgetState
                                         ),
                                   ),
                                   InkWell(
-                                      splashColor: Colors.transparent,
-                                      focusColor: Colors.transparent,
-                                      hoverColor: Colors.transparent,
-                                      highlightColor: Colors.transparent,
-                                      onTap: () async {
-                                        final _datePicked7Date =
-                                            await showDatePicker(
-                                          context: context,
-                                          initialDate: getCurrentTimestamp,
-                                          firstDate: DateTime(1900),
-                                          lastDate: DateTime(2050),
-                                          builder: (context, child) {
-                                            return wrapInMaterialDatePickerTheme(
-                                              context,
-                                              child!,
-                                              headerBackgroundColor:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primary,
-                                              headerForegroundColor:
-                                                  FlutterFlowTheme.of(context)
-                                                      .info,
-                                              headerTextStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .headlineLarge
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .headlineLargeFamily,
-                                                        fontSize: 32.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .headlineLargeIsCustom,
-                                                      ),
-                                              pickerBackgroundColor:
-                                                  FlutterFlowTheme.of(context)
-                                                      .secondaryBackground,
-                                              pickerForegroundColor:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryText,
-                                              selectedDateTimeBackgroundColor:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primary,
-                                              selectedDateTimeForegroundColor:
-                                                  FlutterFlowTheme.of(context)
-                                                      .info,
-                                              actionButtonForegroundColor:
-                                                  FlutterFlowTheme.of(context)
-                                                      .primaryText,
-                                              iconSize: 24.0,
-                                            );
-                                          },
-                                        );
-
-                                        if (_datePicked7Date != null) {
-                                          safeSetState(() {
-                                            _model.datePicked7 = DateTime(
-                                              _datePicked7Date.year,
-                                              _datePicked7Date.month,
-                                              _datePicked7Date.day,
-                                            );
-                                          });
-                                        } else if (_model.datePicked7 != null) {
-                                          safeSetState(() {
-                                            _model.datePicked7 =
-                                                getCurrentTimestamp;
-                                          });
-                                        }
-                                      },
-                                      child: Container(
-                                        width: double.infinity,
-                                        height: 56.0,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xFFF1F1F1),
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(6.0),
-                                            bottomRight: Radius.circular(6.0),
-                                            topLeft: Radius.circular(6.0),
-                                            topRight: Radius.circular(6.0),
-                                          ),
-                                          border: Border.all(
-                                            color: Color(0x001E7A4C),
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  8.0, 0.0, 8.0, 0.0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                _model.datePicked7 != null
-                                                    ? valueOrDefault<String>(
-                                                        dateTimeFormat(
-                                                          "d/M/y",
-                                                          _model.datePicked7,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        'Data',
-                                                      )
-                                                    : dateTimeFormat(
-                                                        "d/M/y",
-                                                        functions.converterParaData(
-                                                            _model
-                                                                .editReproducao
-                                                                ?.firstOrNull
-                                                                ?.dataParto),
-                                                        locale:
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      ),
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
+                                    splashColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    hoverColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    onTap: () async {
+                                      final _datePicked7Date =
+                                          await showDatePicker(
+                                        context: context,
+                                        initialDate: getCurrentTimestamp,
+                                        firstDate: DateTime(1900),
+                                        lastDate: DateTime(2050),
+                                        builder: (context, child) {
+                                          return wrapInMaterialDatePickerTheme(
+                                            context,
+                                            child!,
+                                            headerBackgroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .primary,
+                                            headerForegroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .info,
+                                            headerTextStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .headlineLarge
                                                     .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .secondaryText,
-                                                      fontSize: 16.0,
+                                                      fontFamily: FlutterFlowTheme
+                                                              .of(context)
+                                                          .headlineLargeFamily,
+                                                      fontSize: 32.0,
                                                       letterSpacing: 0.0,
                                                       fontWeight:
                                                           FontWeight.w600,
                                                       useGoogleFonts:
                                                           !FlutterFlowTheme.of(
                                                                   context)
-                                                              .bodyMediumIsCustom,
+                                                              .headlineLargeIsCustom,
                                                     ),
-                                              ),
-                                              Icon(
-                                                Icons.calendar_month_rounded,
-                                                color: Color(0xFF181818),
-                                                size: 24.0,
-                                              ),
-                                            ],
-                                          ),
+                                            pickerBackgroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .secondaryBackground,
+                                            pickerForegroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .primaryText,
+                                            selectedDateTimeBackgroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .primary,
+                                            selectedDateTimeForegroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .info,
+                                            actionButtonForegroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .primaryText,
+                                            iconSize: 24.0,
+                                          );
+                                        },
+                                      );
+
+                                      if (_datePicked7Date != null) {
+                                        safeSetState(() {
+                                          _model.datePicked7 = DateTime(
+                                            _datePicked7Date.year,
+                                            _datePicked7Date.month,
+                                            _datePicked7Date.day,
+                                          );
+                                        });
+                                      } else if (_model.datePicked7 != null) {
+                                        safeSetState(() {
+                                          _model.datePicked7 =
+                                              getCurrentTimestamp;
+                                        });
+                                      }
+                                    },
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 56.0,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFF1F1F1),
+                                        borderRadius: BorderRadius.only(
+                                          bottomLeft: Radius.circular(6.0),
+                                          bottomRight: Radius.circular(6.0),
+                                          topLeft: Radius.circular(6.0),
+                                          topRight: Radius.circular(6.0),
+                                        ),
+                                        border: Border.all(
+                                          color: Color(0x001E7A4C),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            8.0, 0.0, 8.0, 0.0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              _model.datePicked7 != null
+                                                  ? valueOrDefault<String>(
+                                                      dateTimeFormat(
+                                                        "d/M/y",
+                                                        _model.datePicked7,
+                                                        locale:
+                                                            FFLocalizations.of(
+                                                                    context)
+                                                                .languageCode,
+                                                      ),
+                                                      'Data',
+                                                    )
+                                                  : dateTimeFormat(
+                                                      "d/M/y",
+                                                      functions
+                                                          .converterParaData(
+                                                              _model
+                                                                  .editReproducao
+                                                                  ?.firstOrNull
+                                                                  ?.dataParto),
+                                                      locale:
+                                                          FFLocalizations.of(
+                                                                  context)
+                                                              .languageCode,
+                                                    ),
+                                              style: FlutterFlowTheme.of(
+                                                      context)
+                                                  .bodyMedium
+                                                  .override(
+                                                    fontFamily:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumFamily,
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryText,
+                                                    fontSize: 16.0,
+                                                    letterSpacing: 0.0,
+                                                    fontWeight: FontWeight.w600,
+                                                    useGoogleFonts:
+                                                        !FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumIsCustom,
+                                                  ),
+                                            ),
+                                            Icon(
+                                              Icons.calendar_month_rounded,
+                                              color: Color(0xFF181818),
+                                              size: 24.0,
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
-                                ),
+                                  ),
+                                ].divide(SizedBox(height: 8.0)),
+                              ),
                             ),
                             if ((functions.converterParaData(_model
-                                  .editReproducao
-                                  ?.firstOrNull
-                                  ?.dataInseminacao) !=
-                                null) &&
-                              (functions.converterParaData(_model
-                                  .editReproducao
-                                  ?.firstOrNull
-                                  ?.dataParto) !=
-                                null))
+                                        .editReproducao
+                                        ?.firstOrNull
+                                        ?.dataInseminacao) !=
+                                    null) &&
+                                (functions.converterParaData(_model
+                                        .editReproducao
+                                        ?.firstOrNull
+                                        ?.dataParto) !=
+                                    null))
                               Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 0.0, 0.0),
@@ -3469,30 +3502,31 @@ class _EditReproducaoRebanhoWidgetState
                                       TextSpan(
                                         text: valueOrDefault<String>(
                                           functions.converterParaData(_model
-                                                  .editReproducao
-                                                  ?.firstOrNull
-                                                  ?.dataInseminacao) !=
-                                                null &&
-                                              functions.converterParaData(
-                                                  _model
-                                                    .editReproducao
-                                                    ?.firstOrNull
-                                                    ?.dataParto) !=
-                                                null
-                                            ? functions
-                                              .diasEntreDatas(
-                                                functions.converterParaData(
-                                                  _model
-                                                    .editReproducao
-                                                    ?.firstOrNull
-                                                    ?.dataInseminacao)!,
-                                                functions.converterParaData(
-                                                  _model
-                                                    .editReproducao
-                                                    ?.firstOrNull
-                                                    ?.dataParto)!)
-                                              .toString()
-                                            : '-',
+                                                          .editReproducao
+                                                          ?.firstOrNull
+                                                          ?.dataInseminacao) !=
+                                                      null &&
+                                                  functions.converterParaData(
+                                                          _model
+                                                              .editReproducao
+                                                              ?.firstOrNull
+                                                              ?.dataParto) !=
+                                                      null
+                                              ? functions
+                                                  .diasEntreDatas(
+                                                      functions.converterParaData(
+                                                          _model
+                                                              .editReproducao
+                                                              ?.firstOrNull
+                                                              ?.dataInseminacao)!,
+                                                      functions
+                                                          .converterParaData(
+                                                              _model
+                                                                  .editReproducao
+                                                                  ?.firstOrNull
+                                                                  ?.dataParto)!)
+                                                  .toString()
+                                              : '-',
                                           '-',
                                         ),
                                         style: TextStyle(

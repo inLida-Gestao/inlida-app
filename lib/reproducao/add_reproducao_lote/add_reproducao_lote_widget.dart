@@ -138,9 +138,11 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       ?.clear();
                                 });
                                 safeSetState(() {
-                                  _model.dropDownLoteValueController?.reset();
+                                  _model.dropDownLoteValueController?.value =
+                                      null;
                                   _model.dropDownLoteValue = null;
-                                  _model.dropdownStatusValueController?.reset();
+                                  _model.dropdownStatusValueController?.value =
+                                      null;
                                   _model.dropdownStatusValue = null;
                                 });
                                 _model.score = 1;
@@ -1063,7 +1065,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                           safeSetState(() {
                                             _model
                                                 .dropdownRessincValueController
-                                                ?.reset();
+                                                ?.value = null;
                                             _model.dropdownRessincValue = null;
                                           });
                                         },
@@ -3343,10 +3345,10 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         onPressed: () async {
                                           safeSetState(() {
                                             _model.dropDownLoteValueController
-                                                ?.reset();
+                                                ?.value = null;
                                             _model.dropDownLoteValue = null;
                                             _model.dropdownStatusValueController
-                                                ?.reset();
+                                                ?.value = null;
                                             _model.dropdownStatusValue = null;
                                           });
                                           safeSetState(() {

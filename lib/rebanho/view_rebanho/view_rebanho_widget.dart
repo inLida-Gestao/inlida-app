@@ -36,6 +36,39 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
     with TickerProviderStateMixin {
   late ViewRebanhoModel _model;
 
+  Future<void> _refreshHistPesagensAtual() async {
+    final idRebanho = widget.idRebanho;
+
+    FFAppState().histPesagens = [];
+    if (mounted) {
+      safeSetState(() {});
+    }
+
+    if (idRebanho == null || idRebanho.isEmpty) {
+      return;
+    }
+
+    final pesagens = await SQLiteManager.instance.buscaHistPesagens(
+      idRebanho: idRebanho,
+    );
+
+    for (final item in pesagens) {
+      FFAppState().addToHistPesagens(HistoricoPesagensStruct(
+        id: item.id,
+        idRebanho: item.idRebanho,
+        dataPesagem: item.dataPesagem,
+        tipo: item.tipo,
+        peso: item.peso,
+        deletado: item.deletado,
+        createdAt: item.createdAt,
+      ));
+    }
+
+    if (mounted) {
+      safeSetState(() {});
+    }
+  }
+
   @override
   void setState(VoidCallback callback) {
     super.setState(callback);
@@ -93,7 +126,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
 
     _model.anotacoesFocusNode ??= FocusNode();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _refreshHistPesagensAtual();
+      safeSetState(() {});
+    });
   }
 
   @override
@@ -6231,13 +6267,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                             .viewInsetsOf(
                                                                 context),
                                                         child: AddPesagemWidget(
-                                                          idRebanho: widget!
-                                                              .idRebanho!,
+                                                          idRebanho:
+                                                              widget.idRebanho,
                                                         ),
                                                       );
                                                     },
-                                                  ).then((value) =>
-                                                      safeSetState(() {}));
+                                                  );
+                                                  await _refreshHistPesagensAtual();
                                                 },
                                                 text: 'Adicionar pesagem',
                                                 icon: Icon(

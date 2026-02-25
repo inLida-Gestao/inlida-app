@@ -35,6 +35,68 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     with TickerProviderStateMixin {
   late EditRebanhoModel _model;
 
+  Future<void> _refreshPesoAtualEDataUltimaPesagem() async {
+    final idRebanho = FFAppState().rebanhoSelecionado.idRebanho;
+    if (idRebanho.isEmpty) {
+      return;
+    }
+
+    final rebanho = await SQLiteManager.instance.buscarRebanho(
+      idRebanho: idRebanho,
+    );
+    final rebanhoAtual = rebanho.firstOrNull;
+    if (rebanhoAtual == null) {
+      return;
+    }
+
+    FFAppState().updateRebanhoSelecionadoStruct(
+      (e) => e
+        ..pesoAtual = rebanhoAtual.pesoAtual
+        ..dataUltimaPesagem = rebanhoAtual.dataUltimaPesagem ?? '',
+    );
+
+    _model.pesoAtualTextController?.text =
+        rebanhoAtual.pesoAtual?.toString() ?? '';
+    _model.datePicked4 =
+        functions.converterParaData(rebanhoAtual.dataUltimaPesagem);
+
+    if (mounted) {
+      safeSetState(() {});
+    }
+  }
+
+  Future<void> _refreshHistPesagens() async {
+    final idRebanho = FFAppState().rebanhoSelecionado.idRebanho;
+    FFAppState().histPesagens = [];
+    if (mounted) {
+      safeSetState(() {});
+    }
+
+    if (idRebanho.isEmpty) {
+      return;
+    }
+
+    final pesagens = await SQLiteManager.instance.buscaHistPesagens(
+      idRebanho: idRebanho,
+    );
+
+    for (final item in pesagens) {
+      FFAppState().addToHistPesagens(HistoricoPesagensStruct(
+        id: item.id,
+        idRebanho: item.idRebanho,
+        dataPesagem: item.dataPesagem,
+        tipo: item.tipo,
+        peso: item.peso,
+        deletado: item.deletado,
+        createdAt: item.createdAt,
+      ));
+    }
+
+    if (mounted) {
+      safeSetState(() {});
+    }
+  }
+
   @override
   void setState(VoidCallback callback) {
     super.setState(callback);
@@ -60,16 +122,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     _model.nAnimalFocusNode ??= FocusNode();
 
     _model.nChipTextController ??= TextEditingController(
-        text: valueOrDefault<String>(
-                  FFAppState().rebanhoSelecionado.chip,
-                  'N/A',
-                ) ==
-                'null'
-            ? 'N/A'
-            : valueOrDefault<String>(
-                FFAppState().rebanhoSelecionado.chip,
-                'N/A',
-              ));
+        text: () {
+      final chip = FFAppState().rebanhoSelecionado.chip;
+      if (chip == 'null' || chip.trim().isEmpty) {
+        return '';
+      }
+      return chip;
+    }());
     _model.nChipFocusNode ??= FocusNode();
 
     _model.cdigoregistroTextController ??= TextEditingController(
@@ -110,6 +169,19 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
       'N/A',
     ));
     _model.anotacoesFocusNode ??= FocusNode();
+
+    _model.dPLoteValue = () {
+      final loteId = FFAppState().rebanhoSelecionado.loteId;
+      if (loteId == 'null' || loteId.trim().isEmpty) {
+        return null;
+      }
+      return loteId;
+    }();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _refreshHistPesagens();
+      await _refreshPesoAtualEDataUltimaPesagem();
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
@@ -1859,10 +1931,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 controller: _model
                                                         .dPLoteValueController ??=
                                                     FormFieldController<String>(
-                                                  _model.dPLoteValue ??=
-                                                      FFAppState()
-                                                          .rebanhoSelecionado
-                                                          .loteId,
+                                                  _model.dPLoteValue,
                                                 ),
                                                 options: List<String>.from(
                                                     FFAppState()
@@ -1932,9 +2001,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     Colors.transparent,
                                                 onTap: () async {
                                                   safeSetState(() {
-                                                    _model.dPLoteValueController
-                                                        ?.reset();
                                                     _model.dPLoteValue = null;
+                                                    _model.dPLoteValueController
+                                                        ?.value = null;
                                                   });
                                                 },
                                                 child: Icon(
@@ -6407,6 +6476,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                               FFAppState().dataDadosNaoSyncProp = getCurrentTimestamp;
                                                                               safeSetState(() {});
                                                                             }
+                                                                            await _refreshHistPesagens();
+                                                                            await _refreshPesoAtualEDataUltimaPesagem();
                                                                           }
                                                                         },
                                                                         child:
@@ -6465,8 +6536,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                                 );
                                               },
-                                            ).then(
-                                                (value) => safeSetState(() {}));
+                                            );
+                                            await _refreshHistPesagens();
+                                            await _refreshPesoAtualEDataUltimaPesagem();
                                           },
                                           text: 'Adicionar pesagem',
                                           icon: Icon(

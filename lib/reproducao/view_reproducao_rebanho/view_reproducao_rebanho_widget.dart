@@ -30,6 +30,52 @@ class _ViewReproducaoRebanhoWidgetState
     extends State<ViewReproducaoRebanhoWidget> {
   late ViewReproducaoRebanhoModel _model;
 
+  String _normalizeDisplayText(String? value, {String fallback = 'S/N'}) {
+    final normalized = value?.trim();
+    if (normalized == null ||
+        normalized.isEmpty ||
+        normalized.toLowerCase() == 'null') {
+      return fallback;
+    }
+
+    return normalized;
+  }
+
+  String _formatDisplayDate(BuildContext context, String? dateValue,
+      {String fallback = 'N/A'}) {
+    final normalized = dateValue?.trim();
+    if (normalized == null ||
+        normalized.isEmpty ||
+        normalized.toLowerCase() == 'null') {
+      return fallback;
+    }
+
+    final converted = functions.converterParaData(normalized);
+    if (converted == null) {
+      return fallback;
+    }
+
+    return dateTimeFormat(
+      "d/M/y",
+      converted,
+      locale: FFLocalizations.of(context).languageCode,
+    );
+  }
+
+  bool _hasReprodutorData(BuscarReproducaoRow? row) {
+    final num = row?.numReprodutor?.trim();
+    final nome = row?.nomeReprodutor?.trim();
+    final nasc = row?.nascimentoReprodutor?.trim();
+
+    return (num != null && num.isNotEmpty && num.toLowerCase() != 'null') ||
+        (nome != null && nome.isNotEmpty && nome.toLowerCase() != 'null') ||
+        (nasc != null && nasc.isNotEmpty && nasc.toLowerCase() != 'null');
+  }
+
+  String _buildReprodutorLabel(BuildContext context, BuscarReproducaoRow? row) {
+    return '${_normalizeDisplayText(row?.numReprodutor)} • ${_normalizeDisplayText(row?.nomeReprodutor)} • ${_formatDisplayDate(context, row?.nascimentoReprodutor)}';
+  }
+
   @override
   void setState(VoidCallback callback) {
     super.setState(callback);
@@ -704,14 +750,10 @@ class _ViewReproducaoRebanhoWidgetState
                                         ),
                                   ),
                                 ),
-                                if (FFAppState()
-                                            .reprodutorSelecionado
-                                            .idRebanho !=
-                                        null &&
-                                    FFAppState()
-                                            .reprodutorSelecionado
-                                            .idRebanho !=
-                                        '')
+                                if (_hasReprodutorData(
+                                  rAddInseminacaoBuscarReproducaoRowList
+                                    .firstOrNull,
+                                ))
                                   Container(
                                     width: double.infinity,
                                     height: 56.0,
@@ -734,51 +776,11 @@ class _ViewReproducaoRebanhoWidgetState
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Text(
-                                            '${valueOrDefault<String>(
+                                            _buildReprodutorLabel(
+                                              context,
                                               rAddInseminacaoBuscarReproducaoRowList
-                                                          .firstOrNull
-                                                          ?.numReprodutor ==
-                                                      'null'
-                                                  ? 'S/N'
-                                                  : valueOrDefault<String>(
-                                                      rAddInseminacaoBuscarReproducaoRowList
-                                                          .firstOrNull
-                                                          ?.numReprodutor,
-                                                      'S/N',
-                                                    ),
-                                              'S/N',
-                                            )} • ${valueOrDefault<String>(
-                                              rAddInseminacaoBuscarReproducaoRowList
-                                                          .firstOrNull
-                                                          ?.nomeReprodutor ==
-                                                      'null'
-                                                  ? 'S/N'
-                                                  : valueOrDefault<String>(
-                                                      rAddInseminacaoBuscarReproducaoRowList
-                                                          .firstOrNull
-                                                          ?.nomeReprodutor,
-                                                      'S/N',
-                                                    ),
-                                              'S/N',
-                                            )} • ${valueOrDefault<String>(
-                                              rAddInseminacaoBuscarReproducaoRowList
-                                                          .firstOrNull
-                                                          ?.nascimentoReprodutor ==
-                                                      'null'
-                                                  ? 'N/A'
-                                                  : dateTimeFormat(
-                                                      "d/M/y",
-                                                      functions.converterParaData(
-                                                          rAddInseminacaoBuscarReproducaoRowList
-                                                              .firstOrNull
-                                                              ?.nascimentoReprodutor),
-                                                      locale:
-                                                          FFLocalizations.of(
-                                                                  context)
-                                                              .languageCode,
-                                                    ),
-                                              'N/A',
-                                            )}',
+                                                  .firstOrNull,
+                                            ),
                                             style: FlutterFlowTheme.of(context)
                                                 .bodyMedium
                                                 .override(
@@ -802,14 +804,10 @@ class _ViewReproducaoRebanhoWidgetState
                                       ),
                                     ),
                                   ),
-                                if (FFAppState()
-                                            .reprodutorSelecionado
-                                            .idRebanho ==
-                                        null ||
-                                    FFAppState()
-                                            .reprodutorSelecionado
-                                            .idRebanho ==
-                                        '')
+                                if (!_hasReprodutorData(
+                                  rAddInseminacaoBuscarReproducaoRowList
+                                    .firstOrNull,
+                                ))
                                   Align(
                                     alignment: AlignmentDirectional(-1.0, 0.0),
                                     child: Text(

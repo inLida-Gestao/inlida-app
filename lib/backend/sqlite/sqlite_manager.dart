@@ -1114,23 +1114,62 @@ class SQLiteManager {
         statusRebanho: statusRebanho,
       );
 
-  Future addPesagem({
+  Future<void> addPesagem({
     String? idRebanho,
     String? dataPesagem,
     String? tipo,
     double? peso,
     String? deletado,
     String? createdat,
-  }) =>
-      performAddPesagem(
+  }) async {
+    await performAddPesagem(
+      _database,
+      idRebanho: idRebanho,
+      dataPesagem: dataPesagem,
+      tipo: tipo,
+      peso: peso,
+      deletado: deletado,
+      createdat: createdat,
+    );
+
+    await _syncUltimaPesagemNoRebanho(idRebanho);
+  }
+
+  Future<void> _syncUltimaPesagemNoRebanho(String? idRebanho) async {
+    if (idRebanho == null || idRebanho.isEmpty) {
+      return;
+    }
+
+    final ultimaPesagem = await _database.rawQuery('''
+SELECT peso, dataPesagem
+FROM local_historico_pesagens
+WHERE idRebanho = '${idRebanho}'
+AND deletado = 'NAO'
+ORDER BY date(dataPesagem) DESC, datetime(created_at, 'localtime') DESC, id DESC
+LIMIT 1
+''');
+
+    if (ultimaPesagem.isEmpty) {
+      await performUPDTPesoRebanho(
         _database,
+        peso: null,
+        data: '',
         idRebanho: idRebanho,
-        dataPesagem: dataPesagem,
-        tipo: tipo,
-        peso: peso,
-        deletado: deletado,
-        createdat: createdat,
       );
+      return;
+    }
+
+    final row = ultimaPesagem.first;
+    final peso = row['peso'] as num?;
+    final dataPesagem = row['dataPesagem'] as String?;
+
+    await performUPDTPesoRebanho(
+      _database,
+      peso: peso?.toDouble(),
+      data: dataPesagem,
+      idRebanho: idRebanho,
+    );
+  }
 
   Future uPDTPesoRebanho({
     double? peso,
@@ -1234,15 +1273,18 @@ class SQLiteManager {
         rebanhoIdReprodutor: rebanhoIdReprodutor,
       );
 
-  Future deletePesagem({
+  Future<void> deletePesagem({
     String? idRebanho,
     int? idPesagem,
-  }) =>
-      performDeletePesagem(
-        _database,
-        idRebanho: idRebanho,
-        idPesagem: idPesagem,
-      );
+  }) async {
+    await performDeletePesagem(
+      _database,
+      idRebanho: idRebanho,
+      idPesagem: idPesagem,
+    );
+
+    await _syncUltimaPesagemNoRebanho(idRebanho);
+  }
 
   Future deletarTodasPesagens() => performDeletarTodasPesagens(
         _database,

@@ -31,6 +31,36 @@ class EditReproducaoLoteWidget extends StatefulWidget {
 class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
   late EditReproducaoLoteModel _model;
 
+  String? _normalizeRessincValue(String? value) {
+    if (value == null) return null;
+    final normalized = value.trim().toLowerCase();
+    if (normalized.isEmpty || normalized == '-' || normalized == 'null') {
+      return null;
+    }
+    if (normalized == 'tradicional') return 'Tradicional';
+    if (normalized == 'precoce') return 'Precoce';
+    if (normalized == 'superprecoce') return 'Superprecoce';
+    return null;
+  }
+
+  String? _normalizeSimNaoValue(String? value) {
+    if (value == null) return null;
+    final normalized = value.trim().toLowerCase();
+    if (normalized.isEmpty || normalized == '-' || normalized == 'null') {
+      return null;
+    }
+    if (normalized == 'sim' || normalized == 's' || normalized == 'yes') {
+      return 'Sim';
+    }
+    if (normalized == 'não' ||
+        normalized == 'nao' ||
+        normalized == 'n' ||
+        normalized == 'no') {
+      return 'Não';
+    }
+    return null;
+  }
+
   @override
   void setState(VoidCallback callback) {
     super.setState(callback);
@@ -1413,7 +1443,12 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             controller: _model
                                                     .dropdownRessincValueController ??=
                                                 FormFieldController<String>(
-                                                    null),
+                                              _model.dropdownRessincValue ??=
+                                                  _normalizeRessincValue(
+                                                      containerBuscarReproducaoRowList
+                                                          .firstOrNull
+                                                          ?.ressinc),
+                                            ),
                                             options: [
                                               'Tradicional',
                                               'Precoce',
@@ -1504,7 +1539,11 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             controller: _model
                                                     .dropdownGnrhValueController ??=
                                                 FormFieldController<String>(
-                                                    null),
+                                              _model.dropdownGnrhValue ??=
+                                                  _normalizeSimNaoValue(
+                                                      containerBuscarReproducaoRowList
+                                                          .firstOrNull?.gnrh),
+                                            ),
                                             options: ['Sim', 'Não'],
                                             onChanged: (val) => safeSetState(
                                                 () => _model.dropdownGnrhValue =
@@ -1590,7 +1629,11 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             controller: _model
                                                     .dropdownCioValueController ??=
                                                 FormFieldController<String>(
-                                                    null),
+                                              _model.dropdownCioValue ??=
+                                                  _normalizeSimNaoValue(
+                                                      containerBuscarReproducaoRowList
+                                                          .firstOrNull?.cio),
+                                            ),
                                             options: ['Sim', 'Não'],
                                             onChanged: (val) => safeSetState(
                                                 () => _model.dropdownCioValue =

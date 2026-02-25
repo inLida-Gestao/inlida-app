@@ -111,13 +111,13 @@ class _AddReproducaoRebanhoWidgetState
                             _model.textFieldAnotacoesTextController?.clear();
                           });
                           safeSetState(() {
-                            _model.dropdownRessincValueController?.reset();
+                            _model.dropdownRessincValueController?.value = null;
                             _model.dropdownRessincValue = null;
-                            _model.dropdownGnrhValueController?.reset();
+                            _model.dropdownGnrhValueController?.value = null;
                             _model.dropdownGnrhValue = null;
-                            _model.dropdownCioValueController?.reset();
+                            _model.dropdownCioValueController?.value = null;
                             _model.dropdownCioValue = null;
-                            _model.dropdownStatusValueController?.reset();
+                            _model.dropdownStatusValueController?.value = null;
                             _model.dropdownStatusValue = null;
                           });
                           _model.score = 0.5;
@@ -1143,7 +1143,7 @@ class _AddReproducaoRebanhoWidgetState
                                   onPressed: () async {
                                     safeSetState(() {
                                       _model.dropdownRessincValueController
-                                          ?.reset();
+                                          ?.value = null;
                                       _model.dropdownRessincValue = null;
                                     });
                                   },
@@ -3153,16 +3153,16 @@ class _AddReproducaoRebanhoWidgetState
                                   onPressed: () async {
                                     safeSetState(() {
                                       _model.dropdownRessincValueController
-                                          ?.reset();
+                                        ?.value = null;
                                       _model.dropdownRessincValue = null;
                                       _model.dropdownGnrhValueController
-                                          ?.reset();
+                                        ?.value = null;
                                       _model.dropdownGnrhValue = null;
                                       _model.dropdownCioValueController
-                                          ?.reset();
+                                        ?.value = null;
                                       _model.dropdownCioValue = null;
                                       _model.dropdownStatusValueController
-                                          ?.reset();
+                                        ?.value = null;
                                       _model.dropdownStatusValue = null;
                                     });
                                     safeSetState(() {

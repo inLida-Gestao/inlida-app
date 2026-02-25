@@ -382,7 +382,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
             child: FFButtonWidget(
               onPressed: () async {
                 await SQLiteManager.instance.addPesagem(
-                  idRebanho: widget!.idRebanho,
+                  idRebanho: widget.idRebanho,
                   dataPesagem: dateTimeFormat(
                     "yyyy-MM-dd",
                     _model.datePicked,
@@ -398,7 +398,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                   ),
                 );
                 FFAppState().addToHistPesagens(HistoricoPesagensStruct(
-                  idRebanho: widget!.idRebanho,
+                  idRebanho: widget.idRebanho,
                   dataPesagem: dateTimeFormat(
                     "yyyy-MM-dd",
                     _model.datePicked,
@@ -414,15 +414,6 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                   ),
                 ));
                 safeSetState(() {});
-                await SQLiteManager.instance.uPDTPesoRebanho(
-                  idRebanho: widget!.idRebanho,
-                  peso: double.tryParse(_model.pesoTextController.text),
-                  data: dateTimeFormat(
-                    "yyyy-MM-dd",
-                    _model.datePicked,
-                    locale: FFLocalizations.of(context).languageCode,
-                  ),
-                );
                 if (!(FFAppState().dataDadosNaoSyncRebanho != null)) {
                   FFAppState().dataDadosNaoSyncRebanho = getCurrentTimestamp;
                   safeSetState(() {});

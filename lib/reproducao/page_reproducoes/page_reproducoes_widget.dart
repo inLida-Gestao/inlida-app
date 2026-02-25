@@ -1064,9 +1064,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                        if ((reproducaoItem.ressinc == null || reproducaoItem.ressinc == '') &&
-                                                                            (reproducaoItem.ressinc !=
-                                                                                '-'))
+                                                                        if ((reproducaoItem.ressinc != null && reproducaoItem.ressinc != '') &&
+                                                                          (reproducaoItem.ressinc != '-') &&
+                                                                          (reproducaoItem.ressinc != 'null'))
                                                                           Container(
                                                                             width:
                                                                                 20.0,
@@ -2099,9 +2099,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                        if ((reproducaoItem.ressinc == null || reproducaoItem.ressinc == '') &&
-                                                                            (reproducaoItem.ressinc !=
-                                                                                '-'))
+                                                                        if ((reproducaoItem.ressinc != null && reproducaoItem.ressinc != '') &&
+                                                                          (reproducaoItem.ressinc != '-') &&
+                                                                          (reproducaoItem.ressinc != 'null'))
                                                                           Container(
                                                                             width:
                                                                                 20.0,
