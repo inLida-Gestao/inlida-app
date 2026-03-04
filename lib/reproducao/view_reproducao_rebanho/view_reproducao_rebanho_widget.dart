@@ -2127,7 +2127,13 @@ class _ViewReproducaoRebanhoWidgetState
                                   .firstOrNull?.parida,
                               'N/A',
                             ) ==
-                            'SIM')
+                            'SIM' ||
+                            valueOrDefault<String>(
+                              rAddInseminacaoBuscarReproducaoRowList
+                                  .firstOrNull?.parida,
+                              'N/A',
+                            ) ==
+                            'Sim')
                             Padding(
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),

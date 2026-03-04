@@ -26,10 +26,16 @@ class EditReproducaoLoteModel
 
   bool ressinc = false;
 
+  bool parida = false;
+
   ///  State fields for stateful widgets in this component.
 
   // Stores action output result for [Backend Call - SQLite (Buscar Reproducao)] action in editReproducaoLote widget.
   List<BuscarReproducaoRow>? editReproducao;
+  // State field(s) for Checkbox-Parida widget.
+  bool? checkboxParidaValue;
+  // State field(s) for DatePicked-DataParto widget.
+  DateTime? datePicked7;
   // State field(s) for DropDown-Lote widget.
   String? dropDownLoteValue;
   FormFieldController<String>? dropDownLoteValueController;

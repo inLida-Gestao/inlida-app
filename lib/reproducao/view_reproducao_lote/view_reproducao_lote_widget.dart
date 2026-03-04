@@ -1313,7 +1313,13 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                               .reproducao?.firstOrNull?.parida,
                                           'N/A',
                                         ) ==
-                                        'SIM')
+                                        'SIM' ||
+                                        valueOrDefault<String>(
+                                          _model
+                                              .reproducao?.firstOrNull?.parida,
+                                          'N/A',
+                                        ) ==
+                                        'Sim')
                                       Icon(
                                         Icons.check_box_rounded,
                                         color: FlutterFlowTheme.of(context)
@@ -1325,7 +1331,13 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                               .reproducao?.firstOrNull?.parida,
                                           'N/A',
                                         ) ==
-                                        'NAO')
+                                        'NAO' ||
+                                        valueOrDefault<String>(
+                                          _model
+                                              .reproducao?.firstOrNull?.parida,
+                                          'N/A',
+                                        ) ==
+                                        'Não')
                                       Icon(
                                         Icons.check_box_outline_blank,
                                         color: FlutterFlowTheme.of(context)
@@ -1354,7 +1366,12 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                       _model.reproducao?.firstOrNull?.parida,
                                       'N/A',
                                     ) ==
-                                    'SIM')
+                                    'SIM' ||
+                                    valueOrDefault<String>(
+                                      _model.reproducao?.firstOrNull?.parida,
+                                      'N/A',
+                                    ) ==
+                                    'Sim')
                                   Expanded(
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,

@@ -149,8 +149,11 @@ class _EditReproducaoRebanhoWidgetState
                     _model.editReproducao?.firstOrNull?.ressinc == 'SIM'
                         ? true
                         : false;
+                final dataParto = _model.editReproducao?.firstOrNull?.dataParto;
                 _model.parida =
-                    _model.editReproducao?.firstOrNull?.parida == 'SIM'
+                    (_model.editReproducao?.firstOrNull?.parida == 'SIM' ||
+                     _model.editReproducao?.firstOrNull?.parida == 'Sim' ||
+                     (dataParto != null && dataParto.isNotEmpty && dataParto != '-'))
                         ? true
                         : false;
                 safeSetState(() {});
@@ -3952,7 +3955,7 @@ class _EditReproducaoRebanhoWidgetState
                                                   _model.dropdownRessincValue,
                                                   '-',
                                                 ),
-                                                parida: _model.parida == true
+                                                parida: (_model.checkboxParidaValue ?? _model.parida) == true
                                                     ? 'Sim'
                                                     : 'Não',
                                                 dataParto: _model.datePicked7 !=
@@ -4118,7 +4121,7 @@ class _EditReproducaoRebanhoWidgetState
                                                   _model.dropdownRessincValue,
                                                   '-',
                                                 ),
-                                                parida: _model.parida == true
+                                                parida: (_model.checkboxParidaValue ?? _model.parida) == true
                                                     ? 'Sim'
                                                     : 'Não',
                                                 dataParto: _model.datePicked7 !=
