@@ -392,6 +392,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                             .idRebanho,
                                                         categoria: animaisItem
                                                             .categoria,
+                                                        loteNome: animaisItem.loteNome,
                                                       );
                                                       safeSetState(() {});
                                                     } else {
@@ -419,6 +420,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                             .idRebanho,
                                                         categoria: animaisItem
                                                             .categoria,
+                                                        loteNome: animaisItem.loteNome,
                                                       );
                                                       safeSetState(() {});
                                                     }
@@ -438,6 +440,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                       idRebanho:
                                                           animaisItem.idRebanho,
                                                       chip: animaisItem.chip,
+                                                      loteNome: animaisItem.loteNome,
                                                     );
                                                     safeSetState(() {});
                                                     FFAppState().rebuild = true;
@@ -939,6 +942,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
+                                                                loteNome: animaisItem.loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -967,6 +971,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
+                                                                loteNome: animaisItem.loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -1208,6 +1213,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
+                                                                loteNome: animaisItem.loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -1236,6 +1242,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
+                                                                loteNome: animaisItem.loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -1482,6 +1489,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
+                                                                loteNome: animaisItem.loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -1510,6 +1518,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
+                                                                loteNome: animaisItem.loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -1744,6 +1753,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
+                                                                loteNome: animaisItem.loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -1772,6 +1782,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
+                                                                loteNome: animaisItem.loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -2125,6 +2136,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
+                                                                loteNome: animaisItem.loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -2153,6 +2165,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
+                                                                loteNome: animaisItem.loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -2387,6 +2400,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                               categoria:
                                                                   animaisItem
                                                                       .categoria,
+                                                              loteNome: animaisItem.loteNome,
                                                             );
                                                             _model.updatePage(
                                                                 () {});
@@ -2413,6 +2427,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                               categoria:
                                                                   animaisItem
                                                                       .categoria,
+                                                              loteNome: animaisItem.loteNome,
                                                             );
                                                             _model.updatePage(
                                                                 () {});
@@ -2650,6 +2665,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                               categoria:
                                                                   animaisItem
                                                                       .categoria,
+                                                              loteNome: animaisItem.loteNome,
                                                             );
                                                             _model.updatePage(
                                                                 () {});
@@ -2676,6 +2692,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                               categoria:
                                                                   animaisItem
                                                                       .categoria,
+                                                              loteNome: animaisItem.loteNome,
                                                             );
                                                             _model.updatePage(
                                                                 () {});
@@ -2910,6 +2927,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                               categoria:
                                                                   animaisItem
                                                                       .categoria,
+                                                              loteNome: animaisItem.loteNome,
                                                             );
                                                             _model.updatePage(
                                                                 () {});
@@ -2936,6 +2954,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                               categoria:
                                                                   animaisItem
                                                                       .categoria,
+                                                              loteNome: animaisItem.loteNome,
                                                             );
                                                             _model.updatePage(
                                                                 () {});

@@ -550,10 +550,7 @@ class _AddReproducaoRebanhoWidgetState
                                 ),
                               ),
                             ),
-                            if ((FFAppState().matrizSelecionada.numAnimal !=
-                                    '') ||
-                                (FFAppState().matrizSelecionada.nomeAnimal !=
-                                    ''))
+                            if (FFAppState().matrizSelecionada.idRebanho != '')
                               Align(
                                 alignment: AlignmentDirectional(-1.0, 0.0),
                                 child: Text(
