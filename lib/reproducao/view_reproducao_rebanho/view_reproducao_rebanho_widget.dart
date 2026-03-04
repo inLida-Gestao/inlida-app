@@ -575,6 +575,27 @@ class _ViewReproducaoRebanhoWidgetState
                                           ),
                                     ),
                                   ),
+                                if (rAddInseminacaoBuscarReproducaoRowList.firstOrNull != null)
+                                  Align(
+                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    child: Text(
+                                      'Lote: ${rAddInseminacaoBuscarReproducaoRowList.firstOrNull?.loteNome != null && rAddInseminacaoBuscarReproducaoRowList.firstOrNull?.loteNome != '' && rAddInseminacaoBuscarReproducaoRowList.firstOrNull?.loteNome != 'null' ? rAddInseminacaoBuscarReproducaoRowList.firstOrNull?.loteNome : 'Sem lote'}',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
+                                            fontSize: 14.0,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                  ),
                               ].divide(SizedBox(height: 8.0)),
                             ),
                           ),

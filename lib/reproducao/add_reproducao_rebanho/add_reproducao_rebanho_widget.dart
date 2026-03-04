@@ -550,6 +550,30 @@ class _AddReproducaoRebanhoWidgetState
                                 ),
                               ),
                             ),
+                            if ((FFAppState().matrizSelecionada.numAnimal !=
+                                    '') ||
+                                (FFAppState().matrizSelecionada.nomeAnimal !=
+                                    ''))
+                              Align(
+                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                child: Text(
+                                  'Lote: ${FFAppState().matrizSelecionada.loteNome != '' ? FFAppState().matrizSelecionada.loteNome : 'Sem lote'}',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily:
+                                            FlutterFlowTheme.of(context)
+                                                .bodyMediumFamily,
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryText,
+                                        fontSize: 14.0,
+                                        letterSpacing: 0.0,
+                                        useGoogleFonts:
+                                            !FlutterFlowTheme.of(context)
+                                                .bodyMediumIsCustom,
+                                      ),
+                                ),
+                              ),
                           ].divide(SizedBox(height: 8.0)),
                         ),
                       ),

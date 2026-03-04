@@ -29,6 +29,8 @@ class PageReproducoesModel extends FlutterFlowModel<PageReproducoesWidget> {
 
   int? pageNum = 1;
 
+  int countReproducoesFiltradas = 0;
+
   ///  State fields for stateful widgets in this component.
 
   // Model for selecionarPropriedade component.

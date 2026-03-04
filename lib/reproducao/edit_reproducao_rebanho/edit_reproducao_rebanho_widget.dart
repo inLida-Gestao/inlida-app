@@ -408,6 +408,24 @@ class _EditReproducaoRebanhoWidgetState
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
+                                    if (containerBuscarReproducaoRowList.firstOrNull != null)
+                                      Text(
+                                        'Lote: ${containerBuscarReproducaoRowList.firstOrNull?.loteNome != null && containerBuscarReproducaoRowList.firstOrNull?.loteNome != '' && containerBuscarReproducaoRowList.firstOrNull?.loteNome != 'null' ? containerBuscarReproducaoRowList.firstOrNull?.loteNome : 'Sem lote'}',
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMediumFamily,
+                                              color: FlutterFlowTheme.of(context)
+                                                  .secondaryText,
+                                              fontSize: 14.0,
+                                              letterSpacing: 0.0,
+                                              useGoogleFonts:
+                                                  !FlutterFlowTheme.of(context)
+                                                      .bodyMediumIsCustom,
+                                            ),
+                                      ),
                                   ],
                                 ),
                               ),

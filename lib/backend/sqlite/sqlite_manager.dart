@@ -274,10 +274,26 @@ class SQLiteManager {
 
   Future<List<QTDReproducoesRow>> qTDReproducoes({
     String? idPropriedade,
+    String? tipoRepro,
+    String? inseminador,
+    String? loteNome,
+    String? dataRepro,
+    String? dataReproFim,
+    String? dataPrev,
+    String? dataPrevFim,
+    String? categoriaFiltro,
   }) =>
       performQTDReproducoes(
         _database,
         idPropriedade: idPropriedade,
+        tipoRepro: tipoRepro,
+        inseminador: inseminador,
+        loteNome: loteNome,
+        dataRepro: dataRepro,
+        dataReproFim: dataReproFim,
+        dataPrev: dataPrev,
+        dataPrevFim: dataPrevFim,
+        categoriaFiltro: categoriaFiltro,
       );
 
   Future<List<QTDInseminacaoRow>> qTDInseminacao({
@@ -414,8 +430,11 @@ class SQLiteManager {
     String? inseminador,
     String? loteNome,
     String? dataRepro,
+    String? dataReproFim,
     String? dataPrev,
+    String? dataPrevFim,
     String? dataHoje,
+    String? categoriaFiltro,
   }) =>
       performListarReproducoesPaginada(
         _database,
@@ -426,8 +445,11 @@ class SQLiteManager {
         inseminador: inseminador,
         loteNome: loteNome,
         dataRepro: dataRepro,
+        dataReproFim: dataReproFim,
         dataPrev: dataPrev,
+        dataPrevFim: dataPrevFim,
         dataHoje: dataHoje,
+        categoriaFiltro: categoriaFiltro,
       );
 
   Future<List<CountAnimaisLoteRow>> countAnimaisLote({
@@ -479,8 +501,11 @@ class SQLiteManager {
     String? loteNome,
     String? pesquisa,
     String? dataRepro,
+    String? dataReproFim,
     String? dataPrev,
+    String? dataPrevFim,
     String? dataHoje,
+    String? categoriaFiltro,
   }) =>
       performListarReproducoesPesq(
         _database,
@@ -490,8 +515,11 @@ class SQLiteManager {
         loteNome: loteNome,
         pesquisa: pesquisa,
         dataRepro: dataRepro,
+        dataReproFim: dataReproFim,
         dataPrev: dataPrev,
+        dataPrevFim: dataPrevFim,
         dataHoje: dataHoje,
+        categoriaFiltro: categoriaFiltro,
       );
 
   Future<List<BuscaSanidadesPesqRow>> buscaSanidadesPesq({

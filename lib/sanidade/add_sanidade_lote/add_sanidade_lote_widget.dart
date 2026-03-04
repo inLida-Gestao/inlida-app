@@ -1155,7 +1155,10 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               'Deltrametrina, Imidocarp, Nitroxinil & Triclorfon',
                                               'Doramectina',
                                               'Eprinomectina',
-                                              'Ivermectina'
+                                              'Ivermectina',
+                                              'Moxidectina',
+                                              'Levamisol',
+                                              'Vermífigo'
                                             ],
                                             width: double.infinity,
                                             height: 56.0,
@@ -2685,8 +2688,31 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                       ),
                       Expanded(
                         child: FFButtonWidget(
-                          onPressed: (_model.dropDownLoteValue == null ||
-                                  _model.dropDownLoteValue == '')
+                          onPressed: ((_model.dropDownLoteValue == null ||
+                                      _model.dropDownLoteValue == '') ||
+                                  (_model.datePicked == null) ||
+                              (FFAppState().sanidade.isEmpty) ||
+                              (FFAppState().sanidade.contains('Vacina') &&
+                                !(_model
+                                    .dropDownVacinaValue?.isNotEmpty ??
+                                  false)) ||
+                              (FFAppState().sanidade.contains(
+                                  'Antiraparasitário') &&
+                                !(_model.dropDownAntiparasitarioValue
+                                    ?.isNotEmpty ??
+                                  false)) ||
+                              (FFAppState()
+                                  .sanidade
+                                  .contains('Tratamento') &&
+                                !(_model.dropDownTratamentoValue
+                                    ?.isNotEmpty ??
+                                  false)) ||
+                              (FFAppState().sanidade.contains(
+                                  'Protocolo reprodutivo') &&
+                                ((_model.dropDownProtocoloValue ==
+                                    null) ||
+                                  (_model.dropDownProtocoloValue ==
+                                    ''))))
                               ? null
                               : () async {
                                   if (!(FFAppState().dataDadosNaoSyncSanidade !=

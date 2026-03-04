@@ -282,6 +282,28 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       .nAnimalTextController,
                                                   focusNode:
                                                       _model.nAnimalFocusNode,
+                                                  onChanged: (value) {
+                                                  final upperValue =
+                                                    value.toUpperCase();
+                                                  if (value != upperValue) {
+                                                    _model
+                                                      .nAnimalTextController!
+                                                      .value = _model
+                                                        .nAnimalTextController!
+                                                        .value
+                                                        .copyWith(
+                                                        text:
+                                                          upperValue,
+                                                        selection: TextSelection
+                                                          .collapsed(
+                                                            offset:
+                                                              upperValue.length),
+                                                        composing:
+                                                          TextRange
+                                                            .empty,
+                                                        );
+                                                  }
+                                                  },
                                                   autofocus: true,
                                                   obscureText: false,
                                                   decoration: InputDecoration(

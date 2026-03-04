@@ -1318,10 +1318,36 @@ class FFAppState extends ChangeNotifier {
     _filtroDataReproducao = value;
   }
 
+  DateTime? _filtroDataReproducaoFim;
+  DateTime? get filtroDataReproducaoFim => _filtroDataReproducaoFim;
+  set filtroDataReproducaoFim(DateTime? value) {
+    _filtroDataReproducaoFim = value;
+  }
+
   DateTime? _filtroDataParto;
   DateTime? get filtroDataParto => _filtroDataParto;
   set filtroDataParto(DateTime? value) {
     _filtroDataParto = value;
+  }
+
+  DateTime? _filtroDataPartoFim;
+  DateTime? get filtroDataPartoFim => _filtroDataPartoFim;
+  set filtroDataPartoFim(DateTime? value) {
+    _filtroDataPartoFim = value;
+  }
+
+  List<String> _filtroCategoriaReproducao = [];
+  List<String> get filtroCategoriaReproducao => _filtroCategoriaReproducao;
+  set filtroCategoriaReproducao(List<String> value) {
+    _filtroCategoriaReproducao = value;
+  }
+
+  void addToFiltroCategoriaReproducao(String value) {
+    filtroCategoriaReproducao.add(value);
+  }
+
+  void removeFromFiltroCategoriaReproducao(String value) {
+    filtroCategoriaReproducao.remove(value);
   }
 
   String _filtroInseminador = '';

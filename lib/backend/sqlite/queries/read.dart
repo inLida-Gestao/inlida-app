@@ -1074,10 +1074,34 @@ class BuscarLotesRow extends SqliteRow {
 Future<List<QTDReproducoesRow>> performQTDReproducoes(
   Database database, {
   String? idPropriedade,
+  String? tipoRepro,
+  String? inseminador,
+  String? loteNome,
+  String? dataRepro,
+  String? dataReproFim,
+  String? dataPrev,
+  String? dataPrevFim,
+  String? categoriaFiltro,
 }) {
+  final _tipoRepro = tipoRepro ?? '';
+  final _inseminador = inseminador ?? '';
+  final _loteNome = loteNome ?? '';
+  final _dataRepro = dataRepro ?? '';
+  final _dataReproFim = dataReproFim ?? '';
+  final _dataPrev = dataPrev ?? '';
+  final _dataPrevFim = dataPrevFim ?? '';
+  final _categoriaFiltro = categoriaFiltro ?? '';
   final query = '''
 SELECT * FROM local_reproducao
 WHERE id_propriedade = '${idPropriedade}'
+AND ('${_tipoRepro}' = '' OR tipo_reproducao = '${_tipoRepro}')
+AND ('${_inseminador}' = '' OR inseminador = '${_inseminador}')
+AND ('${_loteNome}' = '' OR loteNome = '${_loteNome}')
+AND ('${_dataRepro}' = '' OR date(data_inseminacao) >= date('${_dataRepro}'))
+AND ('${_dataReproFim}' = '' OR date(data_inseminacao) <= date('${_dataReproFim}'))
+AND ('${_dataPrev}' = '' OR date(previsao_parto) >= date('${_dataPrev}'))
+AND ('${_dataPrevFim}' = '' OR date(previsao_parto) <= date('${_dataPrevFim}'))
+AND ('${_categoriaFiltro}' = '' OR categoria IN (${_categoriaFiltro.split(',').where((e) => e.isNotEmpty).map((e) => "'${e.trim()}'").join(',')}))
 AND deletado = 'NAO'
 
 
@@ -1755,8 +1779,11 @@ Future<List<ListarReproducoesPaginadaRow>> performListarReproducoesPaginada(
   String? inseminador,
   String? loteNome,
   String? dataRepro,
+  String? dataReproFim,
   String? dataPrev,
+  String? dataPrevFim,
   String? dataHoje,
+  String? categoriaFiltro,
 }) {
   final query = '''
 SELECT * FROM local_reproducao
@@ -1765,7 +1792,10 @@ AND ('${tipoRepro}' = '' OR tipo_reproducao = '${tipoRepro}')
 AND ('${inseminador}' = '' OR inseminador = '${inseminador}')
 AND ('${loteNome}' = '' OR loteNome = '${loteNome}')
 AND ('${dataRepro}' = '' OR date(data_inseminacao) >= date('${dataRepro}'))
-AND ('${dataPrev}' = '' OR '${dataHoje}' = '' OR date(previsao_parto) BETWEEN date('${dataHoje}') AND date('${dataPrev}') )
+AND ('${dataReproFim}' = '' OR date(data_inseminacao) <= date('${dataReproFim}'))
+AND ('${dataPrev}' = '' OR date(previsao_parto) >= date('${dataPrev}'))
+AND ('${dataPrevFim}' = '' OR date(previsao_parto) <= date('${dataPrevFim}'))
+AND ('${categoriaFiltro}' = '' OR categoria IN (${(categoriaFiltro ?? '').split(',').where((e) => e.isNotEmpty).map((e) => "'${e.trim()}'").join(',')}))
 AND deletado = 'NAO'
 ORDER BY created_at DESC
 LIMIT ${limitRep} OFFSET ${offsetRep}
@@ -1991,8 +2021,11 @@ Future<List<ListarReproducoesPesqRow>> performListarReproducoesPesq(
   String? loteNome,
   String? pesquisa,
   String? dataRepro,
+  String? dataReproFim,
   String? dataPrev,
+  String? dataPrevFim,
   String? dataHoje,
+  String? categoriaFiltro,
 }) {
   final query = '''
 SELECT * FROM local_reproducao a
@@ -2004,7 +2037,10 @@ AND ('${pesquisa}' = '' OR a.numMatriz LIKE '%${pesquisa}%' OR a.nomeMatriz LIKE
 a.numReprodutor LIKE '%${pesquisa}%' OR a.nomeReprodutor LIKE '%${pesquisa}%' OR 
 a.chipMatriz LIKE '%${pesquisa}%' OR a.chipReprodutor LIKE '%${pesquisa}%')
 AND ('${dataRepro}' = '' OR date(data_inseminacao) >= date('${dataRepro}'))
-AND ('${dataPrev}' = '' OR '${dataHoje}' = '' OR date(previsao_parto) BETWEEN date('${dataHoje}') AND date('${dataPrev}') )
+AND ('${dataReproFim}' = '' OR date(data_inseminacao) <= date('${dataReproFim}'))
+AND ('${dataPrev}' = '' OR date(previsao_parto) >= date('${dataPrev}'))
+AND ('${dataPrevFim}' = '' OR date(previsao_parto) <= date('${dataPrevFim}'))
+AND ('${categoriaFiltro}' = '' OR a.categoria IN (${(categoriaFiltro ?? '').split(',').where((e) => e.isNotEmpty).map((e) => "'${e.trim()}'").join(',')}))
 AND deletado = 'NAO'
 ORDER BY created_at DESC
 --LIMIT 100

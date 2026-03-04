@@ -14,13 +14,15 @@ class AnimalSelecionadoStruct extends BaseStruct {
     String? idRebanho,
     String? chip,
     String? categoria,
+    String? loteNome,
   })  : _numAnimal = numAnimal,
         _nomeAnimal = nomeAnimal,
         _dataNascAnimal = dataNascAnimal,
         _racaAnimal = racaAnimal,
         _idRebanho = idRebanho,
         _chip = chip,
-        _categoria = categoria;
+        _categoria = categoria,
+        _loteNome = loteNome;
 
   // "numAnimal" field.
   String? _numAnimal;
@@ -71,6 +73,13 @@ class AnimalSelecionadoStruct extends BaseStruct {
 
   bool hasCategoria() => _categoria != null;
 
+  // "loteNome" field.
+  String? _loteNome;
+  String get loteNome => _loteNome ?? '';
+  set loteNome(String? val) => _loteNome = val;
+
+  bool hasLoteNome() => _loteNome != null;
+
   static AnimalSelecionadoStruct fromMap(Map<String, dynamic> data) =>
       AnimalSelecionadoStruct(
         numAnimal: data['numAnimal'] as String?,
@@ -80,6 +89,7 @@ class AnimalSelecionadoStruct extends BaseStruct {
         idRebanho: data['idRebanho'] as String?,
         chip: data['chip'] as String?,
         categoria: data['categoria'] as String?,
+        loteNome: data['loteNome'] as String?,
       );
 
   static AnimalSelecionadoStruct? maybeFromMap(dynamic data) => data is Map
@@ -94,6 +104,7 @@ class AnimalSelecionadoStruct extends BaseStruct {
         'idRebanho': _idRebanho,
         'chip': _chip,
         'categoria': _categoria,
+        'loteNome': _loteNome,
       }.withoutNulls;
 
   @override
@@ -124,6 +135,10 @@ class AnimalSelecionadoStruct extends BaseStruct {
         ),
         'categoria': serializeParam(
           _categoria,
+          ParamType.String,
+        ),
+        'loteNome': serializeParam(
+          _loteNome,
           ParamType.String,
         ),
       }.withoutNulls;
@@ -166,6 +181,11 @@ class AnimalSelecionadoStruct extends BaseStruct {
           ParamType.String,
           false,
         ),
+        loteNome: deserializeParam(
+          data['loteNome'],
+          ParamType.String,
+          false,
+        ),
       );
 
   @override
@@ -180,7 +200,8 @@ class AnimalSelecionadoStruct extends BaseStruct {
         racaAnimal == other.racaAnimal &&
         idRebanho == other.idRebanho &&
         chip == other.chip &&
-        categoria == other.categoria;
+        categoria == other.categoria &&
+        loteNome == other.loteNome;
   }
 
   @override
@@ -191,7 +212,8 @@ class AnimalSelecionadoStruct extends BaseStruct {
         racaAnimal,
         idRebanho,
         chip,
-        categoria
+        categoria,
+        loteNome
       ]);
 }
 
@@ -203,6 +225,7 @@ AnimalSelecionadoStruct createAnimalSelecionadoStruct({
   String? idRebanho,
   String? chip,
   String? categoria,
+  String? loteNome,
 }) =>
     AnimalSelecionadoStruct(
       numAnimal: numAnimal,
@@ -212,4 +235,5 @@ AnimalSelecionadoStruct createAnimalSelecionadoStruct({
       idRebanho: idRebanho,
       chip: chip,
       categoria: categoria,
+      loteNome: loteNome,
     );

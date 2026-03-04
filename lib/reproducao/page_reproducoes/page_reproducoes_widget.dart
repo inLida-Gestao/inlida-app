@@ -122,6 +122,95 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
     );
   }
 
+  Future<void> _atualizarCountReproducoesFiltradas() async {
+    if (!_hasFiltrosAtivos()) {
+      _model.countReproducoesFiltradas = FFAppState().countReproducoes;
+      return;
+    }
+
+    final result = await SQLiteManager.instance.qTDReproducoes(
+      idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+      tipoRepro: FFAppState().filtroReproducao,
+      inseminador: FFAppState().filtroInseminador,
+      loteNome: FFAppState().filtroLoteReproducao,
+      dataRepro: dateTimeFormat(
+        'yyyy-MM-dd',
+        FFAppState().filtroDataReproducao,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+      dataReproFim: dateTimeFormat(
+        'yyyy-MM-dd',
+        FFAppState().filtroDataReproducaoFim,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+      dataPrev: dateTimeFormat(
+        'yyyy-MM-dd',
+        FFAppState().filtroDataParto,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+      dataPrevFim: dateTimeFormat(
+        'yyyy-MM-dd',
+        FFAppState().filtroDataPartoFim,
+        locale: FFLocalizations.of(context).languageCode,
+      ),
+      categoriaFiltro: FFAppState().filtroCategoriaReproducao.isNotEmpty
+          ? FFAppState().filtroCategoriaReproducao.join(',')
+          : '',
+    );
+
+    _model.countReproducoesFiltradas = result.length;
+  }
+
+  String _buildDateRangeChip({
+    required DateTime? inicio,
+    required DateTime? fim,
+    required String prefixo,
+  }) {
+    if (inicio == null && fim == null) {
+      return '';
+    }
+
+    final inicioTxt = inicio != null
+        ? dateTimeFormat(
+            'd/M/y',
+            inicio,
+            locale: FFLocalizations.of(context).languageCode,
+          )
+        : '...';
+    final fimTxt = fim != null
+        ? dateTimeFormat(
+            'd/M/y',
+            fim,
+            locale: FFLocalizations.of(context).languageCode,
+          )
+        : '...';
+
+    return '$prefixo: $inicioTxt - $fimTxt';
+  }
+
+  bool _hasFiltrosAtivos() {
+    return FFAppState().filtroReproducao != '' ||
+        FFAppState().filtroInseminador != '' ||
+        FFAppState().filtroLoteReproducao != '' ||
+        FFAppState().filtroDataReproducao != null ||
+        FFAppState().filtroDataReproducaoFim != null ||
+        FFAppState().filtroDataParto != null ||
+        FFAppState().filtroDataPartoFim != null ||
+        FFAppState().filtroCategoriaReproducao.isNotEmpty;
+  }
+
+  int _totalReproducoesParaPaginacao() {
+    return _model.countReproducoesFiltradas;
+  }
+
+  int _totalPaginasParaPaginacao() {
+    final total = _totalReproducoesParaPaginacao();
+    if (total <= 0) {
+      return 1;
+    }
+    return (total / _model.limit).ceil();
+  }
+
   @override
   void setState(VoidCallback callback) {
     super.setState(callback);
@@ -136,6 +225,8 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       await action_blocks.qTDReproducoes(context);
+      await _atualizarCountReproducoesFiltradas();
+      safeSetState(() {});
     });
 
     _model.pesquisarTextController ??= TextEditingController();
@@ -584,7 +675,13 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                 child: FiltrosReproducaoWidget(),
                               );
                             },
-                          ).then((value) => safeSetState(() {}));
+                          ).then((value) async {
+                            await action_blocks.qTDReproducoes(context);
+                            await _atualizarCountReproducoesFiltradas();
+                            _model.pageNum = 1;
+                            _model.offset = 0;
+                            safeSetState(() {});
+                          });
                         },
                         child: Container(
                           width: 102.0,
@@ -631,8 +728,12 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                           ),
                         ),
                       ),
-                      if (FFAppState().filtroPrevisaoPartoTxt != null &&
-                          FFAppState().filtroPrevisaoPartoTxt != '')
+                      if (_buildDateRangeChip(
+                            inicio: FFAppState().filtroDataParto,
+                            fim: FFAppState().filtroDataPartoFim,
+                            prefixo: 'Previsão de parto',
+                          ) !=
+                          '')
                         Container(
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context)
@@ -647,7 +748,11 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 16.0, 8.0, 16.0, 8.0),
                             child: Text(
-                              FFAppState().filtroPrevisaoPartoTxt,
+                              _buildDateRangeChip(
+                                inicio: FFAppState().filtroDataParto,
+                                fim: FFAppState().filtroDataPartoFim,
+                                prefixo: 'Previsão de parto',
+                              ),
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
@@ -667,8 +772,12 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                             ),
                           ),
                         ),
-                      if (FFAppState().filtroDataReproducaoTxt != null &&
-                          FFAppState().filtroDataReproducaoTxt != '')
+                      if (_buildDateRangeChip(
+                            inicio: FFAppState().filtroDataReproducao,
+                            fim: FFAppState().filtroDataReproducaoFim,
+                            prefixo: 'Data da reprodução',
+                          ) !=
+                          '')
                         Container(
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context)
@@ -683,7 +792,46 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                             padding: EdgeInsetsDirectional.fromSTEB(
                                 16.0, 8.0, 16.0, 8.0),
                             child: Text(
-                              FFAppState().filtroDataReproducaoTxt,
+                              _buildDateRangeChip(
+                                inicio: FFAppState().filtroDataReproducao,
+                                fim: FFAppState().filtroDataReproducaoFim,
+                                prefixo: 'Data da reprodução',
+                              ),
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    font: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w500,
+                                      fontStyle: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .fontStyle,
+                                    ),
+                                    color: Color(0xFF5F5F5F),
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.w500,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .fontStyle,
+                                  ),
+                            ),
+                          ),
+                        ),
+                      if (FFAppState().filtroCategoriaReproducao.isNotEmpty)
+                        Container(
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.of(context)
+                                .secondaryBackground,
+                            borderRadius: BorderRadius.circular(24.0),
+                            shape: BoxShape.rectangle,
+                            border: Border.all(
+                              color: Color(0xFFBEBEBE),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                16.0, 8.0, 16.0, 8.0),
+                            child: Text(
+                              'Categoria: ${FFAppState().filtroCategoriaReproducao.join(', ')}',
                               style: FlutterFlowTheme.of(context)
                                   .bodyMedium
                                   .override(
@@ -778,9 +926,19 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                           FFAppState().filtroDataReproducao,
                           locale: FFLocalizations.of(context).languageCode,
                         ),
+                        dataReproFim: dateTimeFormat(
+                          "yyyy-MM-dd",
+                          FFAppState().filtroDataReproducaoFim,
+                          locale: FFLocalizations.of(context).languageCode,
+                        ),
                         dataPrev: dateTimeFormat(
                           "yyyy-MM-dd",
                           FFAppState().filtroDataParto,
+                          locale: FFLocalizations.of(context).languageCode,
+                        ),
+                        dataPrevFim: dateTimeFormat(
+                          "yyyy-MM-dd",
+                          FFAppState().filtroDataPartoFim,
                           locale: FFLocalizations.of(context).languageCode,
                         ),
                         dataHoje: dateTimeFormat(
@@ -788,6 +946,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                           FFAppState().filtroDataHoje,
                           locale: FFLocalizations.of(context).languageCode,
                         ),
+                        categoriaFiltro: FFAppState().filtroCategoriaReproducao.isNotEmpty
+                            ? FFAppState().filtroCategoriaReproducao.join(',')
+                            : '',
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -1117,7 +1278,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             ),
                                                                           ),
                                                                           Text(
-                                                                            'Lote da reprodução:',
+                                                                            'Lote:',
                                                                             style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                                   font: GoogleFonts.poppins(
                                                                                     fontWeight: FontWeight.normal,
@@ -1744,9 +1905,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                           ),
                                           TextSpan(
                                             text: valueOrDefault<String>(
-                                              ((FFAppState().countReproducoes /
-                                                          _model.limit)
-                                                      .ceil())
+                                              _totalPaginasParaPaginacao()
                                                   .toString(),
                                               '1',
                                             ),
@@ -1779,9 +1938,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                       ),
                                       onPressed: (_model.pageNum ==
                                               valueOrDefault<int>(
-                                                (FFAppState().countReproducoes /
-                                                        _model.limit)
-                                                    .ceil(),
+                                                _totalPaginasParaPaginacao(),
                                                 1,
                                               ))
                                           ? null
@@ -1815,9 +1972,19 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                           FFAppState().filtroDataReproducao,
                           locale: FFLocalizations.of(context).languageCode,
                         ),
+                        dataReproFim: dateTimeFormat(
+                          "yyyy-MM-dd",
+                          FFAppState().filtroDataReproducaoFim,
+                          locale: FFLocalizations.of(context).languageCode,
+                        ),
                         dataPrev: dateTimeFormat(
                           "yyyy-MM-dd",
                           FFAppState().filtroDataParto,
+                          locale: FFLocalizations.of(context).languageCode,
+                        ),
+                        dataPrevFim: dateTimeFormat(
+                          "yyyy-MM-dd",
+                          FFAppState().filtroDataPartoFim,
                           locale: FFLocalizations.of(context).languageCode,
                         ),
                         dataHoje: dateTimeFormat(
@@ -1825,6 +1992,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                           FFAppState().filtroDataHoje,
                           locale: FFLocalizations.of(context).languageCode,
                         ),
+                        categoriaFiltro: FFAppState().filtroCategoriaReproducao.isNotEmpty
+                            ? FFAppState().filtroCategoriaReproducao.join(',')
+                            : '',
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -2152,7 +2322,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             ),
                                                                           ),
                                                                           Text(
-                                                                            'Lote da reprodução:',
+                                                                            'Lote:',
                                                                             style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                                   font: GoogleFonts.poppins(
                                                                                     fontWeight: FontWeight.normal,

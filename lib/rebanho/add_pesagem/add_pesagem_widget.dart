@@ -26,6 +26,20 @@ class AddPesagemWidget extends StatefulWidget {
 class _AddPesagemWidgetState extends State<AddPesagemWidget> {
   late AddPesagemModel _model;
 
+  double? _parsePesoInteiro(String? rawValue) {
+    final normalized = rawValue?.trim().replaceAll(',', '.');
+    if (normalized == null || normalized.isEmpty) {
+      return null;
+    }
+
+    final parsed = double.tryParse(normalized);
+    if (parsed == null) {
+      return null;
+    }
+
+    return parsed.truncateToDouble();
+  }
+
   @override
   void setState(VoidCallback callback) {
     super.setState(callback);
@@ -381,6 +395,9 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
             padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
             child: FFButtonWidget(
               onPressed: () async {
+                final pesoInteiro =
+                    _parsePesoInteiro(_model.pesoTextController.text);
+
                 await SQLiteManager.instance.addPesagem(
                   idRebanho: widget.idRebanho,
                   dataPesagem: dateTimeFormat(
@@ -389,7 +406,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                     locale: FFLocalizations.of(context).languageCode,
                   ),
                   tipo: 'Atual',
-                  peso: double.tryParse(_model.pesoTextController.text),
+                  peso: pesoInteiro,
                   deletado: 'NAO',
                   createdat: dateTimeFormat(
                     "yyyy-MM-dd HH:mm:ss",
@@ -405,7 +422,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                     locale: FFLocalizations.of(context).languageCode,
                   ),
                   tipo: 'Atual',
-                  peso: double.tryParse(_model.pesoTextController.text),
+                  peso: pesoInteiro,
                   deletado: 'NAO',
                   createdAt: dateTimeFormat(
                     "yyyy-MM-dd HH:mm:ss",

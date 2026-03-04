@@ -424,12 +424,32 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   _model.nAnimalTextController,
                                               focusNode:
                                                   _model.nAnimalFocusNode,
-                                              onChanged: (_) =>
-                                                  EasyDebounce.debounce(
-                                                '_model.nAnimalTextController',
-                                                Duration(milliseconds: 2000),
-                                                () => safeSetState(() {}),
-                                              ),
+                                              onChanged: (value) {
+                                                final upperValue =
+                                                    value.toUpperCase();
+                                                if (value != upperValue) {
+                                                  _model
+                                                      .nAnimalTextController!
+                                                      .value = _model
+                                                          .nAnimalTextController!
+                                                          .value
+                                                          .copyWith(
+                                                            text: upperValue,
+                                                            selection: TextSelection
+                                                                .collapsed(
+                                                                    offset:
+                                                                        upperValue
+                                                                            .length),
+                                                            composing:
+                                                                TextRange.empty,
+                                                          );
+                                                }
+                                                EasyDebounce.debounce(
+                                                  '_model.nAnimalTextController',
+                                                  Duration(milliseconds: 2000),
+                                                  () => safeSetState(() {}),
+                                                );
+                                              },
                                               autofocus: true,
                                               obscureText: false,
                                               decoration: InputDecoration(
@@ -5871,12 +5891,15 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         .rebanhoSelecionado
                                                         .rebanhoIdReprodutor,
                                               );
-                                              if (FFAppState()
+                                                final novoPesoNascimento =
+                                                  double.tryParse(_model
+                                                    .pesonascimentoTextController
+                                                    .text);
+                                                if (novoPesoNascimento != null &&
+                                                  FFAppState()
                                                       .rebanhoSelecionado
                                                       .pesoNascimento !=
-                                                  (double.parse(_model
-                                                      .pesonascimentoTextController
-                                                      .text))) {
+                                                    novoPesoNascimento) {
                                                 await SQLiteManager.instance
                                                     .addPesagem(
                                                   dataPesagem: _model
@@ -5918,12 +5941,15 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       .idRebanho,
                                                 );
                                               }
-                                              if (FFAppState()
+                                                final novoPesoDesmama =
+                                                  double.tryParse(_model
+                                                    .pesodadesmamaTextController
+                                                    .text);
+                                                if (novoPesoDesmama != null &&
+                                                  FFAppState()
                                                       .rebanhoSelecionado
                                                       .pesoDesmama !=
-                                                  (double.parse(_model
-                                                      .pesodadesmamaTextController
-                                                      .text))) {
+                                                    novoPesoDesmama) {
                                                 await SQLiteManager.instance
                                                     .addPesagem(
                                                   dataPesagem: _model
@@ -5965,12 +5991,15 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       .idRebanho,
                                                 );
                                               }
-                                              if (FFAppState()
+                                                final novoPesoAtual =
+                                                  double.tryParse(_model
+                                                    .pesoAtualTextController
+                                                    .text);
+                                                if (novoPesoAtual != null &&
+                                                  FFAppState()
                                                       .rebanhoSelecionado
                                                       .pesoAtual !=
-                                                  (double.parse(_model
-                                                      .pesoAtualTextController
-                                                      .text))) {
+                                                    novoPesoAtual) {
                                                 await SQLiteManager.instance
                                                     .addPesagem(
                                                   dataPesagem: _model

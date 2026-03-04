@@ -8,7 +8,6 @@ import 'dart:ui';
 import '/actions/actions.dart' as action_blocks;
 import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'add_rebanho_semen_model.dart';
 export 'add_rebanho_semen_model.dart';
@@ -173,6 +172,20 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                   child: TextFormField(
                                     controller: _model.nAnimalTextController,
                                     focusNode: _model.nAnimalFocusNode,
+                                    onChanged: (value) {
+                                      final upperValue = value.toUpperCase();
+                                      if (value != upperValue) {
+                                        _model.nAnimalTextController!.value =
+                                            _model.nAnimalTextController!.value
+                                                .copyWith(
+                                          text: upperValue,
+                                          selection:
+                                              TextSelection.collapsed(
+                                                  offset: upperValue.length),
+                                          composing: TextRange.empty,
+                                        );
+                                      }
+                                    },
                                     autofocus: true,
                                     obscureText: false,
                                     decoration: InputDecoration(
@@ -765,7 +778,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                       ),
                                       tipo: 'Sêmen',
                                       sexo: 'Macho',
-                                      categoria: 'Reprodutor',
+                                      categoria: 'Touro',
                                       nomeConcat:
                                           '${_model.nAnimalTextController.text} - ${_model.nomeAnimalTextController.text}',
                                       statusRebanho: 'Sêmen',

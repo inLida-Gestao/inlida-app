@@ -1,11 +1,8 @@
 import '/backend/sqlite/sqlite_manager.dart';
-import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/form_field_controller.dart';
 import 'dart:ui';
-import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +30,14 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => FiltrosReproducaoModel());
+
+    _model.dataReproducaoInicio = FFAppState().filtroDataReproducao;
+    _model.dataReproducaoFim = FFAppState().filtroDataReproducaoFim;
+    _model.dataPartoInicio = FFAppState().filtroDataParto;
+    _model.dataPartoFim = FFAppState().filtroDataPartoFim;
+    _model.categoriasSelecionadas =
+        List<String>.from(FFAppState().filtroCategoriaReproducao);
+    _model.showCategoriaDropdown = false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
@@ -92,9 +97,18 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                 topRight: Radius.circular(16.0),
               ),
             ),
-            child: SingleChildScrollView(
-              primary: false,
-              child: Column(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                if (_model.showCategoriaDropdown ?? false) {
+                  safeSetState(() {
+                    _model.showCategoriaDropdown = false;
+                  });
+                }
+              },
+              child: SingleChildScrollView(
+                primary: false,
+                child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
@@ -158,7 +172,9 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                               FFAppState().filtrosAplicadosReproducao = [];
                               FFAppState().filtroReproducao = '';
                               FFAppState().filtroDataReproducao = null;
+                              FFAppState().filtroDataReproducaoFim = null;
                               FFAppState().filtroDataParto = null;
+                              FFAppState().filtroDataPartoFim = null;
                               FFAppState().filtroMatrizReproducao = '';
                               FFAppState().filtroReprodutorReproducao = '';
                               FFAppState().filtroLoteReproducao = '';
@@ -166,6 +182,13 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                               FFAppState().filtroDataReproducaoTxt = '';
                               FFAppState().filtroPrevisaoPartoTxt = '';
                               FFAppState().filtroDataHoje = null;
+                              FFAppState().filtroCategoriaReproducao = [];
+                              _model.dataReproducaoInicio = null;
+                              _model.dataReproducaoFim = null;
+                              _model.dataPartoInicio = null;
+                              _model.dataPartoFim = null;
+                              _model.categoriasSelecionadas = [];
+                              _model.showCategoriaDropdown = false;
                               safeSetState(() {});
                               Navigator.pop(context);
                             },
@@ -532,145 +555,156 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                     ),
                                     Row(
                                       mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        FlutterFlowDropDown<String>(
-                                          controller: _model
-                                                  .dropDownValueController1 ??=
-                                              FormFieldController<String>(null),
-                                          options: [
-                                            'Últimos 30 dias',
-                                            'Últimos 60 dias',
-                                            'Últimos 90 dias'
-                                          ],
-                                          onChanged: (val) async {
-                                            safeSetState(() =>
-                                                _model.dropDownValue1 = val);
-                                            FFAppState().filtroDataReproducao =
-                                                () {
-                                              if (_model.dropDownValue1 ==
-                                                  'Últimos 30 dias') {
-                                                return functions.hojeMenos30();
-                                              } else if (_model
-                                                      .dropDownValue1 ==
-                                                  'Últimos 60 dias') {
-                                                return functions.hojeMenos60();
-                                              } else if (_model
-                                                      .dropDownValue1 ==
-                                                  'Últimos 90 dias') {
-                                                return functions.hojeMenos90();
-                                              } else {
-                                                return getCurrentTimestamp;
+                                        Expanded(
+                                          child: InkWell(
+                                            splashColor: Colors.transparent,
+                                            focusColor: Colors.transparent,
+                                            hoverColor: Colors.transparent,
+                                            highlightColor: Colors.transparent,
+                                            onTap: () async {
+                                              final picked = await showDatePicker(
+                                                context: context,
+                                                initialDate: _model.dataReproducaoInicio ?? getCurrentTimestamp,
+                                                firstDate: DateTime(1900),
+                                                lastDate: DateTime(2050),
+                                                builder: (context, child) {
+                                                  return wrapInMaterialDatePickerTheme(
+                                                    context,
+                                                    child!,
+                                                    headerBackgroundColor: Color(0xFF28A365),
+                                                    headerForegroundColor: FlutterFlowTheme.of(context).info,
+                                                    headerTextStyle: FlutterFlowTheme.of(context).headlineLarge.override(
+                                                      fontFamily: FlutterFlowTheme.of(context).headlineLargeFamily,
+                                                      fontSize: 32.0,
+                                                      letterSpacing: 0.0,
+                                                      fontWeight: FontWeight.w600,
+                                                      useGoogleFonts: !FlutterFlowTheme.of(context).headlineLargeIsCustom,
+                                                    ),
+                                                    pickerBackgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                    pickerForegroundColor: FlutterFlowTheme.of(context).primaryText,
+                                                    selectedDateTimeBackgroundColor: Color(0xFF28A365),
+                                                    selectedDateTimeForegroundColor: FlutterFlowTheme.of(context).info,
+                                                    actionButtonForegroundColor: FlutterFlowTheme.of(context).primaryText,
+                                                    iconSize: 24.0,
+                                                  );
+                                                },
+                                              );
+                                              if (picked != null) {
+                                                _model.dataReproducaoInicio = DateTime(picked.year, picked.month, picked.day);
+                                                FFAppState().filtroDataReproducao = _model.dataReproducaoInicio;
+                                                safeSetState(() {});
                                               }
-                                            }();
-                                            FFAppState()
-                                                    .filtroDataReproducaoTxt =
-                                                _model.dropDownValue1!;
-                                            safeSetState(() {});
-                                          },
-                                          width: 200.0,
-                                          height: 56.0,
-                                          textStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
+                                            },
+                                            child: Container(
+                                              height: 56.0,
+                                              decoration: BoxDecoration(
+                                                color: FlutterFlowTheme.of(context).customColor3,
+                                                borderRadius: BorderRadius.circular(8.0),
                                               ),
-                                          hintText: 'Selecionar período...',
-                                          icon: Icon(
-                                            Icons.keyboard_arrow_down_rounded,
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                            size: 24.0,
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      _model.dataReproducaoInicio != null
+                                                          ? dateTimeFormat("d/M/y", _model.dataReproducaoInicio, locale: FFLocalizations.of(context).languageCode)
+                                                          : 'Data inicial',
+                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                        fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                        color: _model.dataReproducaoInicio != null ? FlutterFlowTheme.of(context).primaryText : FlutterFlowTheme.of(context).secondaryText,
+                                                        letterSpacing: 0.0,
+                                                        useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                      ),
+                                                    ),
+                                                    Icon(Icons.calendar_today, color: FlutterFlowTheme.of(context).secondaryText, size: 20.0),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                          fillColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .customColor3,
-                                          elevation: 2.0,
-                                          borderColor: Colors.transparent,
-                                          borderWidth: 0.0,
-                                          borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  12.0, 0.0, 12.0, 0.0),
-                                          hidesUnderline: true,
-                                          isOverButton: false,
-                                          isSearchable: false,
-                                          isMultiSelect: false,
                                         ),
-                                        Text(
-                                          () {
-                                            if (_model.dropDownValue1 ==
-                                                'Últimos 30 dias') {
-                                              return '${dateTimeFormat(
-                                                "dMMM",
-                                                functions.hojeMenos30(),
-                                                locale:
-                                                    FFLocalizations.of(context)
-                                                        .languageCode,
-                                              )} - ${dateTimeFormat(
-                                                "dMMM",
-                                                getCurrentTimestamp,
-                                                locale:
-                                                    FFLocalizations.of(context)
-                                                        .languageCode,
-                                              )}';
-                                            } else if (_model.dropDownValue1 ==
-                                                'Últimos 60 dias') {
-                                              return '${dateTimeFormat(
-                                                "dMMM",
-                                                functions.hojeMenos60(),
-                                                locale:
-                                                    FFLocalizations.of(context)
-                                                        .languageCode,
-                                              )} - ${dateTimeFormat(
-                                                "dMMM",
-                                                getCurrentTimestamp,
-                                                locale:
-                                                    FFLocalizations.of(context)
-                                                        .languageCode,
-                                              )}';
-                                            } else if (_model.dropDownValue1 ==
-                                                'Últimos 90 dias') {
-                                              return '${dateTimeFormat(
-                                                "dMMM",
-                                                functions.hojeMenos90(),
-                                                locale:
-                                                    FFLocalizations.of(context)
-                                                        .languageCode,
-                                              )} - ${dateTimeFormat(
-                                                "dMMM",
-                                                getCurrentTimestamp,
-                                                locale:
-                                                    FFLocalizations.of(context)
-                                                        .languageCode,
-                                              )}';
-                                            } else {
-                                              return ' ';
-                                            }
-                                          }(),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
+                                        Padding(
+                                          padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                          child: Text('até', style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                            fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                          )),
+                                        ),
+                                        Expanded(
+                                          child: InkWell(
+                                            splashColor: Colors.transparent,
+                                            focusColor: Colors.transparent,
+                                            hoverColor: Colors.transparent,
+                                            highlightColor: Colors.transparent,
+                                            onTap: () async {
+                                              final picked = await showDatePicker(
+                                                context: context,
+                                                initialDate: _model.dataReproducaoFim ?? getCurrentTimestamp,
+                                                firstDate: DateTime(1900),
+                                                lastDate: DateTime(2050),
+                                                builder: (context, child) {
+                                                  return wrapInMaterialDatePickerTheme(
+                                                    context,
+                                                    child!,
+                                                    headerBackgroundColor: Color(0xFF28A365),
+                                                    headerForegroundColor: FlutterFlowTheme.of(context).info,
+                                                    headerTextStyle: FlutterFlowTheme.of(context).headlineLarge.override(
+                                                      fontFamily: FlutterFlowTheme.of(context).headlineLargeFamily,
+                                                      fontSize: 32.0,
+                                                      letterSpacing: 0.0,
+                                                      fontWeight: FontWeight.w600,
+                                                      useGoogleFonts: !FlutterFlowTheme.of(context).headlineLargeIsCustom,
+                                                    ),
+                                                    pickerBackgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                    pickerForegroundColor: FlutterFlowTheme.of(context).primaryText,
+                                                    selectedDateTimeBackgroundColor: Color(0xFF28A365),
+                                                    selectedDateTimeForegroundColor: FlutterFlowTheme.of(context).info,
+                                                    actionButtonForegroundColor: FlutterFlowTheme.of(context).primaryText,
+                                                    iconSize: 24.0,
+                                                  );
+                                                },
+                                              );
+                                              if (picked != null) {
+                                                _model.dataReproducaoFim = DateTime(picked.year, picked.month, picked.day);
+                                                FFAppState().filtroDataReproducaoFim = _model.dataReproducaoFim;
+                                                safeSetState(() {});
+                                              }
+                                            },
+                                            child: Container(
+                                              height: 56.0,
+                                              decoration: BoxDecoration(
+                                                color: FlutterFlowTheme.of(context).customColor3,
+                                                borderRadius: BorderRadius.circular(8.0),
                                               ),
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      _model.dataReproducaoFim != null
+                                                          ? dateTimeFormat("d/M/y", _model.dataReproducaoFim, locale: FFLocalizations.of(context).languageCode)
+                                                          : 'Data final',
+                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                        fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                        color: _model.dataReproducaoFim != null ? FlutterFlowTheme.of(context).primaryText : FlutterFlowTheme.of(context).secondaryText,
+                                                        letterSpacing: 0.0,
+                                                        useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                      ),
+                                                    ),
+                                                    Icon(Icons.calendar_today, color: FlutterFlowTheme.of(context).secondaryText, size: 20.0),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ],
                                     ),
                                   ].divide(SizedBox(height: 8.0)),
                                 ),
@@ -712,147 +746,331 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                     ),
                                     Row(
                                       mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        FlutterFlowDropDown<String>(
-                                          controller: _model
-                                                  .dropDownValueController2 ??=
-                                              FormFieldController<String>(null),
-                                          options: [
-                                            'em 1 mês',
-                                            'em 2 meses',
-                                            'em 3 meses'
-                                          ],
-                                          onChanged: (val) async {
-                                            safeSetState(() =>
-                                                _model.dropDownValue2 = val);
-                                            FFAppState().filtroDataParto = () {
-                                              if (_model.dropDownValue2 ==
-                                                  'em 1 mês') {
-                                                return functions.hojeMais30();
-                                              } else if (_model
-                                                      .dropDownValue2 ==
-                                                  'em 2 meses') {
-                                                return functions.hojeMais60();
-                                              } else if (_model
-                                                      .dropDownValue2 ==
-                                                  'em 3 meses') {
-                                                return functions.hojeMais90();
-                                              } else {
-                                                return getCurrentTimestamp;
+                                        Expanded(
+                                          child: InkWell(
+                                            splashColor: Colors.transparent,
+                                            focusColor: Colors.transparent,
+                                            hoverColor: Colors.transparent,
+                                            highlightColor: Colors.transparent,
+                                            onTap: () async {
+                                              final picked = await showDatePicker(
+                                                context: context,
+                                                initialDate: _model.dataPartoInicio ?? getCurrentTimestamp,
+                                                firstDate: DateTime(1900),
+                                                lastDate: DateTime(2050),
+                                                builder: (context, child) {
+                                                  return wrapInMaterialDatePickerTheme(
+                                                    context,
+                                                    child!,
+                                                    headerBackgroundColor: Color(0xFF28A365),
+                                                    headerForegroundColor: FlutterFlowTheme.of(context).info,
+                                                    headerTextStyle: FlutterFlowTheme.of(context).headlineLarge.override(
+                                                      fontFamily: FlutterFlowTheme.of(context).headlineLargeFamily,
+                                                      fontSize: 32.0,
+                                                      letterSpacing: 0.0,
+                                                      fontWeight: FontWeight.w600,
+                                                      useGoogleFonts: !FlutterFlowTheme.of(context).headlineLargeIsCustom,
+                                                    ),
+                                                    pickerBackgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                    pickerForegroundColor: FlutterFlowTheme.of(context).primaryText,
+                                                    selectedDateTimeBackgroundColor: Color(0xFF28A365),
+                                                    selectedDateTimeForegroundColor: FlutterFlowTheme.of(context).info,
+                                                    actionButtonForegroundColor: FlutterFlowTheme.of(context).primaryText,
+                                                    iconSize: 24.0,
+                                                  );
+                                                },
+                                              );
+                                              if (picked != null) {
+                                                _model.dataPartoInicio = DateTime(picked.year, picked.month, picked.day);
+                                                FFAppState().filtroDataParto = _model.dataPartoInicio;
+                                                safeSetState(() {});
                                               }
-                                            }();
-                                            FFAppState()
-                                                    .filtroPrevisaoPartoTxt =
-                                                _model.dropDownValue2!;
-                                            FFAppState().filtroDataHoje =
-                                                getCurrentTimestamp;
-                                            safeSetState(() {});
-                                          },
-                                          width: 200.0,
-                                          height: 56.0,
-                                          textStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
+                                            },
+                                            child: Container(
+                                              height: 56.0,
+                                              decoration: BoxDecoration(
+                                                color: FlutterFlowTheme.of(context).customColor3,
+                                                borderRadius: BorderRadius.circular(8.0),
                                               ),
-                                          hintText: 'Selecionar período...',
-                                          icon: Icon(
-                                            Icons.keyboard_arrow_down_rounded,
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                            size: 24.0,
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      _model.dataPartoInicio != null
+                                                          ? dateTimeFormat("d/M/y", _model.dataPartoInicio, locale: FFLocalizations.of(context).languageCode)
+                                                          : 'Data inicial',
+                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                        fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                        color: _model.dataPartoInicio != null ? FlutterFlowTheme.of(context).primaryText : FlutterFlowTheme.of(context).secondaryText,
+                                                        letterSpacing: 0.0,
+                                                        useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                      ),
+                                                    ),
+                                                    Icon(Icons.calendar_today, color: FlutterFlowTheme.of(context).secondaryText, size: 20.0),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                          fillColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .customColor3,
-                                          elevation: 2.0,
-                                          borderColor: Colors.transparent,
-                                          borderWidth: 0.0,
-                                          borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  12.0, 0.0, 12.0, 0.0),
-                                          hidesUnderline: true,
-                                          isOverButton: false,
-                                          isSearchable: false,
-                                          isMultiSelect: false,
                                         ),
-                                        Text(
-                                          () {
-                                            if (_model.dropDownValue2 ==
-                                                'em 1 mês') {
-                                              return '${dateTimeFormat(
-                                                "dMMM",
-                                                getCurrentTimestamp,
-                                                locale:
-                                                    FFLocalizations.of(context)
-                                                        .languageCode,
-                                              )} - ${dateTimeFormat(
-                                                "dMMM",
-                                                functions.hojeMais30(),
-                                                locale:
-                                                    FFLocalizations.of(context)
-                                                        .languageCode,
-                                              )}';
-                                            } else if (_model.dropDownValue2 ==
-                                                'em 2 meses') {
-                                              return '${dateTimeFormat(
-                                                "dMMM",
-                                                getCurrentTimestamp,
-                                                locale:
-                                                    FFLocalizations.of(context)
-                                                        .languageCode,
-                                              )} - ${dateTimeFormat(
-                                                "dMMM",
-                                                functions.hojeMais60(),
-                                                locale:
-                                                    FFLocalizations.of(context)
-                                                        .languageCode,
-                                              )}';
-                                            } else if (_model.dropDownValue2 ==
-                                                'em 3 meses') {
-                                              return '${dateTimeFormat(
-                                                "dMMM",
-                                                getCurrentTimestamp,
-                                                locale:
-                                                    FFLocalizations.of(context)
-                                                        .languageCode,
-                                              )} - ${dateTimeFormat(
-                                                "dMMM",
-                                                functions.hojeMais90(),
-                                                locale:
-                                                    FFLocalizations.of(context)
-                                                        .languageCode,
-                                              )}';
-                                            } else {
-                                              return ' ';
-                                            }
-                                          }(),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                letterSpacing: 0.0,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
+                                        Padding(
+                                          padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                          child: Text('até', style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                            fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                          )),
+                                        ),
+                                        Expanded(
+                                          child: InkWell(
+                                            splashColor: Colors.transparent,
+                                            focusColor: Colors.transparent,
+                                            hoverColor: Colors.transparent,
+                                            highlightColor: Colors.transparent,
+                                            onTap: () async {
+                                              final picked = await showDatePicker(
+                                                context: context,
+                                                initialDate: _model.dataPartoFim ?? getCurrentTimestamp,
+                                                firstDate: DateTime(1900),
+                                                lastDate: DateTime(2050),
+                                                builder: (context, child) {
+                                                  return wrapInMaterialDatePickerTheme(
+                                                    context,
+                                                    child!,
+                                                    headerBackgroundColor: Color(0xFF28A365),
+                                                    headerForegroundColor: FlutterFlowTheme.of(context).info,
+                                                    headerTextStyle: FlutterFlowTheme.of(context).headlineLarge.override(
+                                                      fontFamily: FlutterFlowTheme.of(context).headlineLargeFamily,
+                                                      fontSize: 32.0,
+                                                      letterSpacing: 0.0,
+                                                      fontWeight: FontWeight.w600,
+                                                      useGoogleFonts: !FlutterFlowTheme.of(context).headlineLargeIsCustom,
+                                                    ),
+                                                    pickerBackgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                    pickerForegroundColor: FlutterFlowTheme.of(context).primaryText,
+                                                    selectedDateTimeBackgroundColor: Color(0xFF28A365),
+                                                    selectedDateTimeForegroundColor: FlutterFlowTheme.of(context).info,
+                                                    actionButtonForegroundColor: FlutterFlowTheme.of(context).primaryText,
+                                                    iconSize: 24.0,
+                                                  );
+                                                },
+                                              );
+                                              if (picked != null) {
+                                                _model.dataPartoFim = DateTime(picked.year, picked.month, picked.day);
+                                                FFAppState().filtroDataPartoFim = _model.dataPartoFim;
+                                                safeSetState(() {});
+                                              }
+                                            },
+                                            child: Container(
+                                              height: 56.0,
+                                              decoration: BoxDecoration(
+                                                color: FlutterFlowTheme.of(context).customColor3,
+                                                borderRadius: BorderRadius.circular(8.0),
                                               ),
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      _model.dataPartoFim != null
+                                                          ? dateTimeFormat("d/M/y", _model.dataPartoFim, locale: FFLocalizations.of(context).languageCode)
+                                                          : 'Data final',
+                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                        fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                        color: _model.dataPartoFim != null ? FlutterFlowTheme.of(context).primaryText : FlutterFlowTheme.of(context).secondaryText,
+                                                        letterSpacing: 0.0,
+                                                        useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                      ),
+                                                    ),
+                                                    Icon(Icons.calendar_today, color: FlutterFlowTheme.of(context).secondaryText, size: 20.0),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ],
                                     ),
+                                  ].divide(SizedBox(height: 8.0)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(
+                                0.0, 24.0, 0.0, 0.0),
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                              ),
+                              child: Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    24.0, 0.0, 24.0, 0.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Categoria',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            color: Color(0xFF2F2F2F),
+                                            fontSize: 18.0,
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.w500,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                    InkWell(
+                                      splashColor: Colors.transparent,
+                                      focusColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () async {
+                                        safeSetState(() {
+                                          _model.showCategoriaDropdown = !(_model.showCategoriaDropdown ?? false);
+                                        });
+                                      },
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: 56.0,
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context).customColor3,
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  _model.categoriasSelecionadas.isNotEmpty
+                                                      ? _model.categoriasSelecionadas.join(', ')
+                                                      : 'Selecionar categorias...',
+                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                    fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                    color: _model.categoriasSelecionadas.isNotEmpty
+                                                        ? FlutterFlowTheme.of(context).primaryText
+                                                        : FlutterFlowTheme.of(context).secondaryText,
+                                                    letterSpacing: 0.0,
+                                                    useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              Icon(
+                                                (_model.showCategoriaDropdown ?? false)
+                                                    ? Icons.keyboard_arrow_up_rounded
+                                                    : Icons.keyboard_arrow_down_rounded,
+                                                color: FlutterFlowTheme.of(context).secondaryText,
+                                                size: 24.0,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    if (_model.showCategoriaDropdown ?? false)
+                                      Container(
+                                        constraints: BoxConstraints(maxHeight: 250.0),
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context).secondaryBackground,
+                                          borderRadius: BorderRadius.circular(8.0),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              blurRadius: 8.0,
+                                              color: Color(0x1A000000),
+                                              offset: Offset(0.0, 4.0),
+                                              spreadRadius: 0.0,
+                                            ),
+                                          ],
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: FFAppState()
+                                                  .categoriasRebanho
+                                                  .map((categoria) => InkWell(
+                                                        splashColor: Colors.transparent,
+                                                        focusColor: Colors.transparent,
+                                                        hoverColor: Colors.transparent,
+                                                        highlightColor: Colors.transparent,
+                                                        onTap: () async {
+                                                          safeSetState(() {
+                                                            if (_model.categoriasSelecionadas.contains(categoria)) {
+                                                              _model.categoriasSelecionadas.remove(categoria);
+                                                            } else {
+                                                              _model.categoriasSelecionadas.add(categoria);
+                                                            }
+                                                            FFAppState().filtroCategoriaReproducao = List<String>.from(_model.categoriasSelecionadas);
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          width: double.infinity,
+                                                          padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
+                                                          decoration: BoxDecoration(
+                                                            color: _model.categoriasSelecionadas.contains(categoria)
+                                                                ? Color(0x1A28A365)
+                                                                : Colors.transparent,
+                                                          ),
+                                                          child: Row(
+                                                            mainAxisSize: MainAxisSize.max,
+                                                            children: [
+                                                              Container(
+                                                                width: 20.0,
+                                                                height: 20.0,
+                                                                decoration: BoxDecoration(
+                                                                  color: _model.categoriasSelecionadas.contains(categoria)
+                                                                      ? Color(0xFF28A365)
+                                                                      : Colors.transparent,
+                                                                  borderRadius: BorderRadius.circular(4.0),
+                                                                  border: Border.all(
+                                                                    color: _model.categoriasSelecionadas.contains(categoria)
+                                                                        ? Color(0xFF28A365)
+                                                                        : FlutterFlowTheme.of(context).secondaryText,
+                                                                    width: 1.5,
+                                                                  ),
+                                                                ),
+                                                                child: _model.categoriasSelecionadas.contains(categoria)
+                                                                    ? Icon(Icons.check, color: Colors.white, size: 14.0)
+                                                                    : null,
+                                                              ),
+                                                              SizedBox(width: 10.0),
+                                                              Text(
+                                                                categoria,
+                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                  fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                  letterSpacing: 0.0,
+                                                                  useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ))
+                                                  .toList(),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                   ].divide(SizedBox(height: 8.0)),
                                 ),
                               ),
@@ -931,11 +1149,8 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                                       Colors.transparent,
                                                   onTap: () async {
                                                     if (FFAppState()
-                                                                .filtroMatrizReproducao !=
-                                                            null &&
-                                                        FFAppState()
-                                                                .filtroMatrizReproducao !=
-                                                            '') {
+                                                        .filtroMatrizReproducao !=
+                                                      '') {
                                                       if (FFAppState()
                                                               .filtroMatrizReproducao ==
                                                           matrizItem) {
@@ -1157,11 +1372,8 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                                       Colors.transparent,
                                                   onTap: () async {
                                                     if (FFAppState()
-                                                                .filtroReprodutorReproducao !=
-                                                            null &&
-                                                        FFAppState()
-                                                                .filtroReprodutorReproducao !=
-                                                            '') {
+                                                        .filtroReprodutorReproducao !=
+                                                      '') {
                                                       if (FFAppState()
                                                               .filtroReprodutorReproducao ==
                                                           reprodutorItem) {
@@ -1495,12 +1707,9 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
-                                                  if (FFAppState()
-                                                              .filtroLoteReproducao !=
-                                                          null &&
-                                                      FFAppState()
-                                                              .filtroLoteReproducao !=
-                                                          '') {
+                                                    if (FFAppState()
+                                                        .filtroLoteReproducao !=
+                                                      '') {
                                                     if (FFAppState()
                                                             .filtroLoteReproducao ==
                                                         loteItem) {
@@ -1897,6 +2106,7 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                     ),
                   ),
                 ],
+              ),
               ),
             ),
           ),
