@@ -41,8 +41,26 @@ DateTime converterTimestamp(String data) {
 
 List<String> converterJSONparaLista(String json) {
   // gere uma funcao que converta string que esta no formato json para uma lista de strings
-  final List<dynamic> jsonList = jsonDecode(json); // Decode JSON string to List
-  return List<String>.from(jsonList); // Convert List<dynamic> to List<String>
+  try {
+    final decoded = jsonDecode(json);
+    if (decoded is List) {
+      return List<String>.from(decoded.map((e) => e.toString()));
+    }
+    // Se decodificou mas não é lista, retorna como item único
+    return [decoded.toString()];
+  } catch (e) {
+    // Se falhar o jsonDecode, tenta recuperar dados de formato Dart List.toString()
+    // Ex: "[Antitetânica, Botulismo]" (sem aspas JSON)
+    final trimmed = json.trim();
+    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+      final inner = trimmed.substring(1, trimmed.length - 1).trim();
+      if (inner.isEmpty) return [];
+      return inner.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+    }
+    // Último recurso: retorna o valor como item único se não estiver vazio
+    if (trimmed.isNotEmpty) return [trimmed];
+    return [];
+  }
 }
 
 String addRegistroToJsonString(

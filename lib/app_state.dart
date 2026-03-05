@@ -234,6 +234,21 @@ class FFAppState extends ChangeNotifier {
         : prefs.remove('ff_ultimaSincronizacao');
   }
 
+  /// Progresso da sincronização (0 a 100). -1 = não está sincronizando.
+  int _syncProgressPercent = -1;
+  int get syncProgressPercent => _syncProgressPercent;
+  set syncProgressPercent(int value) {
+    _syncProgressPercent = value;
+    notifyListeners();
+  }
+
+  /// Texto curto descrevendo a etapa atual da sincronização.
+  String _syncProgressLabel = '';
+  String get syncProgressLabel => _syncProgressLabel;
+  set syncProgressLabel(String value) {
+    _syncProgressLabel = value;
+  }
+
   PropriedadeSelecionadaStruct _propriedadeSelecionada =
       PropriedadeSelecionadaStruct();
   PropriedadeSelecionadaStruct get propriedadeSelecionada =>

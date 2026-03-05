@@ -240,17 +240,20 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                               ),
                             ],
                           ),
-                          FlutterFlowIconButton(
-                            borderRadius: 8.0,
-                            buttonSize: 40.0,
-                            fillColor: FlutterFlowTheme.of(context).primary,
-                            icon: Icon(
-                              Icons.refresh_sharp,
-                              color: FlutterFlowTheme.of(context).info,
-                              size: 24.0,
-                            ),
-                            showLoadingIndicator: true,
-                            onPressed: () async {
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              FlutterFlowIconButton(
+                                borderRadius: 8.0,
+                                buttonSize: 40.0,
+                                fillColor: FlutterFlowTheme.of(context).primary,
+                                icon: Icon(
+                                  Icons.refresh_sharp,
+                                  color: FlutterFlowTheme.of(context).info,
+                                  size: 24.0,
+                                ),
+                                showLoadingIndicator: true,
+                                onPressed: () async {
                               _model.temInternet =
                                   await actions.checkInternetConnection();
                               if (_model.temInternet == true) {
@@ -265,6 +268,10 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         'Pago') ||
                                     (_model.userLogado?.firstOrNull?.acesso ==
                                         'Gratis')) {
+                                  FFAppState().syncProgressPercent = 0;
+                                  FFAppState().syncProgressLabel = 'Enviando...';
+                                  safeSetState(() {});
+                                  try {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
@@ -280,20 +287,42 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                               .secondary,
                                     ),
                                   );
+                                  // Upload phase - 20%
+                                  FFAppState().syncProgressPercent = 5;
+                                  FFAppState().syncProgressLabel = 'Enviando rebanhos...';
+                                  safeSetState(() {});
                                   await Future.wait([
                                     action_blocks.putUpdtRebanhos(context),
                                     action_blocks.putUpdtLotes(context),
                                     action_blocks
                                         .putUpdtReproducao(context),
                                   ]);
+                                  FFAppState().syncProgressPercent = 15;
+                                  FFAppState().syncProgressLabel = 'Enviando sanidades...';
+                                  safeSetState(() {});
                                   FFAppState().dataDadosNaoSyncRepro = null;
                                   safeSetState(() {});
                                   await action_blocks.putUpdtSanidades(context);
+                                  FFAppState().syncProgressPercent = 20;
+                                  FFAppState().syncProgressLabel = 'Baixando propriedades...';
+                                  safeSetState(() {});
+                                  // Download propriedades - 25%
                                   await action_blocks
                                       .refreshPropriedades(context);
+                                  FFAppState().syncProgressPercent = 25;
+                                  FFAppState().syncProgressLabel = 'Enviando propriedades...';
+                                  safeSetState(() {});
                                   await action_blocks
                                       .putUpdtPropriedades(context);
+                                  FFAppState().syncProgressPercent = 30;
+                                  FFAppState().syncProgressLabel = 'Baixando lotes...';
+                                  safeSetState(() {});
+                                  // Download lotes - 35%
                                   try { await action_blocks.refreshLotes(context); } catch (e) { debugPrint('[SYNC] Erro nav1 lotes: $e'); }
+                                  FFAppState().syncProgressPercent = 35;
+                                  FFAppState().syncProgressLabel = 'Baixando dados...';
+                                  safeSetState(() {});
+                                  // Download parallel - 35% to 95%
                                   await Future.wait([
                                     action_blocks
                                         .refreshRebanhoOtimizada(context),
@@ -304,16 +333,26 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                     action_blocks
                                         .refresSanidadeOtimizada(context),
                                   ]).catchError((e) { debugPrint('[SYNC] Erro no Future.wait nav1: $e'); return <void>[]; });
+                                  FFAppState().syncProgressPercent = 95;
+                                  FFAppState().syncProgressLabel = 'Finalizando...';
+                                  safeSetState(() {});
                                   await action_blocks
                                       .countLotesCadastrados(context);
                                   FFAppState().ultimaSincronizacao =
                                       getCurrentTimestamp;
+                                  FFAppState().syncProgressPercent = 100;
+                                  FFAppState().syncProgressLabel = 'Concluído!';
                                   safeSetState(() {});
                                   FFAppState().dataDadosNaoSyncProp = null;
                                   FFAppState().dataDadosNaoSyncRebanho = null;
                                   FFAppState().dataDadosNaoSyncLotes = null;
                                   FFAppState().dataDadosNaoSyncRepro = null;
                                   FFAppState().dataDadosNaoSyncSanidade = null;
+                                  safeSetState(() {});
+                                  // Reset progress after a brief delay so user sees 100%
+                                  await Future.delayed(Duration(milliseconds: 1500));
+                                  FFAppState().syncProgressPercent = -1;
+                                  FFAppState().syncProgressLabel = '';
                                   safeSetState(() {});
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
@@ -331,6 +370,26 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                     ),
                                   );
                                   Navigator.pop(context);
+                                  } catch (e) {
+                                    debugPrint('[SYNC] Erro geral na sincronização: $e');
+                                    FFAppState().syncProgressPercent = -1;
+                                    FFAppState().syncProgressLabel = '';
+                                    safeSetState(() {});
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Erro na sincronização. Tente novamente.',
+                                          style: TextStyle(
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground,
+                                          ),
+                                        ),
+                                        duration: Duration(milliseconds: 4000),
+                                        backgroundColor:
+                                            FlutterFlowTheme.of(context).error,
+                                      ),
+                                    );
+                                  }
                                 } else {
                                   GoRouter.of(context).prepareAuthEvent();
                                   await authManager.signOut();
@@ -373,6 +432,27 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
 
                               safeSetState(() {});
                             },
+                          ),
+                          if (FFAppState().syncProgressPercent >= 0)
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
+                              child: Text(
+                                '${FFAppState().syncProgressPercent}%',
+                                style: FlutterFlowTheme.of(context)
+                                    .bodySmall
+                                    .override(
+                                      font: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                      fontSize: 11.0,
+                                      letterSpacing: 0.0,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                            ),
+                          ],
                           ),
                         ],
                       ),

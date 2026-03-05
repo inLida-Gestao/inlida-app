@@ -8,6 +8,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'index.dart'; // Imports other custom actions
 import '/flutter_flow/custom_functions.dart'; // Imports custom functions
 import 'package:flutter/material.dart';
+import 'dart:convert';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
@@ -177,7 +178,11 @@ String _extractRebanhoId(dynamic record) {
 }
 
 dynamic _cleanNull(dynamic value) {
-  return (value == "null") ? null : value;
+  if (value == "null") return null;
+  if (value is List || value is Map) {
+    return jsonEncode(value);
+  }
+  return value;
 }
 
 /// Remove triggers FTS5 que podem falhar no Android (sistema SQLite sem FTS5).

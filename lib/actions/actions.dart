@@ -132,14 +132,25 @@ Future<void> _showSyncErrorsDialog(
 }
 
 Future refreshPropriedades(BuildContext context) async {
+  try {
   List<PropriedadesChangeTrackerRow>? lastChangeResult;
   ApiCallResponse? propriedade;
 
-  lastChangeResult = await PropriedadesChangeTrackerTable().queryRows(
-    queryFn: (q) => q,
-  );
-  if (lastChangeResult!.firstOrNull!.lastChange! >
-      FFAppState().propriedadesChangeDateTime!) {
+  try {
+    lastChangeResult = await PropriedadesChangeTrackerTable().queryRows(
+      queryFn: (q) => q,
+    );
+  } catch (e) {
+    _syncLog('propriedades', 'ERRO ao consultar change tracker: $e');
+    lastChangeResult = [];
+  }
+  final remoteLastChange = lastChangeResult?.firstOrNull?.lastChange;
+  final localLastChange = FFAppState().propriedadesChangeDateTime;
+  final shouldSync = remoteLastChange == null ||
+      localLastChange == null ||
+      remoteLastChange.isAfter(localLastChange);
+  _syncLog('propriedades', 'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
+  if (shouldSync) {
     await SQLiteManager.instance.deletarTodasPropriedades();
     propriedade = await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
       pUserId: currentUserUid,
@@ -187,12 +198,19 @@ Future refreshPropriedades(BuildContext context) async {
     await actions.batchInsertLocalPropriedades(records);
 
     FFAppState().propriedadesChangeDateTime =
-        lastChangeResult?.firstOrNull?.lastChange;
+        remoteLastChange ?? DateTime.now();
     FFAppState().propriedadesIndex = 0;
+    _syncLog('propriedades', 'Sincronização de propriedades concluída.');
+  } else {
+    _syncLog('propriedades', 'Sem necessidade de sincronização.');
+  }
+  } catch (e, s) {
+    _syncLog('propriedades', 'ERRO FATAL na sincronização de propriedades: $e\n$s');
   }
 }
 
 Future putUpdtPropriedades(BuildContext context) async {
+  try {
   List<BuscaPropriedadesPUTRow>? localPropriedades;
   List<BuscaPropriedadesUPDATEDRow>? localPropriedadesUPT;
 
@@ -318,6 +336,9 @@ Future putUpdtPropriedades(BuildContext context) async {
     }
     FFAppState().propriedadesIndex = 0;
   }
+  } catch (e, s) {
+    _syncLog('putUpdtPropriedades', 'ERRO no upload de propriedades: $e\n$s');
+  }
 }
 
 Future buscaPropriedade(
@@ -407,6 +428,7 @@ Future animaisPropriedade(BuildContext context) async {
 }
 
 Future putUpdtRebanhos(BuildContext context) async {
+  try {
   List<BuscarRebanhoPUTRow>? localRebanhos;
   List<RebanhoRow>? animalExiste;
   List<BuscarRebanhoUPDATEDRow>? localRebanhosUPDT;
@@ -788,6 +810,9 @@ Future putUpdtRebanhos(BuildContext context) async {
     }
     FFAppState().pesagensIndex = 0;
   }
+  } catch (e, s) {
+    _syncLog('putUpdtRebanhos', 'ERRO no upload de rebanhos: $e\n$s');
+  }
 }
 
 Future countLotesAtivoInativo(BuildContext context) async {
@@ -906,15 +931,26 @@ Future buscaRebanhosLote(
 }
 
 Future refreshLotes(BuildContext context) async {
+  try {
   List<LotesChangeTrackerRow>? lastChangeResult;
   ApiCallResponse? propriedades;
   List<LotesRow>? lotes;
 
-  lastChangeResult = await LotesChangeTrackerTable().queryRows(
-    queryFn: (q) => q,
-  );
-  if (lastChangeResult!.firstOrNull!.lastChange! >
-      FFAppState().lotesChangeDateTime!) {
+  try {
+    lastChangeResult = await LotesChangeTrackerTable().queryRows(
+      queryFn: (q) => q,
+    );
+  } catch (e) {
+    _syncLog('lotes', 'ERRO ao consultar change tracker: $e');
+    lastChangeResult = [];
+  }
+  final remoteLastChange = lastChangeResult?.firstOrNull?.lastChange;
+  final localLastChange = FFAppState().lotesChangeDateTime;
+  final shouldSync = remoteLastChange == null ||
+      localLastChange == null ||
+      remoteLastChange.isAfter(localLastChange);
+  _syncLog('lotes', 'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
+  if (shouldSync) {
     await SQLiteManager.instance.deleteAllLotes();
     propriedades = await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
       pUserId: currentUserUid,
@@ -964,12 +1000,19 @@ Future refreshLotes(BuildContext context) async {
     await actions.batchInsertLocalLotes(records);
 
     FFAppState().lotesChangeDateTime =
-        lastChangeResult?.firstOrNull?.lastChange;
+        remoteLastChange ?? DateTime.now();
     FFAppState().lotesIndex = 0;
+    _syncLog('lotes', 'Sincronização de lotes concluída.');
+  } else {
+    _syncLog('lotes', 'Sem necessidade de sincronização.');
+  }
+  } catch (e, s) {
+    _syncLog('lotes', 'ERRO FATAL na sincronização de lotes: $e\n$s');
   }
 }
 
 Future putUpdtLotes(BuildContext context) async {
+  try {
   List<BuscarLotePUTRow>? localLotes;
   List<BuscarLoteUPDTRow>? localLotesUPT;
 
@@ -1080,6 +1123,9 @@ Future putUpdtLotes(BuildContext context) async {
     }
     FFAppState().lotesIndex = 0;
   }
+  } catch (e, s) {
+    _syncLog('putUpdtLotes', 'ERRO no upload de lotes: $e\n$s');
+  }
 }
 
 Future countLotesCadastrados(BuildContext context) async {
@@ -1121,6 +1167,7 @@ Future qTDReproducoes(BuildContext context) async {
 }
 
 Future putUpdtReproducao(BuildContext context) async {
+  try {
   List<BuscarReproducaoPUTRow>? localReproducao;
   List<BuscarReproducaoUPDTRow>? localReproducaoUPDT;
 
@@ -1419,6 +1466,9 @@ Future putUpdtReproducao(BuildContext context) async {
     }
     FFAppState().reproducaoIndex = 0;
   }
+  } catch (e, s) {
+    _syncLog('putUpdtReproducao', 'ERRO no upload de reprodução: $e\n$s');
+  }
 }
 
 Future countSanidades(BuildContext context) async {
@@ -1465,6 +1515,7 @@ Future countSanidades(BuildContext context) async {
 }
 
 Future putUpdtSanidades(BuildContext context) async {
+  try {
   List<BuscarSanidadePUTRow>? localSanidade;
   List<BuscarSanidadeUPDTRow>? localSanidadeUPDT;
 
@@ -1641,6 +1692,9 @@ Future putUpdtSanidades(BuildContext context) async {
       }
     }
     FFAppState().sanidadeIndex = 0;
+  }
+  } catch (e, s) {
+    _syncLog('putUpdtSanidades', 'ERRO no upload de sanidades: $e\n$s');
   }
 }
 

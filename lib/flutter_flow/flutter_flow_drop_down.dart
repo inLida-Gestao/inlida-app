@@ -277,6 +277,19 @@ class _FlutterFlowDropDownState<T> extends State<FlutterFlowDropDown<T>> {
       )
       .toList();
 
+  Widget? _createMultiSelectHintOrDefault() {
+    if (isMultiSelect && currentValues.isNotEmpty) {
+      final selectedText = currentValues
+          .where((v) => optionLabels.containsKey(v))
+          .map((v) => optionLabels[v])
+          .join(', ');
+      if (selectedText.isNotEmpty) {
+        return Text(selectedText, style: widget.textStyle, maxLines: 1);
+      }
+    }
+    return _createHintText();
+  }
+
   Widget _buildDropdown() {
     final overlayColor = WidgetStateProperty.resolveWith<Color?>((states) =>
         states.contains(WidgetState.focused) ? Colors.transparent : null);
@@ -285,7 +298,7 @@ class _FlutterFlowDropDownState<T> extends State<FlutterFlowDropDown<T>> {
         : const IconStyleData();
     return DropdownButton2<T>(
       value: currentValue,
-      hint: _createHintText(),
+      hint: _createMultiSelectHintOrDefault(),
       items: isMultiSelect ? _createMultiselectMenuItems() : _createMenuItems(),
       iconStyleData: iconStyleData,
       buttonStyleData: ButtonStyleData(

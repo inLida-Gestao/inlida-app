@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 
 Future<Map<String, dynamic>> batchInsertLocalSanidade(
@@ -136,5 +137,11 @@ String _extractSanidadeId(dynamic record) {
 }
 
 dynamic _cleanNull(dynamic value) {
-  return (value == "null") ? null : value;
+  if (value == "null") return null;
+  // Se o valor for uma List ou Map (ex: campo jsonb do Supabase),
+  // converte para JSON string para armazenar corretamente no SQLite
+  if (value is List || value is Map) {
+    return jsonEncode(value);
+  }
+  return value;
 }

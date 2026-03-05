@@ -288,7 +288,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Fix flutter_codesign_* identifiers for App Store submission\nFW_DIR=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\nif [ -d \"$FW_DIR/App.framework\" ]; then\n  /usr/bin/codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" --identifier \"io.flutter.flutter.app\" \"$FW_DIR/App.framework\"\nfi\nif [ -d \"$FW_DIR/Flutter.framework\" ]; then\n  /usr/bin/codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" --identifier \"io.flutter.flutter\" \"$FW_DIR/Flutter.framework\"\nfi\n";
+			shellScript = "# Fix flutter_codesign_* identifiers for App Store submission\n# Skip on simulator builds (no signing identity available)\nif [[ \"$PLATFORM_NAME\" == *simulator* ]]; then\n  echo \"Skipping framework re-signing for simulator build\"\n  exit 0\nfi\nFW_DIR=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\nif [ -d \"$FW_DIR/App.framework\" ]; then\n  /usr/bin/codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" --identifier \"io.flutter.flutter.app\" \"$FW_DIR/App.framework\"\nfi\nif [ -d \"$FW_DIR/Flutter.framework\" ]; then\n  /usr/bin/codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" --identifier \"io.flutter.flutter\" \"$FW_DIR/Flutter.framework\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
