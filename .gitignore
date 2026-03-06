@@ -4,6 +4,7 @@
 *.pyc
 *.swp
 .DS_Store
+._*
 .atom/
 .buildlog/
 .history
@@ -58,6 +59,7 @@ app.*.map.json
 .pub/
 .pub-cache/
 build/
+build
 coverage/
 
 # IDE/editor local settings
