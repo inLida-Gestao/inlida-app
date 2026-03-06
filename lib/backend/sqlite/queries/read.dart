@@ -2855,13 +2855,41 @@ Future<List<BuscaRebanhoPopupRow>> performBuscaRebanhoPopup(
   Database database, {
   String? idPropriedade,
   String? pesquisa,
+  String? sexo,
+  String? statusRebanho,
+  String? categoria,
+  String? categoriaExcluir,
+  String? excludeIdRebanho,
+  int limit = 30,
 }) {
-  final query = '''
-SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
-AND ('${pesquisa}' = '' OR (numeroAnimal LIKE '${pesquisa}%' OR nome LIKE '${pesquisa}%' OR chip LIKE '${pesquisa}'))
-AND deletado = 'NAO'
+  final conditions = StringBuffer();
+  conditions.write("idPropriedade = '${idPropriedade}' AND deletado = 'NAO'");
 
+  if (pesquisa != null && pesquisa.isNotEmpty) {
+    conditions.write(" AND (numeroAnimal LIKE '${pesquisa}%' OR nome LIKE '${pesquisa}%' OR chip LIKE '${pesquisa}%')");
+  }
+  if (sexo != null && sexo.isNotEmpty) {
+    conditions.write(" AND sexo = '${sexo}'");
+  }
+  if (statusRebanho != null && statusRebanho.isNotEmpty) {
+    conditions.write(" AND statusRebanho = '${statusRebanho}'");
+  }
+  if (categoria != null && categoria.isNotEmpty) {
+    conditions.write(" AND categoria = '${categoria}'");
+  }
+  if (categoriaExcluir != null && categoriaExcluir.isNotEmpty) {
+    conditions.write(" AND categoria != '${categoriaExcluir}'");
+  }
+  if (excludeIdRebanho != null && excludeIdRebanho.isNotEmpty) {
+    conditions.write(" AND idRebanho != '${excludeIdRebanho}'");
+  }
+
+  final query = '''
+SELECT idRebanho, numeroAnimal, nome, dataNascimento, raca, chip, categoria, sexo, statusRebanho, loteNome
+FROM local_rebanho
+WHERE ${conditions.toString()}
+ORDER BY numeroAnimal ASC
+LIMIT ${limit}
 ''';
   return _readQuery(database, query, (d) => BuscaRebanhoPopupRow(d));
 }

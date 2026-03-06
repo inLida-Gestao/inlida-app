@@ -755,11 +755,23 @@ class SQLiteManager {
   Future<List<BuscaRebanhoPopupRow>> buscaRebanhoPopup({
     String? idPropriedade,
     String? pesquisa,
+    String? sexo,
+    String? statusRebanho,
+    String? categoria,
+    String? categoriaExcluir,
+    String? excludeIdRebanho,
+    int limit = 30,
   }) =>
       performBuscaRebanhoPopup(
         _database,
         idPropriedade: idPropriedade,
         pesquisa: pesquisa,
+        sexo: sexo,
+        statusRebanho: statusRebanho,
+        categoria: categoria,
+        categoriaExcluir: categoriaExcluir,
+        excludeIdRebanho: excludeIdRebanho,
+        limit: limit,
       );
 
   Future<List<RebanhoPopupSPRow>> rebanhoPopupSP({

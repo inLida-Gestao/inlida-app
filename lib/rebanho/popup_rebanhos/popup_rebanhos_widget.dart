@@ -73,10 +73,11 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
           return Padding(
             padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
             child: FutureBuilder<List<BuscaRebanhoPopupRow>>(
-              future: SQLiteManager.instance.buscaRebanhoPopup(
+              future: _model.getBuscaRebanhoFuture(
                 idPropriedade:
                     FFAppState().propriedadeSelecionada.idPropriedade,
-                pesquisa: _model.pesquisarTextController2.text,
+                pesquisa: _model.pesquisarTextController1.text,
+                excludeIdRebanho: FFAppState().rebanhoSelecionado.idRebanho,
               ),
               builder: (context, snapshot) {
                 // Customize what your widget looks like when it's loading.
@@ -124,8 +125,11 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                             focusNode: _model.pesquisarFocusNode1,
                             onChanged: (_) => EasyDebounce.debounce(
                               '_model.pesquisarTextController1',
-                              Duration(milliseconds: 250),
-                              () => safeSetState(() {}),
+                              Duration(milliseconds: 500),
+                              () {
+                                _model.invalidateBuscaCache();
+                                safeSetState(() {});
+                              },
                             ),
                             autofocus: false,
                             obscureText: false,
@@ -195,6 +199,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                       onTap: () async {
                                         _model.pesquisarTextController1
                                             ?.clear();
+                                        _model.invalidateBuscaCache();
                                         safeSetState(() {});
                                       },
                                       child: Icon(
@@ -327,13 +332,6 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                   builder: (context) {
                                     final animais =
                                         containerBuscaRebanhoPopupRowList
-                                            .where((e) =>
-                                                e.idRebanho !=
-                                                FFAppState()
-                                                    .rebanhoSelecionado
-                                                    .idRebanho)
-                                            .toList()
-                                            .take(20)
                                             .toList();
 
                                     return ListView.builder(
@@ -614,8 +612,11 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                         focusNode: _model.pesquisarFocusNode2,
                         onChanged: (_) => EasyDebounce.debounce(
                           '_model.pesquisarTextController2',
-                          Duration(milliseconds: 250),
-                          () => safeSetState(() {}),
+                          Duration(milliseconds: 500),
+                          () {
+                            _model.invalidateBuscaCache();
+                            safeSetState(() {});
+                          },
                         ),
                         autofocus: false,
                         obscureText: false,
@@ -682,6 +683,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                               ? InkWell(
                                   onTap: () async {
                                     _model.pesquisarTextController2?.clear();
+                                    _model.invalidateBuscaCache();
                                     safeSetState(() {});
                                   },
                                   child: Icon(
@@ -1917,10 +1919,28 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                       },
                     ),
                   FutureBuilder<List<BuscaRebanhoPopupRow>>(
-                    future: SQLiteManager.instance.buscaRebanhoPopup(
+                    future: _model.getBuscaRebanhoFuture(
                       idPropriedade:
                           FFAppState().propriedadeSelecionada.idPropriedade,
                       pesquisa: _model.pesquisarTextController2.text,
+                      sexo: widget!.sexo == 'Fêmea' ? 'Fêmea' : null,
+                      categoriaExcluir: widget!.sexo == 'Fêmea' ? 'Bezerra' : null,
+                      categoria: widget!.sexo == 'Macho' &&
+                              (widget!.reproducao == false ||
+                                  widget!.tipoReproducao == 'Monta Natural')
+                          ? 'Touro'
+                          : null,
+                      statusRebanho: widget!.sexo == 'Fêmea'
+                          ? 'Na propriedade'
+                          : widget!.sexo == 'Macho' &&
+                                  widget!.reproducao == true &&
+                                  widget!.tipoReproducao == 'Monta Natural'
+                              ? 'Na propriedade'
+                              : widget!.sexo == 'Macho' &&
+                                      widget!.reproducao == true &&
+                                      widget!.tipoReproducao == 'Inseminação'
+                                  ? 'Sêmen'
+                                  : null,
                     ),
                     builder: (context, snapshot) {
                       // Customize what your widget looks like when it's loading.
@@ -2061,16 +2081,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                       child: Builder(
                                         builder: (context) {
                                           final animais =
-                                              semPesquisaBuscaRebanhoPopupRowList
-                                                  .where((e) =>
-                                                      (e.sexo == 'Fêmea') &&
-                                                      (e.categoria !=
-                                                          'Bezerra') &&
-                                                      (e.statusRebanho ==
-                                                          'Na propriedade'))
-                                                  .toList()
-                                                  .take(20)
-                                                  .toList();
+                                              semPesquisaBuscaRebanhoPopupRowList;
 
                                           return SingleChildScrollView(
                                             child: Column(
@@ -2323,12 +2334,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                       child: Builder(
                                         builder: (context) {
                                           final animais =
-                                              semPesquisaBuscaRebanhoPopupRowList
-                                                  .where((e) =>
-                                                      e.categoria == 'Touro')
-                                                  .toList()
-                                                  .take(20)
-                                                  .toList();
+                                              semPesquisaBuscaRebanhoPopupRowList;
                                           if (animais.isEmpty) {
                                             return Center(
                                               child: EmptyRebanhoWidget(),
@@ -2585,15 +2591,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                       child: Builder(
                                         builder: (context) {
                                           final animais =
-                                              semPesquisaBuscaRebanhoPopupRowList
-                                                  .where((e) =>
-                                                      (e.categoria ==
-                                                          'Touro') &&
-                                                      (e.statusRebanho ==
-                                                          'Na propriedade'))
-                                                  .toList()
-                                                  .take(20)
-                                                  .toList();
+                                              semPesquisaBuscaRebanhoPopupRowList;
                                           if (animais.isEmpty) {
                                             return Center(
                                               child: EmptyRebanhoWidget(),
@@ -2849,13 +2847,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                       child: Builder(
                                         builder: (context) {
                                           final animais =
-                                              semPesquisaBuscaRebanhoPopupRowList
-                                                  .where((e) =>
-                                                      e.statusRebanho ==
-                                                      'Sêmen')
-                                                  .toList()
-                                                  .take(20)
-                                                  .toList();
+                                              semPesquisaBuscaRebanhoPopupRowList;
                                           if (animais.isEmpty) {
                                             return Center(
                                               child: EmptyRebanhoWidget(),

@@ -110,6 +110,9 @@ Future<Database> initializeDatabaseFromDbFile(
   // Validar compatibilidade FTS5 (Android não tem FTS5 no SQLite do sistema)
   await _ensureFts5Compatibility(database);
 
+  // Criar índices para otimizar buscas no rebanho popup
+  await _ensureRebanhoIndexes(database);
+
   return database;
 }
 
@@ -146,4 +149,36 @@ Future<void> _ensureFts5Compatibility(Database db) async {
       debugPrint('[SQLite] Não foi possível remover tabela FTS5: $e3');
     }
   }
+}
+
+/// Cria índices compostos na tabela local_rebanho para acelerar
+/// buscas no popup de seleção de animais (LIKE em numeroAnimal, nome, chip).
+/// Usa CREATE INDEX IF NOT EXISTS para ser idempotente.
+Future<void> _ensureRebanhoIndexes(Database db) async {
+  const indexes = <String>[
+    // Índice composto principal para a busca do popup
+    '''CREATE INDEX IF NOT EXISTS idx_rebanho_prop_deletado
+       ON local_rebanho (idPropriedade, deletado)''',
+    // Índice para busca por numeroAnimal (LIKE prefix)
+    '''CREATE INDEX IF NOT EXISTS idx_rebanho_numero_animal
+       ON local_rebanho (idPropriedade, deletado, numeroAnimal)''',
+    // Índice para busca por nome (LIKE prefix)
+    '''CREATE INDEX IF NOT EXISTS idx_rebanho_nome
+       ON local_rebanho (idPropriedade, deletado, nome)''',
+    // Índice para busca por chip
+    '''CREATE INDEX IF NOT EXISTS idx_rebanho_chip
+       ON local_rebanho (idPropriedade, deletado, chip)''',
+    // Índice para filtros por sexo e status
+    '''CREATE INDEX IF NOT EXISTS idx_rebanho_sexo_status
+       ON local_rebanho (idPropriedade, deletado, sexo, statusRebanho, categoria)''',
+  ];
+
+  for (final indexSql in indexes) {
+    try {
+      await db.execute(indexSql);
+    } catch (e) {
+      debugPrint('[SQLite] Erro ao criar índice: $e');
+    }
+  }
+  debugPrint('[SQLite] Índices de busca do rebanho verificados/criados.');
 }
