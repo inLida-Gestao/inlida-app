@@ -1,17 +1,24 @@
 // Automatic FlutterFlow imports
-import '/backend/schema/structs/index.dart';
-import '/backend/supabase/supabase.dart';
 import '/backend/sqlite/sqlite_manager.dart';
-import '/actions/actions.dart' as action_blocks;
-import '/flutter_flow/flutter_flow_theme.dart';
-import '/flutter_flow/flutter_flow_util.dart';
-import 'index.dart'; // Imports other custom actions
-import '/flutter_flow/custom_functions.dart'; // Imports custom functions
+// Imports other custom actions
+// Imports custom functions
 import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
 import 'package:sqflite/sqflite.dart';
+
+String? _cleanNull(dynamic value) {
+  if (value == null || value == 'null') return null;
+  return value.toString();
+}
+
+double? _toDouble(dynamic value) {
+  if (value == null || value == 'null') return null;
+  if (value is num) return value.toDouble();
+  if (value is String) return double.tryParse(value);
+  return null;
+}
 
 Future<Map<String, dynamic>> batchInsertLocalPesagens(
     List<dynamic> records) async {
@@ -24,15 +31,34 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
 
   for (int i = 0; i < records.length; i++) {
     try {
-      final Map<String, dynamic> data = Map<String, dynamic>.from(records[i]);
-      data.remove('id');
+      final Map<String, dynamic> source =
+          Map<String, dynamic>.from(records[i]);
+      final Map<String, dynamic> mapped = {};
 
-      final Map<String, dynamic> cleanData = {};
-      data.forEach((key, value) {
-        cleanData[key] = (value == "null") ? null : value;
-      });
+      // Mapeamento específico Supabase -> SQLite
+      if (source['idRebanho'] != null) {
+        mapped['idRebanho'] = _cleanNull(source['idRebanho']);
+      }
+      if (source['dataPesagem'] != null) {
+        mapped['dataPesagem'] = _cleanNull(source['dataPesagem']);
+      }
+      if (source['tipo'] != null) {
+        mapped['tipo'] = _cleanNull(source['tipo']);
+      }
+      if (source['peso'] != null) {
+        mapped['peso'] = _toDouble(source['peso']);
+      }
+      if (source['deletado'] != null) {
+        mapped['deletado'] = _cleanNull(source['deletado']);
+      }
+      if (source['created_at'] != null) {
+        mapped['created_at'] = _cleanNull(source['created_at']);
+      }
+      if (source['id_propriedade'] != null) {
+        mapped['id_propriedade'] = _cleanNull(source['id_propriedade']);
+      }
 
-      mappedRecords.add(cleanData);
+      mappedRecords.add(mapped);
     } catch (e) {
       final id = _extractPesagemId(records[i]);
       errors.add({'id': id, 'error': 'Erro ao mapear: $e'});
@@ -44,8 +70,8 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
     final db = SQLiteManager.instance.database;
     await db.transaction((txn) async {
       final batch = txn.batch();
-      for (final cleanData in mappedRecords) {
-        batch.insert('local_historico_pesagens', cleanData,
+      for (final mapped in mappedRecords) {
+        batch.insert('local_historico_pesagens', mapped,
             conflictAlgorithm: ConflictAlgorithm.replace);
       }
       await batch.commit(noResult: true);
@@ -57,15 +83,13 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
     final db = SQLiteManager.instance.database;
     int insertedCount = 0;
 
-    for (final cleanData in mappedRecords) {
+    for (final mapped in mappedRecords) {
       try {
-        await db.insert('local_historico_pesagens', cleanData,
+        await db.insert('local_historico_pesagens', mapped,
             conflictAlgorithm: ConflictAlgorithm.replace);
         insertedCount++;
       } catch (e) {
-        final id = cleanData['id_pesagem']?.toString() ??
-            cleanData['id_rebanho']?.toString() ??
-            'desconhecido';
+        final id = mapped['idRebanho']?.toString() ?? 'desconhecido';
         errors.add({'id': id, 'error': e.toString()});
       }
     }

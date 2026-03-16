@@ -45,7 +45,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimer = InstantTimer.periodic(
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         callback: (timer) async {
           _model.temNet = await actions.checkInternetConnection();
 
@@ -88,7 +88,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
     context.watch<FFAppState>();
 
     return AnimatedContainer(
-      duration: Duration(milliseconds: 350),
+      duration: const Duration(milliseconds: 350),
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
@@ -97,7 +97,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
         key: _model.formKey,
         autovalidateMode: AutovalidateMode.disabled,
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 16.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 16.0),
           child: SingleChildScrollView(
             primary: false,
             child: Column(
@@ -110,7 +110,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily:
                             FlutterFlowTheme.of(context).bodyMediumFamily,
-                        color: Color(0xFF181818),
+                        color: const Color(0xFF181818),
                         fontSize: 24.0,
                         letterSpacing: 0.0,
                         fontWeight: FontWeight.w500,
@@ -130,12 +130,12 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                         context: context,
                         isGlobal: false,
                         avoidOverflow: true,
-                        targetAnchor: AlignmentDirectional(0.0, 1.0)
+                        targetAnchor: const AlignmentDirectional(0.0, 1.0)
                             .resolve(Directionality.of(context)),
-                        followerAnchor: AlignmentDirectional(0.0, -1.0)
+                        followerAnchor: const AlignmentDirectional(0.0, -1.0)
                             .resolve(Directionality.of(context)),
                         builder: (dialogContext) {
-                          return Material(
+                          return const Material(
                             color: Colors.transparent,
                             child: SelectColorIconWidget(),
                           );
@@ -147,18 +147,18 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                       height: 56.0,
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).secondaryBackground,
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(6.0),
                           bottomRight: Radius.circular(6.0),
                           topLeft: Radius.circular(6.0),
                           topRight: Radius.circular(6.0),
                         ),
                         border: Border.all(
-                          color: Color(0xFFBEBEBE),
+                          color: const Color(0xFFBEBEBE),
                         ),
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
@@ -168,8 +168,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                               borderRadius: BorderRadius.circular(8.0),
                               child: Image.network(
                                 valueOrDefault<String>(
-                                  FFAppState().iconeSelecionado != null &&
-                                          FFAppState().iconeSelecionado != ''
+                                  FFAppState().iconeSelecionado != ''
                                       ? FFAppState().iconeSelecionado
                                       : 'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/in-linda-b-k-p-a05zov/assets/kpdgcsdxpwzi/Milho.png',
                                   'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/in-linda-b-k-p-a05zov/assets/kpdgcsdxpwzi/Milho.png',
@@ -189,7 +188,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF474747),
+                                        color: const Color(0xFF474747),
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -198,12 +197,12 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                                 .bodyMediumIsCustom,
                                       ),
                                 ),
-                                Icon(
+                                const Icon(
                                   Icons.keyboard_arrow_down,
                                   color: Color(0xFF474747),
                                   size: 24.0,
                                 ),
-                              ].divide(SizedBox(width: 8.0)),
+                              ].divide(const SizedBox(width: 8.0)),
                             ),
                           ],
                         ),
@@ -225,7 +224,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).bodyMediumFamily,
-                              color: Color(0xFF474747),
+                              color: const Color(0xFF474747),
                               fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
@@ -245,7 +244,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                               .override(
                                 fontFamily: FlutterFlowTheme.of(context)
                                     .labelMediumFamily,
-                                color: Color(0xFFBEBEBE),
+                                color: const Color(0xFFBEBEBE),
                                 fontSize: 16.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w600,
@@ -254,14 +253,14 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                     .labelMediumIsCustom,
                               ),
                           enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color(0x00E0E3E7),
                               width: 2.0,
                             ),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color(0xFF28A365),
                               width: 2.0,
                             ),
@@ -282,7 +281,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           filled: true,
-                          fillColor: Color(0xFFF1F1F1),
+                          fillColor: const Color(0xFFF1F1F1),
                         ),
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
@@ -299,7 +298,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                         validator: _model.nomePropriedadeTextControllerValidator
                             .asValidator(context),
                       ),
-                    ].divide(SizedBox(height: 8.0)),
+                    ].divide(const SizedBox(height: 8.0)),
                   ),
                 ),
                 Container(
@@ -316,7 +315,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).bodyMediumFamily,
-                              color: Color(0xFF474747),
+                              color: const Color(0xFF474747),
                               fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
@@ -327,7 +326,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                       FlutterFlowDropDown<String>(
                         controller: _model.dropdownUFValueController ??=
                             FormFieldController<String>(null),
-                        options: [
+                        options: const [
                           'AC',
                           'AL',
                           'AP',
@@ -401,19 +400,19 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                           color: FlutterFlowTheme.of(context).secondaryText,
                           size: 24.0,
                         ),
-                        fillColor: Color(0xFFF1F1F1),
+                        fillColor: const Color(0xFFF1F1F1),
                         elevation: 0.0,
-                        borderColor: Color(0x00E0E3E7),
+                        borderColor: const Color(0x00E0E3E7),
                         borderWidth: 0.0,
                         borderRadius: 8.0,
-                        margin: EdgeInsetsDirectional.fromSTEB(
+                        margin: const EdgeInsetsDirectional.fromSTEB(
                             16.0, 4.0, 16.0, 4.0),
                         hidesUnderline: true,
                         isOverButton: true,
                         isSearchable: true,
                         isMultiSelect: false,
                       ),
-                    ].divide(SizedBox(height: 8.0)),
+                    ].divide(const SizedBox(height: 8.0)),
                   ),
                 ),
                 Container(
@@ -430,7 +429,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).bodyMediumFamily,
-                              color: Color(0xFF474747),
+                              color: const Color(0xFF474747),
                               fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
@@ -447,7 +446,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                         ),
                         child: Builder(
                           builder: (context) => Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -462,9 +461,10 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                     context: context,
                                     isGlobal: false,
                                     avoidOverflow: true,
-                                    targetAnchor: AlignmentDirectional(0.0, 1.0)
+                                    targetAnchor: const AlignmentDirectional(
+                                            0.0, 1.0)
                                         .resolve(Directionality.of(context)),
-                                    followerAnchor: AlignmentDirectional(
+                                    followerAnchor: const AlignmentDirectional(
                                             0.0, -1.0)
                                         .resolve(Directionality.of(context)),
                                     builder: (dialogContext) {
@@ -481,13 +481,13 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                     context: context,
                                     builder: (alertDialogContext) {
                                       return AlertDialog(
-                                        content:
-                                            Text('Selecione o estado primeiro'),
+                                        content: const Text(
+                                            'Selecione o estado primeiro'),
                                         actions: [
                                           TextButton(
                                             onPressed: () => Navigator.pop(
                                                 alertDialogContext),
-                                            child: Text('Ok'),
+                                            child: const Text('Ok'),
                                           ),
                                         ],
                                       );
@@ -511,16 +511,13 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: FFAppState()
-                                                          .cidadeSelecionada !=
-                                                      null &&
-                                                  FFAppState()
-                                                          .cidadeSelecionada !=
+                                          color:
+                                              FFAppState().cidadeSelecionada !=
                                                       ''
-                                              ? FlutterFlowTheme.of(context)
-                                                  .secondaryText
-                                              : FlutterFlowTheme.of(context)
-                                                  .accent3,
+                                                  ? FlutterFlowTheme.of(context)
+                                                      .secondaryText
+                                                  : FlutterFlowTheme.of(context)
+                                                      .accent3,
                                           fontSize: 16.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -541,7 +538,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                           ),
                         ),
                       ),
-                    ].divide(SizedBox(height: 8.0)),
+                    ].divide(const SizedBox(height: 8.0)),
                   ),
                 ),
                 Container(
@@ -558,7 +555,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).bodyMediumFamily,
-                              color: Color(0xFF474747),
+                              color: const Color(0xFF474747),
                               fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
@@ -566,7 +563,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                   .bodyMediumIsCustom,
                             ),
                       ),
-                      Container(
+                      SizedBox(
                         width: double.infinity,
                         child: TextFormField(
                           controller: _model.benfeitoriaTextController,
@@ -597,14 +594,14 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                       .labelMediumIsCustom,
                                 ),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Color(0x00000000),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(6.0),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Color(0x00000000),
                                 width: 1.0,
                               ),
@@ -647,7 +644,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                               .asValidator(context),
                         ),
                       ),
-                    ].divide(SizedBox(height: 8.0)),
+                    ].divide(const SizedBox(height: 8.0)),
                   ),
                 ),
                 Container(
@@ -664,7 +661,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).bodyMediumFamily,
-                              color: Color(0xFF474747),
+                              color: const Color(0xFF474747),
                               fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
@@ -672,7 +669,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                   .bodyMediumIsCustom,
                             ),
                       ),
-                      Container(
+                      SizedBox(
                         width: double.infinity,
                         child: TextFormField(
                           controller: _model.tFpastagemTextController,
@@ -703,14 +700,14 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                       .labelMediumIsCustom,
                                 ),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Color(0x00000000),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(6.0),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Color(0x00000000),
                                 width: 1.0,
                               ),
@@ -753,7 +750,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                               .asValidator(context),
                         ),
                       ),
-                    ].divide(SizedBox(height: 8.0)),
+                    ].divide(const SizedBox(height: 8.0)),
                   ),
                 ),
                 Container(
@@ -770,7 +767,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).bodyMediumFamily,
-                              color: Color(0xFF474747),
+                              color: const Color(0xFF474747),
                               fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
@@ -778,7 +775,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                   .bodyMediumIsCustom,
                             ),
                       ),
-                      Container(
+                      SizedBox(
                         width: double.infinity,
                         child: TextFormField(
                           controller: _model.tFreservaTextController,
@@ -809,14 +806,14 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                       .labelMediumIsCustom,
                                 ),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Color(0x00000000),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(6.0),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Color(0x00000000),
                                 width: 1.0,
                               ),
@@ -859,7 +856,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                               .asValidator(context),
                         ),
                       ),
-                    ].divide(SizedBox(height: 8.0)),
+                    ].divide(const SizedBox(height: 8.0)),
                   ),
                 ),
                 Container(
@@ -876,7 +873,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).bodyMediumFamily,
-                              color: Color(0xFF474747),
+                              color: const Color(0xFF474747),
                               fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
@@ -884,7 +881,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                   .bodyMediumIsCustom,
                             ),
                       ),
-                      Container(
+                      SizedBox(
                         width: double.infinity,
                         child: TextFormField(
                           controller: _model.tFagriculturaTextController,
@@ -915,14 +912,14 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                       .labelMediumIsCustom,
                                 ),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Color(0x00000000),
                                 width: 1.0,
                               ),
                               borderRadius: BorderRadius.circular(6.0),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Color(0x00000000),
                                 width: 1.0,
                               ),
@@ -965,7 +962,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                               .asValidator(context),
                         ),
                       ),
-                    ].divide(SizedBox(height: 8.0)),
+                    ].divide(const SizedBox(height: 8.0)),
                   ),
                 ),
                 Container(
@@ -982,7 +979,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).bodyMediumFamily,
-                              color: Color(0xFF474747),
+                              color: const Color(0xFF474747),
                               fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
@@ -993,7 +990,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                       Container(
                         width: double.infinity,
                         height: 56.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF1F1F1),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(6.0),
@@ -1003,9 +1000,9 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                           ),
                         ),
                         child: Align(
-                          alignment: AlignmentDirectional(-1.0, 0.0),
+                          alignment: const AlignmentDirectional(-1.0, 0.0),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 0.0, 0.0),
                             child: Text(
                               valueOrDefault<String>(
@@ -1039,35 +1036,20 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                     fontFamily: FlutterFlowTheme.of(context)
                                         .bodyMediumFamily,
                                     color: valueOrDefault<Color>(
-                                      (_model.benfeitoriaTextController
-                                                          .text ==
-                                                      null ||
-                                                  _model.benfeitoriaTextController
-                                                          .text ==
-                                                      '') ||
+                                      (_model.benfeitoriaTextController.text == '') ||
                                               (_model.tFpastagemTextController
-                                                          .text ==
-                                                      null ||
-                                                  _model
-                                                          .tFpastagemTextController
-                                                          .text ==
-                                                      '') ||
+                                                      .text ==
+                                                  '') ||
                                               (_model.tFreservaTextController
-                                                          .text ==
-                                                      null ||
-                                                  _model.tFreservaTextController
-                                                          .text ==
-                                                      '') ||
+                                                      .text ==
+                                                  '') ||
                                               (_model.tFagriculturaTextController
-                                                          .text ==
-                                                      null ||
-                                                  _model.tFagriculturaTextController
-                                                          .text ==
-                                                      '')
-                                          ? Color(0xFFBEBEBE)
+                                                      .text ==
+                                                  '')
+                                          ? const Color(0xFFBEBEBE)
                                           : FlutterFlowTheme.of(context)
                                               .primaryText,
-                                      Color(0xFFBEBEBE),
+                                      const Color(0xFFBEBEBE),
                                     ),
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
@@ -1080,7 +1062,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                           ),
                         ),
                       ),
-                    ].divide(SizedBox(height: 8.0)),
+                    ].divide(const SizedBox(height: 8.0)),
                   ),
                 ),
                 Container(
@@ -1097,7 +1079,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).bodyMediumFamily,
-                              color: Color(0xFF474747),
+                              color: const Color(0xFF474747),
                               fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
@@ -1108,7 +1090,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                       Container(
                         width: double.infinity,
                         height: 56.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF1F1F1),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(6.0),
@@ -1121,7 +1103,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                           multiSelectController:
                               _model.dropdownAtividadesValueController ??=
                                   FormListFieldController<String>(null),
-                          options: [
+                          options: const [
                             'Engorda',
                             'Cria',
                             'Leite',
@@ -1148,12 +1130,12 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                             color: FlutterFlowTheme.of(context).secondaryText,
                             size: 24.0,
                           ),
-                          fillColor: Color(0xFFF1F1F1),
+                          fillColor: const Color(0xFFF1F1F1),
                           elevation: 0.0,
-                          borderColor: Color(0x00E0E3E7),
+                          borderColor: const Color(0x00E0E3E7),
                           borderWidth: 0.0,
                           borderRadius: 8.0,
-                          margin: EdgeInsetsDirectional.fromSTEB(
+                          margin: const EdgeInsetsDirectional.fromSTEB(
                               16.0, 4.0, 16.0, 4.0),
                           hidesUnderline: true,
                           isOverButton: true,
@@ -1163,7 +1145,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                               () => _model.dropdownAtividadesValue = val),
                         ),
                       ),
-                    ].divide(SizedBox(height: 8.0)),
+                    ].divide(const SizedBox(height: 8.0)),
                   ),
                 ),
                 Container(
@@ -1180,7 +1162,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).bodyMediumFamily,
-                              color: Color(0xFF474747),
+                              color: const Color(0xFF474747),
                               fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
@@ -1191,7 +1173,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                       Container(
                         width: double.infinity,
                         height: 104.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF1F1F1),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(6.0),
@@ -1201,7 +1183,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 0.0, 0.0),
                           child: TextFormField(
                             controller: _model.textController6,
@@ -1215,7 +1197,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                   .override(
                                     fontFamily: FlutterFlowTheme.of(context)
                                         .bodyMediumFamily,
-                                    color: Color(0xFFBEBEBE),
+                                    color: const Color(0xFFBEBEBE),
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -1224,14 +1206,14 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                             .bodyMediumIsCustom,
                                   ),
                               enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x00FFFFFF),
                                   width: 2.0,
                                 ),
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                               focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Color(0x004B39EF),
                                   width: 2.0,
                                 ),
@@ -1269,11 +1251,12 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                           ),
                         ),
                       ),
-                    ].divide(SizedBox(height: 8.0)),
+                    ].divide(const SizedBox(height: 8.0)),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
+                  padding:
+                      const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -1303,17 +1286,17 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                           options: FFButtonOptions(
                             width: 155.0,
                             height: 56.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
-                            color: Color(0x001E7A4C),
+                            color: const Color(0x001E7A4C),
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
                                   fontFamily: FlutterFlowTheme.of(context)
                                       .titleSmallFamily,
-                                  color: Color(0xFF1E7A4C),
+                                  color: const Color(0xFF1E7A4C),
                                   fontSize: 18.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.w600,
@@ -1321,7 +1304,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                       .titleSmallIsCustom,
                                 ),
                             elevation: 0.0,
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color(0xFF1E7A4C),
                               width: 2.0,
                             ),
@@ -1331,20 +1314,14 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                       ),
                       Expanded(
                         child: FFButtonWidget(
-                          onPressed: ((_model.nomePropriedadeTextController
-                                              .text ==
-                                          null ||
-                                      _model.nomePropriedadeTextController
-                                              .text ==
-                                          '') ||
+                          onPressed: ((_model
+                                          .nomePropriedadeTextController.text ==
+                                      '') ||
                                   (_model.dropdownUFValue == null ||
                                       _model.dropdownUFValue == '') ||
                                   (_model.tFpastagemTextController.text ==
-                                          null ||
-                                      _model.tFpastagemTextController.text ==
-                                          '') ||
-                                  (FFAppState().cidadeSelecionada == null ||
-                                      FFAppState().cidadeSelecionada == ''))
+                                      '') ||
+                                  (FFAppState().cidadeSelecionada == ''))
                               ? null
                               : () async {
                                   await SQLiteManager.instance
@@ -1441,7 +1418,8 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                           fontSize: 16.0,
                                         ),
                                       ),
-                                      duration: Duration(milliseconds: 4000),
+                                      duration:
+                                          const Duration(milliseconds: 4000),
                                       backgroundColor:
                                           FlutterFlowTheme.of(context)
                                               .secondary,
@@ -1453,11 +1431,11 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                           options: FFButtonOptions(
                             width: 155.0,
                             height: 56.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
-                            color: Color(0xFF28A365),
+                            color: const Color(0xFF28A365),
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
@@ -1471,7 +1449,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                       .titleSmallIsCustom,
                                 ),
                             elevation: 3.0,
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Colors.transparent,
                               width: 1.0,
                             ),
@@ -1483,10 +1461,10 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                           ),
                         ),
                       ),
-                    ].divide(SizedBox(width: 16.0)),
+                    ].divide(const SizedBox(width: 16.0)),
                   ),
                 ),
-              ].divide(SizedBox(height: 32.0)),
+              ].divide(const SizedBox(height: 32.0)),
             ),
           ),
         ),

@@ -60,7 +60,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
-      Function() _navigate = () {};
+      Function() navigate = () {};
       _model.userLogadoON = await UsersTable().queryRows(
         queryFn: (q) => q.eqOrNull(
           'userID',
@@ -88,7 +88,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       color: FlutterFlowTheme.of(context).secondaryBackground,
                     ),
                   ),
-                  duration: Duration(milliseconds: 6000),
+                  duration: const Duration(milliseconds: 6000),
                   backgroundColor: FlutterFlowTheme.of(context).secondary,
                 ),
               );
@@ -117,16 +117,40 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               FFAppState().qtdAntiparasitarios = 0;
               FFAppState().lotesCadastrados = 0;
               safeSetState(() {});
-              try { await action_blocks.refreshPropriedades(context); } catch (e) { debugPrint('[SYNC][propriedades] Erro na home: $e'); }
-              try { await action_blocks.refreshLotes(context); } catch (e) { debugPrint('[SYNC][lotes] Erro na home: $e'); }
-              try { await action_blocks.refreshRebanhoOtimizada(context); } catch (e) { debugPrint('[SYNC][rebanho] Erro na home: $e'); }
-              try { await action_blocks.refreshReproducaoOtimizada(context); } catch (e) { debugPrint('[SYNC][reproducao] Erro na home: $e'); }
+              try {
+                await action_blocks.refreshPropriedades(context);
+              } catch (e) {
+                debugPrint('[SYNC][propriedades] Erro na home: $e');
+              }
+              try {
+                await action_blocks.refreshLotes(context);
+              } catch (e) {
+                debugPrint('[SYNC][lotes] Erro na home: $e');
+              }
+              try {
+                await action_blocks.refreshRebanhoOtimizada(context);
+              } catch (e) {
+                debugPrint('[SYNC][rebanho] Erro na home: $e');
+              }
+              try {
+                await action_blocks.refreshReproducaoOtimizada(context);
+              } catch (e) {
+                debugPrint('[SYNC][reproducao] Erro na home: $e');
+              }
               unawaited(
                 () async {
-                  try { await action_blocks.refreshPesagens(context); } catch (e) { debugPrint('[SYNC][pesagens] Erro na home: $e'); }
+                  try {
+                    await action_blocks.refreshPesagens(context);
+                  } catch (e) {
+                    debugPrint('[SYNC][pesagens] Erro na home: $e');
+                  }
                 }(),
               );
-              try { await action_blocks.refresSanidadeOtimizada(context); } catch (e) { debugPrint('[SYNC][sanidade] Erro na home: $e'); }
+              try {
+                await action_blocks.refresSanidadeOtimizada(context);
+              } catch (e) {
+                debugPrint('[SYNC][sanidade] Erro na home: $e');
+              }
               FFAppState().firstRunUserEmail = currentUserEmail;
               FFAppState().ultimaSincronizacao = getCurrentTimestamp;
               safeSetState(() {});
@@ -135,7 +159,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           }),
           Future(() async {
             _model.instantTimer = InstantTimer.periodic(
-              duration: Duration(milliseconds: 250),
+              duration: const Duration(milliseconds: 250),
               callback: (timer) async {
                 _model.temNet = await actions.checkInternetConnection();
 
@@ -189,7 +213,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         await authManager.signOut();
         GoRouter.of(context).clearRedirectLocation();
 
-        _navigate = () =>
+        navigate = () =>
             context.goNamedAuth(TelaInicioWidget.routeName, context.mounted);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -199,13 +223,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 color: FlutterFlowTheme.of(context).secondaryBackground,
               ),
             ),
-            duration: Duration(milliseconds: 4000),
+            duration: const Duration(milliseconds: 4000),
             backgroundColor: FlutterFlowTheme.of(context).secondary,
           ),
         );
       }
 
-      _navigate();
+      navigate();
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
@@ -238,7 +262,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               (FFAppState().navegacaoDashboard == 'sanidade'),
           child: Builder(
             builder: (context) => Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 24.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 24.0),
               child: FloatingActionButton(
                 onPressed: () async {
                   if (FFAppState().navegacaoDashboard == 'propriedades') {
@@ -253,14 +278,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           elevation: 0,
                           insetPadding: EdgeInsets.zero,
                           backgroundColor: Colors.transparent,
-                          alignment: AlignmentDirectional(0.0, 0.0)
+                          alignment: const AlignmentDirectional(0.0, 0.0)
                               .resolve(Directionality.of(context)),
                           child: GestureDetector(
                             onTap: () {
                               FocusScope.of(dialogContext).unfocus();
                               FocusManager.instance.primaryFocus?.unfocus();
                             },
-                            child: AddPropriedadeWidget(),
+                            child: const AddPropriedadeWidget(),
                           ),
                         );
                       },
@@ -271,9 +296,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       context: context,
                       isGlobal: false,
                       avoidOverflow: true,
-                      targetAnchor: AlignmentDirectional(1.0, -1.0)
+                      targetAnchor: const AlignmentDirectional(1.0, -1.0)
                           .resolve(Directionality.of(context)),
-                      followerAnchor: AlignmentDirectional(1.0, 1.0)
+                      followerAnchor: const AlignmentDirectional(1.0, 1.0)
                           .resolve(Directionality.of(context)),
                       builder: (dialogContext) {
                         return Material(
@@ -283,7 +308,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                               FocusScope.of(dialogContext).unfocus();
                               FocusManager.instance.primaryFocus?.unfocus();
                             },
-                            child: SubMenuRebanhoWidget(),
+                            child: const SubMenuRebanhoWidget(),
                           ),
                         );
                       },
@@ -299,14 +324,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           elevation: 0,
                           insetPadding: EdgeInsets.zero,
                           backgroundColor: Colors.transparent,
-                          alignment: AlignmentDirectional(0.0, 0.0)
+                          alignment: const AlignmentDirectional(0.0, 0.0)
                               .resolve(Directionality.of(context)),
                           child: GestureDetector(
                             onTap: () {
                               FocusScope.of(dialogContext).unfocus();
                               FocusManager.instance.primaryFocus?.unfocus();
                             },
-                            child: AddLoteWidget(),
+                            child: const AddLoteWidget(),
                           ),
                         );
                       },
@@ -317,9 +342,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       context: context,
                       isGlobal: false,
                       avoidOverflow: true,
-                      targetAnchor: AlignmentDirectional(1.0, -1.0)
+                      targetAnchor: const AlignmentDirectional(1.0, -1.0)
                           .resolve(Directionality.of(context)),
-                      followerAnchor: AlignmentDirectional(1.0, 1.0)
+                      followerAnchor: const AlignmentDirectional(1.0, 1.0)
                           .resolve(Directionality.of(context)),
                       builder: (dialogContext) {
                         return Material(
@@ -329,7 +354,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                               FocusScope.of(dialogContext).unfocus();
                               FocusManager.instance.primaryFocus?.unfocus();
                             },
-                            child: PopupReproducaoWidget(),
+                            child: const PopupReproducaoWidget(),
                           ),
                         );
                       },
@@ -340,9 +365,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                       context: context,
                       isGlobal: false,
                       avoidOverflow: true,
-                      targetAnchor: AlignmentDirectional(1.0, -1.0)
+                      targetAnchor: const AlignmentDirectional(1.0, -1.0)
                           .resolve(Directionality.of(context)),
-                      followerAnchor: AlignmentDirectional(1.0, 1.0)
+                      followerAnchor: const AlignmentDirectional(1.0, 1.0)
                           .resolve(Directionality.of(context)),
                       builder: (dialogContext) {
                         return Material(
@@ -352,7 +377,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                               FocusScope.of(dialogContext).unfocus();
                               FocusManager.instance.primaryFocus?.unfocus();
                             },
-                            child: PopupSanidadeWidget(),
+                            child: const PopupSanidadeWidget(),
                           ),
                         );
                       },
@@ -375,26 +400,27 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           child: wrapWithModel(
             model: _model.navegacaoModel,
             updateCallback: () => safeSetState(() {}),
-            child: NavegacaoWidget(),
+            child: const NavegacaoWidget(),
           ),
         ),
         body: SafeArea(
           top: true,
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      24.0, 0.0, 24.0, 0.0),
                   child: Container(
-                    decoration: BoxDecoration(),
+                    decoration: const BoxDecoration(),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             children: [
@@ -461,7 +487,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                               .bodyMediumIsCustom,
                                     ),
                               ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                         if (responsiveVisibility(
@@ -483,7 +509,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       elevation: 0,
                                       insetPadding: EdgeInsets.zero,
                                       backgroundColor: Colors.transparent,
-                                      alignment: AlignmentDirectional(0.0, 0.0)
+                                      alignment: const AlignmentDirectional(
+                                              0.0, 0.0)
                                           .resolve(Directionality.of(context)),
                                       child: GestureDetector(
                                         onTap: () {
@@ -492,26 +519,27 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           FocusManager.instance.primaryFocus
                                               ?.unfocus();
                                         },
-                                        child: PesquisaGeralWidget(),
+                                        child: const PesquisaGeralWidget(),
                                       ),
                                     );
                                   },
                                 );
                               },
                               text: '',
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.search,
                                 size: 28.0,
                               ),
                               options: FFButtonOptions(
                                 height: 40.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     10.0, 0.0, 0.0, 0.0),
-                                iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                    0.0, 0.0, 0.0, 0.0),
+                                iconPadding:
+                                    const EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 0.0, 0.0, 0.0),
                                 iconColor:
                                     FlutterFlowTheme.of(context).customColor4,
-                                color: Color(0x0028A365),
+                                color: const Color(0x0028A365),
                                 textStyle: FlutterFlowTheme.of(context)
                                     .titleSmall
                                     .override(
@@ -540,30 +568,30 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     builder: (context) {
                       if (FFAppState().navegacaoDashboard == 'propriedades') {
                         return AnimatedContainer(
-                          duration: Duration(milliseconds: 500),
+                          duration: const Duration(milliseconds: 500),
                           curve: Curves.easeInOut,
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: wrapWithModel(
                             model: _model.pagePropriedadesModel,
                             updateCallback: () => safeSetState(() {}),
-                            child: PagePropriedadesWidget(),
+                            child: const PagePropriedadesWidget(),
                           ),
                         );
                       } else if (FFAppState().navegacaoDashboard == 'painel') {
                         return Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 0.0, 24.0, 0.0),
                           child: AnimatedContainer(
-                            duration: Duration(milliseconds: 500),
+                            duration: const Duration(milliseconds: 500),
                             curve: Curves.easeInOut,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 wrapWithModel(
                                   model: _model.selecionarPropriedadeModel,
                                   updateCallback: () => safeSetState(() {}),
-                                  child: SelecionarPropriedadeWidget(),
+                                  child: const SelecionarPropriedadeWidget(),
                                 ),
                                 Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -572,7 +600,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     Expanded(
                                       child: Container(
                                         width: 160.0,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           color: Color(0xFFF8F8F8),
                                           borderRadius: BorderRadius.only(
                                             bottomLeft: Radius.circular(12.0),
@@ -582,9 +610,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  12.0, 12.0, 12.0, 8.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(12.0, 12.0, 12.0, 8.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
@@ -601,7 +628,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                 ),
                                               ),
                                               Container(
-                                                decoration: BoxDecoration(),
+                                                decoration:
+                                                    const BoxDecoration(),
                                                 child: Text(
                                                   valueOrDefault<String>(
                                                     FFAppState()
@@ -657,7 +685,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     Expanded(
                                       child: Container(
                                         width: 160.0,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           color: Color(0xFFF8F8F8),
                                           borderRadius: BorderRadius.only(
                                             bottomLeft: Radius.circular(12.0),
@@ -667,9 +695,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  12.0, 12.0, 12.0, 8.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(12.0, 12.0, 12.0, 8.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
@@ -686,7 +713,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                 ),
                                               ),
                                               Container(
-                                                decoration: BoxDecoration(),
+                                                decoration:
+                                                    const BoxDecoration(),
                                                 child: Text(
                                                   valueOrDefault<String>(
                                                     FFAppState()
@@ -739,7 +767,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(width: 8.0)),
+                                  ].divide(const SizedBox(width: 8.0)),
                                 ),
                                 if (responsiveVisibility(
                                   context: context,
@@ -757,7 +785,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsets.all(16.0),
+                                      padding: const EdgeInsets.all(16.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -785,7 +813,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                           .bodyMediumIsCustom,
                                                 ),
                                           ),
-                                        ].divide(SizedBox(width: 24.0)),
+                                        ].divide(const SizedBox(width: 24.0)),
                                       ),
                                     ),
                                   ),
@@ -806,24 +834,26 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           child: Padding(
                                             padding: MediaQuery.viewInsetsOf(
                                                 context),
-                                            child: NavegarBottomWidget(),
+                                            child: const NavegarBottomWidget(),
                                           ),
                                         );
                                       },
                                     ).then((value) => safeSetState(() {}));
                                   },
                                   text: 'Adicionar novo',
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.add,
                                     size: 24.0,
                                   ),
                                   options: FFButtonOptions(
                                     width: double.infinity,
                                     height: 48.0,
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        16.0, 0.0, 16.0, 0.0),
-                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 0.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16.0, 0.0, 16.0, 0.0),
+                                    iconPadding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 0.0, 0.0, 0.0),
                                     color: FlutterFlowTheme.of(context).primary,
                                     textStyle: FlutterFlowTheme.of(context)
                                         .titleSmall
@@ -842,7 +872,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 16.0, 0.0, 0.0),
                                   child: FutureBuilder<List<AnunciosRow>>(
                                     future: AnunciosTable().queryRows(
@@ -877,8 +907,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                         ),
                                         child: Visibility(
                                           visible: ((containerAnunciosRowList
-                                                          .length >
-                                                      0) &&
+                                                      .isNotEmpty) &&
                                                   (_model.temNet == true)) &&
                                               responsiveVisibility(
                                                 context: context,
@@ -890,19 +919,16 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                   containerAnunciosRowList
                                                       .toList();
 
-                                              return Container(
+                                              return SizedBox(
                                                 width: double.infinity,
                                                 height: 160.0,
                                                 child: Stack(
                                                   children: [
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  0.0,
-                                                                  24.0,
-                                                                  0.0,
-                                                                  0.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(0.0,
+                                                              24.0, 0.0, 0.0),
                                                       child: PageView.builder(
                                                         controller: _model
                                                                 .pageViewController ??=
@@ -969,16 +995,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                     ),
                                                     Align(
                                                       alignment:
-                                                          AlignmentDirectional(
+                                                          const AlignmentDirectional(
                                                               0.0, -1.0),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0,
-                                                                    16.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(0.0,
+                                                                0.0, 0.0, 16.0),
                                                         child: smooth_page_indicator
                                                             .SmoothPageIndicator(
                                                           controller: _model
@@ -1000,9 +1023,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                 .pageViewController!
                                                                 .animateToPage(
                                                               i,
-                                                              duration: Duration(
-                                                                  milliseconds:
-                                                                      500),
+                                                              duration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          500),
                                                               curve:
                                                                   Curves.ease,
                                                             );
@@ -1073,12 +1097,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                         text: 'delete',
                                         options: FFButtonOptions(
                                           height: 40.0,
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 0.0, 16.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 0.0, 16.0, 0.0),
                                           iconPadding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 0.0, 0.0, 0.0),
+                                              const EdgeInsetsDirectional
+                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
                                           color: FlutterFlowTheme.of(context)
                                               .primary,
                                           textStyle: FlutterFlowTheme.of(
@@ -1136,7 +1159,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           safeSetState(() {});
                                         },
                                       ),
-                                    ].divide(SizedBox(width: 8.0)),
+                                    ].divide(const SizedBox(width: 8.0)),
                                   ),
                                 if (responsiveVisibility(
                                   context: context,
@@ -1186,7 +1209,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                       ),
-                                    ].divide(SizedBox(width: 8.0)),
+                                    ].divide(const SizedBox(width: 8.0)),
                                   ),
                                 if (responsiveVisibility(
                                   context: context,
@@ -1212,7 +1235,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                              ].divide(SizedBox(height: 24.0)),
+                              ].divide(const SizedBox(height: 24.0)),
                             ),
                           ),
                         );
@@ -1228,7 +1251,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           child: wrapWithModel(
                             model: _model.pageRebanhoModel,
                             updateCallback: () => safeSetState(() {}),
-                            child: PageRebanhoWidget(),
+                            child: const PageRebanhoWidget(),
                           ),
                         );
                       } else if (FFAppState().navegacaoDashboard == 'lotes') {
@@ -1242,7 +1265,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           child: wrapWithModel(
                             model: _model.pageLotesModel,
                             updateCallback: () => safeSetState(() {}),
-                            child: PageLotesWidget(),
+                            child: const PageLotesWidget(),
                           ),
                         );
                       } else if (FFAppState().navegacaoDashboard ==
@@ -1257,7 +1280,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           child: wrapWithModel(
                             model: _model.pageReproducoesModel,
                             updateCallback: () => safeSetState(() {}),
-                            child: PageReproducoesWidget(),
+                            child: const PageReproducoesWidget(),
                           ),
                         );
                       } else if (FFAppState().navegacaoDashboard ==
@@ -1265,14 +1288,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         return wrapWithModel(
                           model: _model.pageSanidadeModel,
                           updateCallback: () => safeSetState(() {}),
-                          child: PageSanidadeWidget(),
+                          child: const PageSanidadeWidget(),
                         );
                       } else if (FFAppState().navegacaoDashboard ==
                           'minhaconta') {
                         return wrapWithModel(
                           model: _model.minhaContaModel,
                           updateCallback: () => safeSetState(() {}),
-                          child: MinhaContaWidget(),
+                          child: const MinhaContaWidget(),
                         );
                       } else {
                         return Container(
@@ -1287,7 +1310,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     },
                   ),
                 ),
-              ].divide(SizedBox(height: 16.0)),
+              ].divide(const SizedBox(height: 16.0)),
             ),
           ),
         ),

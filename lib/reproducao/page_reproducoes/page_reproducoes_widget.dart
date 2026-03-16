@@ -82,8 +82,8 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
           elevation: 0,
           insetPadding: EdgeInsets.zero,
           backgroundColor: Colors.transparent,
-          alignment:
-              AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(ctx)),
+          alignment: const AlignmentDirectional(0.0, 0.0)
+              .resolve(Directionality.of(ctx)),
           child: ViewReproducaoRebanhoWidget(
             idReproducao: idReproducao,
           ),
@@ -112,8 +112,8 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
           elevation: 0,
           insetPadding: EdgeInsets.zero,
           backgroundColor: Colors.transparent,
-          alignment:
-              AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(ctx)),
+          alignment: const AlignmentDirectional(0.0, 0.0)
+              .resolve(Directionality.of(ctx)),
           child: EditReproducaoRebanhoWidget(
             idReproducao: idReproducao,
           ),
@@ -252,21 +252,23 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
         color: FlutterFlowTheme.of(context).secondaryBackground,
       ),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
               child: wrapWithModel(
                 model: _model.selecionarPropriedadeModel,
                 updateCallback: () => safeSetState(() {}),
-                child: SelecionarPropriedadeWidget(),
+                child: const SelecionarPropriedadeWidget(),
               ),
             ),
             if (FFAppState().visibilidadeProgressBarRepro == true)
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,16 +327,17 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                             .headlineSmallIsCustom,
                                   ),
                             ),
-                            barRadius: Radius.circular(8.0),
+                            barRadius: const Radius.circular(8.0),
                             padding: EdgeInsets.zero,
                           ),
                       ],
                     ),
-                  ].divide(SizedBox(height: 6.0)),
+                  ].divide(const SizedBox(height: 6.0)),
                 ),
               ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(0.0, 16.0, 0.0, 0.0),
               child: Container(
                 width: double.infinity,
                 height: 120.0,
@@ -347,12 +350,12 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                   children: [
                     Expanded(
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF8F8F8),
                           shape: BoxShape.rectangle,
                         ),
                         child: Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -394,7 +397,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF8E8E8E),
+                                        color: const Color(0xFF8E8E8E),
                                         fontSize: 11.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.normal,
@@ -404,18 +407,18 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                       ),
                                 ),
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                       ),
                     ),
                     Expanded(
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF8F8F8),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -461,7 +464,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF8E8E8E),
+                                        color: const Color(0xFF8E8E8E),
                                         fontSize: 11.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.normal,
@@ -471,18 +474,18 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                       ),
                                 ),
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                       ),
                     ),
                     Expanded(
                       child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF8F8F8),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -522,7 +525,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF8E8E8E),
+                                        color: const Color(0xFF8E8E8E),
                                         fontSize: 11.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.normal,
@@ -532,28 +535,29 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                       ),
                                 ),
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                       ),
                     ),
                   ]
-                      .divide(SizedBox(width: 8.0))
-                      .addToStart(SizedBox(width: 24.0))
-                      .addToEnd(SizedBox(width: 24.0)),
+                      .divide(const SizedBox(width: 8.0))
+                      .addToStart(const SizedBox(width: 24.0))
+                      .addToEnd(const SizedBox(width: 24.0)),
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
-              child: Container(
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
+              child: SizedBox(
                 width: double.infinity,
                 child: TextFormField(
                   controller: _model.pesquisarTextController,
                   focusNode: _model.pesquisarFocusNode,
                   onChanged: (_) => EasyDebounce.debounce(
                     '_model.pesquisarTextController',
-                    Duration(milliseconds: 2000),
+                    const Duration(milliseconds: 2000),
                     () => safeSetState(() {}),
                   ),
                   autofocus: false,
@@ -645,7 +649,8 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
               ),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
               child: Container(
                 width: double.infinity,
                 height: 40.0,
@@ -672,7 +677,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                             builder: (context) {
                               return Padding(
                                 padding: MediaQuery.viewInsetsOf(context),
-                                child: FiltrosReproducaoWidget(),
+                                child: const FiltrosReproducaoWidget(),
                               );
                             },
                           ).then((value) async {
@@ -692,11 +697,11 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                             borderRadius: BorderRadius.circular(24.0),
                             shape: BoxShape.rectangle,
                             border: Border.all(
-                              color: Color(0xFFBEBEBE),
+                              color: const Color(0xFFBEBEBE),
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 8.0, 16.0, 8.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -723,7 +728,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                              ].divide(SizedBox(width: 8.0)),
+                              ].divide(const SizedBox(width: 8.0)),
                             ),
                           ),
                         ),
@@ -741,11 +746,11 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                             borderRadius: BorderRadius.circular(24.0),
                             shape: BoxShape.rectangle,
                             border: Border.all(
-                              color: Color(0xFFBEBEBE),
+                              color: const Color(0xFFBEBEBE),
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 8.0, 16.0, 8.0),
                             child: Text(
                               _buildDateRangeChip(
@@ -762,7 +767,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                           .bodyMedium
                                           .fontStyle,
                                     ),
-                                    color: Color(0xFF5F5F5F),
+                                    color: const Color(0xFF5F5F5F),
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
                                     fontStyle: FlutterFlowTheme.of(context)
@@ -785,11 +790,11 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                             borderRadius: BorderRadius.circular(24.0),
                             shape: BoxShape.rectangle,
                             border: Border.all(
-                              color: Color(0xFFBEBEBE),
+                              color: const Color(0xFFBEBEBE),
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 8.0, 16.0, 8.0),
                             child: Text(
                               _buildDateRangeChip(
@@ -806,7 +811,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                           .bodyMedium
                                           .fontStyle,
                                     ),
-                                    color: Color(0xFF5F5F5F),
+                                    color: const Color(0xFF5F5F5F),
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
                                     fontStyle: FlutterFlowTheme.of(context)
@@ -824,11 +829,11 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                             borderRadius: BorderRadius.circular(24.0),
                             shape: BoxShape.rectangle,
                             border: Border.all(
-                              color: Color(0xFFBEBEBE),
+                              color: const Color(0xFFBEBEBE),
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 8.0, 16.0, 8.0),
                             child: Text(
                               'Categoria: ${FFAppState().filtroCategoriaReproducao.join(', ')}',
@@ -841,7 +846,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                           .bodyMedium
                                           .fontStyle,
                                     ),
-                                    color: Color(0xFF5F5F5F),
+                                    color: const Color(0xFF5F5F5F),
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
                                     fontStyle: FlutterFlowTheme.of(context)
@@ -869,11 +874,11 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                   borderRadius: BorderRadius.circular(24.0),
                                   shape: BoxShape.rectangle,
                                   border: Border.all(
-                                    color: Color(0xFFBEBEBE),
+                                    color: const Color(0xFFBEBEBE),
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 8.0, 16.0, 8.0),
                                   child: Text(
                                     filtroReproItem,
@@ -887,7 +892,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                     .bodyMedium
                                                     .fontStyle,
                                           ),
-                                          color: Color(0xFF5F5F5F),
+                                          color: const Color(0xFF5F5F5F),
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w500,
                                           fontStyle:
@@ -898,11 +903,11 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                   ),
                                 ),
                               );
-                            }).divide(SizedBox(width: 8.0)),
+                            }).divide(const SizedBox(width: 8.0)),
                           );
                         },
                       ),
-                    ].divide(SizedBox(width: 8.0)),
+                    ].divide(const SizedBox(width: 8.0)),
                   ),
                 ),
               ),
@@ -910,8 +915,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
             Flexible(
               child: Builder(
                 builder: (context) {
-                  if (_model.pesquisarTextController.text == null ||
-                      _model.pesquisarTextController.text == '') {
+                  if (_model.pesquisarTextController.text == '') {
                     return FutureBuilder<List<ListarReproducoesPaginadaRow>>(
                       future: SQLiteManager.instance.listarReproducoesPaginada(
                         idPropriedade:
@@ -946,7 +950,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                           FFAppState().filtroDataHoje,
                           locale: FFLocalizations.of(context).languageCode,
                         ),
-                        categoriaFiltro: FFAppState().filtroCategoriaReproducao.isNotEmpty
+                        categoriaFiltro: FFAppState()
+                                .filtroCategoriaReproducao
+                                .isNotEmpty
                             ? FFAppState().filtroCategoriaReproducao.join(',')
                             : '',
                       ),
@@ -969,21 +975,21 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                             snapshot.data!;
 
                         return Container(
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               if (!(reproducaoPaginadaListarReproducoesPaginadaRowList
                                   .isNotEmpty))
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 48.0, 24.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      boxShadow: [
+                                      boxShadow: const [
                                         BoxShadow(
                                           blurRadius: 4.0,
                                           color: Color(0x41000040),
@@ -996,8 +1002,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          32.0, 32.0, 32.0, 32.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              32.0, 32.0, 32.0, 32.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -1052,7 +1059,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
-                                        ].divide(SizedBox(height: 24.0)),
+                                        ].divide(const SizedBox(height: 24.0)),
                                       ),
                                     ),
                                   ),
@@ -1061,8 +1068,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                   .isNotEmpty)
                                 Flexible(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 14.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 14.0, 0.0, 0.0),
                                     child: Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
@@ -1080,9 +1088,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                   .toList();
                                           if (reproducao.isEmpty) {
                                             return Center(
-                                              child: Container(
+                                              child: SizedBox(
                                                 height: 200.0,
-                                                child: EmptyReproducaoWidget(),
+                                                child:
+                                                    const EmptyReproducaoWidget(),
                                               ),
                                             );
                                           }
@@ -1117,12 +1126,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                       builder: (context) =>
                                                           Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    24.0,
-                                                                    8.0,
-                                                                    24.0,
-                                                                    8.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(24.0,
+                                                                8.0, 24.0, 8.0),
                                                         child: Container(
                                                           child: Row(
                                                             mainAxisSize:
@@ -1163,7 +1169,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                         ),
                                                                         ClipRRect(
                                                                           borderRadius:
-                                                                              BorderRadius.only(
+                                                                              const BorderRadius.only(
                                                                             bottomLeft:
                                                                                 Radius.circular(100.0),
                                                                             bottomRight:
@@ -1178,7 +1184,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             height:
                                                                                 23.0,
                                                                             decoration:
-                                                                                BoxDecoration(
+                                                                                const BoxDecoration(
                                                                               color: Color(0xFFF1F1F1),
                                                                               borderRadius: BorderRadius.only(
                                                                                 bottomLeft: Radius.circular(100.0),
@@ -1188,34 +1194,30 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                               ),
                                                                             ),
                                                                             alignment:
-                                                                                AlignmentDirectional(0.0, 0.0),
+                                                                                const AlignmentDirectional(0.0, 0.0),
                                                                             child:
                                                                                 Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                               child: Text(
                                                                                 '${valueOrDefault<String>(
                                                                                   reproducaoItem.tipoReproducao,
                                                                                   '--',
-                                                                                )} (${reproducaoItem.tipoReproducao == 'Inseminação' ? (functions.converterParaData(reproducaoItem.dataInseminacao) != null
-                                                                                    ? dateTimeFormat(
-                                                                                        "dd/MM/yy",
-                                                                                        functions.converterParaData(reproducaoItem.dataInseminacao),
-                                                                                        locale: FFLocalizations.of(context).languageCode,
-                                                                                      )
-                                                                                    : 'N/A') : (functions.converterParaData(reproducaoItem.dataInicial) != null
-                                                                                    ? dateTimeFormat(
-                                                                                        "dd/MM/yy",
-                                                                                        functions.converterParaData(reproducaoItem.dataInicial),
-                                                                                        locale: FFLocalizations.of(context).languageCode,
-                                                                                      )
-                                                                                    : 'N/A')})',
+                                                                                )} (${reproducaoItem.tipoReproducao == 'Inseminação' ? (functions.converterParaData(reproducaoItem.dataInseminacao) != null ? dateTimeFormat(
+                                                                                    "dd/MM/yy",
+                                                                                    functions.converterParaData(reproducaoItem.dataInseminacao),
+                                                                                    locale: FFLocalizations.of(context).languageCode,
+                                                                                  ) : 'N/A') : (functions.converterParaData(reproducaoItem.dataInicial) != null ? dateTimeFormat(
+                                                                                    "dd/MM/yy",
+                                                                                    functions.converterParaData(reproducaoItem.dataInicial),
+                                                                                    locale: FFLocalizations.of(context).languageCode,
+                                                                                  ) : 'N/A')})',
                                                                                 textAlign: TextAlign.center,
                                                                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                                       font: GoogleFonts.poppins(
                                                                                         fontWeight: FontWeight.w600,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF5F5F5F),
+                                                                                      color: const Color(0xFF5F5F5F),
                                                                                       fontSize: 10.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.w600,
@@ -1226,8 +1228,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                           ),
                                                                         ),
                                                                         if ((reproducaoItem.ressinc != null && reproducaoItem.ressinc != '') &&
-                                                                          (reproducaoItem.ressinc != '-') &&
-                                                                          (reproducaoItem.ressinc != 'null'))
+                                                                            (reproducaoItem.ressinc !=
+                                                                                '-') &&
+                                                                            (reproducaoItem.ressinc !=
+                                                                                'null'))
                                                                           Container(
                                                                             width:
                                                                                 20.0,
@@ -1240,7 +1244,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             ),
                                                                             child:
                                                                                 Align(
-                                                                              alignment: AlignmentDirectional(0.0, 0.0),
+                                                                              alignment: const AlignmentDirectional(0.0, 0.0),
                                                                               child: Text(
                                                                                 'R',
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -1253,7 +1257,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                      ].divide(SizedBox(
+                                                                      ].divide(const SizedBox(
                                                                               width: 8.0)),
                                                                     ),
                                                                     if (reproducaoItem
@@ -1284,7 +1288,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                     fontWeight: FontWeight.normal,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFF5F5F5F),
+                                                                                  color: const Color(0xFF5F5F5F),
                                                                                   fontSize: 12.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
@@ -1312,7 +1316,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                       fontWeight: FontWeight.normal,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                     ),
-                                                                                    color: Color(0xFF5F5F5F),
+                                                                                    color: const Color(0xFF5F5F5F),
                                                                                     fontSize: 14.0,
                                                                                     letterSpacing: 0.0,
                                                                                     fontWeight: FontWeight.normal,
@@ -1320,11 +1324,11 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                   ),
                                                                             ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 3.0)),
+                                                                        ].divide(const SizedBox(width: 3.0)),
                                                                       ),
                                                                     Container(
                                                                       decoration:
-                                                                          BoxDecoration(),
+                                                                          const BoxDecoration(),
                                                                       child:
                                                                           Row(
                                                                         mainAxisSize:
@@ -1347,7 +1351,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             ),
                                                                           ),
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 0.0,
                                                                                 0.0,
                                                                                 7.0,
@@ -1360,7 +1364,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                       fontWeight: FontWeight.w600,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                     ),
-                                                                                    color: Color(0xFF474747),
+                                                                                    color: const Color(0xFF474747),
                                                                                     fontSize: 16.0,
                                                                                     letterSpacing: 0.0,
                                                                                     fontWeight: FontWeight.w600,
@@ -1382,10 +1386,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                     reproducaoItem.nomeMatriz,
                                                                                     '--',
                                                                                   )} • ${reproducaoItem.nascimentoMatriz == 'null' ? 'N/A' : dateTimeFormat(
-                                                                                      "dd/MM/yyyy",
-                                                                                      functions.converterParaData(reproducaoItem.nascimentoMatriz),
-                                                                                      locale: FFLocalizations.of(context).languageCode,
-                                                                                    )}',
+                                                                                    "dd/MM/yyyy",
+                                                                                    functions.converterParaData(reproducaoItem.nascimentoMatriz),
+                                                                                    locale: FFLocalizations.of(context).languageCode,
+                                                                                  )}',
                                                                                 '--',
                                                                               ),
                                                                               style: FlutterFlowTheme.of(context).bodyLarge.override(
@@ -1393,7 +1397,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                       fontWeight: FontWeight.normal,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                     ),
-                                                                                    color: Color(0xFF474747),
+                                                                                    color: const Color(0xFF474747),
                                                                                     fontSize: 14.0,
                                                                                     letterSpacing: 0.0,
                                                                                     fontWeight: FontWeight.normal,
@@ -1401,7 +1405,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                   ),
                                                                             ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 3.0)),
+                                                                        ].divide(const SizedBox(width: 3.0)),
                                                                       ),
                                                                     ),
                                                                     Row(
@@ -1412,7 +1416,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                           [
                                                                         ClipRRect(
                                                                           borderRadius:
-                                                                              BorderRadius.only(
+                                                                              const BorderRadius.only(
                                                                             bottomLeft:
                                                                                 Radius.circular(100.0),
                                                                             bottomRight:
@@ -1438,9 +1442,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                     return '#f5d7d4';
                                                                                   }
                                                                                 }(),
-                                                                                defaultColor: Color(0xFFF5D7D4),
+                                                                                defaultColor: const Color(0xFFF5D7D4),
                                                                               ),
-                                                                              borderRadius: BorderRadius.only(
+                                                                              borderRadius: const BorderRadius.only(
                                                                                 bottomLeft: Radius.circular(100.0),
                                                                                 bottomRight: Radius.circular(100.0),
                                                                                 topLeft: Radius.circular(100.0),
@@ -1448,10 +1452,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                               ),
                                                                             ),
                                                                             alignment:
-                                                                                AlignmentDirectional(0.0, 0.0),
+                                                                                const AlignmentDirectional(0.0, 0.0),
                                                                             child:
                                                                                 Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                               child: Row(
                                                                                 mainAxisSize: MainAxisSize.max,
                                                                                 children: [
@@ -1476,7 +1480,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                                 return '#cc3729';
                                                                                               }
                                                                                             }(),
-                                                                                            defaultColor: Color(0xFFCC3729),
+                                                                                            defaultColor: const Color(0xFFCC3729),
                                                                                           ),
                                                                                           fontSize: 10.0,
                                                                                           letterSpacing: 0.0,
@@ -1484,10 +1488,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
                                                                                   ),
-                                                                                  if ((reproducaoItem.statusReproducao != null &&
-                                                                                          reproducaoItem.statusReproducao != '' &&
-                                                                                          reproducaoItem.statusReproducao != 'Não diagnosticado') &&
-                                                                                      (functions.converterParaData(reproducaoItem.dataStatus) != null))
+                                                                                  if ((reproducaoItem.statusReproducao != null && reproducaoItem.statusReproducao != '' && reproducaoItem.statusReproducao != 'Não diagnosticado') && (functions.converterParaData(reproducaoItem.dataStatus) != null))
                                                                                     Text(
                                                                                       valueOrDefault<String>(
                                                                                         ' (${dateTimeFormat(
@@ -1505,7 +1506,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                             ),
                                                                                             color: colorFromCssString(
                                                                                               reproducaoItem.statusReproducao == 'Prenhez' ? '#1e7a4c' : '#cc3729',
-                                                                                              defaultColor: Color(0xFFCC3729),
+                                                                                              defaultColor: const Color(0xFFCC3729),
                                                                                             ),
                                                                                             fontSize: 10.0,
                                                                                             letterSpacing: 0.0,
@@ -1518,7 +1519,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                      ].divide(SizedBox(
+                                                                      ].divide(const SizedBox(
                                                                               width: 8.0)),
                                                                     ),
                                                                     if (reproducaoItem
@@ -1531,7 +1532,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             [
                                                                           ClipRRect(
                                                                             borderRadius:
-                                                                                BorderRadius.only(
+                                                                                const BorderRadius.only(
                                                                               bottomLeft: Radius.circular(100.0),
                                                                               bottomRight: Radius.circular(100.0),
                                                                               topLeft: Radius.circular(100.0),
@@ -1540,7 +1541,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             child:
                                                                                 Container(
                                                                               height: 23.0,
-                                                                              decoration: BoxDecoration(
+                                                                              decoration: const BoxDecoration(
                                                                                 color: Color(0xFFEFF5D4),
                                                                                 borderRadius: BorderRadius.only(
                                                                                   bottomLeft: Radius.circular(100.0),
@@ -1549,9 +1550,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                   topRight: Radius.circular(100.0),
                                                                                 ),
                                                                               ),
-                                                                              alignment: AlignmentDirectional(0.0, 0.0),
+                                                                              alignment: const AlignmentDirectional(0.0, 0.0),
                                                                               child: Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                 child: Text(
                                                                                   valueOrDefault<String>(
                                                                                     'Parida em (${valueOrDefault<String>(
@@ -1572,7 +1573,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                           fontWeight: FontWeight.w600,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF1E7A4C),
+                                                                                        color: const Color(0xFF1E7A4C),
                                                                                         fontSize: 10.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.w600,
@@ -1582,7 +1583,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 8.0)),
+                                                                        ].divide(const SizedBox(width: 8.0)),
                                                                       ),
                                                                     Row(
                                                                       mainAxisSize:
@@ -1616,7 +1617,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                   fontWeight: FontWeight.w600,
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                 ),
-                                                                                color: Color(0xFF474747),
+                                                                                color: const Color(0xFF474747),
                                                                                 fontSize: 16.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.w600,
@@ -1672,7 +1673,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                     fontWeight: FontWeight.normal,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFF474747),
+                                                                                  color: const Color(0xFF474747),
                                                                                   fontSize: 14.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
@@ -1680,7 +1681,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                 ),
                                                                           ),
                                                                         ),
-                                                                      ].divide(SizedBox(
+                                                                      ].divide(const SizedBox(
                                                                               width: 3.0)),
                                                                     ),
                                                                     if (reproducaoItem
@@ -1705,19 +1706,18 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                         fontWeight: FontWeight.w600,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF474747),
+                                                                                      color: const Color(0xFF474747),
                                                                                       fontSize: 14.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.w600,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                     ),
                                                                               ),
-                                                                            ].divide(SizedBox(width: 5.0)),
+                                                                            ].divide(const SizedBox(width: 5.0)),
                                                                           ),
                                                                           Text(
                                                                             valueOrDefault<String>(
-                                                                              functions.converterParaData(reproducaoItem.previsaoParto) !=
-                                                                                      null
+                                                                              functions.converterParaData(reproducaoItem.previsaoParto) != null
                                                                                   ? dateTimeFormat(
                                                                                       "dd/MM/yy",
                                                                                       functions.converterParaData(reproducaoItem.previsaoParto),
@@ -1731,93 +1731,102 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                     fontWeight: FontWeight.normal,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFF474747),
+                                                                                  color: const Color(0xFF474747),
                                                                                   fontSize: 14.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                 ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 3.0)),
+                                                                        ].divide(const SizedBox(width: 3.0)),
                                                                       ),
-                                                                  ].divide(SizedBox(
+                                                                  ].divide(const SizedBox(
                                                                       height:
                                                                           4.0)),
                                                                 ),
                                                               ),
-                                                                Row(
+                                                              Row(
                                                                 mainAxisSize:
-                                                                  MainAxisSize
-                                                                    .min,
+                                                                    MainAxisSize
+                                                                        .min,
                                                                 children: [
                                                                   InkWell(
-                                                                  splashColor:
-                                                                    Colors.transparent,
-                                                                  focusColor:
-                                                                    Colors.transparent,
-                                                                  hoverColor:
-                                                                    Colors.transparent,
-                                                                  highlightColor:
-                                                                    Colors.transparent,
-                                                                  onTap:
-                                                                    () async {
-                                                                    await _openViewReproducao(
-                                                                    ctx: context,
-                                                                    idReproducao:
-                                                                      reproducaoItem.idReproducao!,
-                                                                    idRebanhoReprodutor:
-                                                                      reproducaoItem.idRebanhoReprodutor,
-                                                                    idRebanhoMatriz:
-                                                                      reproducaoItem.idRebanhoMatriz,
-                                                                    );
-                                                                  },
-                                                                  child:
-                                                                    Icon(
-                                                                    Icons
-                                                                      .visibility_outlined,
-                                                                    color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                      .primaryText,
-                                                                    size:
-                                                                      24.0,
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
+                                                                        () async {
+                                                                      await _openViewReproducao(
+                                                                        ctx:
+                                                                            context,
+                                                                        idReproducao:
+                                                                            reproducaoItem.idReproducao!,
+                                                                        idRebanhoReprodutor:
+                                                                            reproducaoItem.idRebanhoReprodutor,
+                                                                        idRebanhoMatriz:
+                                                                            reproducaoItem.idRebanhoMatriz,
+                                                                      );
+                                                                    },
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .visibility_outlined,
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primaryText,
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
                                                                   ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width:
-                                                                      16.0),
+                                                                  const SizedBox(
+                                                                      width:
+                                                                          16.0),
                                                                   InkWell(
-                                                                  splashColor:
-                                                                    Colors.transparent,
-                                                                  focusColor:
-                                                                    Colors.transparent,
-                                                                  hoverColor:
-                                                                    Colors.transparent,
-                                                                  highlightColor:
-                                                                    Colors.transparent,
-                                                                  onTap:
-                                                                    () async {
-                                                                    await _openEditReproducao(
-                                                                    ctx: context,
-                                                                    idReproducao:
-                                                                      reproducaoItem.idReproducao!,
-                                                                    idRebanhoReprodutor:
-                                                                      reproducaoItem.idRebanhoReprodutor,
-                                                                    idRebanhoMatriz:
-                                                                      reproducaoItem.idRebanhoMatriz,
-                                                                    );
-                                                                  },
-                                                                  child:
-                                                                    Icon(
-                                                                    Icons
-                                                                      .edit_outlined,
-                                                                    color: Color(
-                                                                      0xFF1E7A4C),
-                                                                    size:
-                                                                      24.0,
-                                                                  ),
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
+                                                                        () async {
+                                                                      await _openEditReproducao(
+                                                                        ctx:
+                                                                            context,
+                                                                        idReproducao:
+                                                                            reproducaoItem.idReproducao!,
+                                                                        idRebanhoReprodutor:
+                                                                            reproducaoItem.idRebanhoReprodutor,
+                                                                        idRebanhoMatriz:
+                                                                            reproducaoItem.idRebanhoMatriz,
+                                                                      );
+                                                                    },
+                                                                    child:
+                                                                        const Icon(
+                                                                      Icons
+                                                                          .edit_outlined,
+                                                                      color: Color(
+                                                                          0xFF1E7A4C),
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
                                                                   ),
                                                                 ],
-                                                                ),
+                                                              ),
                                                             ],
                                                           ),
                                                         ),
@@ -1834,7 +1843,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                   ),
                                 ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     16.0, 0.0, 16.0, 0.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -1909,7 +1918,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                   .toString(),
                                               '1',
                                             ),
-                                            style: TextStyle(),
+                                            style: const TextStyle(),
                                           )
                                         ],
                                         style: FlutterFlowTheme.of(context)
@@ -1950,7 +1959,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                               safeSetState(() {});
                                             },
                                     ),
-                                  ].divide(SizedBox(width: 8.0)),
+                                  ].divide(const SizedBox(width: 8.0)),
                                 ),
                               ),
                             ],
@@ -1992,7 +2001,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                           FFAppState().filtroDataHoje,
                           locale: FFLocalizations.of(context).languageCode,
                         ),
-                        categoriaFiltro: FFAppState().filtroCategoriaReproducao.isNotEmpty
+                        categoriaFiltro: FFAppState()
+                                .filtroCategoriaReproducao
+                                .isNotEmpty
                             ? FFAppState().filtroCategoriaReproducao.join(',')
                             : '',
                       ),
@@ -2015,21 +2026,21 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                             snapshot.data!;
 
                         return Container(
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               if (!(reproducaoPesqListarReproducoesPesqRowList
                                   .isNotEmpty))
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 48.0, 24.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      boxShadow: [
+                                      boxShadow: const [
                                         BoxShadow(
                                           blurRadius: 4.0,
                                           color: Color(0x41000040),
@@ -2042,8 +2053,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          32.0, 32.0, 32.0, 32.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              32.0, 32.0, 32.0, 32.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -2098,7 +2110,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
-                                        ].divide(SizedBox(height: 24.0)),
+                                        ].divide(const SizedBox(height: 24.0)),
                                       ),
                                     ),
                                   ),
@@ -2107,8 +2119,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                   .isNotEmpty)
                                 Flexible(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 14.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 14.0, 0.0, 0.0),
                                     child: Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
@@ -2124,9 +2137,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                   .toList();
                                           if (reproducao.isEmpty) {
                                             return Center(
-                                              child: Container(
+                                              child: SizedBox(
                                                 height: 200.0,
-                                                child: EmptyReproducaoWidget(),
+                                                child:
+                                                    const EmptyReproducaoWidget(),
                                               ),
                                             );
                                           }
@@ -2161,12 +2175,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                       builder: (context) =>
                                                           Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    24.0,
-                                                                    8.0,
-                                                                    24.0,
-                                                                    8.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(24.0,
+                                                                8.0, 24.0, 8.0),
                                                         child: Container(
                                                           child: Row(
                                                             mainAxisSize:
@@ -2207,7 +2218,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                         ),
                                                                         ClipRRect(
                                                                           borderRadius:
-                                                                              BorderRadius.only(
+                                                                              const BorderRadius.only(
                                                                             bottomLeft:
                                                                                 Radius.circular(100.0),
                                                                             bottomRight:
@@ -2222,7 +2233,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             height:
                                                                                 23.0,
                                                                             decoration:
-                                                                                BoxDecoration(
+                                                                                const BoxDecoration(
                                                                               color: Color(0xFFF1F1F1),
                                                                               borderRadius: BorderRadius.only(
                                                                                 bottomLeft: Radius.circular(100.0),
@@ -2232,34 +2243,30 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                               ),
                                                                             ),
                                                                             alignment:
-                                                                                AlignmentDirectional(0.0, 0.0),
+                                                                                const AlignmentDirectional(0.0, 0.0),
                                                                             child:
                                                                                 Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                               child: Text(
                                                                                 '${valueOrDefault<String>(
                                                                                   reproducaoItem.tipoReproducao,
                                                                                   '--',
-                                                                                )} (${reproducaoItem.tipoReproducao == 'Inseminação' ? (functions.converterParaData(reproducaoItem.dataInseminacao) != null
-                                                                                    ? dateTimeFormat(
-                                                                                        "dd/MM/yy",
-                                                                                        functions.converterParaData(reproducaoItem.dataInseminacao),
-                                                                                        locale: FFLocalizations.of(context).languageCode,
-                                                                                      )
-                                                                                    : 'N/A') : (functions.converterParaData(reproducaoItem.dataInicial) != null
-                                                                                    ? dateTimeFormat(
-                                                                                        "dd/MM/yy",
-                                                                                        functions.converterParaData(reproducaoItem.dataInicial),
-                                                                                        locale: FFLocalizations.of(context).languageCode,
-                                                                                      )
-                                                                                    : 'N/A')})',
+                                                                                )} (${reproducaoItem.tipoReproducao == 'Inseminação' ? (functions.converterParaData(reproducaoItem.dataInseminacao) != null ? dateTimeFormat(
+                                                                                    "dd/MM/yy",
+                                                                                    functions.converterParaData(reproducaoItem.dataInseminacao),
+                                                                                    locale: FFLocalizations.of(context).languageCode,
+                                                                                  ) : 'N/A') : (functions.converterParaData(reproducaoItem.dataInicial) != null ? dateTimeFormat(
+                                                                                    "dd/MM/yy",
+                                                                                    functions.converterParaData(reproducaoItem.dataInicial),
+                                                                                    locale: FFLocalizations.of(context).languageCode,
+                                                                                  ) : 'N/A')})',
                                                                                 textAlign: TextAlign.center,
                                                                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                                       font: GoogleFonts.poppins(
                                                                                         fontWeight: FontWeight.w600,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF5F5F5F),
+                                                                                      color: const Color(0xFF5F5F5F),
                                                                                       fontSize: 10.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.w600,
@@ -2270,8 +2277,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                           ),
                                                                         ),
                                                                         if ((reproducaoItem.ressinc != null && reproducaoItem.ressinc != '') &&
-                                                                          (reproducaoItem.ressinc != '-') &&
-                                                                          (reproducaoItem.ressinc != 'null'))
+                                                                            (reproducaoItem.ressinc !=
+                                                                                '-') &&
+                                                                            (reproducaoItem.ressinc !=
+                                                                                'null'))
                                                                           Container(
                                                                             width:
                                                                                 20.0,
@@ -2284,7 +2293,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             ),
                                                                             child:
                                                                                 Align(
-                                                                              alignment: AlignmentDirectional(0.0, 0.0),
+                                                                              alignment: const AlignmentDirectional(0.0, 0.0),
                                                                               child: Text(
                                                                                 'R',
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -2297,7 +2306,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                      ].divide(SizedBox(
+                                                                      ].divide(const SizedBox(
                                                                               width: 8.0)),
                                                                     ),
                                                                     if (reproducaoItem
@@ -2328,7 +2337,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                     fontWeight: FontWeight.normal,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFF5F5F5F),
+                                                                                  color: const Color(0xFF5F5F5F),
                                                                                   fontSize: 12.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
@@ -2356,7 +2365,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                       fontWeight: FontWeight.normal,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                     ),
-                                                                                    color: Color(0xFF5F5F5F),
+                                                                                    color: const Color(0xFF5F5F5F),
                                                                                     fontSize: 14.0,
                                                                                     letterSpacing: 0.0,
                                                                                     fontWeight: FontWeight.normal,
@@ -2364,11 +2373,11 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                   ),
                                                                             ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 3.0)),
+                                                                        ].divide(const SizedBox(width: 3.0)),
                                                                       ),
                                                                     Container(
                                                                       decoration:
-                                                                          BoxDecoration(),
+                                                                          const BoxDecoration(),
                                                                       child:
                                                                           Row(
                                                                         mainAxisSize:
@@ -2391,7 +2400,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             ),
                                                                           ),
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 0.0,
                                                                                 0.0,
                                                                                 7.0,
@@ -2404,7 +2413,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                       fontWeight: FontWeight.w600,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                     ),
-                                                                                    color: Color(0xFF474747),
+                                                                                    color: const Color(0xFF474747),
                                                                                     fontSize: 16.0,
                                                                                     letterSpacing: 0.0,
                                                                                     fontWeight: FontWeight.w600,
@@ -2462,7 +2471,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                       fontWeight: FontWeight.normal,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                     ),
-                                                                                    color: Color(0xFF474747),
+                                                                                    color: const Color(0xFF474747),
                                                                                     fontSize: 14.0,
                                                                                     letterSpacing: 0.0,
                                                                                     fontWeight: FontWeight.normal,
@@ -2470,7 +2479,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                   ),
                                                                             ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 3.0)),
+                                                                        ].divide(const SizedBox(width: 3.0)),
                                                                       ),
                                                                     ),
                                                                     if (reproducaoItem
@@ -2483,7 +2492,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             [
                                                                           ClipRRect(
                                                                             borderRadius:
-                                                                                BorderRadius.only(
+                                                                                const BorderRadius.only(
                                                                               bottomLeft: Radius.circular(100.0),
                                                                               bottomRight: Radius.circular(100.0),
                                                                               topLeft: Radius.circular(100.0),
@@ -2503,18 +2512,18 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                       return '#f5d7d4';
                                                                                     }
                                                                                   }(),
-                                                                                  defaultColor: Color(0xFFF5D7D4),
+                                                                                  defaultColor: const Color(0xFFF5D7D4),
                                                                                 ),
-                                                                                borderRadius: BorderRadius.only(
+                                                                                borderRadius: const BorderRadius.only(
                                                                                   bottomLeft: Radius.circular(100.0),
                                                                                   bottomRight: Radius.circular(100.0),
                                                                                   topLeft: Radius.circular(100.0),
                                                                                   topRight: Radius.circular(100.0),
                                                                                 ),
                                                                               ),
-                                                                              alignment: AlignmentDirectional(0.0, 0.0),
+                                                                              alignment: const AlignmentDirectional(0.0, 0.0),
                                                                               child: Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                 child: Row(
                                                                                   mainAxisSize: MainAxisSize.max,
                                                                                   children: [
@@ -2539,7 +2548,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                                   return '#cc3729';
                                                                                                 }
                                                                                               }(),
-                                                                                              defaultColor: Color(0xFFCC3729),
+                                                                                              defaultColor: const Color(0xFFCC3729),
                                                                                             ),
                                                                                             fontSize: 10.0,
                                                                                             letterSpacing: 0.0,
@@ -2547,10 +2556,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                           ),
                                                                                     ),
-                                                                                    if ((reproducaoItem.statusReproducao != null &&
-                                                                                            reproducaoItem.statusReproducao != '' &&
-                                                                                            reproducaoItem.statusReproducao != 'Não diagnosticado') &&
-                                                                                        (functions.converterParaData(reproducaoItem.dataStatus) != null))
+                                                                                    if ((reproducaoItem.statusReproducao != null && reproducaoItem.statusReproducao != '' && reproducaoItem.statusReproducao != 'Não diagnosticado') && (functions.converterParaData(reproducaoItem.dataStatus) != null))
                                                                                       Text(
                                                                                         valueOrDefault<String>(
                                                                                           ' (${dateTimeFormat(
@@ -2568,7 +2574,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                               ),
                                                                                               color: colorFromCssString(
                                                                                                 reproducaoItem.statusReproducao == 'Prenhez' ? '#1e7a4c' : '#cc3729',
-                                                                                                defaultColor: Color(0xFFCC3729),
+                                                                                                defaultColor: const Color(0xFFCC3729),
                                                                                               ),
                                                                                               fontSize: 10.0,
                                                                                               letterSpacing: 0.0,
@@ -2581,7 +2587,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 8.0)),
+                                                                        ].divide(const SizedBox(width: 8.0)),
                                                                       ),
                                                                     if (reproducaoItem
                                                                             .parida ==
@@ -2593,7 +2599,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             [
                                                                           ClipRRect(
                                                                             borderRadius:
-                                                                                BorderRadius.only(
+                                                                                const BorderRadius.only(
                                                                               bottomLeft: Radius.circular(100.0),
                                                                               bottomRight: Radius.circular(100.0),
                                                                               topLeft: Radius.circular(100.0),
@@ -2602,7 +2608,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             child:
                                                                                 Container(
                                                                               height: 23.0,
-                                                                              decoration: BoxDecoration(
+                                                                              decoration: const BoxDecoration(
                                                                                 color: Color(0xFFEFF5D4),
                                                                                 borderRadius: BorderRadius.only(
                                                                                   bottomLeft: Radius.circular(100.0),
@@ -2611,9 +2617,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                   topRight: Radius.circular(100.0),
                                                                                 ),
                                                                               ),
-                                                                              alignment: AlignmentDirectional(0.0, 0.0),
+                                                                              alignment: const AlignmentDirectional(0.0, 0.0),
                                                                               child: Padding(
-                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                 child: Text(
                                                                                   valueOrDefault<String>(
                                                                                     'Parida em (${valueOrDefault<String>(
@@ -2634,7 +2640,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                           fontWeight: FontWeight.w600,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF1E7A4C),
+                                                                                        color: const Color(0xFF1E7A4C),
                                                                                         fontSize: 10.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.w600,
@@ -2644,7 +2650,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 8.0)),
+                                                                        ].divide(const SizedBox(width: 8.0)),
                                                                       ),
                                                                     Row(
                                                                       mainAxisSize:
@@ -2678,7 +2684,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                   fontWeight: FontWeight.w600,
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                 ),
-                                                                                color: Color(0xFF474747),
+                                                                                color: const Color(0xFF474747),
                                                                                 fontSize: 16.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.w600,
@@ -2734,7 +2740,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                     fontWeight: FontWeight.normal,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFF474747),
+                                                                                  color: const Color(0xFF474747),
                                                                                   fontSize: 14.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
@@ -2742,7 +2748,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                 ),
                                                                           ),
                                                                         ),
-                                                                      ].divide(SizedBox(
+                                                                      ].divide(const SizedBox(
                                                                               width: 3.0)),
                                                                     ),
                                                                     if (reproducaoItem
@@ -2767,19 +2773,18 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                         fontWeight: FontWeight.w600,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF474747),
+                                                                                      color: const Color(0xFF474747),
                                                                                       fontSize: 14.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.w600,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                     ),
                                                                               ),
-                                                                            ].divide(SizedBox(width: 5.0)),
+                                                                            ].divide(const SizedBox(width: 5.0)),
                                                                           ),
                                                                           Text(
                                                                             valueOrDefault<String>(
-                                                                              functions.converterParaData(reproducaoItem.previsaoParto) !=
-                                                                                      null
+                                                                              functions.converterParaData(reproducaoItem.previsaoParto) != null
                                                                                   ? dateTimeFormat(
                                                                                       "dd/MM/yy",
                                                                                       functions.converterParaData(reproducaoItem.previsaoParto),
@@ -2793,93 +2798,102 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                     fontWeight: FontWeight.normal,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFF474747),
+                                                                                  color: const Color(0xFF474747),
                                                                                   fontSize: 14.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                 ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 3.0)),
+                                                                        ].divide(const SizedBox(width: 3.0)),
                                                                       ),
-                                                                  ].divide(SizedBox(
+                                                                  ].divide(const SizedBox(
                                                                       height:
                                                                           4.0)),
                                                                 ),
                                                               ),
-                                                                Row(
+                                                              Row(
                                                                 mainAxisSize:
-                                                                  MainAxisSize
-                                                                    .min,
+                                                                    MainAxisSize
+                                                                        .min,
                                                                 children: [
                                                                   InkWell(
-                                                                  splashColor:
-                                                                    Colors.transparent,
-                                                                  focusColor:
-                                                                    Colors.transparent,
-                                                                  hoverColor:
-                                                                    Colors.transparent,
-                                                                  highlightColor:
-                                                                    Colors.transparent,
-                                                                  onTap:
-                                                                    () async {
-                                                                    await _openViewReproducao(
-                                                                    ctx: context,
-                                                                    idReproducao:
-                                                                      reproducaoItem.idReproducao!,
-                                                                    idRebanhoReprodutor:
-                                                                      reproducaoItem.idRebanhoReprodutor,
-                                                                    idRebanhoMatriz:
-                                                                      reproducaoItem.idRebanhoMatriz,
-                                                                    );
-                                                                  },
-                                                                  child:
-                                                                    Icon(
-                                                                    Icons
-                                                                      .visibility_outlined,
-                                                                    color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                      .primaryText,
-                                                                    size:
-                                                                      24.0,
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
+                                                                        () async {
+                                                                      await _openViewReproducao(
+                                                                        ctx:
+                                                                            context,
+                                                                        idReproducao:
+                                                                            reproducaoItem.idReproducao!,
+                                                                        idRebanhoReprodutor:
+                                                                            reproducaoItem.idRebanhoReprodutor,
+                                                                        idRebanhoMatriz:
+                                                                            reproducaoItem.idRebanhoMatriz,
+                                                                      );
+                                                                    },
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .visibility_outlined,
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primaryText,
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
                                                                   ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width:
-                                                                      16.0),
+                                                                  const SizedBox(
+                                                                      width:
+                                                                          16.0),
                                                                   InkWell(
-                                                                  splashColor:
-                                                                    Colors.transparent,
-                                                                  focusColor:
-                                                                    Colors.transparent,
-                                                                  hoverColor:
-                                                                    Colors.transparent,
-                                                                  highlightColor:
-                                                                    Colors.transparent,
-                                                                  onTap:
-                                                                    () async {
-                                                                    await _openEditReproducao(
-                                                                    ctx: context,
-                                                                    idReproducao:
-                                                                      reproducaoItem.idReproducao!,
-                                                                    idRebanhoReprodutor:
-                                                                      reproducaoItem.idRebanhoReprodutor,
-                                                                    idRebanhoMatriz:
-                                                                      reproducaoItem.idRebanhoMatriz,
-                                                                    );
-                                                                  },
-                                                                  child:
-                                                                    Icon(
-                                                                    Icons
-                                                                      .edit_outlined,
-                                                                    color: Color(
-                                                                      0xFF1E7A4C),
-                                                                    size:
-                                                                      24.0,
-                                                                  ),
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
+                                                                        () async {
+                                                                      await _openEditReproducao(
+                                                                        ctx:
+                                                                            context,
+                                                                        idReproducao:
+                                                                            reproducaoItem.idReproducao!,
+                                                                        idRebanhoReprodutor:
+                                                                            reproducaoItem.idRebanhoReprodutor,
+                                                                        idRebanhoMatriz:
+                                                                            reproducaoItem.idRebanhoMatriz,
+                                                                      );
+                                                                    },
+                                                                    child:
+                                                                        const Icon(
+                                                                      Icons
+                                                                          .edit_outlined,
+                                                                      color: Color(
+                                                                          0xFF1E7A4C),
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
                                                                   ),
                                                                 ],
-                                                                ),
+                                                              ),
                                                             ],
                                                           ),
                                                         ),

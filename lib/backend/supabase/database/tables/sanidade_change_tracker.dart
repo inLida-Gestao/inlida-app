@@ -11,7 +11,7 @@ class SanidadeChangeTrackerTable
 }
 
 class SanidadeChangeTrackerRow extends SupabaseDataRow {
-  SanidadeChangeTrackerRow(Map<String, dynamic> data) : super(data);
+  SanidadeChangeTrackerRow(super.data);
 
   @override
   SupabaseTable get table => SanidadeChangeTrackerTable();

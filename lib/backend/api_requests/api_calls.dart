@@ -28,7 +28,7 @@ class IconesimgsCall {
 
     return ApiManager.instance.makeApiCall(
       callName: 'iconesimgs',
-      apiUrl: '${baseUrl}/icones_imgs',
+      apiUrl: '$baseUrl/icones_imgs',
       callType: ApiCallType.GET,
       headers: {},
       params: {
@@ -98,14 +98,14 @@ class BuscarRebanhosCall {
     final ffApiRequestBody = '''
 {
   "p_id_propriedade": [
-    ${pIdPropriedade}
+    $pIdPropriedade
   ],
-  "p_limite": ${pLimite},
-  "p_offset": ${pOffset}
+  "p_limite": $pLimite,
+  "p_offset": $pOffset
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'Buscar Rebanhos',
-      apiUrl: '${baseUrl}/rebanho_propriedade_mobile',
+      apiUrl: '$baseUrl/rebanho_propriedade_mobile',
       callType: ApiCallType.POST,
       headers: {
         'apikey':
@@ -138,14 +138,14 @@ class BuscarReproducoesCall {
     final ffApiRequestBody = '''
 {
   "p_id_propriedade": [
-    ${pIdPropriedade}
+    $pIdPropriedade
   ],
-  "p_limite": ${pLimite},
-  "p_offset": ${pOffset}
+  "p_limite": $pLimite,
+  "p_offset": $pOffset
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'Buscar Reproducoes',
-      apiUrl: '${baseUrl}/reproducao_mobile',
+      apiUrl: '$baseUrl/reproducao_mobile',
       callType: ApiCallType.POST,
       headers: {
         'apikey':
@@ -178,14 +178,14 @@ class BuscarSanidadesCall {
     final ffApiRequestBody = '''
 {
   "p_id_propriedade": [
-    ${pIdPropriedade}
+    $pIdPropriedade
   ],
-  "p_limite": ${pLimite},
-  "p_offset": ${pOffset}
+  "p_limite": $pLimite,
+  "p_offset": $pOffset
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'Buscar Sanidades',
-      apiUrl: '${baseUrl}/sanidade_mobile',
+      apiUrl: '$baseUrl/sanidade_mobile',
       callType: ApiCallType.POST,
       headers: {
         'apikey':
@@ -218,14 +218,14 @@ class BuscarPesagensCall {
     final ffApiRequestBody = '''
 {
   "p_id_propriedade": [
-    ${pIdPropriedade}
+    $pIdPropriedade
   ],
-  "p_limite": ${pLimite},
-  "p_offset": ${pOffset}
+  "p_limite": $pLimite,
+  "p_offset": $pOffset
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'Buscar Pesagens',
-      apiUrl: '${baseUrl}/pesagens_propriedade_mobile',
+      apiUrl: '$baseUrl/pesagens_propriedade_mobile',
       callType: ApiCallType.POST,
       headers: {
         'apikey':
@@ -256,12 +256,12 @@ class QTDRebanhosCall {
     final ffApiRequestBody = '''
 {
   "p_ids_propriedades": [
-    ${pIdsPropriedades}
+    $pIdsPropriedades
   ]
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'QTD Rebanhos',
-      apiUrl: '${baseUrl}/contar_rebanho_prop_mob',
+      apiUrl: '$baseUrl/contar_rebanho_prop_mob',
       callType: ApiCallType.POST,
       headers: {
         'apikey':
@@ -292,12 +292,12 @@ class QTDPesagensPropriedadeCall {
     final ffApiRequestBody = '''
 {
   "p_ids_propriedades": [
-    ${pIdsPropriedades}
+    $pIdsPropriedades
   ]
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'QTD Pesagens Propriedade',
-      apiUrl: '${baseUrl}/count_pesagens_propriedade_mobile',
+      apiUrl: '$baseUrl/count_pesagens_propriedade_mobile',
       callType: ApiCallType.POST,
       headers: {
         'apikey':
@@ -329,13 +329,13 @@ class QTDPesagensCall {
     final ffApiRequestBody = '''
 {
   "p_ids_rebanhos": [
-    ${pIdsRebanhos}
+    $pIdsRebanhos
   ],
   "p_timestamp": "${escapeStringForJson(pTimestamp)}"
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'QTD Pesagens',
-      apiUrl: '${baseUrl}/contar_pesagens_mob',
+      apiUrl: '$baseUrl/contar_pesagens_mob',
       callType: ApiCallType.POST,
       headers: {
         'apikey':
@@ -366,12 +366,12 @@ class QTDReproducoesCall {
     final ffApiRequestBody = '''
 {
   "p_ids_propriedades": [
-    ${pIdsPropriedades}
+    $pIdsPropriedades
   ]
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'QTD Reproducoes',
-      apiUrl: '${baseUrl}/contar_repro_prop_mob',
+      apiUrl: '$baseUrl/contar_repro_prop_mob',
       callType: ApiCallType.POST,
       headers: {
         'apikey':
@@ -402,12 +402,12 @@ class QTDSanidadeCall {
     final ffApiRequestBody = '''
 {
   "p_ids_propriedades": [
-    ${pIdsPropriedades}
+    $pIdsPropriedades
   ]
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'QTD Sanidade',
-      apiUrl: '${baseUrl}/contar_sanidade_prop_mob',
+      apiUrl: '$baseUrl/contar_sanidade_prop_mob',
       callType: ApiCallType.POST,
       headers: {
         'apikey':
@@ -440,7 +440,7 @@ class BuscarPropriedadesUserCall {
 }''';
     return ApiManager.instance.makeApiCall(
       callName: 'Buscar Propriedades User',
-      apiUrl: '${baseUrl}/propriedades_by_user',
+      apiUrl: '$baseUrl/propriedades_by_user',
       callType: ApiCallType.POST,
       headers: {
         'apikey':
@@ -470,7 +470,7 @@ class CidadesCall {
     return ApiManager.instance.makeApiCall(
       callName: 'Cidades',
       apiUrl:
-          'https://servicodados.ibge.gov.br/api/v1/localidades/estados/${idUF}/distritos',
+          'https://servicodados.ibge.gov.br/api/v1/localidades/estados/$idUF/distritos',
       callType: ApiCallType.GET,
       headers: {},
       params: {
@@ -543,7 +543,7 @@ class BuscaCidadesCall {
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
         'Authorization':
             'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
-        'Range': '${inicio}-${fim}',
+        'Range': '$inicio-$fim',
       },
       params: {},
       returnBody: true,

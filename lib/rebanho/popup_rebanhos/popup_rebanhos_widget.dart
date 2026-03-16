@@ -21,8 +21,8 @@ class PopupRebanhosWidget extends StatefulWidget {
     bool? sanidade,
     bool? reproducao,
     this.tipoReproducao,
-  })  : this.sanidade = sanidade ?? false,
-        this.reproducao = reproducao ?? false;
+  })  : sanidade = sanidade ?? false,
+        reproducao = reproducao ?? false;
 
   final String? sexo;
   final bool sanidade;
@@ -69,9 +69,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
 
     return Builder(
       builder: (context) {
-        if (widget!.sanidade == true) {
+        if (widget.sanidade == true) {
           return Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
             child: FutureBuilder<List<BuscaRebanhoPopupRow>>(
               future: _model.getBuscaRebanhoFuture(
                 idPropriedade:
@@ -100,7 +100,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                   height: 400.0,
                   decoration: BoxDecoration(
                     color: FlutterFlowTheme.of(context).secondaryBackground,
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                         blurRadius: 4.0,
                         color: Color(0x33000000),
@@ -116,16 +116,16 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(8.0, 8.0, 8.0, 0.0),
-                        child: Container(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            8.0, 8.0, 8.0, 0.0),
+                        child: SizedBox(
                           width: double.infinity,
                           child: TextFormField(
                             controller: _model.pesquisarTextController1,
                             focusNode: _model.pesquisarFocusNode1,
                             onChanged: (_) => EasyDebounce.debounce(
                               '_model.pesquisarTextController1',
-                              Duration(milliseconds: 500),
+                              const Duration(milliseconds: 500),
                               () {
                                 _model.invalidateBuscaCache();
                                 safeSetState(() {});
@@ -231,14 +231,14 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                       ),
                       if (!(containerBuscaRebanhoPopupRowList.isNotEmpty))
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 24.0, 24.0, 0.0),
                           child: Container(
                             width: double.infinity,
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context)
                                   .secondaryBackground,
-                              boxShadow: [
+                              boxShadow: const [
                                 BoxShadow(
                                   blurRadius: 4.0,
                                   color: Color(0x41000040),
@@ -251,7 +251,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                               borderRadius: BorderRadius.circular(6.0),
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   32.0, 32.0, 32.0, 32.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -300,7 +300,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                ].divide(SizedBox(height: 24.0)),
+                                ].divide(const SizedBox(height: 24.0)),
                               ),
                             ),
                           ),
@@ -308,17 +308,17 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                       if (containerBuscaRebanhoPopupRowList.isNotEmpty)
                         Flexible(
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 14.0, 0.0, 8.0),
                             child: Container(
                               width: double.infinity,
-                              constraints: BoxConstraints(
+                              constraints: const BoxConstraints(
                                 maxHeight: 500.0,
                               ),
                               decoration: BoxDecoration(
                                 color: FlutterFlowTheme.of(context)
                                     .secondaryBackground,
-                                borderRadius: BorderRadius.only(
+                                borderRadius: const BorderRadius.only(
                                   bottomLeft: Radius.circular(8.0),
                                   bottomRight: Radius.circular(8.0),
                                   topLeft: Radius.circular(0.0),
@@ -326,7 +326,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                 ),
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     8.0, 0.0, 8.0, 0.0),
                                 child: Builder(
                                   builder: (context) {
@@ -351,8 +351,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         24.0, 12.0, 24.0, 12.0),
                                                 child: InkWell(
                                                   splashColor:
@@ -390,7 +391,8 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                             .idRebanho,
                                                         categoria: animaisItem
                                                             .categoria,
-                                                        loteNome: animaisItem.loteNome,
+                                                        loteNome: animaisItem
+                                                            .loteNome,
                                                       );
                                                       safeSetState(() {});
                                                     } else {
@@ -418,7 +420,8 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                             .idRebanho,
                                                         categoria: animaisItem
                                                             .categoria,
-                                                        loteNome: animaisItem.loteNome,
+                                                        loteNome: animaisItem
+                                                            .loteNome,
                                                       );
                                                       safeSetState(() {});
                                                     }
@@ -438,7 +441,8 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                       idRebanho:
                                                           animaisItem.idRebanho,
                                                       chip: animaisItem.chip,
-                                                      loteNome: animaisItem.loteNome,
+                                                      loteNome:
+                                                          animaisItem.loteNome,
                                                     );
                                                     safeSetState(() {});
                                                     FFAppState().rebuild = true;
@@ -489,17 +493,12 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                       'null') {
                                                                     return 'N/A';
                                                                   } else if (valueOrDefault<
-                                                                              String>(
-                                                                            animaisItem.dataNascimento,
-                                                                            'xx/xx/xxxx',
-                                                                          ) ==
-                                                                          null ||
-                                                                      valueOrDefault<
-                                                                              String>(
-                                                                            animaisItem.dataNascimento,
-                                                                            'xx/xx/xxxx',
-                                                                          ) ==
-                                                                          '') {
+                                                                          String>(
+                                                                        animaisItem
+                                                                            .dataNascimento,
+                                                                        'xx/xx/xxxx',
+                                                                      ) ==
+                                                                      '') {
                                                                     return 'N/A';
                                                                   } else {
                                                                     return dateTimeFormat(
@@ -526,7 +525,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                     fontFamily:
                                                                         FlutterFlowTheme.of(context)
                                                                             .bodyMediumFamily,
-                                                                    color: Color(
+                                                                    color: const Color(
                                                                         0xFF474747),
                                                                     fontSize:
                                                                         15.0,
@@ -540,8 +539,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                             .bodyMediumIsCustom,
                                                                   ),
                                                             ),
-                                                          ].divide(SizedBox(
-                                                              height: 2.0)),
+                                                          ].divide(
+                                                              const SizedBox(
+                                                                  height: 2.0)),
                                                         ),
                                                       ),
                                                       Icon(
@@ -583,12 +583,12 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
           );
         } else {
           return Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
             child: Container(
               height: 420.0,
               decoration: BoxDecoration(
                 color: FlutterFlowTheme.of(context).secondaryBackground,
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     blurRadius: 4.0,
                     color: Color(0x33000000),
@@ -604,15 +604,16 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 8.0, 8.0, 0.0),
-                    child: Container(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        8.0, 8.0, 8.0, 0.0),
+                    child: SizedBox(
                       width: double.infinity,
                       child: TextFormField(
                         controller: _model.pesquisarTextController2,
                         focusNode: _model.pesquisarFocusNode2,
                         onChanged: (_) => EasyDebounce.debounce(
                           '_model.pesquisarTextController2',
-                          Duration(milliseconds: 500),
+                          const Duration(milliseconds: 500),
                           () {
                             _model.invalidateBuscaCache();
                             safeSetState(() {});
@@ -709,8 +710,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                       ),
                     ),
                   ),
-                  if ((_model.pesquisarTextController2.text != null &&
-                          _model.pesquisarTextController2.text != '') &&
+                  if ((_model.pesquisarTextController2.text != '') &&
                       responsiveVisibility(
                         context: context,
                         phone: false,
@@ -755,14 +755,14 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                               if (!(pesquisaRebanhoBuscaRebanhoPopupRowList
                                   .isNotEmpty))
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 24.0, 24.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      boxShadow: [
+                                      boxShadow: const [
                                         BoxShadow(
                                           blurRadius: 4.0,
                                           color: Color(0x41000040),
@@ -775,8 +775,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          32.0, 32.0, 32.0, 32.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              32.0, 32.0, 32.0, 32.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -831,28 +832,29 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
-                                        ].divide(SizedBox(height: 24.0)),
+                                        ].divide(const SizedBox(height: 24.0)),
                                       ),
                                     ),
                                   ),
                                 ),
                               if ((pesquisaRebanhoBuscaRebanhoPopupRowList
                                       .isNotEmpty) &&
-                                  (widget!.sexo == 'Fêmea'))
+                                  (widget.sexo == 'Fêmea'))
                                 Flexible(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 14.0, 0.0, 8.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 14.0, 0.0, 8.0),
                                     child: Container(
                                       width: double.infinity,
                                       height: 300.0,
-                                      constraints: BoxConstraints(
+                                      constraints: const BoxConstraints(
                                         maxHeight: 500.0,
                                       ),
                                       decoration: BoxDecoration(
                                         color: FlutterFlowTheme.of(context)
                                             .secondaryBackground,
-                                        borderRadius: BorderRadius.only(
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(8.0),
                                           bottomRight: Radius.circular(8.0),
                                           topLeft: Radius.circular(0.0),
@@ -860,8 +862,8 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            8.0, 0.0, 8.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                         child: Builder(
                                           builder: (context) {
                                             final animais =
@@ -901,12 +903,12 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                     children: [
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    24.0,
-                                                                    12.0,
-                                                                    24.0,
-                                                                    12.0),
+                                                                24.0,
+                                                                12.0,
+                                                                24.0,
+                                                                12.0),
                                                         child: InkWell(
                                                           splashColor: Colors
                                                               .transparent,
@@ -944,7 +946,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
-                                                                loteNome: animaisItem.loteNome,
+                                                                loteNome:
+                                                                    animaisItem
+                                                                        .loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -973,7 +977,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
-                                                                loteNome: animaisItem.loteNome,
+                                                                loteNome:
+                                                                    animaisItem
+                                                                        .loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -1027,15 +1033,10 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                             'null') {
                                                                           return 'N/A';
                                                                         } else if (valueOrDefault<String>(
-                                                                                  animaisItem.dataNascimento,
-                                                                                  'xx/xx/xxxx',
-                                                                                ) ==
-                                                                                null ||
-                                                                            valueOrDefault<String>(
-                                                                                  animaisItem.dataNascimento,
-                                                                                  'xx/xx/xxxx',
-                                                                                ) ==
-                                                                                '') {
+                                                                              animaisItem.dataNascimento,
+                                                                              'xx/xx/xxxx',
+                                                                            ) ==
+                                                                            '') {
                                                                           return 'N/A';
                                                                         } else {
                                                                           return dateTimeFormat(
@@ -1058,7 +1059,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                           fontFamily:
                                                                               FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                           color:
-                                                                              Color(0xFF474747),
+                                                                              const Color(0xFF474747),
                                                                           fontSize:
                                                                               15.0,
                                                                           letterSpacing:
@@ -1069,9 +1070,10 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                               !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                         ),
                                                                   ),
-                                                                ].divide(SizedBox(
-                                                                    height:
-                                                                        2.0)),
+                                                                ].divide(
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2.0)),
                                                               ),
                                                               Icon(
                                                                 Icons
@@ -1106,20 +1108,21 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                 ),
                               if ((pesquisaRebanhoBuscaRebanhoPopupRowList
                                       .isNotEmpty) &&
-                                  (widget!.sexo == 'Macho'))
+                                  (widget.sexo == 'Macho'))
                                 Flexible(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 14.0, 0.0, 8.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 14.0, 0.0, 8.0),
                                     child: Container(
                                       width: double.infinity,
-                                      constraints: BoxConstraints(
+                                      constraints: const BoxConstraints(
                                         maxHeight: 500.0,
                                       ),
                                       decoration: BoxDecoration(
                                         color: FlutterFlowTheme.of(context)
                                             .secondaryBackground,
-                                        borderRadius: BorderRadius.only(
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(8.0),
                                           bottomRight: Radius.circular(8.0),
                                           topLeft: Radius.circular(0.0),
@@ -1127,8 +1130,8 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            8.0, 0.0, 8.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                         child: Builder(
                                           builder: (context) {
                                             final animais =
@@ -1146,7 +1149,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                     .take(20)
                                                     .toList();
                                             if (animais.isEmpty) {
-                                              return Center(
+                                              return const Center(
                                                 child: EmptyRebanhoWidget(),
                                               );
                                             }
@@ -1172,12 +1175,12 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                     children: [
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    24.0,
-                                                                    12.0,
-                                                                    24.0,
-                                                                    12.0),
+                                                                24.0,
+                                                                12.0,
+                                                                24.0,
+                                                                12.0),
                                                         child: InkWell(
                                                           splashColor: Colors
                                                               .transparent,
@@ -1215,7 +1218,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
-                                                                loteNome: animaisItem.loteNome,
+                                                                loteNome:
+                                                                    animaisItem
+                                                                        .loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -1244,7 +1249,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
-                                                                loteNome: animaisItem.loteNome,
+                                                                loteNome:
+                                                                    animaisItem
+                                                                        .loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -1298,15 +1305,10 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                             'null') {
                                                                           return 'N/A';
                                                                         } else if (valueOrDefault<String>(
-                                                                                  animaisItem.dataNascimento,
-                                                                                  'xx/xx/xxxx',
-                                                                                ) ==
-                                                                                null ||
-                                                                            valueOrDefault<String>(
-                                                                                  animaisItem.dataNascimento,
-                                                                                  'xx/xx/xxxx',
-                                                                                ) ==
-                                                                                '') {
+                                                                              animaisItem.dataNascimento,
+                                                                              'xx/xx/xxxx',
+                                                                            ) ==
+                                                                            '') {
                                                                           return 'N/A';
                                                                         } else {
                                                                           return dateTimeFormat(
@@ -1329,7 +1331,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                           fontFamily:
                                                                               FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                           color:
-                                                                              Color(0xFF474747),
+                                                                              const Color(0xFF474747),
                                                                           fontSize:
                                                                               15.0,
                                                                           letterSpacing:
@@ -1340,9 +1342,10 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                               !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                         ),
                                                                   ),
-                                                                ].divide(SizedBox(
-                                                                    height:
-                                                                        2.0)),
+                                                                ].divide(
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2.0)),
                                                               ),
                                                               Icon(
                                                                 Icons
@@ -1377,9 +1380,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                 ),
                               if (((pesquisaRebanhoBuscaRebanhoPopupRowList
                                           .isNotEmpty) &&
-                                      (widget!.sexo == 'Macho') &&
-                                      (widget!.reproducao == true) &&
-                                      (widget!.tipoReproducao ==
+                                      (widget.sexo == 'Macho') &&
+                                      (widget.reproducao == true) &&
+                                      (widget.tipoReproducao ==
                                           'Monta Natural')) &&
                                   responsiveVisibility(
                                     context: context,
@@ -1390,17 +1393,18 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                   ))
                                 Flexible(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 14.0, 0.0, 8.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 14.0, 0.0, 8.0),
                                     child: Container(
                                       width: double.infinity,
-                                      constraints: BoxConstraints(
+                                      constraints: const BoxConstraints(
                                         maxHeight: 500.0,
                                       ),
                                       decoration: BoxDecoration(
                                         color: FlutterFlowTheme.of(context)
                                             .secondaryBackground,
-                                        borderRadius: BorderRadius.only(
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(8.0),
                                           bottomRight: Radius.circular(8.0),
                                           topLeft: Radius.circular(0.0),
@@ -1408,8 +1412,8 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            8.0, 0.0, 8.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                         child: Builder(
                                           builder: (context) {
                                             final animais =
@@ -1448,12 +1452,12 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                     children: [
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    24.0,
-                                                                    12.0,
-                                                                    24.0,
-                                                                    12.0),
+                                                                24.0,
+                                                                12.0,
+                                                                24.0,
+                                                                12.0),
                                                         child: InkWell(
                                                           splashColor: Colors
                                                               .transparent,
@@ -1491,7 +1495,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
-                                                                loteNome: animaisItem.loteNome,
+                                                                loteNome:
+                                                                    animaisItem
+                                                                        .loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -1520,7 +1526,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
-                                                                loteNome: animaisItem.loteNome,
+                                                                loteNome:
+                                                                    animaisItem
+                                                                        .loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -1572,15 +1580,10 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                               'null') {
                                                                             return 'N/A';
                                                                           } else if (valueOrDefault<String>(
-                                                                                    animaisItem.dataNascimento,
-                                                                                    'xx/xx/xxxx',
-                                                                                  ) ==
-                                                                                  null ||
-                                                                              valueOrDefault<String>(
-                                                                                    animaisItem.dataNascimento,
-                                                                                    'xx/xx/xxxx',
-                                                                                  ) ==
-                                                                                  '') {
+                                                                                animaisItem.dataNascimento,
+                                                                                'xx/xx/xxxx',
+                                                                              ) ==
+                                                                              '') {
                                                                             return 'N/A';
                                                                           } else {
                                                                             return dateTimeFormat(
@@ -1602,7 +1605,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                             fontFamily:
                                                                                 FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                             color:
-                                                                                Color(0xFF474747),
+                                                                                const Color(0xFF474747),
                                                                             fontSize:
                                                                                 15.0,
                                                                             letterSpacing:
@@ -1613,7 +1616,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                                 !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                           ),
                                                                     ),
-                                                                  ].divide(SizedBox(
+                                                                  ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
                                                                 ),
@@ -1651,22 +1654,23 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                 ),
                               if ((pesquisaRebanhoBuscaRebanhoPopupRowList
                                       .isNotEmpty) &&
-                                  (widget!.sexo == 'Macho') &&
-                                  (widget!.reproducao == true) &&
-                                  (widget!.tipoReproducao == 'Inseminação'))
+                                  (widget.sexo == 'Macho') &&
+                                  (widget.reproducao == true) &&
+                                  (widget.tipoReproducao == 'Inseminação'))
                                 Flexible(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 14.0, 0.0, 8.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 14.0, 0.0, 8.0),
                                     child: Container(
                                       width: double.infinity,
-                                      constraints: BoxConstraints(
+                                      constraints: const BoxConstraints(
                                         maxHeight: 500.0,
                                       ),
                                       decoration: BoxDecoration(
                                         color: FlutterFlowTheme.of(context)
                                             .secondaryBackground,
-                                        borderRadius: BorderRadius.only(
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(8.0),
                                           bottomRight: Radius.circular(8.0),
                                           topLeft: Radius.circular(0.0),
@@ -1674,8 +1678,8 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            8.0, 0.0, 8.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                         child: Builder(
                                           builder: (context) {
                                             final animais =
@@ -1712,12 +1716,12 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                     children: [
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    24.0,
-                                                                    12.0,
-                                                                    24.0,
-                                                                    12.0),
+                                                                24.0,
+                                                                12.0,
+                                                                24.0,
+                                                                12.0),
                                                         child: InkWell(
                                                           splashColor: Colors
                                                               .transparent,
@@ -1755,7 +1759,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
-                                                                loteNome: animaisItem.loteNome,
+                                                                loteNome:
+                                                                    animaisItem
+                                                                        .loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -1784,7 +1790,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
-                                                                loteNome: animaisItem.loteNome,
+                                                                loteNome:
+                                                                    animaisItem
+                                                                        .loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -1836,15 +1844,10 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                               'null') {
                                                                             return 'N/A';
                                                                           } else if (valueOrDefault<String>(
-                                                                                    animaisItem.dataNascimento,
-                                                                                    'xx/xx/xxxx',
-                                                                                  ) ==
-                                                                                  null ||
-                                                                              valueOrDefault<String>(
-                                                                                    animaisItem.dataNascimento,
-                                                                                    'xx/xx/xxxx',
-                                                                                  ) ==
-                                                                                  '') {
+                                                                                animaisItem.dataNascimento,
+                                                                                'xx/xx/xxxx',
+                                                                              ) ==
+                                                                              '') {
                                                                             return 'N/A';
                                                                           } else {
                                                                             return dateTimeFormat(
@@ -1866,7 +1869,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                             fontFamily:
                                                                                 FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                             color:
-                                                                                Color(0xFF474747),
+                                                                                const Color(0xFF474747),
                                                                             fontSize:
                                                                                 15.0,
                                                                             letterSpacing:
@@ -1877,7 +1880,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                                 !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                           ),
                                                                     ),
-                                                                  ].divide(SizedBox(
+                                                                  ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
                                                                 ),
@@ -1923,22 +1926,23 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                       idPropriedade:
                           FFAppState().propriedadeSelecionada.idPropriedade,
                       pesquisa: _model.pesquisarTextController2.text,
-                      sexo: widget!.sexo == 'Fêmea' ? 'Fêmea' : null,
-                      categoriaExcluir: widget!.sexo == 'Fêmea' ? 'Bezerra' : null,
-                      categoria: widget!.sexo == 'Macho' &&
-                              (widget!.reproducao == false ||
-                                  widget!.tipoReproducao == 'Monta Natural')
+                      sexo: widget.sexo == 'Fêmea' ? 'Fêmea' : null,
+                      categoriaExcluir:
+                          widget.sexo == 'Fêmea' ? 'Bezerra' : null,
+                      categoria: widget.sexo == 'Macho' &&
+                              (widget.reproducao == false ||
+                                  widget.tipoReproducao == 'Monta Natural')
                           ? 'Touro'
                           : null,
-                      statusRebanho: widget!.sexo == 'Fêmea'
+                      statusRebanho: widget.sexo == 'Fêmea'
                           ? 'Na propriedade'
-                          : widget!.sexo == 'Macho' &&
-                                  widget!.reproducao == true &&
-                                  widget!.tipoReproducao == 'Monta Natural'
+                          : widget.sexo == 'Macho' &&
+                                  widget.reproducao == true &&
+                                  widget.tipoReproducao == 'Monta Natural'
                               ? 'Na propriedade'
-                              : widget!.sexo == 'Macho' &&
-                                      widget!.reproducao == true &&
-                                      widget!.tipoReproducao == 'Inseminação'
+                              : widget.sexo == 'Macho' &&
+                                      widget.reproducao == true &&
+                                      widget.tipoReproducao == 'Inseminação'
                                   ? 'Sêmen'
                                   : null,
                     ),
@@ -1961,7 +1965,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                           snapshot.data!;
 
                       return Container(
-                        constraints: BoxConstraints(
+                        constraints: const BoxConstraints(
                           maxHeight: 300.0,
                         ),
                         decoration: BoxDecoration(
@@ -1975,14 +1979,14 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                             if (!(semPesquisaBuscaRebanhoPopupRowList
                                 .isNotEmpty))
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 24.0, 24.0, 0.0),
                                 child: Container(
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     color: FlutterFlowTheme.of(context)
                                         .secondaryBackground,
-                                    boxShadow: [
+                                    boxShadow: const [
                                       BoxShadow(
                                         blurRadius: 4.0,
                                         color: Color(0x41000040),
@@ -1995,8 +1999,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                     borderRadius: BorderRadius.circular(6.0),
                                   ),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        32.0, 32.0, 32.0, 32.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            32.0, 32.0, 32.0, 32.0),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
@@ -2049,25 +2054,25 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                           ),
                                           textAlign: TextAlign.center,
                                         ),
-                                      ].divide(SizedBox(height: 24.0)),
+                                      ].divide(const SizedBox(height: 24.0)),
                                     ),
                                   ),
                                 ),
                               ),
                             if ((semPesquisaBuscaRebanhoPopupRowList
                                     .isNotEmpty) &&
-                                (widget!.sexo == 'Fêmea'))
+                                (widget.sexo == 'Fêmea'))
                               Flexible(
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 14.0, 0.0, 8.0),
                                   child: Container(
                                     width: double.infinity,
                                     height: 300.0,
-                                    constraints: BoxConstraints(
+                                    constraints: const BoxConstraints(
                                       maxHeight: 300.0,
                                     ),
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       borderRadius: BorderRadius.only(
                                         bottomLeft: Radius.circular(0.0),
                                         bottomRight: Radius.circular(0.0),
@@ -2076,8 +2081,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                       ),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          8.0, 0.0, 8.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              8.0, 0.0, 8.0, 0.0),
                                       child: Builder(
                                         builder: (context) {
                                           final animais =
@@ -2094,7 +2100,8 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                 return Container(
                                                   width: double.infinity,
                                                   height: 48.0,
-                                                  decoration: BoxDecoration(),
+                                                  decoration:
+                                                      const BoxDecoration(),
                                                   child: Column(
                                                     mainAxisSize:
                                                         MainAxisSize.max,
@@ -2104,12 +2111,12 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                     children: [
                                                       Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    24.0,
-                                                                    12.0,
-                                                                    24.0,
-                                                                    12.0),
+                                                                24.0,
+                                                                12.0,
+                                                                24.0,
+                                                                12.0),
                                                         child: InkWell(
                                                           splashColor: Colors
                                                               .transparent,
@@ -2147,7 +2154,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
-                                                                loteNome: animaisItem.loteNome,
+                                                                loteNome:
+                                                                    animaisItem
+                                                                        .loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -2176,7 +2185,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                 categoria:
                                                                     animaisItem
                                                                         .categoria,
-                                                                loteNome: animaisItem.loteNome,
+                                                                loteNome:
+                                                                    animaisItem
+                                                                        .loteNome,
                                                               );
                                                               _model.updatePage(
                                                                   () {});
@@ -2234,15 +2245,10 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                               'null') {
                                                                             return 'N/A';
                                                                           } else if (valueOrDefault<String>(
-                                                                                    animaisItem.dataNascimento,
-                                                                                    'xx/xx/xxxx',
-                                                                                  ) ==
-                                                                                  null ||
-                                                                              valueOrDefault<String>(
-                                                                                    animaisItem.dataNascimento,
-                                                                                    'xx/xx/xxxx',
-                                                                                  ) ==
-                                                                                  '') {
+                                                                                animaisItem.dataNascimento,
+                                                                                'xx/xx/xxxx',
+                                                                              ) ==
+                                                                              '') {
                                                                             return 'N/A';
                                                                           } else {
                                                                             return dateTimeFormat(
@@ -2264,7 +2270,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                             fontFamily:
                                                                                 FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                             color:
-                                                                                Color(0xFF474747),
+                                                                                const Color(0xFF474747),
                                                                             fontSize:
                                                                                 15.0,
                                                                             letterSpacing:
@@ -2275,7 +2281,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                                 !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                           ),
                                                                     ),
-                                                                  ].divide(SizedBox(
+                                                                  ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
                                                                 ),
@@ -2306,22 +2312,22 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                               ),
                             if ((semPesquisaBuscaRebanhoPopupRowList
                                     .isNotEmpty) &&
-                                (widget!.sexo == 'Macho') &&
-                                (widget!.reproducao == false))
+                                (widget.sexo == 'Macho') &&
+                                (widget.reproducao == false))
                               Flexible(
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 14.0, 0.0, 8.0),
                                   child: Container(
                                     width: double.infinity,
                                     height: 300.0,
-                                    constraints: BoxConstraints(
+                                    constraints: const BoxConstraints(
                                       maxHeight: 300.0,
                                     ),
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                         bottomLeft: Radius.circular(8.0),
                                         bottomRight: Radius.circular(8.0),
                                         topLeft: Radius.circular(0.0),
@@ -2329,14 +2335,15 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                       ),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          8.0, 0.0, 8.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              8.0, 0.0, 8.0, 0.0),
                                       child: Builder(
                                         builder: (context) {
                                           final animais =
                                               semPesquisaBuscaRebanhoPopupRowList;
                                           if (animais.isEmpty) {
-                                            return Center(
+                                            return const Center(
                                               child: EmptyRebanhoWidget(),
                                             );
                                           }
@@ -2365,12 +2372,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                   children: [
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  24.0,
-                                                                  12.0,
-                                                                  24.0,
-                                                                  12.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(24.0,
+                                                              12.0, 24.0, 12.0),
                                                       child: InkWell(
                                                         splashColor:
                                                             Colors.transparent,
@@ -2406,7 +2410,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                               categoria:
                                                                   animaisItem
                                                                       .categoria,
-                                                              loteNome: animaisItem.loteNome,
+                                                              loteNome:
+                                                                  animaisItem
+                                                                      .loteNome,
                                                             );
                                                             _model.updatePage(
                                                                 () {});
@@ -2433,7 +2439,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                               categoria:
                                                                   animaisItem
                                                                       .categoria,
-                                                              loteNome: animaisItem.loteNome,
+                                                              loteNome:
+                                                                  animaisItem
+                                                                      .loteNome,
                                                             );
                                                             _model.updatePage(
                                                                 () {});
@@ -2491,15 +2499,10 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                             'null') {
                                                                           return 'N/A';
                                                                         } else if (valueOrDefault<String>(
-                                                                                  animaisItem.dataNascimento,
-                                                                                  'xx/xx/xxxx',
-                                                                                ) ==
-                                                                                null ||
-                                                                            valueOrDefault<String>(
-                                                                                  animaisItem.dataNascimento,
-                                                                                  'xx/xx/xxxx',
-                                                                                ) ==
-                                                                                '') {
+                                                                              animaisItem.dataNascimento,
+                                                                              'xx/xx/xxxx',
+                                                                            ) ==
+                                                                            '') {
                                                                           return 'N/A';
                                                                         } else {
                                                                           return dateTimeFormat(
@@ -2522,7 +2525,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                           fontFamily:
                                                                               FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                           color:
-                                                                              Color(0xFF474747),
+                                                                              const Color(0xFF474747),
                                                                           fontSize:
                                                                               15.0,
                                                                           letterSpacing:
@@ -2533,9 +2536,10 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                               !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                         ),
                                                                   ),
-                                                                ].divide(SizedBox(
-                                                                    height:
-                                                                        2.0)),
+                                                                ].divide(
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2.0)),
                                                               ),
                                                             ],
                                                           ),
@@ -2563,22 +2567,22 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                               ),
                             if ((semPesquisaBuscaRebanhoPopupRowList
                                     .isNotEmpty) &&
-                                (widget!.sexo == 'Macho') &&
-                                (widget!.tipoReproducao == 'Monta Natural') &&
-                                (widget!.reproducao == true))
+                                (widget.sexo == 'Macho') &&
+                                (widget.tipoReproducao == 'Monta Natural') &&
+                                (widget.reproducao == true))
                               Flexible(
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 14.0, 0.0, 8.0),
                                   child: Container(
                                     width: double.infinity,
-                                    constraints: BoxConstraints(
+                                    constraints: const BoxConstraints(
                                       maxHeight: 300.0,
                                     ),
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                         bottomLeft: Radius.circular(8.0),
                                         bottomRight: Radius.circular(8.0),
                                         topLeft: Radius.circular(0.0),
@@ -2586,14 +2590,15 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                       ),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          8.0, 0.0, 8.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              8.0, 0.0, 8.0, 0.0),
                                       child: Builder(
                                         builder: (context) {
                                           final animais =
                                               semPesquisaBuscaRebanhoPopupRowList;
                                           if (animais.isEmpty) {
-                                            return Center(
+                                            return const Center(
                                               child: EmptyRebanhoWidget(),
                                             );
                                           }
@@ -2622,12 +2627,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                   children: [
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  24.0,
-                                                                  12.0,
-                                                                  24.0,
-                                                                  12.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(24.0,
+                                                              12.0, 24.0, 12.0),
                                                       child: InkWell(
                                                         splashColor:
                                                             Colors.transparent,
@@ -2663,7 +2665,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                               categoria:
                                                                   animaisItem
                                                                       .categoria,
-                                                              loteNome: animaisItem.loteNome,
+                                                              loteNome:
+                                                                  animaisItem
+                                                                      .loteNome,
                                                             );
                                                             _model.updatePage(
                                                                 () {});
@@ -2690,7 +2694,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                               categoria:
                                                                   animaisItem
                                                                       .categoria,
-                                                              loteNome: animaisItem.loteNome,
+                                                              loteNome:
+                                                                  animaisItem
+                                                                      .loteNome,
                                                             );
                                                             _model.updatePage(
                                                                 () {});
@@ -2748,15 +2754,10 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                             'null') {
                                                                           return 'N/A';
                                                                         } else if (valueOrDefault<String>(
-                                                                                  animaisItem.dataNascimento,
-                                                                                  'xx/xx/xxxx',
-                                                                                ) ==
-                                                                                null ||
-                                                                            valueOrDefault<String>(
-                                                                                  animaisItem.dataNascimento,
-                                                                                  'xx/xx/xxxx',
-                                                                                ) ==
-                                                                                '') {
+                                                                              animaisItem.dataNascimento,
+                                                                              'xx/xx/xxxx',
+                                                                            ) ==
+                                                                            '') {
                                                                           return 'N/A';
                                                                         } else {
                                                                           return dateTimeFormat(
@@ -2779,7 +2780,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                           fontFamily:
                                                                               FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                           color:
-                                                                              Color(0xFF474747),
+                                                                              const Color(0xFF474747),
                                                                           fontSize:
                                                                               15.0,
                                                                           letterSpacing:
@@ -2790,9 +2791,10 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                               !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                         ),
                                                                   ),
-                                                                ].divide(SizedBox(
-                                                                    height:
-                                                                        2.0)),
+                                                                ].divide(
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2.0)),
                                                               ),
                                                             ],
                                                           ),
@@ -2820,20 +2822,20 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                               ),
                             if ((semPesquisaBuscaRebanhoPopupRowList
                                     .isNotEmpty) &&
-                                (widget!.sexo == 'Macho') &&
-                                (widget!.tipoReproducao == 'Inseminação') &&
-                                (widget!.reproducao == true))
+                                (widget.sexo == 'Macho') &&
+                                (widget.tipoReproducao == 'Inseminação') &&
+                                (widget.reproducao == true))
                               Flexible(
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 14.0, 0.0, 8.0),
                                   child: Container(
                                     width: double.infinity,
                                     height: 300.0,
-                                    constraints: BoxConstraints(
+                                    constraints: const BoxConstraints(
                                       maxHeight: 300.0,
                                     ),
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       borderRadius: BorderRadius.only(
                                         bottomLeft: Radius.circular(8.0),
                                         bottomRight: Radius.circular(8.0),
@@ -2842,14 +2844,15 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                       ),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          8.0, 0.0, 8.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              8.0, 0.0, 8.0, 0.0),
                                       child: Builder(
                                         builder: (context) {
                                           final animais =
                                               semPesquisaBuscaRebanhoPopupRowList;
                                           if (animais.isEmpty) {
-                                            return Center(
+                                            return const Center(
                                               child: EmptyRebanhoWidget(),
                                             );
                                           }
@@ -2878,12 +2881,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                   children: [
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  24.0,
-                                                                  12.0,
-                                                                  24.0,
-                                                                  12.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(24.0,
+                                                              12.0, 24.0, 12.0),
                                                       child: InkWell(
                                                         splashColor:
                                                             Colors.transparent,
@@ -2919,7 +2919,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                               categoria:
                                                                   animaisItem
                                                                       .categoria,
-                                                              loteNome: animaisItem.loteNome,
+                                                              loteNome:
+                                                                  animaisItem
+                                                                      .loteNome,
                                                             );
                                                             _model.updatePage(
                                                                 () {});
@@ -2946,7 +2948,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                               categoria:
                                                                   animaisItem
                                                                       .categoria,
-                                                              loteNome: animaisItem.loteNome,
+                                                              loteNome:
+                                                                  animaisItem
+                                                                      .loteNome,
                                                             );
                                                             _model.updatePage(
                                                                 () {});
@@ -3004,15 +3008,10 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                             'null') {
                                                                           return 'N/A';
                                                                         } else if (valueOrDefault<String>(
-                                                                                  animaisItem.dataNascimento,
-                                                                                  'xx/xx/xxxx',
-                                                                                ) ==
-                                                                                null ||
-                                                                            valueOrDefault<String>(
-                                                                                  animaisItem.dataNascimento,
-                                                                                  'xx/xx/xxxx',
-                                                                                ) ==
-                                                                                '') {
+                                                                              animaisItem.dataNascimento,
+                                                                              'xx/xx/xxxx',
+                                                                            ) ==
+                                                                            '') {
                                                                           return 'N/A';
                                                                         } else {
                                                                           return dateTimeFormat(
@@ -3035,7 +3034,7 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                           fontFamily:
                                                                               FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                           color:
-                                                                              Color(0xFF474747),
+                                                                              const Color(0xFF474747),
                                                                           fontSize:
                                                                               15.0,
                                                                           letterSpacing:
@@ -3046,9 +3045,10 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                                                               !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                         ),
                                                                   ),
-                                                                ].divide(SizedBox(
-                                                                    height:
-                                                                        2.0)),
+                                                                ].divide(
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2.0)),
                                                               ),
                                                             ],
                                                           ),

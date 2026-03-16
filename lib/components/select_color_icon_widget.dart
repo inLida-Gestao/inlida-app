@@ -36,7 +36,7 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimer = InstantTimer.periodic(
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         callback: (timer) async {
           _model.temNet = await actions.checkInternetConnection();
 
@@ -61,11 +61,11 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
     context.watch<FFAppState>();
 
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+      padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
       child: Material(
         color: Colors.transparent,
         elevation: 5.0,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(6.0),
             bottomRight: Radius.circular(6.0),
@@ -76,7 +76,7 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
         child: Container(
           width: double.infinity,
           height: 150.0,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(6.0),
@@ -86,7 +86,7 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
             ),
           ),
           child: Align(
-            alignment: AlignmentDirectional(0.0, -1.0),
+            alignment: const AlignmentDirectional(0.0, -1.0),
             child: SingleChildScrollView(
               primary: false,
               child: Column(
@@ -104,7 +104,7 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
                         desktop: false,
                       ))
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
                           16.0, 16.0, 16.0, 16.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
@@ -121,7 +121,7 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
                                         .headlineSmall
                                         .fontStyle,
                                   ),
-                                  color: Color(0xFF181818),
+                                  color: const Color(0xFF181818),
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.w500,
@@ -150,7 +150,7 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             16.0, 0.0, 16.0, 0.0),
                         child: Wrap(
                           spacing: 0.0,
@@ -170,11 +170,12 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
                                     .secondaryBackground,
                               ),
                               child: Align(
-                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                alignment:
+                                    const AlignmentDirectional(-1.0, 0.0),
                                 child: Container(
                                   width: 40.0,
                                   height: 40.0,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     borderRadius: BorderRadius.only(
                                       bottomLeft: Radius.circular(100.0),
                                       bottomRight: Radius.circular(100.0),
@@ -190,8 +191,8 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
                       ),
                     ),
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 16.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        16.0, 16.0, 16.0, 16.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -207,7 +208,7 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
                                       .headlineSmall
                                       .fontStyle,
                                 ),
-                                color: Color(0xFF181818),
+                                color: const Color(0xFF181818),
                                 fontSize: 16.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w500,
@@ -232,7 +233,7 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             16.0, 0.0, 16.0, 0.0),
                         child: FutureBuilder<ApiCallResponse>(
                           future: BubbleGroup.iconesimgsCall.call(
@@ -289,12 +290,12 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
                                                       resultadoItem
                                                   ? FlutterFlowTheme.of(context)
                                                       .secondary
-                                                  : Color(0x00000000),
+                                                  : const Color(0x00000000),
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            5.0, 5.0, 5.0, 5.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(5.0, 5.0, 5.0, 5.0),
                                         child: InkWell(
                                           splashColor: Colors.transparent,
                                           focusColor: Colors.transparent,
@@ -332,8 +333,8 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
                       color: FlutterFlowTheme.of(context).secondaryBackground,
                     ),
                     child: Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          16.0, 0.0, 16.0, 0.0),
                       child: Builder(
                         builder: (context) {
                           final resultado = FFAppState().icones.toList();
@@ -360,11 +361,11 @@ class _SelectColorIconWidgetState extends State<SelectColorIconWidget> {
                                     color: FFAppState().iconeSelecionado ==
                                             resultadoItem
                                         ? FlutterFlowTheme.of(context).secondary
-                                        : Color(0x00000000),
+                                        : const Color(0x00000000),
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       5.0, 5.0, 5.0, 5.0),
                                   child: InkWell(
                                     splashColor: Colors.transparent,

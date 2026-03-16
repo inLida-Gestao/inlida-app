@@ -57,7 +57,7 @@ class _ReproducoesViewRebanhoWidgetState
   Widget build(BuildContext context) {
     return FutureBuilder<List<BuscarReproducoesRebanhoRow>>(
       future: SQLiteManager.instance.buscarReproducoesRebanho(
-        numAnimal: widget!.numAnimal,
+        numAnimal: widget.numAnimal,
       ),
       builder: (context, snapshot) {
         // Customize what your widget looks like when it's loading.
@@ -77,7 +77,7 @@ class _ReproducoesViewRebanhoWidgetState
         final containerBuscarReproducoesRebanhoRowList = snapshot.data!;
 
         return Container(
-          decoration: BoxDecoration(),
+          decoration: const BoxDecoration(),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -89,9 +89,9 @@ class _ReproducoesViewRebanhoWidgetState
                         .toList();
                     if (reproducao.isEmpty) {
                       return Center(
-                        child: Container(
+                        child: SizedBox(
                           height: 200.0,
-                          child: EmptyReproducaoWidget(),
+                          child: const EmptyReproducaoWidget(),
                         ),
                       );
                     }
@@ -118,7 +118,7 @@ class _ReproducoesViewRebanhoWidgetState
                               ),
                               Builder(
                                 builder: (context) => Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 8.0, 24.0, 8.0),
                                   child: InkWell(
                                     splashColor: Colors.transparent,
@@ -153,10 +153,11 @@ class _ReproducoesViewRebanhoWidgetState
                                             elevation: 0,
                                             insetPadding: EdgeInsets.zero,
                                             backgroundColor: Colors.transparent,
-                                            alignment: AlignmentDirectional(
-                                                    0.0, 0.0)
-                                                .resolve(
-                                                    Directionality.of(context)),
+                                            alignment:
+                                                const AlignmentDirectional(
+                                                        0.0, 0.0)
+                                                    .resolve(Directionality.of(
+                                                        context)),
                                             child: ViewReproducaoRebanhoWidget(
                                               idReproducao:
                                                   reproducaoItem.idReproducao!,
@@ -196,7 +197,8 @@ class _ReproducoesViewRebanhoWidgetState
                                                   ))
                                                     ClipRRect(
                                                       borderRadius:
-                                                          BorderRadius.only(
+                                                          const BorderRadius
+                                                              .only(
                                                         bottomLeft:
                                                             Radius.circular(
                                                                 100.0),
@@ -213,7 +215,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                       child: Container(
                                                         height: 23.0,
                                                         decoration:
-                                                            BoxDecoration(
+                                                            const BoxDecoration(
                                                           color:
                                                               Color(0xFFF1F1F1),
                                                           borderRadius:
@@ -233,16 +235,16 @@ class _ReproducoesViewRebanhoWidgetState
                                                           ),
                                                         ),
                                                         alignment:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                 0.0, 0.0),
                                                         child: Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
-                                                                      8.0,
-                                                                      0.0,
-                                                                      8.0,
-                                                                      0.0),
+                                                                  8.0,
+                                                                  0.0,
+                                                                  8.0,
+                                                                  0.0),
                                                           child: Text(
                                                             '${valueOrDefault<String>(
                                                               reproducaoItem
@@ -292,7 +294,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                                         .bodyLarge
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF5F5F5F),
                                                                   fontSize:
                                                                       10.0,
@@ -312,7 +314,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                     ),
                                                   ClipRRect(
                                                     borderRadius:
-                                                        BorderRadius.only(
+                                                        const BorderRadius.only(
                                                       bottomLeft:
                                                           Radius.circular(
                                                               100.0),
@@ -326,7 +328,8 @@ class _ReproducoesViewRebanhoWidgetState
                                                     ),
                                                     child: Container(
                                                       height: 23.0,
-                                                      decoration: BoxDecoration(
+                                                      decoration:
+                                                          const BoxDecoration(
                                                         color:
                                                             Color(0xFFF1F1F1),
                                                         borderRadius:
@@ -346,16 +349,13 @@ class _ReproducoesViewRebanhoWidgetState
                                                         ),
                                                       ),
                                                       alignment:
-                                                          AlignmentDirectional(
+                                                          const AlignmentDirectional(
                                                               0.0, 0.0),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    8.0,
-                                                                    0.0,
-                                                                    8.0,
-                                                                    0.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(8.0,
+                                                                0.0, 8.0, 0.0),
                                                         child: Text(
                                                           '${reproducaoItem.tipoReproducao} (${reproducaoItem.tipoReproducao == 'Inseminação' ? dateTimeFormat(
                                                               "dd/MM/yy",
@@ -390,7 +390,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                                       .bodyLarge
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF5F5F5F),
                                                                 fontSize: 10.0,
                                                                 letterSpacing:
@@ -424,7 +424,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                       ),
                                                       child: Align(
                                                         alignment:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                 0.0, 0.0),
                                                         child: Text(
                                                           'R',
@@ -451,12 +451,14 @@ class _ReproducoesViewRebanhoWidgetState
                                                         ),
                                                       ),
                                                     ),
-                                                ].divide(SizedBox(width: 8.0)),
+                                                ].divide(
+                                                    const SizedBox(width: 8.0)),
                                               ),
                                               if (reproducaoItem.categoria ==
                                                   'rebanho')
                                                 Container(
-                                                  decoration: BoxDecoration(),
+                                                  decoration:
+                                                      const BoxDecoration(),
                                                   child: Visibility(
                                                     visible: (reproducaoItem
                                                                     .idLote ==
@@ -492,12 +494,12 @@ class _ReproducoesViewRebanhoWidgetState
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
-                                                                      0.0,
-                                                                      0.0,
-                                                                      7.0,
-                                                                      0.0),
+                                                                  0.0,
+                                                                  0.0,
+                                                                  7.0,
+                                                                  0.0),
                                                           child: Text(
                                                             'Matriz:',
                                                             style: FlutterFlowTheme
@@ -514,7 +516,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                                         .bodyLarge
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF474747),
                                                                   fontSize:
                                                                       16.0,
@@ -567,7 +569,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                                         .bodyLarge
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF474747),
                                                                   fontSize:
                                                                       14.0,
@@ -583,8 +585,8 @@ class _ReproducoesViewRebanhoWidgetState
                                                                 ),
                                                           ),
                                                         ),
-                                                      ].divide(
-                                                          SizedBox(width: 3.0)),
+                                                      ].divide(const SizedBox(
+                                                          width: 3.0)),
                                                     ),
                                                   ),
                                                 ),
@@ -624,7 +626,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                                       .bodyLarge
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF5F5F5F),
                                                                 fontSize: 14.0,
                                                                 letterSpacing:
@@ -659,7 +661,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                                     .bodyLarge
                                                                     .fontStyle,
                                                               ),
-                                                              color: Color(
+                                                              color: const Color(
                                                                   0xFF5F5F5F),
                                                               fontSize: 14.0,
                                                               letterSpacing:
@@ -675,15 +677,15 @@ class _ReproducoesViewRebanhoWidgetState
                                                             ),
                                                       ),
                                                     ),
-                                                  ].divide(
-                                                      SizedBox(width: 3.0)),
+                                                  ].divide(const SizedBox(
+                                                      width: 3.0)),
                                                 ),
                                               Row(
                                                 mainAxisSize: MainAxisSize.max,
                                                 children: [
                                                   ClipRRect(
                                                     borderRadius:
-                                                        BorderRadius.only(
+                                                        const BorderRadius.only(
                                                       bottomLeft:
                                                           Radius.circular(
                                                               100.0),
@@ -706,10 +708,12 @@ class _ReproducoesViewRebanhoWidgetState
                                                               ? '#EFF5D4'
                                                               : '#f5d7d4',
                                                           defaultColor:
-                                                              Color(0xFFF5D7D4),
+                                                              const Color(
+                                                                  0xFFF5D7D4),
                                                         ),
                                                         borderRadius:
-                                                            BorderRadius.only(
+                                                            const BorderRadius
+                                                                .only(
                                                           bottomLeft:
                                                               Radius.circular(
                                                                   100.0),
@@ -725,16 +729,13 @@ class _ReproducoesViewRebanhoWidgetState
                                                         ),
                                                       ),
                                                       alignment:
-                                                          AlignmentDirectional(
+                                                          const AlignmentDirectional(
                                                               0.0, 0.0),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    8.0,
-                                                                    0.0,
-                                                                    8.0,
-                                                                    0.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(8.0,
+                                                                0.0, 8.0, 0.0),
                                                         child: Text(
                                                           valueOrDefault<
                                                               String>(
@@ -780,7 +781,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                                       ? '#1e7a4c'
                                                                       : '#cc3729',
                                                                   defaultColor:
-                                                                      Color(
+                                                                      const Color(
                                                                           0xFFCC3729),
                                                                 ),
                                                                 fontSize: 10.0,
@@ -798,7 +799,8 @@ class _ReproducoesViewRebanhoWidgetState
                                                       ),
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(width: 8.0)),
+                                                ].divide(
+                                                    const SizedBox(width: 8.0)),
                                               ),
                                               if (reproducaoItem.parida ==
                                                   'SIM')
@@ -808,7 +810,8 @@ class _ReproducoesViewRebanhoWidgetState
                                                   children: [
                                                     ClipRRect(
                                                       borderRadius:
-                                                          BorderRadius.only(
+                                                          const BorderRadius
+                                                              .only(
                                                         bottomLeft:
                                                             Radius.circular(
                                                                 100.0),
@@ -825,7 +828,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                       child: Container(
                                                         height: 23.0,
                                                         decoration:
-                                                            BoxDecoration(
+                                                            const BoxDecoration(
                                                           color:
                                                               Color(0xFFEFF5D4),
                                                           borderRadius:
@@ -845,16 +848,16 @@ class _ReproducoesViewRebanhoWidgetState
                                                           ),
                                                         ),
                                                         alignment:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                 0.0, 0.0),
                                                         child: Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
-                                                                      8.0,
-                                                                      0.0,
-                                                                      8.0,
-                                                                      0.0),
+                                                                  8.0,
+                                                                  0.0,
+                                                                  8.0,
+                                                                  0.0),
                                                           child: Text(
                                                             valueOrDefault<
                                                                 String>(
@@ -892,7 +895,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                                         .bodyLarge
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF1E7A4C),
                                                                   fontSize:
                                                                       10.0,
@@ -910,8 +913,8 @@ class _ReproducoesViewRebanhoWidgetState
                                                         ),
                                                       ),
                                                     ),
-                                                  ].divide(
-                                                      SizedBox(width: 8.0)),
+                                                  ].divide(const SizedBox(
+                                                      width: 8.0)),
                                                 ),
                                               Row(
                                                 mainAxisSize: MainAxisSize.max,
@@ -945,8 +948,8 @@ class _ReproducoesViewRebanhoWidgetState
                                                                     .bodyLarge
                                                                     .fontStyle,
                                                           ),
-                                                          color:
-                                                              Color(0xFF474747),
+                                                          color: const Color(
+                                                              0xFF474747),
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -980,7 +983,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                                       .bodyLarge
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF474747),
                                                                 fontSize: 14.0,
                                                                 letterSpacing:
@@ -995,7 +998,8 @@ class _ReproducoesViewRebanhoWidgetState
                                                               ),
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(width: 3.0)),
+                                                ].divide(
+                                                    const SizedBox(width: 3.0)),
                                               ),
                                               if (reproducaoItem
                                                       .tipoReproducao ==
@@ -1026,7 +1030,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                                       .bodyLarge
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF474747),
                                                                 fontSize: 14.0,
                                                                 letterSpacing:
@@ -1040,8 +1044,8 @@ class _ReproducoesViewRebanhoWidgetState
                                                                     .fontStyle,
                                                               ),
                                                         ),
-                                                      ].divide(
-                                                          SizedBox(width: 5.0)),
+                                                      ].divide(const SizedBox(
+                                                          width: 5.0)),
                                                     ),
                                                     Text(
                                                       valueOrDefault<String>(
@@ -1073,7 +1077,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                                       .bodyLarge
                                                                       .fontStyle,
                                                                 ),
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF474747),
                                                                 fontSize: 14.0,
                                                                 letterSpacing:
@@ -1087,10 +1091,11 @@ class _ReproducoesViewRebanhoWidgetState
                                                                     .fontStyle,
                                                               ),
                                                     ),
-                                                  ].divide(
-                                                      SizedBox(width: 3.0)),
+                                                  ].divide(const SizedBox(
+                                                      width: 3.0)),
                                                 ),
-                                            ].divide(SizedBox(height: 4.0)),
+                                            ].divide(
+                                                const SizedBox(height: 4.0)),
                                           ),
                                         ),
                                         Icon(

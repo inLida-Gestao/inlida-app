@@ -9,7 +9,7 @@ class PiqueteTable extends SupabaseTable<PiqueteRow> {
 }
 
 class PiqueteRow extends SupabaseDataRow {
-  PiqueteRow(Map<String, dynamic> data) : super(data);
+  PiqueteRow(super.data);
 
   @override
   SupabaseTable get table => PiqueteTable();

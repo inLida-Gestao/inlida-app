@@ -11,7 +11,7 @@ class ReproducaoChangeTrackerTable
 }
 
 class ReproducaoChangeTrackerRow extends SupabaseDataRow {
-  ReproducaoChangeTrackerRow(Map<String, dynamic> data) : super(data);
+  ReproducaoChangeTrackerRow(super.data);
 
   @override
   SupabaseTable get table => ReproducaoChangeTrackerTable();

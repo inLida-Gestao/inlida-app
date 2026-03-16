@@ -477,18 +477,18 @@ class FFAppState extends ChangeNotifier {
   }
 
   List<Color> _coresPropriedade = [
-    Color(4278239999),
-    Color(4278247311),
-    Color(4280853349),
-    Color(4280906700),
-    Color(4287269514),
-    Color(4289842217),
-    Color(4291045836),
-    Color(4291573545),
-    Color(4294237184),
-    Color(4294901760),
-    Color(4294901898),
-    Color(4294929152)
+    const Color(0xff00c2ff),
+    const Color(0xff00df8f),
+    const Color(0xff28a365),
+    const Color(0xff2973cc),
+    const Color(0xff8a8a8a),
+    const Color(0xffb1cc29),
+    const Color(0xffc429cc),
+    const Color(0xffcc3729),
+    const Color(0xfff4dc00),
+    const Color(0xffff0000),
+    const Color(0xffff008a),
+    const Color(0xffff6b00)
   ];
   List<Color> get coresPropriedade => _coresPropriedade;
   set coresPropriedade(List<Color> value) {
@@ -960,6 +960,18 @@ class FFAppState extends ChangeNotifier {
   String get filtroOrigemRebanho => _filtroOrigemRebanho;
   set filtroOrigemRebanho(String value) {
     _filtroOrigemRebanho = value;
+  }
+
+  String _filtroLoteRebanho = '';
+  String get filtroLoteRebanho => _filtroLoteRebanho;
+  set filtroLoteRebanho(String value) {
+    _filtroLoteRebanho = value;
+  }
+
+  String _filtroLoteRebanhoNome = '';
+  String get filtroLoteRebanhoNome => _filtroLoteRebanhoNome;
+  set filtroLoteRebanhoNome(String value) {
+    _filtroLoteRebanhoNome = value;
   }
 
   List<String> _origemRebanho = ['Compra', 'Movimentação', 'Nascimento'];

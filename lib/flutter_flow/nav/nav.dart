@@ -85,40 +85,42 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       debugLogDiagnostics: true,
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
-      errorBuilder: (context, state) =>
-          appStateNotifier.loggedIn ? HomePageWidget() : TelaInicioWidget(),
+      errorBuilder: (context, state) => appStateNotifier.loggedIn
+          ? const HomePageWidget()
+          : const TelaInicioWidget(),
       routes: [
         FFRoute(
           name: '_initialize',
           path: '/',
-          builder: (context, _) =>
-              appStateNotifier.loggedIn ? HomePageWidget() : TelaInicioWidget(),
+          builder: (context, _) => appStateNotifier.loggedIn
+              ? const HomePageWidget()
+              : const TelaInicioWidget(),
         ),
         FFRoute(
           name: HomePageWidget.routeName,
           path: HomePageWidget.routePath,
           requireAuth: true,
-          builder: (context, params) => HomePageWidget(),
+          builder: (context, params) => const HomePageWidget(),
         ),
         FFRoute(
           name: TelaInicioWidget.routeName,
           path: TelaInicioWidget.routePath,
-          builder: (context, params) => TelaInicioWidget(),
+          builder: (context, params) => const TelaInicioWidget(),
         ),
         FFRoute(
           name: RedefinicaoSenhaWidget.routeName,
           path: RedefinicaoSenhaWidget.routePath,
-          builder: (context, params) => RedefinicaoSenhaWidget(),
+          builder: (context, params) => const RedefinicaoSenhaWidget(),
         ),
         FFRoute(
           name: LoginWidget.routeName,
           path: LoginWidget.routePath,
-          builder: (context, params) => LoginWidget(),
+          builder: (context, params) => const LoginWidget(),
         ),
         FFRoute(
           name: CadastroWidget.routeName,
           path: CadastroWidget.routePath,
-          builder: (context, params) => CadastroWidget(),
+          builder: (context, params) => const CadastroWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
@@ -355,7 +357,7 @@ class TransitionInfo {
   final Duration duration;
   final Alignment? alignment;
 
-  static TransitionInfo appDefault() => TransitionInfo(
+  static TransitionInfo appDefault() => const TransitionInfo(
         hasTransition: true,
         transitionType: PageTransitionType.fade,
         duration: Duration(milliseconds: 300),

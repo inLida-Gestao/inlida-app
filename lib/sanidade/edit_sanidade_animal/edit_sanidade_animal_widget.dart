@@ -47,7 +47,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimerrr = InstantTimer.periodic(
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         callback: (timer) async {
           if (FFAppState().rebuild == true) {
             safeSetState(() {});
@@ -108,7 +108,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
     context.watch<FFAppState>();
 
     return Container(
-      decoration: BoxDecoration(),
+      decoration: const BoxDecoration(),
       child: FutureBuilder<List<BuscarRebanhoRow>>(
         future: SQLiteManager.instance.buscarRebanho(
           idRebanho: FFAppState().sanidadeSelecionada.idRebanho,
@@ -137,7 +137,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
               color: FlutterFlowTheme.of(context).secondaryBackground,
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
               child: SingleChildScrollView(
                 primary: false,
                 child: Column(
@@ -185,14 +186,14 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               .bodyMediumIsCustom,
                                     ),
                               ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                         if (FFAppState().userLogado.permissao == 'Admin')
                           FlutterFlowIconButton(
                             borderRadius: 8.0,
                             buttonSize: 40.0,
-                            fillColor: Color(0x0028A365),
+                            fillColor: const Color(0x0028A365),
                             icon: FaIcon(
                               FontAwesomeIcons.trashAlt,
                               color: FlutterFlowTheme.of(context).error,
@@ -228,7 +229,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                               Navigator.pop(context);
                             },
                           ),
-                      ].divide(SizedBox(width: 16.0)),
+                      ].divide(const SizedBox(width: 16.0)),
                     ),
                     SingleChildScrollView(
                       child: Column(
@@ -251,7 +252,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                 ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 16.0, 0.0, 0.0),
                             child: Container(
                               width: double.infinity,
@@ -285,8 +286,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 0.0, 8.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 0.0, 8.0, 0.0),
                                         child: Text(
                                           valueOrDefault<String>(
                                             containerBuscarRebanhoRowList
@@ -299,7 +300,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF181818),
+                                                color: const Color(0xFF181818),
                                                 fontSize: 18.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -343,7 +344,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 16.0, 0.0, 0.0),
                             child: Container(
                               width: double.infinity,
@@ -363,7 +364,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF474747),
+                                          color: const Color(0xFF474747),
                                           fontSize: 16.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -378,7 +379,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                     hoverColor: Colors.transparent,
                                     highlightColor: Colors.transparent,
                                     onTap: () async {
-                                      final _datePickedDate =
+                                      final datePickedDate =
                                           await showDatePicker(
                                         context: context,
                                         initialDate: getCurrentTimestamp,
@@ -389,7 +390,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             context,
                                             child!,
                                             headerBackgroundColor:
-                                                Color(0xFF28A365),
+                                                const Color(0xFF28A365),
                                             headerForegroundColor:
                                                 FlutterFlowTheme.of(context)
                                                     .info,
@@ -416,7 +417,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 FlutterFlowTheme.of(context)
                                                     .primaryText,
                                             selectedDateTimeBackgroundColor:
-                                                Color(0xFF28A365),
+                                                const Color(0xFF28A365),
                                             selectedDateTimeForegroundColor:
                                                 FlutterFlowTheme.of(context)
                                                     .info,
@@ -428,12 +429,12 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                         },
                                       );
 
-                                      if (_datePickedDate != null) {
+                                      if (datePickedDate != null) {
                                         safeSetState(() {
                                           _model.datePicked = DateTime(
-                                            _datePickedDate.year,
-                                            _datePickedDate.month,
-                                            _datePickedDate.day,
+                                            datePickedDate.year,
+                                            datePickedDate.month,
+                                            datePickedDate.day,
                                           );
                                         });
                                       } else if (_model.datePicked != null) {
@@ -446,7 +447,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                     child: Container(
                                       width: double.infinity,
                                       height: 56.0,
-                                      decoration: BoxDecoration(
+                                      decoration: const BoxDecoration(
                                         color: Color(0xFFF1F1F1),
                                         borderRadius: BorderRadius.only(
                                           bottomLeft: Radius.circular(6.0),
@@ -456,8 +457,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            16.0, 0.0, 8.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(16.0, 0.0, 8.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
@@ -498,9 +499,11 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                           valueOrDefault<Color>(
                                                         _model.datePicked ==
                                                                 null
-                                                            ? Color(0xFFBEBEBE)
-                                                            : Color(0xFF333333),
-                                                        Color(0xFFBEBEBE),
+                                                            ? const Color(
+                                                                0xFFBEBEBE)
+                                                            : const Color(
+                                                                0xFF333333),
+                                                        const Color(0xFFBEBEBE),
                                                       ),
                                                       fontSize: 16.0,
                                                       letterSpacing: 0.0,
@@ -533,9 +536,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                             ),
                           ),
                           Align(
-                            alignment: AlignmentDirectional(0.0, 0.0),
+                            alignment: const AlignmentDirectional(0.0, 0.0),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 16.0, 0.0, 0.0),
                               child: FFButtonWidget(
                                 onPressed: () async {
@@ -593,23 +596,23 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       return Padding(
                                         padding:
                                             MediaQuery.viewInsetsOf(context),
-                                        child: SelecionarSanidadeWidget(),
+                                        child: const SelecionarSanidadeWidget(),
                                       );
                                     },
                                   ).then((value) => safeSetState(() {}));
                                 },
                                 text: 'Adicionar sanidade',
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.keyboard_arrow_down_sharp,
                                   size: 15.0,
                                 ),
                                 options: FFButtonOptions(
                                   width: double.infinity,
                                   height: 56.0,
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 0.0, 24.0, 0.0),
-                                  iconPadding: EdgeInsets.all(0.0),
-                                  color: Color(0xFF28A365),
+                                  iconPadding: const EdgeInsets.all(0.0),
+                                  color: const Color(0xFF28A365),
                                   textStyle: FlutterFlowTheme.of(context)
                                       .titleSmall
                                       .override(
@@ -622,7 +625,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 .titleSmallIsCustom,
                                       ),
                                   elevation: 0.0,
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Colors.transparent,
                                     width: 1.0,
                                   ),
@@ -643,7 +646,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 24.0, 0.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
@@ -657,7 +660,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 18.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -667,8 +670,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                           ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'Vacinação',
                                         style: FlutterFlowTheme.of(context)
@@ -677,7 +681,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -688,21 +692,18 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           if ((FFAppState()
-                                                          .sanidadeSelecionada
-                                                          .vacinacao !=
-                                                      null &&
-                                                  FFAppState()
-                                                          .sanidadeSelecionada
-                                                          .vacinacao !=
-                                                      '') &&
+                                                      .sanidadeSelecionada
+                                                      .vacinacao !=
+                                                  '') &&
                                               (FFAppState()
                                                       .sanidadeSelecionada
                                                       .vacinacao !=
@@ -722,14 +723,14 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                               .vacinacao) ??
                                                       [],
                                                 )),
-                                                options: [
+                                                options: const [
                                                   'Aftosa',
                                                   'Antitetânica',
                                                   'Botulismo',
                                                   'Brucelose',
                                                   'Clostridiose',
                                                   'Diarréia (BVD)',
-                                                  'Doença Respiratóa (DBR)',
+                                                  'Doença Respiratória (DBR)',
                                                   'Leptospirose',
                                                   'Parainfluenza e herpes',
                                                   'Raiva',
@@ -767,13 +768,16 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                       .secondaryText,
                                                   size: 24.0,
                                                 ),
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                                 elevation: 0.0,
-                                                borderColor: Color(0x00E0E3E7),
+                                                borderColor:
+                                                    const Color(0x00E0E3E7),
                                                 borderWidth: 0.0,
                                                 borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                margin:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 4.0, 16.0, 4.0),
                                                 hidesUnderline: true,
                                                 isOverButton: true,
@@ -792,7 +796,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             FlutterFlowIconButton(
                                               borderRadius: 8.0,
                                               buttonSize: 40.0,
-                                              fillColor: Color(0x0028A365),
+                                              fillColor:
+                                                  const Color(0x0028A365),
                                               icon: Icon(
                                                 Icons.close,
                                                 color:
@@ -810,12 +815,13 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 });
                                               },
                                             ),
-                                        ].divide(SizedBox(width: 8.0)),
+                                        ].divide(const SizedBox(width: 8.0)),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment:
@@ -832,14 +838,14 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .dropDownVacinaNullValueController ??=
                                                     FormListFieldController<
                                                         String>(null),
-                                                options: [
+                                                options: const [
                                                   'Aftosa',
                                                   'Antitetânica',
                                                   'Botulismo',
                                                   'Brucelose',
                                                   'Clostridiose',
                                                   'Diarréia (BVD)',
-                                                  'Doença Respiratóa (DBR)',
+                                                  'Doença Respiratória (DBR)',
                                                   'Leptospirose',
                                                   'Parainfluenza e herpes',
                                                   'Raiva',
@@ -877,13 +883,16 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                       .secondaryText,
                                                   size: 24.0,
                                                 ),
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                                 elevation: 0.0,
-                                                borderColor: Color(0x00E0E3E7),
+                                                borderColor:
+                                                    const Color(0x00E0E3E7),
                                                 borderWidth: 0.0,
                                                 borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                margin:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 4.0, 16.0, 4.0),
                                                 hidesUnderline: true,
                                                 isOverButton: true,
@@ -902,7 +911,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             FlutterFlowIconButton(
                                               borderRadius: 8.0,
                                               buttonSize: 40.0,
-                                              fillColor: Color(0x0028A365),
+                                              fillColor:
+                                                  const Color(0x0028A365),
                                               icon: Icon(
                                                 Icons.close,
                                                 color:
@@ -920,12 +930,13 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 });
                                               },
                                             ),
-                                        ].divide(SizedBox(width: 8.0)),
+                                        ].divide(const SizedBox(width: 8.0)),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'Vacinação (outros)',
                                         style: FlutterFlowTheme.of(context)
@@ -934,7 +945,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -945,8 +956,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: TextFormField(
                                         controller: _model
                                             .textFieldVacinaOutrosTextController,
@@ -963,7 +975,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -973,7 +985,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .bodyMediumIsCustom,
                                               ),
                                           enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFFF1F1F1),
                                               width: 0.0,
                                             ),
@@ -981,7 +993,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFF28A365),
                                               width: 0.0,
                                             ),
@@ -1010,7 +1022,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           filled: true,
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                         ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
@@ -1018,7 +1030,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF161616),
+                                              color: const Color(0xFF161616),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1032,8 +1044,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'Observação',
                                         style: FlutterFlowTheme.of(context)
@@ -1042,7 +1055,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1053,8 +1066,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: TextFormField(
                                         controller: _model
                                             .textFieldVacinaObservacaoTextController,
@@ -1071,7 +1085,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1081,7 +1095,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .bodyMediumIsCustom,
                                               ),
                                           enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFFF1F1F1),
                                               width: 0.0,
                                             ),
@@ -1089,7 +1103,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFF28A365),
                                               width: 0.0,
                                             ),
@@ -1118,7 +1132,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           filled: true,
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                         ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
@@ -1126,7 +1140,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF161616),
+                                              color: const Color(0xFF161616),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1158,7 +1172,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 24.0, 0.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
@@ -1172,7 +1186,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 18.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1182,8 +1196,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                           ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'Antiparasitário',
                                         style: FlutterFlowTheme.of(context)
@@ -1192,7 +1207,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1208,13 +1223,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         if ((FFAppState()
-                                                        .sanidadeSelecionada
-                                                        .antiparasitario !=
-                                                    null &&
-                                                FFAppState()
-                                                        .sanidadeSelecionada
-                                                        .antiparasitario !=
-                                                    '') &&
+                                                    .sanidadeSelecionada
+                                                    .antiparasitario !=
+                                                '') &&
                                             (FFAppState()
                                                     .sanidadeSelecionada
                                                     .antiparasitario !=
@@ -1233,7 +1244,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                             .antiparasitario) ??
                                                     [],
                                               )),
-                                              options: [
+                                              options: const [
                                                 'Abamectina',
                                                 'Albendazol',
                                                 'Babesiose (Tristeza Bovina) & Tripanossoma',
@@ -1275,13 +1286,16 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .secondaryText,
                                                 size: 24.0,
                                               ),
-                                              fillColor: Color(0xFFF1F1F1),
+                                              fillColor:
+                                                  const Color(0xFFF1F1F1),
                                               elevation: 0.0,
-                                              borderColor: Color(0x00E0E3E7),
+                                              borderColor:
+                                                  const Color(0x00E0E3E7),
                                               borderWidth: 0.0,
                                               borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              margin:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 4.0, 16.0, 4.0),
                                               hidesUnderline: true,
                                               isOverButton: true,
@@ -1300,7 +1314,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                           FlutterFlowIconButton(
                                             borderRadius: 8.0,
                                             buttonSize: 40.0,
-                                            fillColor: Color(0x0028A365),
+                                            fillColor: const Color(0x0028A365),
                                             icon: Icon(
                                               Icons.close,
                                               color:
@@ -1318,11 +1332,12 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               });
                                             },
                                           ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment:
@@ -1339,7 +1354,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .dropDownAntiparasitarioNullValueController ??=
                                                     FormListFieldController<
                                                         String>(null),
-                                                options: [
+                                                options: const [
                                                   'Abamectina',
                                                   'Albendazol',
                                                   'Babesiose (Tristeza Bovina) & Tripanossoma',
@@ -1383,13 +1398,16 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                       .secondaryText,
                                                   size: 24.0,
                                                 ),
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                                 elevation: 0.0,
-                                                borderColor: Color(0x00E0E3E7),
+                                                borderColor:
+                                                    const Color(0x00E0E3E7),
                                                 borderWidth: 0.0,
                                                 borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                margin:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 4.0, 16.0, 4.0),
                                                 hidesUnderline: true,
                                                 isOverButton: true,
@@ -1408,7 +1426,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             FlutterFlowIconButton(
                                               borderRadius: 8.0,
                                               buttonSize: 40.0,
-                                              fillColor: Color(0x0028A365),
+                                              fillColor:
+                                                  const Color(0x0028A365),
                                               icon: Icon(
                                                 Icons.close,
                                                 color:
@@ -1426,12 +1445,13 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 });
                                               },
                                             ),
-                                        ].divide(SizedBox(width: 8.0)),
+                                        ].divide(const SizedBox(width: 8.0)),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'Antiparasitário (outros)',
                                         style: FlutterFlowTheme.of(context)
@@ -1440,7 +1460,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1451,8 +1471,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: TextFormField(
                                         controller: _model
                                             .textFieldAntiparasitarioOutrosTextController,
@@ -1469,7 +1490,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1479,7 +1500,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .bodyMediumIsCustom,
                                               ),
                                           enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFFF1F1F1),
                                               width: 0.0,
                                             ),
@@ -1487,7 +1508,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFF28A365),
                                               width: 0.0,
                                             ),
@@ -1516,7 +1537,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           filled: true,
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                         ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
@@ -1524,7 +1545,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF161616),
+                                              color: const Color(0xFF161616),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1538,8 +1559,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'Observação',
                                         style: FlutterFlowTheme.of(context)
@@ -1548,7 +1570,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1559,8 +1581,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: TextFormField(
                                         controller: _model
                                             .textFieldAntiparasitarioObservacaoTextController,
@@ -1577,7 +1600,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1587,7 +1610,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .bodyMediumIsCustom,
                                               ),
                                           enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFFF1F1F1),
                                               width: 0.0,
                                             ),
@@ -1595,7 +1618,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFF28A365),
                                               width: 0.0,
                                             ),
@@ -1624,7 +1647,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           filled: true,
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                         ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
@@ -1632,7 +1655,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF161616),
+                                              color: const Color(0xFF161616),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1660,7 +1683,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 24.0, 0.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
@@ -1674,7 +1697,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 18.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1684,8 +1707,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                           ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'Tratamento',
                                         style: FlutterFlowTheme.of(context)
@@ -1694,7 +1718,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1710,13 +1734,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         if ((FFAppState()
-                                                        .sanidadeSelecionada
-                                                        .tratamento !=
-                                                    null &&
-                                                FFAppState()
-                                                        .sanidadeSelecionada
-                                                        .tratamento !=
-                                                    '') &&
+                                                    .sanidadeSelecionada
+                                                    .tratamento !=
+                                                '') &&
                                             (FFAppState()
                                                     .sanidadeSelecionada
                                                     .tratamento !=
@@ -1735,7 +1755,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                             .tratamento) ??
                                                     [],
                                               )),
-                                              options: [
+                                              options: const [
                                                 'Anestésico, Sedativo & Similares',
                                                 'Analgésico',
                                                 'Anti-inflamatório',
@@ -1776,13 +1796,16 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .secondaryText,
                                                 size: 24.0,
                                               ),
-                                              fillColor: Color(0xFFF1F1F1),
+                                              fillColor:
+                                                  const Color(0xFFF1F1F1),
                                               elevation: 0.0,
-                                              borderColor: Color(0x00E0E3E7),
+                                              borderColor:
+                                                  const Color(0x00E0E3E7),
                                               borderWidth: 0.0,
                                               borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              margin:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 4.0, 16.0, 4.0),
                                               hidesUnderline: true,
                                               isOverButton: true,
@@ -1801,7 +1824,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                           FlutterFlowIconButton(
                                             borderRadius: 8.0,
                                             buttonSize: 40.0,
-                                            fillColor: Color(0x0028A365),
+                                            fillColor: const Color(0x0028A365),
                                             icon: Icon(
                                               Icons.close,
                                               color:
@@ -1819,11 +1842,12 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               });
                                             },
                                           ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment:
@@ -1840,7 +1864,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .dropDownTratamentoNullValueController ??=
                                                     FormListFieldController<
                                                         String>(null),
-                                                options: [
+                                                options: const [
                                                   'Anestésico, Sedativo & Similares',
                                                   'Analgésico',
                                                   'Anti-inflamatório',
@@ -1883,13 +1907,16 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                       .secondaryText,
                                                   size: 24.0,
                                                 ),
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                                 elevation: 0.0,
-                                                borderColor: Color(0x00E0E3E7),
+                                                borderColor:
+                                                    const Color(0x00E0E3E7),
                                                 borderWidth: 0.0,
                                                 borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                margin:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 4.0, 16.0, 4.0),
                                                 hidesUnderline: true,
                                                 isOverButton: true,
@@ -1908,7 +1935,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             FlutterFlowIconButton(
                                               borderRadius: 8.0,
                                               buttonSize: 40.0,
-                                              fillColor: Color(0x0028A365),
+                                              fillColor:
+                                                  const Color(0x0028A365),
                                               icon: Icon(
                                                 Icons.close,
                                                 color:
@@ -1926,12 +1954,13 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 });
                                               },
                                             ),
-                                        ].divide(SizedBox(width: 8.0)),
+                                        ].divide(const SizedBox(width: 8.0)),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'Tratamento (outros)',
                                         style: FlutterFlowTheme.of(context)
@@ -1940,7 +1969,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1951,8 +1980,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: TextFormField(
                                         controller: _model
                                             .textFieldTratamentoOutrosTextController,
@@ -1969,7 +1999,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1979,7 +2009,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .bodyMediumIsCustom,
                                               ),
                                           enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFFF1F1F1),
                                               width: 0.0,
                                             ),
@@ -1987,7 +2017,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFF28A365),
                                               width: 0.0,
                                             ),
@@ -2016,7 +2046,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           filled: true,
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                         ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
@@ -2024,7 +2054,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF161616),
+                                              color: const Color(0xFF161616),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -2038,8 +2068,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'Observação',
                                         style: FlutterFlowTheme.of(context)
@@ -2048,7 +2079,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -2059,8 +2090,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: TextFormField(
                                         controller: _model
                                             .textFieldTratamentoObservacaoTextController,
@@ -2077,7 +2109,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -2087,7 +2119,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .bodyMediumIsCustom,
                                               ),
                                           enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFFF1F1F1),
                                               width: 0.0,
                                             ),
@@ -2095,7 +2127,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFF28A365),
                                               width: 0.0,
                                             ),
@@ -2124,7 +2156,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           filled: true,
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                         ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
@@ -2132,7 +2164,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF161616),
+                                              color: const Color(0xFF161616),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -2164,7 +2196,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 24.0, 0.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
@@ -2178,7 +2210,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 18.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -2188,8 +2220,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                           ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'Protocolo reprodutivo',
                                         style: FlutterFlowTheme.of(context)
@@ -2198,7 +2231,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -2209,8 +2242,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment:
@@ -2226,7 +2260,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .sanidadeSelecionada
                                                         .protocoloReprodutivo,
                                               ),
-                                              options: [
+                                              options: const [
                                                 'D0-D7-D9',
                                                 'D0-D8-D10',
                                                 'D0-D9-D11',
@@ -2266,13 +2300,16 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .secondaryText,
                                                 size: 24.0,
                                               ),
-                                              fillColor: Color(0xFFF1F1F1),
+                                              fillColor:
+                                                  const Color(0xFFF1F1F1),
                                               elevation: 0.0,
-                                              borderColor: Color(0x00E0E3E7),
+                                              borderColor:
+                                                  const Color(0x00E0E3E7),
                                               borderWidth: 0.0,
                                               borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              margin:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 4.0, 16.0, 4.0),
                                               hidesUnderline: true,
                                               isOverButton: true,
@@ -2287,7 +2324,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             FlutterFlowIconButton(
                                               borderRadius: 8.0,
                                               buttonSize: 40.0,
-                                              fillColor: Color(0x0028A365),
+                                              fillColor:
+                                                  const Color(0x0028A365),
                                               icon: Icon(
                                                 Icons.close,
                                                 color:
@@ -2305,12 +2343,13 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 });
                                               },
                                             ),
-                                        ].divide(SizedBox(width: 8.0)),
+                                        ].divide(const SizedBox(width: 8.0)),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'D0',
                                         style: FlutterFlowTheme.of(context)
@@ -2319,7 +2358,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -2330,8 +2369,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment:
@@ -2347,7 +2387,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .sanidadeSelecionada
                                                         .protocoloD0,
                                               ),
-                                              options: [
+                                              options: const [
                                                 'BE  + Implante novo',
                                                 'BE + Implante novo + PGF',
                                                 'BE  + Implante reuso',
@@ -2386,13 +2426,16 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .secondaryText,
                                                 size: 24.0,
                                               ),
-                                              fillColor: Color(0xFFF1F1F1),
+                                              fillColor:
+                                                  const Color(0xFFF1F1F1),
                                               elevation: 0.0,
-                                              borderColor: Color(0x00E0E3E7),
+                                              borderColor:
+                                                  const Color(0x00E0E3E7),
                                               borderWidth: 0.0,
                                               borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              margin:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 4.0, 16.0, 4.0),
                                               hidesUnderline: true,
                                               isOverButton: true,
@@ -2405,7 +2448,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             FlutterFlowIconButton(
                                               borderRadius: 8.0,
                                               buttonSize: 40.0,
-                                              fillColor: Color(0x0028A365),
+                                              fillColor:
+                                                  const Color(0x0028A365),
                                               icon: Icon(
                                                 Icons.close,
                                                 color:
@@ -2422,12 +2466,13 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 });
                                               },
                                             ),
-                                        ].divide(SizedBox(width: 8.0)),
+                                        ].divide(const SizedBox(width: 8.0)),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -2440,7 +2485,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                       FlutterFlowTheme.of(
                                                               context)
                                                           .bodyMediumFamily,
-                                                  color: Color(0xFF181818),
+                                                  color:
+                                                      const Color(0xFF181818),
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w600,
@@ -2465,19 +2511,19 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                   isGlobal: false,
                                                   avoidOverflow: true,
                                                   targetAnchor:
-                                                      AlignmentDirectional(
+                                                      const AlignmentDirectional(
                                                               1.0, 1.0)
                                                           .resolve(
                                                               Directionality.of(
                                                                   context)),
                                                   followerAnchor:
-                                                      AlignmentDirectional(
+                                                      const AlignmentDirectional(
                                                               -1.0, -1.0)
                                                           .resolve(
                                                               Directionality.of(
                                                                   context)),
                                                   builder: (dialogContext) {
-                                                    return Material(
+                                                    return const Material(
                                                       color: Colors.transparent,
                                                       child:
                                                           LegendaSanidadeWidget(),
@@ -2519,16 +2565,18 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .secondary,
                                                     size: 16.0,
                                                   ),
-                                                ].divide(SizedBox(width: 4.0)),
+                                                ].divide(
+                                                    const SizedBox(width: 4.0)),
                                               ),
                                             ),
                                           ),
-                                        ].divide(SizedBox(width: 8.0)),
+                                        ].divide(const SizedBox(width: 8.0)),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment:
@@ -2544,7 +2592,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .sanidadeSelecionada
                                                         .protocoloRetirada,
                                               ),
-                                              options: [
+                                              options: const [
                                                 'eCG + PGF + CE',
                                                 'eCG + PGR + CE + BE'
                                               ],
@@ -2582,13 +2630,16 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .secondaryText,
                                                 size: 24.0,
                                               ),
-                                              fillColor: Color(0xFFF1F1F1),
+                                              fillColor:
+                                                  const Color(0xFFF1F1F1),
                                               elevation: 0.0,
-                                              borderColor: Color(0x00E0E3E7),
+                                              borderColor:
+                                                  const Color(0x00E0E3E7),
                                               borderWidth: 0.0,
                                               borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              margin:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 4.0, 16.0, 4.0),
                                               hidesUnderline: true,
                                               isOverButton: true,
@@ -2603,7 +2654,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             FlutterFlowIconButton(
                                               borderRadius: 8.0,
                                               buttonSize: 40.0,
-                                              fillColor: Color(0x0028A365),
+                                              fillColor:
+                                                  const Color(0x0028A365),
                                               icon: Icon(
                                                 Icons.close,
                                                 color:
@@ -2621,7 +2673,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 });
                                               },
                                             ),
-                                        ].divide(SizedBox(width: 8.0)),
+                                        ].divide(const SizedBox(width: 8.0)),
                                       ),
                                     ),
                                     if (responsiveVisibility(
@@ -2632,8 +2684,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       desktop: false,
                                     ))
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 24.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 24.0, 0.0, 0.0),
                                         child: Text(
                                           'IATF',
                                           style: FlutterFlowTheme.of(context)
@@ -2642,7 +2694,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF181818),
+                                                color: const Color(0xFF181818),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -2661,8 +2713,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       desktop: false,
                                     ))
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 8.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 8.0, 0.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
@@ -2679,7 +2731,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                           .sanidadeSelecionada
                                                           .protocoloIatf,
                                                 ),
-                                                options: [
+                                                options: const [
                                                   'Com GnRH',
                                                   'Sem GnRH'
                                                 ],
@@ -2719,13 +2771,16 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                       .secondaryText,
                                                   size: 24.0,
                                                 ),
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                                 elevation: 0.0,
-                                                borderColor: Color(0x00E0E3E7),
+                                                borderColor:
+                                                    const Color(0x00E0E3E7),
                                                 borderWidth: 0.0,
                                                 borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                margin:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 4.0, 16.0, 4.0),
                                                 hidesUnderline: true,
                                                 isOverButton: true,
@@ -2739,7 +2794,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               FlutterFlowIconButton(
                                                 borderRadius: 8.0,
                                                 buttonSize: 40.0,
-                                                fillColor: Color(0x0028A365),
+                                                fillColor:
+                                                    const Color(0x0028A365),
                                                 icon: Icon(
                                                   Icons.close,
                                                   color: FlutterFlowTheme.of(
@@ -2757,12 +2813,13 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                   });
                                                 },
                                               ),
-                                          ].divide(SizedBox(width: 8.0)),
+                                          ].divide(const SizedBox(width: 8.0)),
                                         ),
                                       ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'Protocolo reprodutivo (outros)',
                                         style: FlutterFlowTheme.of(context)
@@ -2771,7 +2828,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -2782,8 +2839,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: TextFormField(
                                         controller: _model
                                             .textFieldProtocoloOutrosTextController,
@@ -2800,7 +2858,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -2810,7 +2868,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .bodyMediumIsCustom,
                                               ),
                                           enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFFF1F1F1),
                                               width: 0.0,
                                             ),
@@ -2818,7 +2876,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFF28A365),
                                               width: 0.0,
                                             ),
@@ -2847,7 +2905,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           filled: true,
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                         ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
@@ -2855,7 +2913,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF161616),
+                                              color: const Color(0xFF161616),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -2869,8 +2927,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'Observação',
                                         style: FlutterFlowTheme.of(context)
@@ -2879,7 +2938,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -2890,8 +2949,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: TextFormField(
                                         controller: _model
                                             .textFieldProtocoloObservacaoTextController,
@@ -2908,7 +2968,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -2918,7 +2978,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .bodyMediumIsCustom,
                                               ),
                                           enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFFF1F1F1),
                                               width: 0.0,
                                             ),
@@ -2926,7 +2986,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFF28A365),
                                               width: 0.0,
                                             ),
@@ -2955,7 +3015,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           filled: true,
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                         ),
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
@@ -2963,7 +3023,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF161616),
+                                              color: const Color(0xFF161616),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -3001,17 +3061,17 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                             text: 'Cancelar',
                             options: FFButtonOptions(
                               height: 56.0,
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
-                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                              iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
-                              color: Color(0x004B39EF),
+                              color: const Color(0x004B39EF),
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
                                     fontFamily: FlutterFlowTheme.of(context)
                                         .titleSmallFamily,
-                                    color: Color(0xFF28A365),
+                                    color: const Color(0xFF28A365),
                                     fontSize: 18.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -3020,7 +3080,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             .titleSmallIsCustom,
                                   ),
                               elevation: 0.0,
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Color(0xFF28A365),
                                 width: 2.0,
                               ),
@@ -3036,19 +3096,20 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                         context: context,
                                         builder: (alertDialogContext) {
                                           return AlertDialog(
-                                            title: Text('Confirmar alterações'),
-                                            content: Text(
+                                            title: const Text(
+                                                'Confirmar alterações'),
+                                            content: const Text(
                                                 'Deseja confirmar as alterações realizadas ?'),
                                             actions: [
                                               TextButton(
                                                 onPressed: () => Navigator.pop(
                                                     alertDialogContext, false),
-                                                child: Text('Não'),
+                                                child: const Text('Não'),
                                               ),
                                               TextButton(
                                                 onPressed: () => Navigator.pop(
                                                     alertDialogContext, true),
-                                                child: Text('Sim'),
+                                                child: const Text('Sim'),
                                               ),
                                             ],
                                           );
@@ -3207,7 +3268,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             .secondaryBackground,
                                       ),
                                     ),
-                                    duration: Duration(milliseconds: 4000),
+                                    duration:
+                                        const Duration(milliseconds: 4000),
                                     backgroundColor:
                                         FlutterFlowTheme.of(context).secondary,
                                   ),
@@ -3217,11 +3279,11 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                             text: 'Salvar',
                             options: FFButtonOptions(
                               height: 56.0,
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
-                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                              iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
-                              color: Color(0xFF28A365),
+                              color: const Color(0xFF28A365),
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
@@ -3237,7 +3299,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                             .titleSmallIsCustom,
                                   ),
                               elevation: 0.0,
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Colors.transparent,
                                 width: 2.0,
                               ),
@@ -3245,9 +3307,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                             ),
                           ),
                         ),
-                      ].divide(SizedBox(width: 16.0)),
+                      ].divide(const SizedBox(width: 16.0)),
                     ),
-                  ].divide(SizedBox(height: 24.0)),
+                  ].divide(const SizedBox(height: 24.0)),
                 ),
               ),
             ),

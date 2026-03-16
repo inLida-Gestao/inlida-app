@@ -33,6 +33,11 @@ class PageRebanhoWidget extends StatefulWidget {
 }
 
 class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
+  static const List<String> _defaultStatusFilters = [
+    'Na propriedade',
+    'Sêmen',
+  ];
+
   late PageRebanhoModel _model;
 
   @override
@@ -49,7 +54,10 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
     _model.pesquisarTextController ??= TextEditingController();
     _model.pesquisarFocusNode ??= FocusNode();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _applyDefaultStatusFilters();
+      safeSetState(() {});
+    });
   }
 
   @override
@@ -57,6 +65,29 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
     _model.maybeDispose();
 
     super.dispose();
+  }
+
+  void _applyDefaultStatusFilters() {
+    final appliedFilters = FFAppState()
+        .filtrosAplicadosRebanho
+        .where((item) => !FFAppState().statusRebanho.contains(item))
+        .toList();
+
+    FFAppState().filtroStatusRebanhoList =
+        List<String>.from(_defaultStatusFilters);
+    FFAppState().filtroStatusRebanho = _defaultStatusFilters.join('|');
+    FFAppState().filtrosAplicadosRebanho = [
+      ...appliedFilters,
+      ..._defaultStatusFilters,
+    ];
+  }
+
+  String _statusFilterValue() {
+    if (FFAppState().filtroStatusRebanhoList.isNotEmpty) {
+      return FFAppState().filtroStatusRebanhoList.join('|');
+    }
+
+    return FFAppState().filtroStatusRebanho;
   }
 
   Future<void> _openEditRebanho(BuildContext ctx, String? idRebanho) async {
@@ -167,9 +198,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
           elevation: 0,
           insetPadding: EdgeInsets.zero,
           backgroundColor: Colors.transparent,
-          alignment:
-              AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(ctx)),
-          child: EditRebanhoWidget(),
+          alignment: const AlignmentDirectional(0.0, 0.0)
+              .resolve(Directionality.of(ctx)),
+          child: const EditRebanhoWidget(),
         );
       },
     );
@@ -187,29 +218,31 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
         color: FlutterFlowTheme.of(context).secondaryBackground,
       ),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
         child: SingleChildScrollView(
           primary: false,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
                 child: wrapWithModel(
                   model: _model.selecionarPropriedadeModel,
                   updateCallback: () => safeSetState(() {}),
-                  child: SelecionarPropriedadeWidget(),
+                  child: const SelecionarPropriedadeWidget(),
                 ),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     if (FFAppState().visibleProgressBar == true)
                       Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 8.0, 0.0, 0.0),
                         child: LinearPercentIndicator(
                           percent: (int total, int indexPag) {
                             return indexPag / total.ceil() > 1.0
@@ -249,7 +282,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                       .headlineSmallIsCustom,
                                 ),
                           ),
-                          barRadius: Radius.circular(8.0),
+                          barRadius: const Radius.circular(8.0),
                           padding: EdgeInsets.zero,
                         ),
                       ),
@@ -257,7 +290,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                 ),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 0.0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 0.0),
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -271,12 +305,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         child: Container(
                           width: 159.0,
                           decoration: BoxDecoration(
-                            color: Color(0xFFF8F8F8),
+                            color: const Color(0xFFF8F8F8),
                             borderRadius: BorderRadius.circular(8.0),
                             shape: BoxShape.rectangle,
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 12.0, 12.0, 12.0, 12.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -320,7 +354,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF2F2F2F),
+                                        color: const Color(0xFF2F2F2F),
                                         fontSize: 12.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.normal,
@@ -329,7 +363,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                 .bodyMediumIsCustom,
                                       ),
                                 ),
-                              ].divide(SizedBox(height: 6.0)),
+                              ].divide(const SizedBox(height: 6.0)),
                             ),
                           ),
                         ),
@@ -338,11 +372,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         child: Container(
                           width: 159.0,
                           decoration: BoxDecoration(
-                            color: Color(0xFFF8F8F8),
+                            color: const Color(0xFFF8F8F8),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 12.0, 12.0, 12.0, 12.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -383,7 +417,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF2F2F2F),
+                                        color: const Color(0xFF2F2F2F),
                                         fontSize: 12.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.normal,
@@ -392,25 +426,26 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                 .bodyMediumIsCustom,
                                       ),
                                 ),
-                              ].divide(SizedBox(height: 6.0)),
+                              ].divide(const SizedBox(height: 6.0)),
                             ),
                           ),
                         ),
                       ),
-                    ].divide(SizedBox(width: 8.0)),
+                    ].divide(const SizedBox(width: 8.0)),
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
-                child: Container(
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
+                child: SizedBox(
                   width: double.infinity,
                   child: TextFormField(
                     controller: _model.pesquisarTextController,
                     focusNode: _model.pesquisarFocusNode,
                     onChanged: (_) => EasyDebounce.debounce(
                       '_model.pesquisarTextController',
-                      Duration(milliseconds: 2000),
+                      const Duration(milliseconds: 2000),
                       () => safeSetState(() {}),
                     ),
                     autofocus: false,
@@ -504,14 +539,16 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                 ),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 8.0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 8.0),
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: FlutterFlowTheme.of(context).secondaryBackground,
                   ),
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        0.0, 4.0, 0.0, 0.0),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -532,7 +569,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                 builder: (context) {
                                   return Padding(
                                     padding: MediaQuery.viewInsetsOf(context),
-                                    child: FiltrosRebanhoWidget(),
+                                    child: const FiltrosRebanhoWidget(),
                                   );
                                 },
                               ).then((value) => safeSetState(() {}));
@@ -544,11 +581,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                 borderRadius: BorderRadius.circular(24.0),
                                 shape: BoxShape.rectangle,
                                 border: Border.all(
-                                  color: Color(0xFFBEBEBE),
+                                  color: const Color(0xFFBEBEBE),
                                 ),
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     16.0, 8.0, 16.0, 8.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -576,7 +613,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                         fit: BoxFit.cover,
                                       ),
                                     ),
-                                  ].divide(SizedBox(width: 8.0)),
+                                  ].divide(const SizedBox(width: 8.0)),
                                 ),
                               ),
                             ),
@@ -598,12 +635,13 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                       borderRadius: BorderRadius.circular(24.0),
                                       shape: BoxShape.rectangle,
                                       border: Border.all(
-                                        color: Color(0xFFBEBEBE),
+                                        color: const Color(0xFFBEBEBE),
                                       ),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          16.0, 8.0, 16.0, 8.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              16.0, 8.0, 16.0, 8.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -623,26 +661,27 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                           .bodyMediumIsCustom,
                                                 ),
                                           ),
-                                        ].divide(SizedBox(width: 8.0)),
+                                        ].divide(const SizedBox(width: 8.0)),
                                       ),
                                     ),
                                   );
-                                }).divide(SizedBox(width: 8.0)),
+                                }).divide(const SizedBox(width: 8.0)),
                               );
                             },
                           ),
-                        ].divide(SizedBox(width: 8.0)),
+                        ].divide(const SizedBox(width: 8.0)),
                       ),
                     ),
                   ),
                 ),
               ),
-              Divider(
+              const Divider(
                 thickness: 1.0,
                 color: Color(0xFFEDEDED),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 8.0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 8.0),
                 child: InkWell(
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,
@@ -657,7 +696,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                       builder: (context) {
                         return Padding(
                           padding: MediaQuery.viewInsetsOf(context),
-                          child: FiltrosOrdenacaoRebanhoWidget(),
+                          child: const FiltrosOrdenacaoRebanhoWidget(),
                         );
                       },
                     ).then((value) => safeSetState(() {}));
@@ -667,17 +706,15 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                     height: 40.0,
                     decoration: BoxDecoration(
                       color: valueOrDefault<Color>(
-                        FFAppState().ordenacaoRebanho == null ||
-                                FFAppState().ordenacaoRebanho == ''
+                        FFAppState().ordenacaoRebanho == ''
                             ? FlutterFlowTheme.of(context).secondaryBackground
-                            : Color(0xFFD6F5E5),
+                            : const Color(0xFFD6F5E5),
                         FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       borderRadius: BorderRadius.circular(100.0),
                       border: Border.all(
                         color: valueOrDefault<Color>(
-                          FFAppState().ordenacaoRebanho == null ||
-                                  FFAppState().ordenacaoRebanho == ''
+                          FFAppState().ordenacaoRebanho == ''
                               ? FlutterFlowTheme.of(context).tertiary
                               : FlutterFlowTheme.of(context).secondary,
                           FlutterFlowTheme.of(context).accent3,
@@ -685,7 +722,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                       ),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -728,9 +765,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
                                       color: valueOrDefault<Color>(
-                                        FFAppState().ordenacaoRebanho == null ||
-                                                FFAppState().ordenacaoRebanho ==
-                                                    ''
+                                        FFAppState().ordenacaoRebanho == ''
                                             ? FlutterFlowTheme.of(context)
                                                 .accent3
                                             : FlutterFlowTheme.of(context)
@@ -745,12 +780,10 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                               .bodyMediumIsCustom,
                                     ),
                               ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
-                          if ((FFAppState().ordenacaoRebanho != null &&
-                                  FFAppState().ordenacaoRebanho != '') &&
-                              (FFAppState().ordenacaoRebanhoTipo != null &&
-                                  FFAppState().ordenacaoRebanhoTipo != ''))
+                          if ((FFAppState().ordenacaoRebanho != '') &&
+                              (FFAppState().ordenacaoRebanhoTipo != ''))
                             SizedBox(
                               height: 100.0,
                               child: VerticalDivider(
@@ -761,10 +794,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                           Row(
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              if ((FFAppState().ordenacaoRebanho != null &&
-                                      FFAppState().ordenacaoRebanho != '') &&
-                                  (FFAppState().ordenacaoRebanhoTipo != null &&
-                                      FFAppState().ordenacaoRebanhoTipo != ''))
+                              if ((FFAppState().ordenacaoRebanho != '') &&
+                                  (FFAppState().ordenacaoRebanhoTipo != ''))
                                 Text(
                                   valueOrDefault<String>(
                                     () {
@@ -813,9 +844,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                   color: FlutterFlowTheme.of(context).secondary,
                                   size: 24.0,
                                 ),
-                            ].divide(SizedBox(width: 6.0)),
+                            ].divide(const SizedBox(width: 6.0)),
                           ),
-                        ].divide(SizedBox(width: 8.0)),
+                        ].divide(const SizedBox(width: 8.0)),
                       ),
                     ),
                   ),
@@ -823,12 +854,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
               ),
               Builder(
                 builder: (context) {
-                  if ((_model.pesquisarTextController.text == null ||
-                          _model.pesquisarTextController.text == '') &&
-                      (FFAppState().ordenacaoRebanho == null ||
-                          FFAppState().ordenacaoRebanho == '') &&
-                      (FFAppState().ordenacaoRebanhoTipo == null ||
-                          FFAppState().ordenacaoRebanhoTipo == '')) {
+                  if ((_model.pesquisarTextController.text == '') &&
+                      (FFAppState().ordenacaoRebanho == '') &&
+                      (FFAppState().ordenacaoRebanhoTipo == '')) {
                     return Visibility(
                       visible: FFAppState().propriedadeSelecionada != null,
                       child: FutureBuilder<List<BuscaRebanhoPaginadaRow>>(
@@ -841,7 +869,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                           categoria: FFAppState().filtroCategoriasRebanho,
                           raca: FFAppState().filtroRaca,
                           origem: FFAppState().filtroOrigemRebanho,
-                          statusReb: FFAppState().filtroStatusRebanho,
+                          statusReb: _statusFilterValue(),
                         ),
                         builder: (context, snapshot) {
                           // Customize what your widget looks like when it's loading.
@@ -862,21 +890,22 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                               snapshot.data!;
 
                           return Container(
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 if (!(containerPadraoSemOrdBuscaRebanhoPaginadaRowList
                                     .isNotEmpty))
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        24.0, 24.0, 24.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            24.0, 24.0, 24.0, 0.0),
                                     child: Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
                                         color: FlutterFlowTheme.of(context)
                                             .secondaryBackground,
-                                        boxShadow: [
+                                        boxShadow: const [
                                           BoxShadow(
                                             blurRadius: 4.0,
                                             color: Color(0x41000040),
@@ -890,8 +919,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                             BorderRadius.circular(6.0),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            32.0, 32.0, 32.0, 32.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(32.0, 32.0, 32.0, 32.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
@@ -945,7 +974,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                               ),
                                               textAlign: TextAlign.center,
                                             ),
-                                          ].divide(SizedBox(height: 24.0)),
+                                          ].divide(
+                                              const SizedBox(height: 24.0)),
                                         ),
                                       ),
                                     ),
@@ -953,8 +983,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                 if (containerPadraoSemOrdBuscaRebanhoPaginadaRowList
                                     .isNotEmpty)
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 14.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 14.0, 0.0, 0.0),
                                     child: Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
@@ -981,8 +1012,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                       .secondaryBackground,
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           0.0, 0.0, 0.0, 24.0),
                                                   child: Column(
                                                     mainAxisSize:
@@ -992,12 +1024,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                         builder: (context) =>
                                                             Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
-                                                                      24.0,
-                                                                      0.0,
-                                                                      24.0,
-                                                                      24.0),
+                                                                  24.0,
+                                                                  0.0,
+                                                                  24.0,
+                                                                  24.0),
                                                           child: InkWell(
                                                             splashColor: Colors
                                                                 .transparent,
@@ -1356,8 +1388,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                               safeSetState(
                                                                   () {});
                                                               if (_model.lotes!
-                                                                      .length >
-                                                                  0) {
+                                                                  .isNotEmpty) {
                                                                 while (_model
                                                                         .index <
                                                                     _model
@@ -1402,7 +1433,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                     backgroundColor:
                                                                         Colors
                                                                             .transparent,
-                                                                    alignment: AlignmentDirectional(
+                                                                    alignment: const AlignmentDirectional(
                                                                             0.0,
                                                                             0.0)
                                                                         .resolve(
@@ -1474,16 +1505,16 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                           if (animaisItem.tipo ==
                                                                               'Nascimento')
                                                                             Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
                                                                               child: Container(
                                                                                 width: 100.0,
                                                                                 height: 24.0,
                                                                                 decoration: BoxDecoration(
-                                                                                  color: Color(0xFFB1CC29),
+                                                                                  color: const Color(0xFFB1CC29),
                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                 ),
                                                                                 child: Align(
-                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                   child: Text(
                                                                                     'Nascimento',
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -1499,16 +1530,16 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                           if (animaisItem.tipo ==
                                                                               'Sêmen')
                                                                             Padding(
-                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
                                                                               child: Container(
                                                                                 width: 100.0,
                                                                                 height: 24.0,
                                                                                 decoration: BoxDecoration(
-                                                                                  color: Color(0xFFB1CC29),
+                                                                                  color: const Color(0xFFB1CC29),
                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                 ),
                                                                                 child: Align(
-                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                   child: Text(
                                                                                     'Sêmen',
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -1545,7 +1576,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                             .bodyMedium
                                                                             .override(
                                                                               fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                              color: Color(0xFF474747),
+                                                                              color: const Color(0xFF474747),
                                                                               fontSize: 16.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w500,
@@ -1600,16 +1631,16 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                                 )}',
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                     fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                    color: Color(0xFF5F5F5F),
+                                                                                    color: const Color(0xFF5F5F5F),
                                                                                     letterSpacing: 0.0,
                                                                                     fontWeight: FontWeight.normal,
                                                                                     useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                                   ),
                                                                             ),
-                                                                          ].divide(SizedBox(width: 4.0)),
+                                                                          ].divide(const SizedBox(width: 4.0)),
                                                                         ),
                                                                       ),
-                                                                    ].divide(SizedBox(
+                                                                    ].divide(const SizedBox(
                                                                         height:
                                                                             2.0)),
                                                                   ),
@@ -1628,7 +1659,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                       size:
                                                                           24.0,
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                             16.0),
                                                                     InkWell(
@@ -1651,7 +1682,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                             animaisItem.idRebanho);
                                                                       },
                                                                       child:
-                                                                          Icon(
+                                                                          const Icon(
                                                                         Icons
                                                                             .edit_outlined,
                                                                         color: Color(
@@ -1690,8 +1721,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         },
                       ),
                     );
-                  } else if ((_model.pesquisarTextController.text == null ||
-                          _model.pesquisarTextController.text == '') &&
+                  } else if ((_model.pesquisarTextController.text == '') &&
                       (FFAppState().ordenacaoRebanho == 'crescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'numero')) {
                     return FutureBuilder<List<RebanhoPagOrdNumCresRow>>(
@@ -1704,7 +1734,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         categoria: FFAppState().filtroCategoriasRebanho,
                         raca: FFAppState().filtroRaca,
                         origem: FFAppState().filtroOrigemRebanho,
-                        statusReb: FFAppState().filtroStatusRebanho,
+                        statusReb: _statusFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -1725,21 +1755,21 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                             snapshot.data!;
 
                         return Container(
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               if (!(crescenteNumAnimalRebanhoPagOrdNumCresRowList
                                   .isNotEmpty))
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 24.0, 24.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      boxShadow: [
+                                      boxShadow: const [
                                         BoxShadow(
                                           blurRadius: 4.0,
                                           color: Color(0x41000040),
@@ -1752,8 +1782,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          32.0, 32.0, 32.0, 32.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              32.0, 32.0, 32.0, 32.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -1808,7 +1839,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
-                                        ].divide(SizedBox(height: 24.0)),
+                                        ].divide(const SizedBox(height: 24.0)),
                                       ),
                                     ),
                                   ),
@@ -1816,7 +1847,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                               if (crescenteNumAnimalRebanhoPagOrdNumCresRowList
                                   .isNotEmpty)
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 14.0, 0.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
@@ -1844,8 +1875,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                         .secondaryBackground,
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         0.0, 0.0, 0.0, 24.0),
                                                 child: Column(
                                                   mainAxisSize:
@@ -1855,12 +1887,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                       builder: (context) =>
                                                           Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    24.0,
-                                                                    0.0,
-                                                                    24.0,
-                                                                    24.0),
+                                                                24.0,
+                                                                0.0,
+                                                                24.0,
+                                                                24.0),
                                                         child: InkWell(
                                                           splashColor: Colors
                                                               .transparent,
@@ -2256,8 +2288,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                 .rebanhoLotesSelecionar = [];
                                                             safeSetState(() {});
                                                             if (_model.lotes2!
-                                                                    .length >
-                                                                0) {
+                                                                .isNotEmpty) {
                                                               while (_model
                                                                       .index <
                                                                   _model.lotes2!
@@ -2301,7 +2332,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                   backgroundColor:
                                                                       Colors
                                                                           .transparent,
-                                                                  alignment: AlignmentDirectional(
+                                                                  alignment: const AlignmentDirectional(
                                                                           0.0,
                                                                           0.0)
                                                                       .resolve(
@@ -2381,7 +2412,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         if (animaisItem.tipo ==
                                                                             'Nascimento')
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -2391,11 +2422,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               width: 100.0,
                                                                               height: 24.0,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0xFFB1CC29),
+                                                                                color: const Color(0xFFB1CC29),
                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                               ),
                                                                               child: Align(
-                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                 child: Text(
                                                                                   'Nascimento',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -2411,7 +2442,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         if (animaisItem.tipo ==
                                                                             'Sêmen')
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -2421,11 +2452,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               width: 100.0,
                                                                               height: 24.0,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0xFFB1CC29),
+                                                                                color: const Color(0xFFB1CC29),
                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                               ),
                                                                               child: Align(
-                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                 child: Text(
                                                                                   'Sêmen',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -2467,7 +2498,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                             fontFamily:
                                                                                 FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                             color:
-                                                                                Color(0xFF474747),
+                                                                                const Color(0xFF474747),
                                                                             fontSize:
                                                                                 16.0,
                                                                             letterSpacing:
@@ -2533,16 +2564,16 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               )}',
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                  color: Color(0xFF5F5F5F),
+                                                                                  color: const Color(0xFF5F5F5F),
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
                                                                                   useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                                 ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 4.0)),
+                                                                        ].divide(const SizedBox(width: 4.0)),
                                                                       ),
                                                                     ),
-                                                                  ].divide(SizedBox(
+                                                                  ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
                                                                 ),
@@ -2558,10 +2589,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                     color: FlutterFlowTheme.of(
                                                                             context)
                                                                         .customColor9,
-                                                                    size:
-                                                                        24.0,
+                                                                    size: 24.0,
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                       width:
                                                                           16.0),
                                                                   InkWell(
@@ -2581,10 +2611,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         () async {
                                                                       await _openEditRebanho(
                                                                           context,
-                                                                          animaisItem.idRebanho);
+                                                                          animaisItem
+                                                                              .idRebanho);
                                                                     },
                                                                     child:
-                                                                        Icon(
+                                                                        const Icon(
                                                                       Icons
                                                                           .edit_outlined,
                                                                       color: Color(
@@ -2622,8 +2653,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         );
                       },
                     );
-                  } else if ((_model.pesquisarTextController.text == null ||
-                          _model.pesquisarTextController.text == '') &&
+                  } else if ((_model.pesquisarTextController.text == '') &&
                       (FFAppState().ordenacaoRebanho == 'decrescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'numero')) {
                     return FutureBuilder<List<RebanhoPagOrdNumDescRow>>(
@@ -2636,7 +2666,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         categoria: FFAppState().filtroCategoriasRebanho,
                         raca: FFAppState().filtroRaca,
                         origem: FFAppState().filtroOrigemRebanho,
-                        statusReb: FFAppState().filtroStatusRebanho,
+                        statusReb: _statusFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -2657,21 +2687,21 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                             snapshot.data!;
 
                         return Container(
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               if (!(decrescenteNumAnimalRebanhoPagOrdNumDescRowList
                                   .isNotEmpty))
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 24.0, 24.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      boxShadow: [
+                                      boxShadow: const [
                                         BoxShadow(
                                           blurRadius: 4.0,
                                           color: Color(0x41000040),
@@ -2684,8 +2714,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          32.0, 32.0, 32.0, 32.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              32.0, 32.0, 32.0, 32.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -2740,7 +2771,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
-                                        ].divide(SizedBox(height: 24.0)),
+                                        ].divide(const SizedBox(height: 24.0)),
                                       ),
                                     ),
                                   ),
@@ -2748,7 +2779,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                               if (decrescenteNumAnimalRebanhoPagOrdNumDescRowList
                                   .isNotEmpty)
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 14.0, 0.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
@@ -2776,8 +2807,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                         .secondaryBackground,
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         0.0, 0.0, 0.0, 24.0),
                                                 child: Column(
                                                   mainAxisSize:
@@ -2787,12 +2819,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                       builder: (context) =>
                                                           Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    24.0,
-                                                                    0.0,
-                                                                    24.0,
-                                                                    24.0),
+                                                                24.0,
+                                                                0.0,
+                                                                24.0,
+                                                                24.0),
                                                         child: InkWell(
                                                           splashColor: Colors
                                                               .transparent,
@@ -3188,8 +3220,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                 .rebanhoLotesSelecionar = [];
                                                             safeSetState(() {});
                                                             if (_model.lotes3!
-                                                                    .length >
-                                                                0) {
+                                                                .isNotEmpty) {
                                                               while (_model
                                                                       .index <
                                                                   _model.lotes3!
@@ -3233,7 +3264,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                   backgroundColor:
                                                                       Colors
                                                                           .transparent,
-                                                                  alignment: AlignmentDirectional(
+                                                                  alignment: const AlignmentDirectional(
                                                                           0.0,
                                                                           0.0)
                                                                       .resolve(
@@ -3313,7 +3344,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         if (animaisItem.tipo ==
                                                                             'Nascimento')
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -3323,11 +3354,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               width: 100.0,
                                                                               height: 24.0,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0xFFB1CC29),
+                                                                                color: const Color(0xFFB1CC29),
                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                               ),
                                                                               child: Align(
-                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                 child: Text(
                                                                                   'Nascimento',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -3343,7 +3374,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         if (animaisItem.tipo ==
                                                                             'Sêmen')
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -3353,11 +3384,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               width: 100.0,
                                                                               height: 24.0,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0xFFB1CC29),
+                                                                                color: const Color(0xFFB1CC29),
                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                               ),
                                                                               child: Align(
-                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                 child: Text(
                                                                                   'Sêmen',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -3399,7 +3430,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                             fontFamily:
                                                                                 FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                             color:
-                                                                                Color(0xFF474747),
+                                                                                const Color(0xFF474747),
                                                                             fontSize:
                                                                                 16.0,
                                                                             letterSpacing:
@@ -3465,16 +3496,16 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               )}',
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                  color: Color(0xFF5F5F5F),
+                                                                                  color: const Color(0xFF5F5F5F),
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
                                                                                   useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                                 ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 4.0)),
+                                                                        ].divide(const SizedBox(width: 4.0)),
                                                                       ),
                                                                     ),
-                                                                  ].divide(SizedBox(
+                                                                  ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
                                                                 ),
@@ -3490,10 +3521,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                     color: FlutterFlowTheme.of(
                                                                             context)
                                                                         .customColor9,
-                                                                    size:
-                                                                        24.0,
+                                                                    size: 24.0,
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                       width:
                                                                           16.0),
                                                                   InkWell(
@@ -3513,10 +3543,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         () async {
                                                                       await _openEditRebanho(
                                                                           context,
-                                                                          animaisItem.idRebanho);
+                                                                          animaisItem
+                                                                              .idRebanho);
                                                                     },
                                                                     child:
-                                                                        Icon(
+                                                                        const Icon(
                                                                       Icons
                                                                           .edit_outlined,
                                                                       color: Color(
@@ -3554,8 +3585,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         );
                       },
                     );
-                  } else if ((_model.pesquisarTextController.text == null ||
-                          _model.pesquisarTextController.text == '') &&
+                  } else if ((_model.pesquisarTextController.text == '') &&
                       (FFAppState().ordenacaoRebanho == 'crescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'nome')) {
                     return FutureBuilder<List<RebanhoPagOrdNomCresRow>>(
@@ -3568,7 +3598,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         categoria: FFAppState().filtroCategoriasRebanho,
                         raca: FFAppState().filtroRaca,
                         origem: FFAppState().filtroOrigemRebanho,
-                        statusReb: FFAppState().filtroStatusRebanho,
+                        statusReb: _statusFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -3589,21 +3619,21 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                             snapshot.data!;
 
                         return Container(
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               if (!(crescenteNomeAnimalRebanhoPagOrdNomCresRowList
                                   .isNotEmpty))
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 24.0, 24.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      boxShadow: [
+                                      boxShadow: const [
                                         BoxShadow(
                                           blurRadius: 4.0,
                                           color: Color(0x41000040),
@@ -3616,8 +3646,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          32.0, 32.0, 32.0, 32.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              32.0, 32.0, 32.0, 32.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -3672,7 +3703,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
-                                        ].divide(SizedBox(height: 24.0)),
+                                        ].divide(const SizedBox(height: 24.0)),
                                       ),
                                     ),
                                   ),
@@ -3680,7 +3711,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                               if (crescenteNomeAnimalRebanhoPagOrdNomCresRowList
                                   .isNotEmpty)
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 14.0, 0.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
@@ -3708,8 +3739,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                         .secondaryBackground,
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         0.0, 0.0, 0.0, 24.0),
                                                 child: Column(
                                                   mainAxisSize:
@@ -3719,12 +3751,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                       builder: (context) =>
                                                           Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    24.0,
-                                                                    0.0,
-                                                                    24.0,
-                                                                    24.0),
+                                                                24.0,
+                                                                0.0,
+                                                                24.0,
+                                                                24.0),
                                                         child: InkWell(
                                                           splashColor: Colors
                                                               .transparent,
@@ -4120,8 +4152,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                 .rebanhoLotesSelecionar = [];
                                                             safeSetState(() {});
                                                             if (_model.lotes4!
-                                                                    .length >
-                                                                0) {
+                                                                .isNotEmpty) {
                                                               while (_model
                                                                       .index <
                                                                   _model.lotes4!
@@ -4165,7 +4196,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                   backgroundColor:
                                                                       Colors
                                                                           .transparent,
-                                                                  alignment: AlignmentDirectional(
+                                                                  alignment: const AlignmentDirectional(
                                                                           0.0,
                                                                           0.0)
                                                                       .resolve(
@@ -4245,7 +4276,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         if (animaisItem.tipo ==
                                                                             'Nascimento')
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -4255,11 +4286,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               width: 100.0,
                                                                               height: 24.0,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0xFFB1CC29),
+                                                                                color: const Color(0xFFB1CC29),
                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                               ),
                                                                               child: Align(
-                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                 child: Text(
                                                                                   'Nascimento',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -4275,7 +4306,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         if (animaisItem.tipo ==
                                                                             'Sêmen')
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -4285,11 +4316,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               width: 100.0,
                                                                               height: 24.0,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0xFFB1CC29),
+                                                                                color: const Color(0xFFB1CC29),
                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                               ),
                                                                               child: Align(
-                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                 child: Text(
                                                                                   'Sêmen',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -4331,7 +4362,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                             fontFamily:
                                                                                 FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                             color:
-                                                                                Color(0xFF474747),
+                                                                                const Color(0xFF474747),
                                                                             fontSize:
                                                                                 16.0,
                                                                             letterSpacing:
@@ -4397,16 +4428,16 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               )}',
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                  color: Color(0xFF5F5F5F),
+                                                                                  color: const Color(0xFF5F5F5F),
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
                                                                                   useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                                 ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 4.0)),
+                                                                        ].divide(const SizedBox(width: 4.0)),
                                                                       ),
                                                                     ),
-                                                                  ].divide(SizedBox(
+                                                                  ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
                                                                 ),
@@ -4422,10 +4453,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                     color: FlutterFlowTheme.of(
                                                                             context)
                                                                         .customColor9,
-                                                                    size:
-                                                                        24.0,
+                                                                    size: 24.0,
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                       width:
                                                                           16.0),
                                                                   InkWell(
@@ -4445,10 +4475,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         () async {
                                                                       await _openEditRebanho(
                                                                           context,
-                                                                          animaisItem.idRebanho);
+                                                                          animaisItem
+                                                                              .idRebanho);
                                                                     },
                                                                     child:
-                                                                        Icon(
+                                                                        const Icon(
                                                                       Icons
                                                                           .edit_outlined,
                                                                       color: Color(
@@ -4486,8 +4517,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         );
                       },
                     );
-                  } else if ((_model.pesquisarTextController.text == null ||
-                          _model.pesquisarTextController.text == '') &&
+                  } else if ((_model.pesquisarTextController.text == '') &&
                       (FFAppState().ordenacaoRebanho == 'decrescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'nome')) {
                     return FutureBuilder<List<RebanhoPagOrdNomDescRow>>(
@@ -4500,7 +4530,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         categoria: FFAppState().filtroCategoriasRebanho,
                         raca: FFAppState().filtroRaca,
                         origem: FFAppState().filtroOrigemRebanho,
-                        statusReb: FFAppState().filtroStatusRebanho,
+                        statusReb: _statusFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -4521,21 +4551,21 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                             snapshot.data!;
 
                         return Container(
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               if (!(decrescenteNomeAnimalRebanhoPagOrdNomDescRowList
                                   .isNotEmpty))
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 24.0, 24.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      boxShadow: [
+                                      boxShadow: const [
                                         BoxShadow(
                                           blurRadius: 4.0,
                                           color: Color(0x41000040),
@@ -4548,8 +4578,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          32.0, 32.0, 32.0, 32.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              32.0, 32.0, 32.0, 32.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -4604,7 +4635,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
-                                        ].divide(SizedBox(height: 24.0)),
+                                        ].divide(const SizedBox(height: 24.0)),
                                       ),
                                     ),
                                   ),
@@ -4612,7 +4643,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                               if (decrescenteNomeAnimalRebanhoPagOrdNomDescRowList
                                   .isNotEmpty)
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 14.0, 0.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
@@ -4640,8 +4671,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                         .secondaryBackground,
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         0.0, 0.0, 0.0, 24.0),
                                                 child: Column(
                                                   mainAxisSize:
@@ -4651,12 +4683,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                       builder: (context) =>
                                                           Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    24.0,
-                                                                    0.0,
-                                                                    24.0,
-                                                                    24.0),
+                                                                24.0,
+                                                                0.0,
+                                                                24.0,
+                                                                24.0),
                                                         child: InkWell(
                                                           splashColor: Colors
                                                               .transparent,
@@ -5052,8 +5084,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                 .rebanhoLotesSelecionar = [];
                                                             safeSetState(() {});
                                                             if (_model.lotes5!
-                                                                    .length >
-                                                                0) {
+                                                                .isNotEmpty) {
                                                               while (_model
                                                                       .index <
                                                                   _model.lotes5!
@@ -5097,7 +5128,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                   backgroundColor:
                                                                       Colors
                                                                           .transparent,
-                                                                  alignment: AlignmentDirectional(
+                                                                  alignment: const AlignmentDirectional(
                                                                           0.0,
                                                                           0.0)
                                                                       .resolve(
@@ -5177,7 +5208,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         if (animaisItem.tipo ==
                                                                             'Nascimento')
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -5187,11 +5218,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               width: 100.0,
                                                                               height: 24.0,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0xFFB1CC29),
+                                                                                color: const Color(0xFFB1CC29),
                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                               ),
                                                                               child: Align(
-                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                 child: Text(
                                                                                   'Nascimento',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -5207,7 +5238,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         if (animaisItem.tipo ==
                                                                             'Sêmen')
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -5217,11 +5248,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               width: 100.0,
                                                                               height: 24.0,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0xFFB1CC29),
+                                                                                color: const Color(0xFFB1CC29),
                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                               ),
                                                                               child: Align(
-                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                 child: Text(
                                                                                   'Sêmen',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -5263,7 +5294,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                             fontFamily:
                                                                                 FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                             color:
-                                                                                Color(0xFF474747),
+                                                                                const Color(0xFF474747),
                                                                             fontSize:
                                                                                 16.0,
                                                                             letterSpacing:
@@ -5329,16 +5360,16 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               )}',
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                  color: Color(0xFF5F5F5F),
+                                                                                  color: const Color(0xFF5F5F5F),
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
                                                                                   useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                                 ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 4.0)),
+                                                                        ].divide(const SizedBox(width: 4.0)),
                                                                       ),
                                                                     ),
-                                                                  ].divide(SizedBox(
+                                                                  ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
                                                                 ),
@@ -5354,10 +5385,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                     color: FlutterFlowTheme.of(
                                                                             context)
                                                                         .customColor9,
-                                                                    size:
-                                                                        24.0,
+                                                                    size: 24.0,
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                       width:
                                                                           16.0),
                                                                   InkWell(
@@ -5377,10 +5407,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         () async {
                                                                       await _openEditRebanho(
                                                                           context,
-                                                                          animaisItem.idRebanho);
+                                                                          animaisItem
+                                                                              .idRebanho);
                                                                     },
                                                                     child:
-                                                                        Icon(
+                                                                        const Icon(
                                                                       Icons
                                                                           .edit_outlined,
                                                                       color: Color(
@@ -5418,8 +5449,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         );
                       },
                     );
-                  } else if ((_model.pesquisarTextController.text == null ||
-                          _model.pesquisarTextController.text == '') &&
+                  } else if ((_model.pesquisarTextController.text == '') &&
                       (FFAppState().ordenacaoRebanho == 'crescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'nascimento')) {
                     return FutureBuilder<List<RebanhoPagOrdDataCresRow>>(
@@ -5432,7 +5462,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         categoria: FFAppState().filtroCategoriasRebanho,
                         raca: FFAppState().filtroRaca,
                         origem: FFAppState().filtroOrigemRebanho,
-                        statusReb: FFAppState().filtroStatusRebanho,
+                        statusReb: _statusFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -5453,21 +5483,21 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                             snapshot.data!;
 
                         return Container(
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               if (!(crescenteDataNascRebanhoPagOrdDataCresRowList
                                   .isNotEmpty))
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 24.0, 24.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      boxShadow: [
+                                      boxShadow: const [
                                         BoxShadow(
                                           blurRadius: 4.0,
                                           color: Color(0x41000040),
@@ -5480,8 +5510,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          32.0, 32.0, 32.0, 32.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              32.0, 32.0, 32.0, 32.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -5536,7 +5567,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
-                                        ].divide(SizedBox(height: 24.0)),
+                                        ].divide(const SizedBox(height: 24.0)),
                                       ),
                                     ),
                                   ),
@@ -5544,7 +5575,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                               if (crescenteDataNascRebanhoPagOrdDataCresRowList
                                   .isNotEmpty)
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 14.0, 0.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
@@ -5572,8 +5603,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                         .secondaryBackground,
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         0.0, 0.0, 0.0, 24.0),
                                                 child: Column(
                                                   mainAxisSize:
@@ -5583,12 +5615,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                       builder: (context) =>
                                                           Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    24.0,
-                                                                    0.0,
-                                                                    24.0,
-                                                                    24.0),
+                                                                24.0,
+                                                                0.0,
+                                                                24.0,
+                                                                24.0),
                                                         child: InkWell(
                                                           splashColor: Colors
                                                               .transparent,
@@ -5984,8 +6016,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                 .rebanhoLotesSelecionar = [];
                                                             safeSetState(() {});
                                                             if (_model.lotes6!
-                                                                    .length >
-                                                                0) {
+                                                                .isNotEmpty) {
                                                               while (_model
                                                                       .index <
                                                                   _model.lotes6!
@@ -6029,7 +6060,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                   backgroundColor:
                                                                       Colors
                                                                           .transparent,
-                                                                  alignment: AlignmentDirectional(
+                                                                  alignment: const AlignmentDirectional(
                                                                           0.0,
                                                                           0.0)
                                                                       .resolve(
@@ -6109,7 +6140,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         if (animaisItem.tipo ==
                                                                             'Nascimento')
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -6119,11 +6150,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               width: 100.0,
                                                                               height: 24.0,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0xFFB1CC29),
+                                                                                color: const Color(0xFFB1CC29),
                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                               ),
                                                                               child: Align(
-                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                 child: Text(
                                                                                   'Nascimento',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -6139,7 +6170,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         if (animaisItem.tipo ==
                                                                             'Sêmen')
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -6149,11 +6180,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               width: 100.0,
                                                                               height: 24.0,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0xFFB1CC29),
+                                                                                color: const Color(0xFFB1CC29),
                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                               ),
                                                                               child: Align(
-                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                 child: Text(
                                                                                   'Sêmen',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -6195,7 +6226,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                             fontFamily:
                                                                                 FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                             color:
-                                                                                Color(0xFF474747),
+                                                                                const Color(0xFF474747),
                                                                             fontSize:
                                                                                 16.0,
                                                                             letterSpacing:
@@ -6261,16 +6292,16 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               )}',
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                  color: Color(0xFF5F5F5F),
+                                                                                  color: const Color(0xFF5F5F5F),
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
                                                                                   useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                                 ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 4.0)),
+                                                                        ].divide(const SizedBox(width: 4.0)),
                                                                       ),
                                                                     ),
-                                                                  ].divide(SizedBox(
+                                                                  ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
                                                                 ),
@@ -6286,10 +6317,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                     color: FlutterFlowTheme.of(
                                                                             context)
                                                                         .customColor9,
-                                                                    size:
-                                                                        24.0,
+                                                                    size: 24.0,
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                       width:
                                                                           16.0),
                                                                   InkWell(
@@ -6309,10 +6339,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         () async {
                                                                       await _openEditRebanho(
                                                                           context,
-                                                                          animaisItem.idRebanho);
+                                                                          animaisItem
+                                                                              .idRebanho);
                                                                     },
                                                                     child:
-                                                                        Icon(
+                                                                        const Icon(
                                                                       Icons
                                                                           .edit_outlined,
                                                                       color: Color(
@@ -6350,8 +6381,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         );
                       },
                     );
-                  } else if ((_model.pesquisarTextController.text == null ||
-                          _model.pesquisarTextController.text == '') &&
+                  } else if ((_model.pesquisarTextController.text == '') &&
                       (FFAppState().ordenacaoRebanho == 'decrescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'nascimento')) {
                     return FutureBuilder<List<RebanhoPagOrdDataDescRow>>(
@@ -6364,7 +6394,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         categoria: FFAppState().filtroCategoriasRebanho,
                         raca: FFAppState().filtroRaca,
                         origem: FFAppState().filtroOrigemRebanho,
-                        statusReb: FFAppState().filtroStatusRebanho,
+                        statusReb: _statusFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -6385,21 +6415,21 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                             snapshot.data!;
 
                         return Container(
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               if (!(decrescenteDataNascRebanhoPagOrdDataDescRowList
                                   .isNotEmpty))
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 24.0, 24.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      boxShadow: [
+                                      boxShadow: const [
                                         BoxShadow(
                                           blurRadius: 4.0,
                                           color: Color(0x41000040),
@@ -6412,8 +6442,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          32.0, 32.0, 32.0, 32.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              32.0, 32.0, 32.0, 32.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -6468,7 +6499,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
-                                        ].divide(SizedBox(height: 24.0)),
+                                        ].divide(const SizedBox(height: 24.0)),
                                       ),
                                     ),
                                   ),
@@ -6476,7 +6507,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                               if (decrescenteDataNascRebanhoPagOrdDataDescRowList
                                   .isNotEmpty)
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 14.0, 0.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
@@ -6504,8 +6535,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                         .secondaryBackground,
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         0.0, 0.0, 0.0, 24.0),
                                                 child: Column(
                                                   mainAxisSize:
@@ -6515,12 +6547,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                       builder: (context) =>
                                                           Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
+                                                            const EdgeInsetsDirectional
                                                                 .fromSTEB(
-                                                                    24.0,
-                                                                    0.0,
-                                                                    24.0,
-                                                                    24.0),
+                                                                24.0,
+                                                                0.0,
+                                                                24.0,
+                                                                24.0),
                                                         child: InkWell(
                                                           splashColor: Colors
                                                               .transparent,
@@ -6916,8 +6948,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                 .rebanhoLotesSelecionar = [];
                                                             safeSetState(() {});
                                                             if (_model.lotes7!
-                                                                    .length >
-                                                                0) {
+                                                                .isNotEmpty) {
                                                               while (_model
                                                                       .index <
                                                                   _model.lotes7!
@@ -6961,7 +6992,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                   backgroundColor:
                                                                       Colors
                                                                           .transparent,
-                                                                  alignment: AlignmentDirectional(
+                                                                  alignment: const AlignmentDirectional(
                                                                           0.0,
                                                                           0.0)
                                                                       .resolve(
@@ -7041,7 +7072,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         if (animaisItem.tipo ==
                                                                             'Nascimento')
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -7051,11 +7082,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               width: 100.0,
                                                                               height: 24.0,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0xFFB1CC29),
+                                                                                color: const Color(0xFFB1CC29),
                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                               ),
                                                                               child: Align(
-                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                 child: Text(
                                                                                   'Nascimento',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -7071,7 +7102,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         if (animaisItem.tipo ==
                                                                             'Sêmen')
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 8.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -7081,11 +7112,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               width: 100.0,
                                                                               height: 24.0,
                                                                               decoration: BoxDecoration(
-                                                                                color: Color(0xFFB1CC29),
+                                                                                color: const Color(0xFFB1CC29),
                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                               ),
                                                                               child: Align(
-                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                 child: Text(
                                                                                   'Sêmen',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -7127,7 +7158,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                             fontFamily:
                                                                                 FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                             color:
-                                                                                Color(0xFF474747),
+                                                                                const Color(0xFF474747),
                                                                             fontSize:
                                                                                 16.0,
                                                                             letterSpacing:
@@ -7193,16 +7224,16 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               )}',
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                  color: Color(0xFF5F5F5F),
+                                                                                  color: const Color(0xFF5F5F5F),
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
                                                                                   useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                                 ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 4.0)),
+                                                                        ].divide(const SizedBox(width: 4.0)),
                                                                       ),
                                                                     ),
-                                                                  ].divide(SizedBox(
+                                                                  ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
                                                                 ),
@@ -7218,10 +7249,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                     color: FlutterFlowTheme.of(
                                                                             context)
                                                                         .customColor9,
-                                                                    size:
-                                                                        24.0,
+                                                                    size: 24.0,
                                                                   ),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                       width:
                                                                           16.0),
                                                                   InkWell(
@@ -7241,10 +7271,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         () async {
                                                                       await _openEditRebanho(
                                                                           context,
-                                                                          animaisItem.idRebanho);
+                                                                          animaisItem
+                                                                              .idRebanho);
                                                                     },
                                                                     child:
-                                                                        Icon(
+                                                                        const Icon(
                                                                       Icons
                                                                           .edit_outlined,
                                                                       color: Color(
@@ -7292,8 +7323,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         categoria: FFAppState().filtroCategoriasRebanho,
                         raca: FFAppState().filtroRaca,
                         origem: FFAppState().filtroOrigemRebanho,
+                        loteId: FFAppState().filtroLoteRebanho,
                         pesquisa: _model.pesquisarTextController.text,
-                        statusReb: FFAppState().filtroStatusRebanho,
+                        statusReb: _statusFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -7314,21 +7346,21 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                             snapshot.data!;
 
                         return Container(
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               if (!(containerPesquisaPadraoSemOrdBuscaRebanhoPaginadaPesquisaRowList
                                   .isNotEmpty))
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 24.0, 24.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      boxShadow: [
+                                      boxShadow: const [
                                         BoxShadow(
                                           blurRadius: 4.0,
                                           color: Color(0x41000040),
@@ -7341,8 +7373,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          32.0, 32.0, 32.0, 32.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              32.0, 32.0, 32.0, 32.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -7397,13 +7430,13 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
-                                        ].divide(SizedBox(height: 24.0)),
+                                        ].divide(const SizedBox(height: 24.0)),
                                       ),
                                     ),
                                   ),
                                 ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 14.0, 0.0, 0.0),
                                 child: Container(
                                   width: double.infinity,
@@ -7431,8 +7464,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                       .secondaryBackground,
                                             ),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       0.0, 0.0, 0.0, 24.0),
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.max,
@@ -7441,12 +7475,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                     builder: (context) =>
                                                         Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  24.0,
-                                                                  0.0,
-                                                                  24.0,
-                                                                  24.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(24.0,
+                                                              0.0, 24.0, 24.0),
                                                       child: InkWell(
                                                         splashColor:
                                                             Colors.transparent,
@@ -7845,8 +7876,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                               .rebanhoLotesSelecionar = [];
                                                           safeSetState(() {});
                                                           if (_model.lotesPesq!
-                                                                  .length >
-                                                              0) {
+                                                              .isNotEmpty) {
                                                             while (_model
                                                                     .index <
                                                                 _model
@@ -7891,7 +7921,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                 backgroundColor:
                                                                     Colors
                                                                         .transparent,
-                                                                alignment: AlignmentDirectional(
+                                                                alignment: const AlignmentDirectional(
                                                                         0.0,
                                                                         0.0)
                                                                     .resolve(
@@ -7979,7 +8009,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               .tipo ==
                                                                           'Nascimento')
                                                                         Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          padding: const EdgeInsetsDirectional
+                                                                              .fromSTEB(
                                                                               8.0,
                                                                               0.0,
                                                                               0.0,
@@ -7992,12 +8023,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                                 24.0,
                                                                             decoration:
                                                                                 BoxDecoration(
-                                                                              color: Color(0xFFB1CC29),
+                                                                              color: const Color(0xFFB1CC29),
                                                                               borderRadius: BorderRadius.circular(4.0),
                                                                             ),
                                                                             child:
                                                                                 Align(
-                                                                              alignment: AlignmentDirectional(0.0, 0.0),
+                                                                              alignment: const AlignmentDirectional(0.0, 0.0),
                                                                               child: Text(
                                                                                 'Nascimento',
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -8014,7 +8045,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               .tipo ==
                                                                           'Sêmen')
                                                                         Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          padding: const EdgeInsetsDirectional
+                                                                              .fromSTEB(
                                                                               8.0,
                                                                               0.0,
                                                                               0.0,
@@ -8027,12 +8059,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                                 24.0,
                                                                             decoration:
                                                                                 BoxDecoration(
-                                                                              color: Color(0xFFB1CC29),
+                                                                              color: const Color(0xFFB1CC29),
                                                                               borderRadius: BorderRadius.circular(4.0),
                                                                             ),
                                                                             child:
                                                                                 Align(
-                                                                              alignment: AlignmentDirectional(0.0, 0.0),
+                                                                              alignment: const AlignmentDirectional(0.0, 0.0),
                                                                               child: Text(
                                                                                 'Sêmen',
                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -8076,7 +8108,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                           fontFamily:
                                                                               FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                           color:
-                                                                              Color(0xFF474747),
+                                                                              const Color(0xFF474747),
                                                                           fontSize:
                                                                               16.0,
                                                                           letterSpacing:
@@ -8152,20 +8184,21 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                               .bodyMedium
                                                                               .override(
                                                                                 fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                color: Color(0xFF5F5F5F),
+                                                                                color: const Color(0xFF5F5F5F),
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.normal,
                                                                                 useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                               ),
                                                                         ),
                                                                       ),
-                                                                    ].divide(SizedBox(
+                                                                    ].divide(const SizedBox(
                                                                         width:
                                                                             4.0)),
                                                                   ),
-                                                                ].divide(SizedBox(
-                                                                    height:
-                                                                        2.0)),
+                                                                ].divide(
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2.0)),
                                                               ),
                                                             ),
                                                             Row(
@@ -8176,24 +8209,22 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                 Icon(
                                                                   Icons
                                                                       .visibility_outlined,
-                                                                  color: FlutterFlowTheme
-                                                                          .of(context)
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
                                                                       .customColor9,
                                                                   size: 24.0,
                                                                 ),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                     width:
                                                                         16.0),
                                                                 InkWell(
                                                                   splashColor:
                                                                       Colors
                                                                           .transparent,
-                                                                  focusColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  hoverColor:
-                                                                      Colors
-                                                                          .transparent,
+                                                                  focusColor: Colors
+                                                                      .transparent,
+                                                                  hoverColor: Colors
+                                                                      .transparent,
                                                                   highlightColor:
                                                                       Colors
                                                                           .transparent,
@@ -8201,9 +8232,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                       () async {
                                                                     await _openEditRebanho(
                                                                         context,
-                                                                        animaisItem.idRebanho);
+                                                                        animaisItem
+                                                                            .idRebanho);
                                                                   },
-                                                                  child: Icon(
+                                                                  child:
+                                                                      const Icon(
                                                                     Icons
                                                                         .edit_outlined,
                                                                     color: Color(
@@ -8242,10 +8275,10 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                   }
                 },
               ),
-              if (_model.pesquisarTextController.text == null ||
-                  _model.pesquisarTextController.text == '')
+              if (_model.pesquisarTextController.text == '')
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      16.0, 0.0, 16.0, 0.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -8311,7 +8344,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                     .toString(),
                                 '1',
                               ),
-                              style: TextStyle(),
+                              style: const TextStyle(),
                             )
                           ],
                           style: FlutterFlowTheme.of(context)
@@ -8349,7 +8382,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                 safeSetState(() {});
                               },
                       ),
-                    ].divide(SizedBox(width: 8.0)),
+                    ].divide(const SizedBox(width: 8.0)),
                   ),
                 ),
             ],

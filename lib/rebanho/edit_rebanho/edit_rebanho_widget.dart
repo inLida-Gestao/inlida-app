@@ -56,7 +56,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     );
 
     _model.pesoAtualTextController?.text =
-        rebanhoAtual.pesoAtual?.toString() ?? '';
+        (rebanhoAtual.pesoAtual == null || rebanhoAtual.pesoAtual == 0.0)
+            ? ''
+            : rebanhoAtual.pesoAtual.toString();
     _model.datePicked4 =
         functions.converterParaData(rebanhoAtual.dataUltimaPesagem);
 
@@ -114,15 +116,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
       initialIndex: 0,
     )..addListener(() => safeSetState(() {}));
 
-    _model.nAnimalTextController ??= TextEditingController(
-        text: valueOrDefault<String>(
-      FFAppState().rebanhoSelecionado.numeroAnimal,
-      'S/N',
-    ));
+    _model.nAnimalTextController ??= TextEditingController(text: () {
+      final val = FFAppState().rebanhoSelecionado.numeroAnimal;
+      if (val == 'null' || val.trim().isEmpty) return '';
+      return val;
+    }());
     _model.nAnimalFocusNode ??= FocusNode();
 
-    _model.nChipTextController ??= TextEditingController(
-        text: () {
+    _model.nChipTextController ??= TextEditingController(text: () {
       final chip = FFAppState().rebanhoSelecionado.chip;
       if (chip == 'null' || chip.trim().isEmpty) {
         return '';
@@ -131,43 +132,46 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     }());
     _model.nChipFocusNode ??= FocusNode();
 
-    _model.cdigoregistroTextController ??= TextEditingController(
-        text: valueOrDefault<String>(
-      FFAppState().rebanhoSelecionado.codRegistro == 'null'
-          ? 'N/A'
-          : FFAppState().rebanhoSelecionado.codRegistro,
-      'N/A',
-    ));
+    _model.cdigoregistroTextController ??= TextEditingController(text: () {
+      final val = FFAppState().rebanhoSelecionado.codRegistro;
+      if (val == 'null' || val.trim().isEmpty) return '';
+      return val;
+    }());
     _model.cdigoregistroFocusNode ??= FocusNode();
 
-    _model.nomeAnimalTextController ??= TextEditingController(
-        text: valueOrDefault<String>(
-      FFAppState().rebanhoSelecionado.nome == 'null'
-          ? 'N/A'
-          : FFAppState().rebanhoSelecionado.nome,
-      'N/A',
-    ));
+    _model.nomeAnimalTextController ??= TextEditingController(text: () {
+      final val = FFAppState().rebanhoSelecionado.nome;
+      if (val == 'null' || val.trim().isEmpty) return '';
+      return val;
+    }());
     _model.nomeAnimalFocusNode ??= FocusNode();
 
-    _model.pesonascimentoTextController ??= TextEditingController(
-        text: FFAppState().rebanhoSelecionado.pesoNascimento.toString());
+    _model.pesonascimentoTextController ??= TextEditingController(text: () {
+      final val = FFAppState().rebanhoSelecionado.pesoNascimento;
+      if (val == 0.0) return '';
+      return val.toString();
+    }());
     _model.pesonascimentoFocusNode ??= FocusNode();
 
-    _model.pesodadesmamaTextController ??= TextEditingController(
-        text: FFAppState().rebanhoSelecionado.pesoDesmama.toString());
+    _model.pesodadesmamaTextController ??= TextEditingController(text: () {
+      final val = FFAppState().rebanhoSelecionado.pesoDesmama;
+      if (val == 0.0) return '';
+      return val.toString();
+    }());
     _model.pesodadesmamaFocusNode ??= FocusNode();
 
-    _model.pesoAtualTextController ??= TextEditingController(
-        text: FFAppState().rebanhoSelecionado.pesoAtual.toString());
+    _model.pesoAtualTextController ??= TextEditingController(text: () {
+      final val = FFAppState().rebanhoSelecionado.pesoAtual;
+      if (val == 0.0) return '';
+      return val.toString();
+    }());
     _model.pesoAtualFocusNode ??= FocusNode();
 
-    _model.anotacoesTextController ??= TextEditingController(
-        text: valueOrDefault<String>(
-      FFAppState().rebanhoSelecionado.anotacoes == 'null'
-          ? 'N/A'
-          : FFAppState().rebanhoSelecionado.anotacoes,
-      'N/A',
-    ));
+    _model.anotacoesTextController ??= TextEditingController(text: () {
+      final val = FFAppState().rebanhoSelecionado.anotacoes;
+      if (val == 'null' || val.trim().isEmpty) return '';
+      return val;
+    }());
     _model.anotacoesFocusNode ??= FocusNode();
 
     _model.dPLoteValue = () {
@@ -208,7 +212,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -242,13 +246,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                 .bodyMediumIsCustom,
                           ),
                     ),
-                  ].divide(SizedBox(width: 16.0)),
+                  ].divide(const SizedBox(width: 16.0)),
                 ),
                 if (FFAppState().userLogado.permissao == 'Admin')
                   FlutterFlowIconButton(
                     borderRadius: 8.0,
                     buttonSize: 40.0,
-                    fillColor: Color(0x0028A365),
+                    fillColor: const Color(0x0028A365),
                     icon: FaIcon(
                       FontAwesomeIcons.trashAlt,
                       color: FlutterFlowTheme.of(context).error,
@@ -259,19 +263,19 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                             context: context,
                             builder: (alertDialogContext) {
                               return AlertDialog(
-                                title: Text('Deletar registro'),
-                                content: Text(
+                                title: const Text('Deletar registro'),
+                                content: const Text(
                                     'Deseja realmente apagar esse registro? Esta ação não pode ser desfeita.'),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(
                                         alertDialogContext, false),
-                                    child: Text('Não'),
+                                    child: const Text('Não'),
                                   ),
                                   TextButton(
                                     onPressed: () =>
                                         Navigator.pop(alertDialogContext, true),
-                                    child: Text('Sim'),
+                                    child: const Text('Sim'),
                                   ),
                                 ],
                               );
@@ -296,16 +300,16 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                       }
                     },
                   ),
-              ].divide(SizedBox(width: 16.0)),
+              ].divide(const SizedBox(width: 16.0)),
             ),
           ),
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 0.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 0.0, 0.0),
             child: Text(
               'Editar animal',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
                     fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                    color: Color(0xFF181818),
+                    color: const Color(0xFF181818),
                     fontSize: 24.0,
                     letterSpacing: 0.0,
                     fontWeight: FontWeight.w500,
@@ -317,7 +321,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
           Flexible(
             child: Container(
               width: double.infinity,
-              constraints: BoxConstraints(
+              constraints: const BoxConstraints(
                 maxHeight: 700.0,
               ),
               decoration: BoxDecoration(
@@ -326,10 +330,10 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
               child: Column(
                 children: [
                   Align(
-                    alignment: Alignment(0.0, 0),
+                    alignment: const Alignment(0.0, 0),
                     child: TabBar(
                       isScrollable: true,
-                      labelColor: Color(0xFF1E7A4C),
+                      labelColor: const Color(0xFF1E7A4C),
                       unselectedLabelColor:
                           FlutterFlowTheme.of(context).accent3,
                       labelStyle: FlutterFlowTheme.of(context)
@@ -343,9 +347,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                             useGoogleFonts: !FlutterFlowTheme.of(context)
                                 .titleMediumIsCustom,
                           ),
-                      unselectedLabelStyle: TextStyle(),
-                      indicatorColor: Color(0xFF1E7A4C),
-                      tabs: [
+                      unselectedLabelStyle: const TextStyle(),
+                      indicatorColor: const Color(0xFF1E7A4C),
+                      tabs: const [
                         Tab(
                           text: 'Sobre o animal',
                         ),
@@ -378,7 +382,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                           key: _model.formKey2,
                           autovalidateMode: AutovalidateMode.disabled,
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 16.0, 24.0, 24.0),
                             child: SingleChildScrollView(
                               primary: false,
@@ -406,7 +410,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -417,7 +421,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               ),
                                         ),
                                         Expanded(
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller:
@@ -428,25 +432,24 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 final upperValue =
                                                     value.toUpperCase();
                                                 if (value != upperValue) {
-                                                  _model
-                                                      .nAnimalTextController!
-                                                      .value = _model
+                                                  _model.nAnimalTextController!
+                                                          .value =
+                                                      _model
                                                           .nAnimalTextController!
                                                           .value
                                                           .copyWith(
-                                                            text: upperValue,
-                                                            selection: TextSelection
-                                                                .collapsed(
-                                                                    offset:
-                                                                        upperValue
-                                                                            .length),
-                                                            composing:
-                                                                TextRange.empty,
-                                                          );
+                                                    text: upperValue,
+                                                    selection:
+                                                        TextSelection.collapsed(
+                                                            offset: upperValue
+                                                                .length),
+                                                    composing: TextRange.empty,
+                                                  );
                                                 }
                                                 EasyDebounce.debounce(
                                                   '_model.nAnimalTextController',
-                                                  Duration(milliseconds: 2000),
+                                                  const Duration(
+                                                      milliseconds: 2000),
                                                   () => safeSetState(() {}),
                                                 );
                                               },
@@ -454,27 +457,28 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Número do animal',
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -484,7 +488,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -517,7 +521,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           8.0),
                                                 ),
                                                 filled: true,
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                                 suffixIcon: _model
                                                         .nAnimalTextController!
                                                         .text
@@ -529,7 +534,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                               ?.clear();
                                                           safeSetState(() {});
                                                         },
-                                                        child: Icon(
+                                                        child: const Icon(
                                                           Icons.clear,
                                                           size: 14.0,
                                                         ),
@@ -560,7 +565,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -582,7 +587,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -599,7 +604,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryBackground,
                                           ),
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller:
@@ -608,34 +613,36 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               onChanged: (_) =>
                                                   EasyDebounce.debounce(
                                                 '_model.nChipTextController',
-                                                Duration(milliseconds: 2000),
+                                                const Duration(
+                                                    milliseconds: 2000),
                                                 () => safeSetState(() {}),
                                               ),
                                               autofocus: true,
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Chip do animal',
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -645,7 +652,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -678,7 +685,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           8.0),
                                                 ),
                                                 filled: true,
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                                 suffixIcon: _model
                                                         .nChipTextController!
                                                         .text
@@ -690,7 +698,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                               ?.clear();
                                                           safeSetState(() {});
                                                         },
-                                                        child: Icon(
+                                                        child: const Icon(
                                                           Icons.clear,
                                                           size: 14.0,
                                                         ),
@@ -738,7 +746,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   padding:
                                                       MediaQuery.viewInsetsOf(
                                                           context),
-                                                  child: SaibaMaisBTWidget(),
+                                                  child:
+                                                      const SaibaMaisBTWidget(),
                                                 );
                                               },
                                             ).then(
@@ -760,8 +769,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                             FlutterFlowTheme.of(
                                                                     context)
                                                                 .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF8E8E8E),
+                                                        color: const Color(
+                                                            0xFF8E8E8E),
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.normal,
@@ -771,7 +780,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                 .bodyMediumIsCustom,
                                                       ),
                                                 ),
-                                                TextSpan(
+                                                const TextSpan(
                                                   text: 'Saiba mais',
                                                   style: TextStyle(
                                                     color: Color(0xFF28A365),
@@ -797,7 +806,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -820,7 +829,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -831,7 +840,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               ),
                                         ),
                                         Expanded(
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller: _model
@@ -841,34 +850,36 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               onChanged: (_) =>
                                                   EasyDebounce.debounce(
                                                 '_model.cdigoregistroTextController',
-                                                Duration(milliseconds: 2000),
+                                                const Duration(
+                                                    milliseconds: 2000),
                                                 () => safeSetState(() {}),
                                               ),
                                               autofocus: true,
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Código registro',
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -878,7 +889,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -911,7 +922,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           8.0),
                                                 ),
                                                 filled: true,
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                                 suffixIcon: _model
                                                         .cdigoregistroTextController!
                                                         .text
@@ -923,7 +935,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                               ?.clear();
                                                           safeSetState(() {});
                                                         },
-                                                        child: Icon(
+                                                        child: const Icon(
                                                           Icons.clear,
                                                           size: 14.0,
                                                         ),
@@ -954,7 +966,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -977,7 +989,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -988,7 +1000,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               ),
                                         ),
                                         Expanded(
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller: _model
@@ -999,27 +1011,28 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Nome do animal',
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -1029,7 +1042,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -1062,7 +1075,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           8.0),
                                                 ),
                                                 filled: true,
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -1088,7 +1102,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1111,7 +1125,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1130,7 +1144,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     .rebanhoSelecionado
                                                     .sexo,
                                           ),
-                                          options: ['Macho', 'Fêmea'],
+                                          options: const ['Macho', 'Fêmea'],
                                           onChanged: (val) => safeSetState(() =>
                                               _model.dropDownSexoValue = val),
                                           width: double.infinity,
@@ -1160,20 +1174,19 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 .secondaryText,
                                             size: 24.0,
                                           ),
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                           elevation: 2.0,
-                                          borderColor: Color(0x00E0E3E7),
+                                          borderColor: const Color(0x00E0E3E7),
                                           borderWidth: 2.0,
                                           borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 4.0, 16.0, 4.0),
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                           hidesUnderline: true,
                                           isOverButton: true,
                                           isSearchable: false,
                                           isMultiSelect: false,
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1195,7 +1208,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1250,14 +1263,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       .secondaryText,
                                               size: 24.0,
                                             ),
-                                            fillColor: Color(0xFFF1F1F1),
+                                            fillColor: const Color(0xFFF1F1F1),
                                             elevation: 2.0,
-                                            borderColor: Color(0x00E0E3E7),
+                                            borderColor:
+                                                const Color(0x00E0E3E7),
                                             borderWidth: 2.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 4.0, 16.0, 4.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                             hidesUnderline: true,
                                             isOverButton: true,
                                             isSearchable: false,
@@ -1308,14 +1321,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       .secondaryText,
                                               size: 24.0,
                                             ),
-                                            fillColor: Color(0xFFF1F1F1),
+                                            fillColor: const Color(0xFFF1F1F1),
                                             elevation: 2.0,
-                                            borderColor: Color(0x00E0E3E7),
+                                            borderColor:
+                                                const Color(0x00E0E3E7),
                                             borderWidth: 2.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 4.0, 16.0, 4.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                             hidesUnderline: true,
                                             isOverButton: true,
                                             isSearchable: false,
@@ -1342,8 +1355,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   BorderRadius.circular(8.0),
                                             ),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 0.0, 16.0, 0.0),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.max,
@@ -1390,7 +1404,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               ),
                                             ),
                                           ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1400,8 +1414,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                           .secondaryBackground,
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 2.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 2.0, 0.0, 0.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         crossAxisAlignment:
@@ -1416,7 +1431,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       FlutterFlowTheme.of(
                                                               context)
                                                           .bodyMediumFamily,
-                                                  color: Color(0xFF474747),
+                                                  color:
+                                                      const Color(0xFF474747),
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w600,
@@ -1432,7 +1448,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             hoverColor: Colors.transparent,
                                             highlightColor: Colors.transparent,
                                             onTap: () async {
-                                              final _datePicked1Date =
+                                              final datePicked1Date =
                                                   await showDatePicker(
                                                 context: context,
                                                 initialDate:
@@ -1444,7 +1460,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     context,
                                                     child!,
                                                     headerBackgroundColor:
-                                                        Color(0xFF28A365),
+                                                        const Color(0xFF28A365),
                                                     headerForegroundColor:
                                                         FlutterFlowTheme.of(
                                                                 context)
@@ -1494,12 +1510,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 },
                                               );
 
-                                              if (_datePicked1Date != null) {
+                                              if (datePicked1Date != null) {
                                                 safeSetState(() {
                                                   _model.datePicked1 = DateTime(
-                                                    _datePicked1Date.year,
-                                                    _datePicked1Date.month,
-                                                    _datePicked1Date.day,
+                                                    datePicked1Date.year,
+                                                    datePicked1Date.month,
+                                                    datePicked1Date.day,
                                                   );
                                                 });
                                               } else if (_model.datePicked1 !=
@@ -1513,7 +1529,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             child: Container(
                                               width: double.infinity,
                                               height: 56.0,
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0xFFF1F1F1),
                                                 borderRadius: BorderRadius.only(
                                                   bottomLeft:
@@ -1526,8 +1542,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 0.0, 8.0, 0.0),
                                                 child: Row(
                                                   mainAxisSize:
@@ -1568,11 +1585,11 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                           Color>(
                                                                     _model.datePicked1 ==
                                                                             null
-                                                                        ? Color(
+                                                                        ? const Color(
                                                                             0xFFBEBEBE)
                                                                         : FlutterFlowTheme.of(context)
                                                                             .secondaryText,
-                                                                    Color(
+                                                                    const Color(
                                                                         0xFFBEBEBE),
                                                                   ),
                                                                   fontSize:
@@ -1603,7 +1620,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               ),
                                             ),
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
                                   ),
@@ -1627,7 +1644,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1638,7 +1655,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               ),
                                         ),
                                         Expanded(
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller: _model
@@ -1649,27 +1666,28 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Peso do animal',
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -1679,7 +1697,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -1712,7 +1730,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           8.0),
                                                 ),
                                                 filled: true,
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -1741,7 +1760,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1764,7 +1783,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1782,7 +1801,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 .rebanhoSelecionado
                                                 .porte,
                                           ),
-                                          options: ['P', 'M', 'G'],
+                                          options: const ['P', 'M', 'G'],
                                           onChanged: (val) => safeSetState(
                                               () => _model.dPPorteValue = val),
                                           width: double.infinity,
@@ -1812,20 +1831,19 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 .secondaryText,
                                             size: 24.0,
                                           ),
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                           elevation: 2.0,
-                                          borderColor: Color(0x00E0E3E7),
+                                          borderColor: const Color(0x00E0E3E7),
                                           borderWidth: 2.0,
                                           borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 4.0, 16.0, 4.0),
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                           hidesUnderline: true,
                                           isOverButton: true,
                                           isSearchable: false,
                                           isMultiSelect: false,
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1848,7 +1866,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1896,20 +1914,19 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 .secondaryText,
                                             size: 24.0,
                                           ),
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                           elevation: 2.0,
-                                          borderColor: Color(0x00E0E3E7),
+                                          borderColor: const Color(0x00E0E3E7),
                                           borderWidth: 2.0,
                                           borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 4.0, 16.0, 4.0),
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                           hidesUnderline: true,
                                           isOverButton: true,
                                           isSearchable: false,
                                           isMultiSelect: false,
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1932,7 +1949,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1997,13 +2014,16 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       .secondaryText,
                                                   size: 24.0,
                                                 ),
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                                 elevation: 2.0,
-                                                borderColor: Color(0x00E0E3E7),
+                                                borderColor:
+                                                    const Color(0x00E0E3E7),
                                                 borderWidth: 2.0,
                                                 borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                margin:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 4.0, 16.0, 4.0),
                                                 hidesUnderline: true,
                                                 isOverButton: true,
@@ -2034,9 +2054,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   size: 24.0,
                                                 ),
                                               ),
-                                          ].divide(SizedBox(width: 8.0)),
+                                          ].divide(const SizedBox(width: 8.0)),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   if (responsiveVisibility(
@@ -2066,7 +2086,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       FlutterFlowTheme.of(
                                                               context)
                                                           .bodyMediumFamily,
-                                                  color: Color(0xFF474747),
+                                                  color:
+                                                      const Color(0xFF474747),
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w600,
@@ -2082,7 +2103,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             hoverColor: Colors.transparent,
                                             highlightColor: Colors.transparent,
                                             onTap: () async {
-                                              final _datePicked2Date =
+                                              final datePicked2Date =
                                                   await showDatePicker(
                                                 context: context,
                                                 initialDate:
@@ -2094,7 +2115,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     context,
                                                     child!,
                                                     headerBackgroundColor:
-                                                        Color(0xFF28A365),
+                                                        const Color(0xFF28A365),
                                                     headerForegroundColor:
                                                         FlutterFlowTheme.of(
                                                                 context)
@@ -2144,12 +2165,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 },
                                               );
 
-                                              if (_datePicked2Date != null) {
+                                              if (datePicked2Date != null) {
                                                 safeSetState(() {
                                                   _model.datePicked2 = DateTime(
-                                                    _datePicked2Date.year,
-                                                    _datePicked2Date.month,
-                                                    _datePicked2Date.day,
+                                                    datePicked2Date.year,
+                                                    datePicked2Date.month,
+                                                    datePicked2Date.day,
                                                   );
                                                 });
                                               } else if (_model.datePicked2 !=
@@ -2163,7 +2184,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             child: Container(
                                               width: double.infinity,
                                               height: 56.0,
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0xFFF1F1F1),
                                                 borderRadius: BorderRadius.only(
                                                   bottomLeft:
@@ -2176,8 +2197,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 0.0, 8.0, 0.0),
                                                 child: Row(
                                                   mainAxisSize:
@@ -2218,11 +2240,11 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                           Color>(
                                                                     _model.datePicked2 ==
                                                                             null
-                                                                        ? Color(
+                                                                        ? const Color(
                                                                             0xFFBEBEBE)
                                                                         : FlutterFlowTheme.of(context)
                                                                             .secondaryText,
-                                                                    Color(
+                                                                    const Color(
                                                                         0xFFBEBEBE),
                                                                   ),
                                                                   fontSize:
@@ -2253,12 +2275,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               ),
                                             ),
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 0.0, 0.0, 8.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 0.0, 0.0, 8.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -2389,12 +2412,15 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             options: FFButtonOptions(
                                               width: 155.0,
                                               height: 56.0,
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 0.0, 24.0, 0.0),
-                                              iconPadding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                              color: Color(0x001E7A4C),
+                                              iconPadding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      0.0, 0.0, 0.0, 0.0),
+                                              color: const Color(0x001E7A4C),
                                               textStyle: FlutterFlowTheme.of(
                                                       context)
                                                   .titleSmall
@@ -2403,7 +2429,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .titleSmallFamily,
-                                                    color: Color(0xFF1E7A4C),
+                                                    color:
+                                                        const Color(0xFF1E7A4C),
                                                     fontSize: 18.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -2413,7 +2440,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                             .titleSmallIsCustom,
                                                   ),
                                               elevation: 0.0,
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0xFF1E7A4C),
                                                 width: 2.0,
                                               ),
@@ -2435,7 +2462,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       _model.tabBarController!
                                                               .index +
                                                           1),
-                                                  duration: Duration(
+                                                  duration: const Duration(
                                                       milliseconds: 300),
                                                   curve: Curves.ease,
                                                 );
@@ -2445,12 +2472,15 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             options: FFButtonOptions(
                                               width: 155.0,
                                               height: 56.0,
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 0.0, 24.0, 0.0),
-                                              iconPadding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                              color: Color(0xFF28A365),
+                                              iconPadding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      0.0, 0.0, 0.0, 0.0),
+                                              color: const Color(0xFF28A365),
                                               textStyle: FlutterFlowTheme.of(
                                                       context)
                                                   .titleSmall
@@ -2469,7 +2499,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                             .titleSmallIsCustom,
                                                   ),
                                               elevation: 3.0,
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Colors.transparent,
                                                 width: 1.0,
                                               ),
@@ -2478,18 +2508,18 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(width: 16.0)),
+                                      ].divide(const SizedBox(width: 16.0)),
                                     ),
                                   ),
-                                ].divide(SizedBox(height: 24.0)),
+                                ].divide(const SizedBox(height: 24.0)),
                               ),
                             ),
                           ),
                         ),
                         Container(
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 24.0, 24.0, 24.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -2510,7 +2540,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                         children: [
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
+                                                const AlignmentDirectional(
+                                                    -1.0, 0.0),
                                             child: Text(
                                               'Matriz',
                                               style: FlutterFlowTheme.of(
@@ -2521,7 +2552,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -2540,8 +2572,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             desktop: false,
                                           ))
                                             Align(
-                                              alignment: AlignmentDirectional(
-                                                  -1.0, 0.0),
+                                              alignment:
+                                                  const AlignmentDirectional(
+                                                      -1.0, 0.0),
                                               child: Text(
                                                 'Não foi possível encontrar uma matriz.',
                                                 style:
@@ -2582,13 +2615,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         isGlobal: false,
                                                         avoidOverflow: true,
                                                         targetAnchor:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                     0.0, 1.0)
                                                                 .resolve(
                                                                     Directionality.of(
                                                                         context)),
                                                         followerAnchor:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                     0.0, -1.0)
                                                                 .resolve(
                                                                     Directionality.of(
@@ -2598,12 +2631,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           return Material(
                                                             color: Colors
                                                                 .transparent,
-                                                            child: Container(
+                                                            child: SizedBox(
                                                               height: 450.0,
                                                               width: double
                                                                   .infinity,
                                                               child:
-                                                                  PopupRebanhosWidget(
+                                                                  const PopupRebanhosWidget(
                                                                 sexo: 'Fêmea',
                                                                 sanidade: false,
                                                                 reproducao:
@@ -2628,12 +2661,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       ),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    16.0,
-                                                                    0.0,
-                                                                    16.0,
-                                                                    0.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(16.0,
+                                                                0.0, 16.0, 0.0),
                                                         child: Row(
                                                           mainAxisSize:
                                                               MainAxisSize.max,
@@ -2722,38 +2752,32 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                                 ),
                                               ),
-                                              if (FFAppState()
-                                                      .matrizSelecionada !=
-                                                  null)
-                                                InkWell(
-                                                  splashColor:
-                                                      Colors.transparent,
-                                                  focusColor:
-                                                      Colors.transparent,
-                                                  hoverColor:
-                                                      Colors.transparent,
-                                                  highlightColor:
-                                                      Colors.transparent,
-                                                  onTap: () async {
-                                                    FFAppState()
-                                                            .matrizSelecionada =
-                                                        AnimalSelecionadoStruct
-                                                            .fromSerializableMap(
-                                                                jsonDecode(
-                                                                    '{}'));
-                                                    safeSetState(() {});
-                                                  },
-                                                  child: Icon(
-                                                    Icons.close_rounded,
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .accent3,
-                                                    size: 24.0,
-                                                  ),
+                                              InkWell(
+                                                splashColor: Colors.transparent,
+                                                focusColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                highlightColor:
+                                                    Colors.transparent,
+                                                onTap: () async {
+                                                  FFAppState()
+                                                          .matrizSelecionada =
+                                                      AnimalSelecionadoStruct
+                                                          .fromSerializableMap(
+                                                              jsonDecode('{}'));
+                                                  safeSetState(() {});
+                                                },
+                                                child: Icon(
+                                                  Icons.close_rounded,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .accent3,
+                                                  size: 24.0,
                                                 ),
-                                            ].divide(SizedBox(width: 16.0)),
+                                              ),
+                                            ].divide(
+                                                const SizedBox(width: 16.0)),
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
                                     Container(
@@ -2776,7 +2800,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       FlutterFlowTheme.of(
                                                               context)
                                                           .bodyMediumFamily,
-                                                  color: Color(0xFF474747),
+                                                  color:
+                                                      const Color(0xFF474747),
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w600,
@@ -2832,13 +2857,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         isGlobal: false,
                                                         avoidOverflow: true,
                                                         targetAnchor:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                     0.0, 1.0)
                                                                 .resolve(
                                                                     Directionality.of(
                                                                         context)),
                                                         followerAnchor:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                     0.0, -1.0)
                                                                 .resolve(
                                                                     Directionality.of(
@@ -2848,12 +2873,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           return Material(
                                                             color: Colors
                                                                 .transparent,
-                                                            child: Container(
+                                                            child: SizedBox(
                                                               height: 450.0,
                                                               width: double
                                                                   .infinity,
                                                               child:
-                                                                  PopupRebanhosWidget(
+                                                                  const PopupRebanhosWidget(
                                                                 sexo: 'Macho',
                                                                 sanidade: false,
                                                                 reproducao:
@@ -2878,12 +2903,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       ),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    16.0,
-                                                                    0.0,
-                                                                    16.0,
-                                                                    0.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(16.0,
+                                                                0.0, 16.0, 0.0),
                                                         child: Row(
                                                           mainAxisSize:
                                                               MainAxisSize.max,
@@ -2969,41 +2991,35 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                                 ),
                                               ),
-                                              if (FFAppState()
-                                                      .reprodutorSelecionado !=
-                                                  null)
-                                                InkWell(
-                                                  splashColor:
-                                                      Colors.transparent,
-                                                  focusColor:
-                                                      Colors.transparent,
-                                                  hoverColor:
-                                                      Colors.transparent,
-                                                  highlightColor:
-                                                      Colors.transparent,
-                                                  onTap: () async {
-                                                    FFAppState()
-                                                            .reprodutorSelecionado =
-                                                        AnimalSelecionadoStruct
-                                                            .fromSerializableMap(
-                                                                jsonDecode(
-                                                                    '{}'));
-                                                    safeSetState(() {});
-                                                  },
-                                                  child: Icon(
-                                                    Icons.close_sharp,
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .accent3,
-                                                    size: 24.0,
-                                                  ),
+                                              InkWell(
+                                                splashColor: Colors.transparent,
+                                                focusColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                highlightColor:
+                                                    Colors.transparent,
+                                                onTap: () async {
+                                                  FFAppState()
+                                                          .reprodutorSelecionado =
+                                                      AnimalSelecionadoStruct
+                                                          .fromSerializableMap(
+                                                              jsonDecode('{}'));
+                                                  safeSetState(() {});
+                                                },
+                                                child: Icon(
+                                                  Icons.close_sharp,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .accent3,
+                                                  size: 24.0,
                                                 ),
-                                            ].divide(SizedBox(width: 16.0)),
+                                              ),
+                                            ].divide(
+                                                const SizedBox(width: 16.0)),
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                                 Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -3020,8 +3036,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   _model.tabBarController!
                                                           .index -
                                                       1),
-                                              duration:
-                                                  Duration(milliseconds: 300),
+                                              duration: const Duration(
+                                                  milliseconds: 300),
                                               curve: Curves.ease,
                                             );
                                           });
@@ -3030,13 +3046,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                         options: FFButtonOptions(
                                           width: 160.0,
                                           height: 56.0,
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           iconPadding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 0.0, 0.0, 0.0),
-                                          color: Color(0x004B39EF),
+                                              const EdgeInsetsDirectional
+                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                          color: const Color(0x004B39EF),
                                           textStyle: FlutterFlowTheme.of(
                                                   context)
                                               .titleSmall
@@ -3044,7 +3059,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .titleSmallFamily,
-                                                color: Color(0xFF1E7A4C),
+                                                color: const Color(0xFF1E7A4C),
                                                 fontSize: 18.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -3054,7 +3069,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         .titleSmallIsCustom,
                                               ),
                                           elevation: 0.0,
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFF1E7A4C),
                                             width: 2.0,
                                           ),
@@ -3075,8 +3090,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   _model.tabBarController!
                                                           .index +
                                                       1),
-                                              duration:
-                                                  Duration(milliseconds: 300),
+                                              duration: const Duration(
+                                                  milliseconds: 300),
                                               curve: Curves.ease,
                                             );
                                           });
@@ -3085,13 +3100,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                         options: FFButtonOptions(
                                           width: 160.0,
                                           height: 56.0,
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           iconPadding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 0.0, 0.0, 0.0),
-                                          color: Color(0xFF28A365),
+                                              const EdgeInsetsDirectional
+                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                          color: const Color(0xFF28A365),
                                           textStyle: FlutterFlowTheme.of(
                                                   context)
                                               .titleSmall
@@ -3109,7 +3123,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         .titleSmallIsCustom,
                                               ),
                                           elevation: 0.0,
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0x0028A365),
                                             width: 0.0,
                                           ),
@@ -3118,9 +3132,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(width: 16.0)),
+                                  ].divide(const SizedBox(width: 16.0)),
                                 ),
-                              ].divide(SizedBox(height: 24.0)),
+                              ].divide(const SizedBox(height: 24.0)),
                             ),
                           ),
                         ),
@@ -3128,15 +3142,16 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                           key: _model.formKey1,
                           autovalidateMode: AutovalidateMode.disabled,
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 24.0, 24.0, 24.0),
                             child: SingleChildScrollView(
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
@@ -3144,8 +3159,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           crossAxisAlignment:
@@ -3161,7 +3176,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -3178,7 +3194,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
-                                                final _datePicked3Date =
+                                                final datePicked3Date =
                                                     await showDatePicker(
                                                   context: context,
                                                   initialDate:
@@ -3190,7 +3206,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       context,
                                                       child!,
                                                       headerBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       headerForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -3239,13 +3256,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   },
                                                 );
 
-                                                if (_datePicked3Date != null) {
+                                                if (datePicked3Date != null) {
                                                   safeSetState(() {
                                                     _model.datePicked3 =
                                                         DateTime(
-                                                      _datePicked3Date.year,
-                                                      _datePicked3Date.month,
-                                                      _datePicked3Date.day,
+                                                      datePicked3Date.year,
+                                                      datePicked3Date.month,
+                                                      datePicked3Date.day,
                                                     );
                                                   });
                                                 } else if (_model.datePicked3 !=
@@ -3259,7 +3276,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               child: Container(
                                                 width: double.infinity,
                                                 height: 56.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color(0xFFF1F1F1),
                                                   borderRadius:
                                                       BorderRadius.only(
@@ -3274,8 +3291,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -3315,12 +3333,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         Color>(
                                                                   _model.datePicked3 ==
                                                                           null
-                                                                      ? Color(
+                                                                      ? const Color(
                                                                           0xFFBEBEBE)
                                                                       : FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText,
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -3375,7 +3393,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -3386,7 +3404,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               ),
                                         ),
                                         Expanded(
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller: _model
@@ -3397,27 +3415,28 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Peso da desmama',
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -3427,7 +3446,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -3460,7 +3479,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           8.0),
                                                 ),
                                                 filled: true,
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -3490,7 +3510,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -3512,7 +3532,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -3528,7 +3548,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                           hoverColor: Colors.transparent,
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
-                                            final _datePicked4Date =
+                                            final datePicked4Date =
                                                 await showDatePicker(
                                               context: context,
                                               initialDate: getCurrentTimestamp,
@@ -3539,7 +3559,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   context,
                                                   child!,
                                                   headerBackgroundColor:
-                                                      Color(0xFF28A365),
+                                                      const Color(0xFF28A365),
                                                   headerForegroundColor:
                                                       FlutterFlowTheme.of(
                                                               context)
@@ -3587,12 +3607,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               },
                                             );
 
-                                            if (_datePicked4Date != null) {
+                                            if (datePicked4Date != null) {
                                               safeSetState(() {
                                                 _model.datePicked4 = DateTime(
-                                                  _datePicked4Date.year,
-                                                  _datePicked4Date.month,
-                                                  _datePicked4Date.day,
+                                                  datePicked4Date.year,
+                                                  datePicked4Date.month,
+                                                  datePicked4Date.day,
                                                 );
                                               });
                                             } else if (_model.datePicked4 !=
@@ -3606,7 +3626,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                           child: Container(
                                             width: double.infinity,
                                             height: 56.0,
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               color: Color(0xFFF1F1F1),
                                               borderRadius: BorderRadius.only(
                                                 bottomLeft:
@@ -3618,8 +3638,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               ),
                                             ),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 0.0, 8.0, 0.0),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.max,
@@ -3658,12 +3679,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                     Color>(
                                                               _model.datePicked4 ==
                                                                       null
-                                                                  ? Color(
+                                                                  ? const Color(
                                                                       0xFFBEBEBE)
                                                                   : FlutterFlowTheme.of(
                                                                           context)
                                                                       .secondaryText,
-                                                              Color(0xFFBEBEBE),
+                                                              const Color(
+                                                                  0xFFBEBEBE),
                                                             ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -3712,7 +3734,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -3723,7 +3745,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               ),
                                         ),
                                         Expanded(
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller: _model
@@ -3734,27 +3756,28 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Peso do animal',
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -3764,7 +3787,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -3797,7 +3820,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           8.0),
                                                 ),
                                                 filled: true,
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -3827,7 +3851,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -3850,7 +3874,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -3899,20 +3923,19 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 .secondaryText,
                                             size: 24.0,
                                           ),
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                           elevation: 0.0,
-                                          borderColor: Color(0x00E0E3E7),
+                                          borderColor: const Color(0x00E0E3E7),
                                           borderWidth: 0.0,
                                           borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 4.0, 16.0, 4.0),
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                           hidesUnderline: true,
                                           isOverButton: true,
                                           isSearchable: false,
                                           isMultiSelect: false,
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -3934,7 +3957,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -3983,20 +4006,19 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 .secondaryText,
                                             size: 24.0,
                                           ),
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                           elevation: 2.0,
-                                          borderColor: Color(0x00E0E3E7),
+                                          borderColor: const Color(0x00E0E3E7),
                                           borderWidth: 2.0,
                                           borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 4.0, 16.0, 4.0),
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                           hidesUnderline: true,
                                           isOverButton: true,
                                           isSearchable: false,
                                           isMultiSelect: false,
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   if (_model.dPOrigemValue == 'Compra')
@@ -4007,8 +4029,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           crossAxisAlignment:
@@ -4024,7 +4046,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -4041,7 +4064,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
-                                                final _datePicked5Date =
+                                                final datePicked5Date =
                                                     await showDatePicker(
                                                   context: context,
                                                   initialDate:
@@ -4053,7 +4076,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       context,
                                                       child!,
                                                       headerBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       headerForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -4086,7 +4110,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                   context)
                                                               .primaryText,
                                                       selectedDateTimeBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       selectedDateTimeForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -4100,13 +4125,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   },
                                                 );
 
-                                                if (_datePicked5Date != null) {
+                                                if (datePicked5Date != null) {
                                                   safeSetState(() {
                                                     _model.datePicked5 =
                                                         DateTime(
-                                                      _datePicked5Date.year,
-                                                      _datePicked5Date.month,
-                                                      _datePicked5Date.day,
+                                                      datePicked5Date.year,
+                                                      datePicked5Date.month,
+                                                      datePicked5Date.day,
                                                     );
                                                   });
                                                 } else if (_model.datePicked5 !=
@@ -4120,7 +4145,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               child: Container(
                                                 width: double.infinity,
                                                 height: 56.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color(0xFFF1F1F1),
                                                   borderRadius:
                                                       BorderRadius.only(
@@ -4135,8 +4160,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -4176,12 +4202,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         Color>(
                                                                   _model.datePicked5 ==
                                                                           null
-                                                                      ? Color(
+                                                                      ? const Color(
                                                                           0xFFBEBEBE)
                                                                       : FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText,
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -4223,8 +4249,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           crossAxisAlignment:
@@ -4240,7 +4266,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -4250,7 +4277,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                             .bodyMediumIsCustom,
                                                   ),
                                             ),
-                                            Container(
+                                            SizedBox(
                                               width: double.infinity,
                                               height: 56.0,
                                               child: custom_widgets
@@ -4285,8 +4312,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           crossAxisAlignment:
@@ -4302,7 +4329,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -4319,7 +4347,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
-                                                final _datePicked6Date =
+                                                final datePicked6Date =
                                                     await showDatePicker(
                                                   context: context,
                                                   initialDate:
@@ -4331,7 +4359,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       context,
                                                       child!,
                                                       headerBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       headerForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -4364,7 +4393,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                   context)
                                                               .primaryText,
                                                       selectedDateTimeBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       selectedDateTimeForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -4378,13 +4408,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   },
                                                 );
 
-                                                if (_datePicked6Date != null) {
+                                                if (datePicked6Date != null) {
                                                   safeSetState(() {
                                                     _model.datePicked6 =
                                                         DateTime(
-                                                      _datePicked6Date.year,
-                                                      _datePicked6Date.month,
-                                                      _datePicked6Date.day,
+                                                      datePicked6Date.year,
+                                                      datePicked6Date.month,
+                                                      datePicked6Date.day,
                                                     );
                                                   });
                                                 } else if (_model.datePicked6 !=
@@ -4398,7 +4428,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               child: Container(
                                                 width: double.infinity,
                                                 height: 56.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color(0xFFF1F1F1),
                                                   borderRadius:
                                                       BorderRadius.only(
@@ -4413,8 +4443,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -4454,12 +4485,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         Color>(
                                                                   _model.datePicked6 ==
                                                                           null
-                                                                      ? Color(
+                                                                      ? const Color(
                                                                           0xFFBEBEBE)
                                                                       : FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText,
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -4501,8 +4532,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           crossAxisAlignment:
@@ -4518,7 +4549,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -4528,7 +4560,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                             .bodyMediumIsCustom,
                                                   ),
                                             ),
-                                            Container(
+                                            SizedBox(
                                               width: double.infinity,
                                               height: 56.0,
                                               child: custom_widgets
@@ -4563,8 +4595,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           crossAxisAlignment:
@@ -4580,7 +4612,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -4597,7 +4630,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
-                                                final _datePicked7Date =
+                                                final datePicked7Date =
                                                     await showDatePicker(
                                                   context: context,
                                                   initialDate:
@@ -4609,7 +4642,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       context,
                                                       child!,
                                                       headerBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       headerForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -4642,7 +4676,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                   context)
                                                               .primaryText,
                                                       selectedDateTimeBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       selectedDateTimeForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -4656,13 +4691,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   },
                                                 );
 
-                                                if (_datePicked7Date != null) {
+                                                if (datePicked7Date != null) {
                                                   safeSetState(() {
                                                     _model.datePicked7 =
                                                         DateTime(
-                                                      _datePicked7Date.year,
-                                                      _datePicked7Date.month,
-                                                      _datePicked7Date.day,
+                                                      datePicked7Date.year,
+                                                      datePicked7Date.month,
+                                                      datePicked7Date.day,
                                                     );
                                                   });
                                                 } else if (_model.datePicked7 !=
@@ -4676,7 +4711,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               child: Container(
                                                 width: double.infinity,
                                                 height: 56.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color(0xFFF1F1F1),
                                                   borderRadius:
                                                       BorderRadius.only(
@@ -4691,8 +4726,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -4732,12 +4768,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         Color>(
                                                                   _model.datePicked7 ==
                                                                           null
-                                                                      ? Color(
+                                                                      ? const Color(
                                                                           0xFFBEBEBE)
                                                                       : FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText,
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -4779,8 +4815,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           crossAxisAlignment:
@@ -4796,7 +4832,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -4813,7 +4850,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
-                                                final _datePicked8Date =
+                                                final datePicked8Date =
                                                     await showDatePicker(
                                                   context: context,
                                                   initialDate:
@@ -4825,7 +4862,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       context,
                                                       child!,
                                                       headerBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       headerForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -4858,7 +4896,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                   context)
                                                               .primaryText,
                                                       selectedDateTimeBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       selectedDateTimeForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -4872,13 +4911,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   },
                                                 );
 
-                                                if (_datePicked8Date != null) {
+                                                if (datePicked8Date != null) {
                                                   safeSetState(() {
                                                     _model.datePicked8 =
                                                         DateTime(
-                                                      _datePicked8Date.year,
-                                                      _datePicked8Date.month,
-                                                      _datePicked8Date.day,
+                                                      datePicked8Date.year,
+                                                      datePicked8Date.month,
+                                                      datePicked8Date.day,
                                                     );
                                                   });
                                                 } else if (_model.datePicked8 !=
@@ -4892,7 +4931,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               child: Container(
                                                 width: double.infinity,
                                                 height: 56.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color(0xFFF1F1F1),
                                                   borderRadius:
                                                       BorderRadius.only(
@@ -4907,8 +4946,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -4948,12 +4988,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         Color>(
                                                                   _model.datePicked8 ==
                                                                           null
-                                                                      ? Color(
+                                                                      ? const Color(
                                                                           0xFFBEBEBE)
                                                                       : FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText,
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -4987,7 +5027,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                         ),
                                       ),
                                     ),
-                                  if (_model.dPOrigemValue == 'Morto')
+                                  if (_model.dPStatusValue == 'Morto')
                                     Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
@@ -4995,8 +5035,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           crossAxisAlignment:
@@ -5012,7 +5052,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -5029,7 +5070,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
-                                                final _datePicked9Date =
+                                                final datePicked9Date =
                                                     await showDatePicker(
                                                   context: context,
                                                   initialDate:
@@ -5041,7 +5082,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       context,
                                                       child!,
                                                       headerBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       headerForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -5074,7 +5116,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                   context)
                                                               .primaryText,
                                                       selectedDateTimeBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       selectedDateTimeForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -5088,13 +5131,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   },
                                                 );
 
-                                                if (_datePicked9Date != null) {
+                                                if (datePicked9Date != null) {
                                                   safeSetState(() {
                                                     _model.datePicked9 =
                                                         DateTime(
-                                                      _datePicked9Date.year,
-                                                      _datePicked9Date.month,
-                                                      _datePicked9Date.day,
+                                                      datePicked9Date.year,
+                                                      datePicked9Date.month,
+                                                      datePicked9Date.day,
                                                     );
                                                   });
                                                 } else if (_model.datePicked9 !=
@@ -5108,7 +5151,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               child: Container(
                                                 width: double.infinity,
                                                 height: 56.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color(0xFFF1F1F1),
                                                   borderRadius:
                                                       BorderRadius.only(
@@ -5123,8 +5166,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -5164,12 +5208,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         Color>(
                                                                   _model.datePicked9 ==
                                                                           null
-                                                                      ? Color(
+                                                                      ? const Color(
                                                                           0xFFBEBEBE)
                                                                       : FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText,
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -5225,7 +5269,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       FlutterFlowTheme.of(
                                                               context)
                                                           .bodyMediumFamily,
-                                                  color: Color(0xFF474747),
+                                                  color:
+                                                      const Color(0xFF474747),
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w600,
@@ -5244,7 +5289,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       .rebanhoSelecionado
                                                       .status,
                                             ),
-                                            options: [
+                                            options: const [
                                               'ACIDENTE',
                                               'ANIMAL PEÇONHENTO',
                                               'ATAQUE AVE',
@@ -5290,20 +5335,20 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       .secondaryText,
                                               size: 24.0,
                                             ),
-                                            fillColor: Color(0xFFF1F1F1),
+                                            fillColor: const Color(0xFFF1F1F1),
                                             elevation: 2.0,
-                                            borderColor: Color(0x00E0E3E7),
+                                            borderColor:
+                                                const Color(0x00E0E3E7),
                                             borderWidth: 2.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 4.0, 16.0, 4.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                             hidesUnderline: true,
                                             isOverButton: true,
                                             isSearchable: false,
                                             isMultiSelect: false,
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
                                   Container(
@@ -5325,7 +5370,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -5338,7 +5383,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                         Container(
                                           width: double.infinity,
                                           height: 104.0,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             color: Color(0xFFF1F1F1),
                                             borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
@@ -5347,7 +5392,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               topRight: Radius.circular(6.0),
                                             ),
                                           ),
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller: _model
@@ -5357,27 +5402,28 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               autofocus: false,
                                               obscureText: false,
                                               decoration: InputDecoration(
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -5387,7 +5433,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -5420,9 +5466,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           8.0),
                                                 ),
                                                 contentPadding:
-                                                    EdgeInsetsDirectional
-                                                        .fromSTEB(16.0, 0.0,
-                                                            16.0, 0.0),
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
+                                                        16.0, 0.0, 16.0, 0.0),
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -5449,12 +5495,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 0.0, 0.0, 8.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 0.0, 0.0, 8.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -5471,7 +5518,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       _model.tabBarController!
                                                               .index -
                                                           1),
-                                                  duration: Duration(
+                                                  duration: const Duration(
                                                       milliseconds: 300),
                                                   curve: Curves.ease,
                                                 );
@@ -5481,12 +5528,15 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             options: FFButtonOptions(
                                               width: 160.0,
                                               height: 56.0,
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 0.0, 24.0, 0.0),
-                                              iconPadding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                              color: Color(0x004B39EF),
+                                              iconPadding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      0.0, 0.0, 0.0, 0.0),
+                                              color: const Color(0x004B39EF),
                                               textStyle: FlutterFlowTheme.of(
                                                       context)
                                                   .titleSmall
@@ -5495,7 +5545,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .titleSmallFamily,
-                                                    color: Color(0xFF1E7A4C),
+                                                    color:
+                                                        const Color(0xFF1E7A4C),
                                                     fontSize: 18.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -5505,7 +5556,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                             .titleSmallIsCustom,
                                                   ),
                                               elevation: 0.0,
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0xFF1E7A4C),
                                                 width: 2.0,
                                               ),
@@ -5863,13 +5914,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     .matrizSelecionada
                                                     .categoria,
                                                 rebanhoIdMatriz: FFAppState()
-                                                                .matrizSelecionada
-                                                                .idRebanho !=
-                                                            null &&
-                                                        FFAppState()
-                                                                .matrizSelecionada
-                                                                .idRebanho !=
-                                                            ''
+                                                            .matrizSelecionada
+                                                            .idRebanho !=
+                                                        ''
                                                     ? FFAppState()
                                                         .matrizSelecionada
                                                         .idRebanho
@@ -5877,13 +5924,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         .rebanhoSelecionado
                                                         .rebanhoIdMatriz,
                                                 rebanhoIdReprodutor: FFAppState()
-                                                                .reprodutorSelecionado
-                                                                .idRebanho !=
-                                                            null &&
-                                                        FFAppState()
-                                                                .reprodutorSelecionado
-                                                                .idRebanho !=
-                                                            ''
+                                                            .reprodutorSelecionado
+                                                            .idRebanho !=
+                                                        ''
                                                     ? FFAppState()
                                                         .reprodutorSelecionado
                                                         .idRebanho
@@ -5891,15 +5934,15 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         .rebanhoSelecionado
                                                         .rebanhoIdReprodutor,
                                               );
-                                                final novoPesoNascimento =
+                                              final novoPesoNascimento =
                                                   double.tryParse(_model
-                                                    .pesonascimentoTextController
-                                                    .text);
-                                                if (novoPesoNascimento != null &&
+                                                      .pesonascimentoTextController
+                                                      .text);
+                                              if (novoPesoNascimento != null &&
                                                   FFAppState()
-                                                      .rebanhoSelecionado
-                                                      .pesoNascimento !=
-                                                    novoPesoNascimento) {
+                                                          .rebanhoSelecionado
+                                                          .pesoNascimento !=
+                                                      novoPesoNascimento) {
                                                 await SQLiteManager.instance
                                                     .addPesagem(
                                                   dataPesagem: _model
@@ -5941,15 +5984,15 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       .idRebanho,
                                                 );
                                               }
-                                                final novoPesoDesmama =
+                                              final novoPesoDesmama =
                                                   double.tryParse(_model
-                                                    .pesodadesmamaTextController
-                                                    .text);
-                                                if (novoPesoDesmama != null &&
+                                                      .pesodadesmamaTextController
+                                                      .text);
+                                              if (novoPesoDesmama != null &&
                                                   FFAppState()
-                                                      .rebanhoSelecionado
-                                                      .pesoDesmama !=
-                                                    novoPesoDesmama) {
+                                                          .rebanhoSelecionado
+                                                          .pesoDesmama !=
+                                                      novoPesoDesmama) {
                                                 await SQLiteManager.instance
                                                     .addPesagem(
                                                   dataPesagem: _model
@@ -5991,15 +6034,15 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                       .idRebanho,
                                                 );
                                               }
-                                                final novoPesoAtual =
+                                              final novoPesoAtual =
                                                   double.tryParse(_model
-                                                    .pesoAtualTextController
-                                                    .text);
-                                                if (novoPesoAtual != null &&
+                                                      .pesoAtualTextController
+                                                      .text);
+                                              if (novoPesoAtual != null &&
                                                   FFAppState()
-                                                      .rebanhoSelecionado
-                                                      .pesoAtual !=
-                                                    novoPesoAtual) {
+                                                          .rebanhoSelecionado
+                                                          .pesoAtual !=
+                                                      novoPesoAtual) {
                                                 await SQLiteManager.instance
                                                     .addPesagem(
                                                   dataPesagem: _model
@@ -6045,79 +6088,89 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 );
                                               }
                                               if (FFAppState()
-                                                          .rebanhoSelecionado
-                                                          .loteId !=
-                                                      null &&
-                                                  FFAppState()
-                                                          .rebanhoSelecionado
-                                                          .loteId !=
-                                                      '') {
+                                                      .rebanhoSelecionado
+                                                      .loteId !=
+                                                  '') {
                                                 _model.loteSelecionadoEditExiste =
                                                     await SQLiteManager.instance
                                                         .buscarLote(
                                                   idLote: _model.loteAtual,
                                                 );
-                                                _model.idAnimais = functions
-                                                    .converterJSONparaLista(_model
-                                                        .loteSelecionadoEditExiste!
-                                                        .firstOrNull!
-                                                        .idAnimais!)
-                                                    .toList()
-                                                    .cast<String>();
-                                                safeSetState(() {});
-                                                _model.removeFromIdAnimais(
-                                                    FFAppState()
-                                                        .rebanhoSelecionado
-                                                        .idRebanho);
-                                                safeSetState(() {});
-                                                await SQLiteManager.instance
-                                                    .uPDTLoteRebanho(
-                                                  idAnimais: functions
-                                                      .converterListaParaJSON(
-                                                          _model.idAnimais
-                                                              .toList()),
-                                                  updatedat: dateTimeFormat(
-                                                    "yyyy-MM-dd HH:mm:ss",
-                                                    getCurrentTimestamp,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  idLote: _model.loteAtual,
-                                                );
+                                                final loteExisteItem = _model
+                                                    .loteSelecionadoEditExiste
+                                                    ?.firstOrNull;
+                                                if (loteExisteItem != null &&
+                                                    loteExisteItem.idAnimais !=
+                                                        null) {
+                                                  _model.idAnimais = functions
+                                                      .converterJSONparaLista(
+                                                          loteExisteItem
+                                                              .idAnimais!)
+                                                      .toList()
+                                                      .cast<String>();
+                                                  safeSetState(() {});
+                                                  _model.removeFromIdAnimais(
+                                                      FFAppState()
+                                                          .rebanhoSelecionado
+                                                          .idRebanho);
+                                                  safeSetState(() {});
+                                                  await SQLiteManager.instance
+                                                      .uPDTLoteRebanho(
+                                                    idAnimais: functions
+                                                        .converterListaParaJSON(
+                                                            _model.idAnimais
+                                                                .toList()),
+                                                    updatedat: dateTimeFormat(
+                                                      "yyyy-MM-dd HH:mm:ss",
+                                                      getCurrentTimestamp,
+                                                      locale:
+                                                          FFLocalizations.of(
+                                                                  context)
+                                                              .languageCode,
+                                                    ),
+                                                    idLote: _model.loteAtual,
+                                                  );
+                                                }
                                                 _model.loteSelecionadoEdit2 =
                                                     await SQLiteManager.instance
                                                         .buscarLote(
                                                   idLote: _model.dPLoteValue,
                                                 );
-                                                _model.idAnimais = functions
-                                                    .converterJSONparaLista(_model
-                                                        .loteSelecionadoEdit2!
-                                                        .firstOrNull!
-                                                        .idAnimais!)
-                                                    .toList()
-                                                    .cast<String>();
-                                                safeSetState(() {});
-                                                _model.addToIdAnimais(
-                                                    FFAppState()
-                                                        .rebanhoSelecionado
-                                                        .idRebanho);
-                                                safeSetState(() {});
-                                                await SQLiteManager.instance
-                                                    .uPDTLoteRebanho(
-                                                  idAnimais: functions
-                                                      .converterListaParaJSON(
-                                                          _model.idAnimais
-                                                              .toList()),
-                                                  updatedat: dateTimeFormat(
-                                                    "yyyy-MM-dd HH:mm:ss",
-                                                    getCurrentTimestamp,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  idLote: _model.dPLoteValue,
-                                                );
+                                                final loteEdit2Item = _model
+                                                    .loteSelecionadoEdit2
+                                                    ?.firstOrNull;
+                                                if (loteEdit2Item != null &&
+                                                    loteEdit2Item.idAnimais !=
+                                                        null) {
+                                                  _model.idAnimais = functions
+                                                      .converterJSONparaLista(
+                                                          loteEdit2Item
+                                                              .idAnimais!)
+                                                      .toList()
+                                                      .cast<String>();
+                                                  safeSetState(() {});
+                                                  _model.addToIdAnimais(
+                                                      FFAppState()
+                                                          .rebanhoSelecionado
+                                                          .idRebanho);
+                                                  safeSetState(() {});
+                                                  await SQLiteManager.instance
+                                                      .uPDTLoteRebanho(
+                                                    idAnimais: functions
+                                                        .converterListaParaJSON(
+                                                            _model.idAnimais
+                                                                .toList()),
+                                                    updatedat: dateTimeFormat(
+                                                      "yyyy-MM-dd HH:mm:ss",
+                                                      getCurrentTimestamp,
+                                                      locale:
+                                                          FFLocalizations.of(
+                                                                  context)
+                                                              .languageCode,
+                                                    ),
+                                                    idLote: _model.dPLoteValue,
+                                                  );
+                                                }
                                               } else {
                                                 if (_model.dPLoteValue !=
                                                         null &&
@@ -6128,14 +6181,21 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           .buscarLote(
                                                     idLote: _model.dPLoteValue,
                                                   );
-                                                  _model.idAnimais = functions
-                                                      .converterJSONparaLista(
-                                                          _model
-                                                              .loteSelecionadoEdit!
-                                                              .firstOrNull!
-                                                              .idAnimais!)
-                                                      .toList()
-                                                      .cast<String>();
+                                                  final loteEditItem = _model
+                                                      .loteSelecionadoEdit
+                                                      ?.firstOrNull;
+                                                  if (loteEditItem != null &&
+                                                      loteEditItem.idAnimais !=
+                                                          null) {
+                                                    _model.idAnimais = functions
+                                                        .converterJSONparaLista(
+                                                            loteEditItem
+                                                                .idAnimais!)
+                                                        .toList()
+                                                        .cast<String>();
+                                                  } else {
+                                                    _model.idAnimais = [];
+                                                  }
                                                   safeSetState(() {});
                                                   _model.addToIdAnimais(
                                                       FFAppState()
@@ -6172,7 +6232,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           .secondaryBackground,
                                                     ),
                                                   ),
-                                                  duration: Duration(
+                                                  duration: const Duration(
                                                       milliseconds: 4000),
                                                   backgroundColor:
                                                       FlutterFlowTheme.of(
@@ -6188,11 +6248,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             options: FFButtonOptions(
                                               width: 160.0,
                                               height: 56.0,
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 0.0, 24.0, 0.0),
-                                              iconPadding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                              iconPadding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      0.0, 0.0, 0.0, 0.0),
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .primary,
@@ -6214,7 +6277,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                             .titleSmallIsCustom,
                                                   ),
                                               elevation: 0.0,
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x0028A365),
                                                 width: 0.0,
                                               ),
@@ -6223,10 +6286,10 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(width: 16.0)),
+                                      ].divide(const SizedBox(width: 16.0)),
                                     ),
                                   ),
-                                ].divide(SizedBox(height: 24.0)),
+                                ].divide(const SizedBox(height: 24.0)),
                               ),
                             ),
                           ),
@@ -6236,7 +6299,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                           children: [
                             Flexible(
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 24.0, 0.0, 0.0),
                                 child: Container(
                                   width: double.infinity,
@@ -6262,8 +6325,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         24.0, 0.0, 0.0, 0.0),
                                                 child: Text(
                                                   'Histórico das pesagens',
@@ -6343,8 +6407,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                       .start,
                                                               children: [
                                                                 Padding(
-                                                                  padding: EdgeInsetsDirectional
-                                                                      .fromSTEB(
+                                                                  padding:
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
                                                                           24.0,
                                                                           12.0,
                                                                           24.0,
@@ -6370,7 +6435,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                             )} KG',
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                  color: Color(0xFF474747),
+                                                                                  color: const Color(0xFF474747),
                                                                                   fontSize: 16.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.w500,
@@ -6385,7 +6450,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                             ),
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                  color: Color(0xFF5F5F5F),
+                                                                                  color: const Color(0xFF5F5F5F),
                                                                                   letterSpacing: 0.0,
                                                                                   useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                                 ),
@@ -6403,14 +6468,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                           decoration:
                                                                               BoxDecoration(
                                                                             color:
-                                                                                Color(0xFFB1CC29),
+                                                                                const Color(0xFFB1CC29),
                                                                             borderRadius:
                                                                                 BorderRadius.circular(4.0),
                                                                           ),
                                                                           child:
                                                                               Align(
                                                                             alignment:
-                                                                                AlignmentDirectional(0.0, 0.0),
+                                                                                const AlignmentDirectional(0.0, 0.0),
                                                                             child:
                                                                                 Text(
                                                                               'Nascimento',
@@ -6434,14 +6499,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                           decoration:
                                                                               BoxDecoration(
                                                                             color:
-                                                                                Color(0xFFB1CC29),
+                                                                                const Color(0xFFB1CC29),
                                                                             borderRadius:
                                                                                 BorderRadius.circular(4.0),
                                                                           ),
                                                                           child:
                                                                               Align(
                                                                             alignment:
-                                                                                AlignmentDirectional(0.0, 0.0),
+                                                                                const AlignmentDirectional(0.0, 0.0),
                                                                             child:
                                                                                 Text(
                                                                               'Desmama',
@@ -6469,16 +6534,16 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                                 context: context,
                                                                                 builder: (alertDialogContext) {
                                                                                   return AlertDialog(
-                                                                                    title: Text('Deletar pesagem'),
-                                                                                    content: Text('Tem certeza que deseja deletar esta pesagem ?'),
+                                                                                    title: const Text('Deletar pesagem'),
+                                                                                    content: const Text('Tem certeza que deseja deletar esta pesagem ?'),
                                                                                     actions: [
                                                                                       TextButton(
                                                                                         onPressed: () => Navigator.pop(alertDialogContext, false),
-                                                                                        child: Text('Não'),
+                                                                                        child: const Text('Não'),
                                                                                       ),
                                                                                       TextButton(
                                                                                         onPressed: () => Navigator.pop(alertDialogContext, true),
-                                                                                        child: Text('Sim'),
+                                                                                        child: const Text('Sim'),
                                                                                       ),
                                                                                     ],
                                                                                   );
@@ -6522,7 +6587,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                     ],
                                                                   ),
                                                                 ),
-                                                                Divider(
+                                                                const Divider(
                                                                   height: 1.0,
                                                                   thickness:
                                                                       1.0,
@@ -6538,13 +6603,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            24.0, 24.0, 24.0, 24.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(24.0, 24.0, 24.0, 24.0),
                                         child: FFButtonWidget(
                                           onPressed: () async {
                                             await showModalBottomSheet(
@@ -6570,21 +6636,21 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             await _refreshPesoAtualEDataUltimaPesagem();
                                           },
                                           text: 'Adicionar pesagem',
-                                          icon: Icon(
+                                          icon: const Icon(
                                             Icons.add,
                                             size: 24.0,
                                           ),
                                           options: FFButtonOptions(
                                             width: double.infinity,
                                             height: 48.0,
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 0.0, 16.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 16.0, 0.0),
                                             iconAlignment: IconAlignment.start,
                                             iconPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional
+                                                    .fromSTEB(
                                                     0.0, 0.0, 0.0, 0.0),
-                                            color: Color(0xFF28A365),
+                                            color: const Color(0xFF28A365),
                                             textStyle:
                                                 FlutterFlowTheme.of(context)
                                                     .titleSmall
@@ -6623,7 +6689,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
               ),
             ),
           ),
-        ].divide(SizedBox(height: 24.0)),
+        ].divide(const SizedBox(height: 24.0)),
       ),
     );
   }

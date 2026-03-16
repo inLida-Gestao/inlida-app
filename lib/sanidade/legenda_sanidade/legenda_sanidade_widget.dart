@@ -54,13 +54,14 @@ class _LegendaSanidadeWidgetState extends State<LegendaSanidadeWidget> {
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Padding(
-          padding: EdgeInsets.all(12.0),
+          padding: const EdgeInsets.all(12.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 0.0),
                 child: Text(
                   'Legenda',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -101,7 +102,7 @@ class _LegendaSanidadeWidgetState extends State<LegendaSanidadeWidget> {
                                 .bodyMediumIsCustom,
                           ),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: 'Benzoato de estradiol',
                       style: TextStyle(
                         fontSize: 12.0,
@@ -145,7 +146,7 @@ class _LegendaSanidadeWidgetState extends State<LegendaSanidadeWidget> {
                                 .bodyMediumIsCustom,
                           ),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: 'Implante de progesterona',
                       style: TextStyle(
                         fontSize: 12.0,
@@ -189,7 +190,7 @@ class _LegendaSanidadeWidgetState extends State<LegendaSanidadeWidget> {
                                 .bodyMediumIsCustom,
                           ),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: 'Prostaglandina',
                       style: TextStyle(
                         fontSize: 12.0,
@@ -233,7 +234,7 @@ class _LegendaSanidadeWidgetState extends State<LegendaSanidadeWidget> {
                                 .bodyMediumIsCustom,
                           ),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: 'Gonadotrofina coriônica',
                       style: TextStyle(
                         fontSize: 12.0,
@@ -277,7 +278,7 @@ class _LegendaSanidadeWidgetState extends State<LegendaSanidadeWidget> {
                                 .bodyMediumIsCustom,
                           ),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: 'Cipionato de estradiol',
                       style: TextStyle(
                         fontSize: 12.0,
@@ -321,7 +322,7 @@ class _LegendaSanidadeWidgetState extends State<LegendaSanidadeWidget> {
                                 .bodyMediumIsCustom,
                           ),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: 'Gonadotrofina',
                       style: TextStyle(
                         fontSize: 12.0,

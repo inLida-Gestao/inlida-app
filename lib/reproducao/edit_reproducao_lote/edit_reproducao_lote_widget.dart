@@ -75,7 +75,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.editReproducao = await SQLiteManager.instance.buscarReproducao(
-        idReproducao: widget!.idReproducao,
+        idReproducao: widget.idReproducao,
       );
       _model.tipoReproducao =
           _model.editReproducao?.firstOrNull?.tipoReproducao ?? 'Inseminação';
@@ -83,12 +83,14 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
       _model.partidaSemen =
           _model.editReproducao?.firstOrNull?.partidaSemen ?? 1;
       final dataParto = _model.editReproducao?.firstOrNull?.dataParto;
-      _model.parida =
-          (_model.editReproducao?.firstOrNull?.parida == 'SIM' ||
-           _model.editReproducao?.firstOrNull?.parida == 'Sim' ||
-           (dataParto != null && dataParto.isNotEmpty && dataParto != '-' && dataParto.toLowerCase() != 'null'))
-              ? true
-              : false;
+      _model.parida = (_model.editReproducao?.firstOrNull?.parida == 'SIM' ||
+              _model.editReproducao?.firstOrNull?.parida == 'Sim' ||
+              (dataParto != null &&
+                  dataParto.isNotEmpty &&
+                  dataParto != '-' &&
+                  dataParto.toLowerCase() != 'null'))
+          ? true
+          : false;
       safeSetState(() {});
     });
 
@@ -116,7 +118,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
         Expanded(
           child: FutureBuilder<List<BuscarReproducaoRow>>(
             future: SQLiteManager.instance.buscarReproducao(
-              idReproducao: widget!.idReproducao,
+              idReproducao: widget.idReproducao,
             ),
             builder: (context, snapshot) {
               // Customize what your widget looks like when it's loading.
@@ -136,7 +138,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
               final containerBuscarReproducaoRowList = snapshot.data!;
 
               return Container(
-                decoration: BoxDecoration(),
+                decoration: const BoxDecoration(),
                 child: FutureBuilder<List<ListarLotesRow>>(
                   future: SQLiteManager.instance.listarLotes(
                     idPropriedade:
@@ -160,7 +162,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                     final containerListarLotesRowList = snapshot.data!;
 
                     return Container(
-                      decoration: BoxDecoration(),
+                      decoration: const BoxDecoration(),
                       child: FutureBuilder<List<ListarRebanhosRow>>(
                         future: SQLiteManager.instance.listarRebanhos(
                           idPropriedade:
@@ -192,7 +194,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 24.0, 0.0, 0.0),
                               child: SingleChildScrollView(
                                 primary: false,
@@ -200,8 +202,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 0.0, 24.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              24.0, 0.0, 24.0, 0.0),
                                       child: InkWell(
                                         splashColor: Colors.transparent,
                                         focusColor: Colors.transparent,
@@ -239,17 +242,18 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                             .bodyMediumIsCustom,
                                                   ),
                                             ),
-                                          ].divide(SizedBox(width: 16.0)),
+                                          ].divide(const SizedBox(width: 16.0)),
                                         ),
                                       ),
                                     ),
-                                    Divider(
+                                    const Divider(
                                       thickness: 2.0,
                                       color: Color(0xFFEDEDED),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 0.0, 24.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              24.0, 0.0, 24.0, 0.0),
                                       child: Container(
                                         width: double.infinity,
                                         decoration: BoxDecoration(
@@ -314,8 +318,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 0.0, 24.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              24.0, 0.0, 24.0, 0.0),
                                       child: Container(
                                         width: double.infinity,
                                         height: 189.0,
@@ -327,28 +332,30 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
                                             Align(
-                                              alignment: AlignmentDirectional(
-                                                  -1.0, 0.0),
+                                              alignment:
+                                                  const AlignmentDirectional(
+                                                      -1.0, 0.0),
                                               child: Text(
                                                 'Tipo de reprodução',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFF474747),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                               ),
                                             ),
                                             InkWell(
@@ -366,9 +373,10 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 width: double.infinity,
                                                 height: 74.0,
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xFFF1F1F1),
+                                                  color:
+                                                      const Color(0xFFF1F1F1),
                                                   borderRadius:
-                                                      BorderRadius.only(
+                                                      const BorderRadius.only(
                                                     bottomLeft:
                                                         Radius.circular(6.0),
                                                     bottomRight:
@@ -385,12 +393,14 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                             ? FlutterFlowTheme
                                                                     .of(context)
                                                                 .secondary
-                                                            : Color(0x00000000),
+                                                            : const Color(
+                                                                0x00000000),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           24.0, 0.0, 24.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -436,7 +446,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                   FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                              color: Color(
+                                                              color: const Color(
                                                                   0xFF474747),
                                                               fontSize: 20.0,
                                                               letterSpacing:
@@ -450,8 +460,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                       .bodyMediumIsCustom,
                                                             ),
                                                       ),
-                                                    ].divide(
-                                                        SizedBox(width: 10.0)),
+                                                    ].divide(const SizedBox(
+                                                        width: 10.0)),
                                                   ),
                                                 ),
                                               ),
@@ -471,9 +481,10 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 width: double.infinity,
                                                 height: 74.0,
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xFFF1F1F1),
+                                                  color:
+                                                      const Color(0xFFF1F1F1),
                                                   borderRadius:
-                                                      BorderRadius.only(
+                                                      const BorderRadius.only(
                                                     bottomLeft:
                                                         Radius.circular(6.0),
                                                     bottomRight:
@@ -490,12 +501,14 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                             ? FlutterFlowTheme
                                                                     .of(context)
                                                                 .secondary
-                                                            : Color(0x00000000),
+                                                            : const Color(
+                                                                0x00000000),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           24.0, 0.0, 24.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -541,7 +554,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                   FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                              color: Color(
+                                                              color: const Color(
                                                                   0xFF474747),
                                                               fontSize: 20.0,
                                                               letterSpacing:
@@ -555,13 +568,13 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                       .bodyMediumIsCustom,
                                                             ),
                                                       ),
-                                                    ].divide(
-                                                        SizedBox(width: 10.0)),
+                                                    ].divide(const SizedBox(
+                                                        width: 10.0)),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                     ),
@@ -572,34 +585,36 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            24.0, 0.0, 24.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
                                             Align(
-                                              alignment: AlignmentDirectional(
-                                                  -1.0, 0.0),
+                                              alignment:
+                                                  const AlignmentDirectional(
+                                                      -1.0, 0.0),
                                               child: Text(
                                                 'Lote*',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFF474747),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                               ),
                                             ),
                                             if (containerListarLotesRowList
@@ -607,9 +622,10 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                               Container(
                                                 width: double.infinity,
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xFFF1F1F1),
+                                                  color:
+                                                      const Color(0xFFF1F1F1),
                                                   borderRadius:
-                                                      BorderRadius.only(
+                                                      const BorderRadius.only(
                                                     bottomLeft:
                                                         Radius.circular(6.0),
                                                     bottomRight:
@@ -620,12 +636,14 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                         Radius.circular(6.0),
                                                   ),
                                                   border: Border.all(
-                                                    color: Color(0x001E7A4C),
+                                                    color:
+                                                        const Color(0x001E7A4C),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           8.0, 0.0, 0.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -735,35 +753,38 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                             size: 24.0,
                                                           ),
                                                           fillColor:
-                                                              Color(0xFFF1F1F1),
+                                                              const Color(
+                                                                  0xFFF1F1F1),
                                                           elevation: 0.0,
                                                           borderColor:
-                                                              Color(0x00E0E3E7),
+                                                              const Color(
+                                                                  0x00E0E3E7),
                                                           borderWidth: 2.0,
                                                           borderRadius: 8.0,
                                                           margin:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
-                                                                      0.0,
-                                                                      4.0,
-                                                                      16.0,
-                                                                      4.0),
+                                                                  0.0,
+                                                                  4.0,
+                                                                  16.0,
+                                                                  4.0),
                                                           hidesUnderline: true,
                                                           isOverButton: true,
                                                           isSearchable: true,
                                                           isMultiSelect: false,
                                                         ),
                                                       ),
-                                                    ].divide(
-                                                        SizedBox(width: 10.0)),
+                                                    ].divide(const SizedBox(
+                                                        width: 10.0)),
                                                   ),
                                                 ),
                                               ),
                                             if (!(rAddInseminacaoListarRebanhosRowList
                                                 .isNotEmpty))
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, 0.0),
                                                 child: Text(
                                                   'Não foi possível encontrar nenhum lote.',
                                                   style:
@@ -783,13 +804,14 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                           ),
                                                 ),
                                               ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 0.0, 24.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              24.0, 0.0, 24.0, 0.0),
                                       child: Container(
                                         width: double.infinity,
                                         decoration: BoxDecoration(
@@ -800,36 +822,39 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
                                             Align(
-                                              alignment: AlignmentDirectional(
-                                                  -1.0, 0.0),
+                                              alignment:
+                                                  const AlignmentDirectional(
+                                                      -1.0, 0.0),
                                               child: Text(
                                                 'Score corporal',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFF474747),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                               ),
                                             ),
                                             Container(
                                               width: double.infinity,
                                               height: 60.0,
                                               decoration: BoxDecoration(
-                                                color: Color(0xFFF1F1F1),
-                                                borderRadius: BorderRadius.only(
+                                                color: const Color(0xFFF1F1F1),
+                                                borderRadius:
+                                                    const BorderRadius.only(
                                                   bottomLeft:
                                                       Radius.circular(6.0),
                                                   bottomRight:
@@ -839,12 +864,14 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                       Radius.circular(6.0),
                                                 ),
                                                 border: Border.all(
-                                                  color: Color(0x001E7A4C),
+                                                  color:
+                                                      const Color(0x001E7A4C),
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         8.0, 0.0, 8.0, 0.0),
                                                 child: Row(
                                                   mainAxisSize:
@@ -856,7 +883,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                     Container(
                                                       width: 48.0,
                                                       decoration:
-                                                          BoxDecoration(),
+                                                          const BoxDecoration(),
                                                       child: Visibility(
                                                         visible:
                                                             _model.score > 1.0,
@@ -890,7 +917,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                             ),
                                                             child: Align(
                                                               alignment:
-                                                                  AlignmentDirectional(
+                                                                  const AlignmentDirectional(
                                                                       0.0, 0.0),
                                                               child: FaIcon(
                                                                 FontAwesomeIcons
@@ -928,7 +955,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                     Container(
                                                       width: 48.0,
                                                       decoration:
-                                                          BoxDecoration(),
+                                                          const BoxDecoration(),
                                                       child: Visibility(
                                                         visible:
                                                             _model.score < 5.0,
@@ -971,12 +998,12 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                         ),
                                                       ),
                                                     ),
-                                                  ].divide(
-                                                      SizedBox(width: 10.0)),
+                                                  ].divide(const SizedBox(
+                                                      width: 10.0)),
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                     ),
@@ -987,34 +1014,36 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            24.0, 0.0, 24.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
                                             Align(
-                                              alignment: AlignmentDirectional(
-                                                  -1.0, 0.0),
+                                              alignment:
+                                                  const AlignmentDirectional(
+                                                      -1.0, 0.0),
                                               child: Text(
                                                 'Reprodutor*',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFF474747),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                               ),
                                             ),
                                             if (rAddInseminacaoListarRebanhosRowList
@@ -1026,9 +1055,10 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                               Container(
                                                 width: double.infinity,
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xFFF1F1F1),
+                                                  color:
+                                                      const Color(0xFFF1F1F1),
                                                   borderRadius:
-                                                      BorderRadius.only(
+                                                      const BorderRadius.only(
                                                     bottomLeft:
                                                         Radius.circular(6.0),
                                                     bottomRight:
@@ -1039,12 +1069,14 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                         Radius.circular(6.0),
                                                   ),
                                                   border: Border.all(
-                                                    color: Color(0x001E7A4C),
+                                                    color:
+                                                        const Color(0x001E7A4C),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           8.0, 0.0, 0.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -1129,27 +1161,25 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                               .secondaryText,
                                                           size: 24.0,
                                                         ),
-                                                        fillColor:
-                                                            Color(0xFFF1F1F1),
+                                                        fillColor: const Color(
+                                                            0xFFF1F1F1),
                                                         elevation: 0.0,
                                                         borderColor:
-                                                            Color(0x00E0E3E7),
+                                                            const Color(
+                                                                0x00E0E3E7),
                                                         borderWidth: 2.0,
                                                         borderRadius: 8.0,
                                                         margin:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    0.0,
-                                                                    4.0,
-                                                                    16.0,
-                                                                    4.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(0.0,
+                                                                4.0, 16.0, 4.0),
                                                         hidesUnderline: true,
                                                         isOverButton: true,
                                                         isSearchable: false,
                                                         isMultiSelect: false,
                                                       ),
-                                                    ].divide(
-                                                        SizedBox(width: 10.0)),
+                                                    ].divide(const SizedBox(
+                                                        width: 10.0)),
                                                   ),
                                                 ),
                                               ),
@@ -1160,8 +1190,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 .toList()
                                                 .isNotEmpty))
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, 0.0),
                                                 child: Text(
                                                   'Não foi possível encontrar nenhum reprodutor.',
                                                   style:
@@ -1181,7 +1212,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                           ),
                                                 ),
                                               ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                     ),
@@ -1193,36 +1224,37 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                               .secondaryBackground,
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, 0.0),
                                                 child: Text(
                                                   'Data da inseminação*',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                               ),
                                               InkWell(
@@ -1232,7 +1264,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
-                                                  final _datePicked1Date =
+                                                  final datePicked1Date =
                                                       await showDatePicker(
                                                     context: context,
                                                     initialDate:
@@ -1296,14 +1328,13 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                     },
                                                   );
 
-                                                  if (_datePicked1Date !=
-                                                      null) {
+                                                  if (datePicked1Date != null) {
                                                     safeSetState(() {
                                                       _model.datePicked1 =
                                                           DateTime(
-                                                        _datePicked1Date.year,
-                                                        _datePicked1Date.month,
-                                                        _datePicked1Date.day,
+                                                        datePicked1Date.year,
+                                                        datePicked1Date.month,
+                                                        datePicked1Date.day,
                                                       );
                                                     });
                                                   } else if (_model
@@ -1319,9 +1350,10 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                   width: double.infinity,
                                                   height: 56.0,
                                                   decoration: BoxDecoration(
-                                                    color: Color(0xFFF1F1F1),
+                                                    color:
+                                                        const Color(0xFFF1F1F1),
                                                     borderRadius:
-                                                        BorderRadius.only(
+                                                        const BorderRadius.only(
                                                       bottomLeft:
                                                           Radius.circular(6.0),
                                                       bottomRight:
@@ -1332,14 +1364,15 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                           Radius.circular(6.0),
                                                     ),
                                                     border: Border.all(
-                                                      color: Color(0x001E7A4C),
+                                                      color: const Color(
+                                                          0x001E7A4C),
                                                     ),
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(8.0, 0.0,
-                                                                8.0, 0.0),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            8.0, 0.0, 8.0, 0.0),
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -1383,9 +1416,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                       ? FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText
-                                                                      : Color(
+                                                                      : const Color(
                                                                           0xFFBEBEBE),
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -1400,7 +1433,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                         .bodyMediumIsCustom,
                                                               ),
                                                         ),
-                                                        Icon(
+                                                        const Icon(
                                                           Icons
                                                               .calendar_month_rounded,
                                                           color:
@@ -1412,19 +1445,22 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                       ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 0.0, 24.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              24.0, 0.0, 24.0, 0.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
+                                                const AlignmentDirectional(
+                                                    -1.0, 0.0),
                                             child: Text(
                                               'Ressinc',
                                               style: FlutterFlowTheme.of(
@@ -1435,7 +1471,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -1456,7 +1493,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                           .firstOrNull
                                                           ?.ressinc),
                                             ),
-                                            options: [
+                                            options: const [
                                               'Tradicional',
                                               'Precoce',
                                               'Superprecoce'
@@ -1501,26 +1538,27 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             borderColor: Colors.transparent,
                                             borderWidth: 0.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    12.0, 0.0, 12.0, 0.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(12.0, 0.0, 12.0, 0.0),
                                             hidesUnderline: true,
                                             isOverButton: false,
                                             isSearchable: false,
                                             isMultiSelect: false,
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 0.0, 24.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              24.0, 0.0, 24.0, 0.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
+                                                const AlignmentDirectional(
+                                                    -1.0, 0.0),
                                             child: Text(
                                               'GnRH',
                                               style: FlutterFlowTheme.of(
@@ -1531,7 +1569,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -1551,7 +1590,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                       containerBuscarReproducaoRowList
                                                           .firstOrNull?.gnrh),
                                             ),
-                                            options: ['Sim', 'Não'],
+                                            options: const ['Sim', 'Não'],
                                             onChanged: (val) => safeSetState(
                                                 () => _model.dropdownGnrhValue =
                                                     val),
@@ -1591,26 +1630,27 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             borderColor: Colors.transparent,
                                             borderWidth: 0.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    12.0, 0.0, 12.0, 0.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(12.0, 0.0, 12.0, 0.0),
                                             hidesUnderline: true,
                                             isOverButton: false,
                                             isSearchable: false,
                                             isMultiSelect: false,
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 0.0, 24.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              24.0, 0.0, 24.0, 0.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
+                                                const AlignmentDirectional(
+                                                    -1.0, 0.0),
                                             child: Text(
                                               'Cio',
                                               style: FlutterFlowTheme.of(
@@ -1621,7 +1661,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -1641,7 +1682,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                       containerBuscarReproducaoRowList
                                                           .firstOrNull?.cio),
                                             ),
-                                            options: ['Sim', 'Não'],
+                                            options: const ['Sim', 'Não'],
                                             onChanged: (val) => safeSetState(
                                                 () => _model.dropdownCioValue =
                                                     val),
@@ -1681,15 +1722,14 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             borderColor: Colors.transparent,
                                             borderWidth: 0.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    12.0, 0.0, 12.0, 0.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(12.0, 0.0, 12.0, 0.0),
                                             hidesUnderline: true,
                                             isOverButton: false,
                                             isSearchable: false,
                                             isMultiSelect: false,
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
                                     if (_model.tipoReproducao == 'Inseminação')
@@ -1700,36 +1740,37 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                               .secondaryBackground,
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, 0.0),
                                                 child: Text(
                                                   'Data de partida do sêmen',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                               ),
                                               InkWell(
@@ -1739,7 +1780,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
-                                                  final _datePicked2Date =
+                                                  final datePicked2Date =
                                                       await showDatePicker(
                                                     context: context,
                                                     initialDate:
@@ -1803,14 +1844,13 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                     },
                                                   );
 
-                                                  if (_datePicked2Date !=
-                                                      null) {
+                                                  if (datePicked2Date != null) {
                                                     safeSetState(() {
                                                       _model.datePicked2 =
                                                           DateTime(
-                                                        _datePicked2Date.year,
-                                                        _datePicked2Date.month,
-                                                        _datePicked2Date.day,
+                                                        datePicked2Date.year,
+                                                        datePicked2Date.month,
+                                                        datePicked2Date.day,
                                                       );
                                                     });
                                                   } else if (_model
@@ -1826,9 +1866,10 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                   width: double.infinity,
                                                   height: 56.0,
                                                   decoration: BoxDecoration(
-                                                    color: Color(0xFFF1F1F1),
+                                                    color:
+                                                        const Color(0xFFF1F1F1),
                                                     borderRadius:
-                                                        BorderRadius.only(
+                                                        const BorderRadius.only(
                                                       bottomLeft:
                                                           Radius.circular(6.0),
                                                       bottomRight:
@@ -1839,14 +1880,15 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                           Radius.circular(6.0),
                                                     ),
                                                     border: Border.all(
-                                                      color: Color(0x001E7A4C),
+                                                      color: const Color(
+                                                          0x001E7A4C),
                                                     ),
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(8.0, 0.0,
-                                                                8.0, 0.0),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            8.0, 0.0, 8.0, 0.0),
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -1894,9 +1936,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                       ? FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText
-                                                                      : Color(
+                                                                      : const Color(
                                                                           0xFFBEBEBE),
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -1911,7 +1953,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                         .bodyMediumIsCustom,
                                                               ),
                                                         ),
-                                                        Icon(
+                                                        const Icon(
                                                           Icons
                                                               .calendar_month_rounded,
                                                           color:
@@ -1923,14 +1965,15 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                       ),
                                     if (_model.tipoReproducao == 'Inseminação')
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            24.0, 0.0, 24.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                         child: Container(
                                           width: double.infinity,
                                           decoration: BoxDecoration(
@@ -1941,38 +1984,41 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, 0.0),
                                                 child: Text(
                                                   'Partida do sêmen',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                               ),
                                               Container(
                                                 width: double.infinity,
                                                 height: 60.0,
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xFFF1F1F1),
+                                                  color:
+                                                      const Color(0xFFF1F1F1),
                                                   borderRadius:
-                                                      BorderRadius.only(
+                                                      const BorderRadius.only(
                                                     bottomLeft:
                                                         Radius.circular(6.0),
                                                     bottomRight:
@@ -1983,12 +2029,14 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                         Radius.circular(6.0),
                                                   ),
                                                   border: Border.all(
-                                                    color: Color(0x001E7A4C),
+                                                    color:
+                                                        const Color(0x001E7A4C),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           8.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -2000,7 +2048,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                       Container(
                                                         width: 48.0,
                                                         decoration:
-                                                            BoxDecoration(),
+                                                            const BoxDecoration(),
                                                         child: Visibility(
                                                           visible: _model
                                                                   .partidaSemen >
@@ -2037,7 +2085,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                               ),
                                                               child: Align(
                                                                 alignment:
-                                                                    AlignmentDirectional(
+                                                                    const AlignmentDirectional(
                                                                         0.0,
                                                                         0.0),
                                                                 child: FaIcon(
@@ -2082,7 +2130,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                       Container(
                                                         width: 48.0,
                                                         decoration:
-                                                            BoxDecoration(),
+                                                            const BoxDecoration(),
                                                         child: Visibility(
                                                           visible: _model
                                                                   .partidaSemen <
@@ -2128,12 +2176,13 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                           ),
                                                         ),
                                                       ),
-                                                    ].divide(
-                                                        SizedBox(width: 10.0)),
+                                                    ].divide(const SizedBox(
+                                                        width: 10.0)),
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                       ),
@@ -2147,45 +2196,47 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                               .secondaryBackground,
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, 0.0),
                                                 child: Text(
                                                   'Previsão do parto',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                               ),
                                               Container(
                                                 width: double.infinity,
                                                 height: 56.0,
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xFFF1F1F1),
+                                                  color:
+                                                      const Color(0xFFF1F1F1),
                                                   borderRadius:
-                                                      BorderRadius.only(
+                                                      const BorderRadius.only(
                                                     bottomLeft:
                                                         Radius.circular(6.0),
                                                     bottomRight:
@@ -2196,12 +2247,14 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                         Radius.circular(6.0),
                                                   ),
                                                   border: Border.all(
-                                                    color: Color(0x001E7A4C),
+                                                    color:
+                                                        const Color(0x001E7A4C),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           8.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -2244,9 +2297,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                             null
                                                                         ? FlutterFlowTheme.of(context)
                                                                             .secondaryText
-                                                                        : Color(
+                                                                        : const Color(
                                                                             0xFFBEBEBE),
-                                                                    Color(
+                                                                    const Color(
                                                                         0xFFBEBEBE),
                                                                   ),
                                                                   fontSize:
@@ -2275,7 +2328,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                       ),
@@ -2288,36 +2342,37 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                               .secondaryBackground,
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, 0.0),
                                                 child: Text(
                                                   'Previsão do parto',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                               ),
                                               InkWell(
@@ -2327,7 +2382,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
-                                                  final _datePicked3Date =
+                                                  final datePicked3Date =
                                                       await showDatePicker(
                                                     context: context,
                                                     initialDate:
@@ -2391,14 +2446,13 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                     },
                                                   );
 
-                                                  if (_datePicked3Date !=
-                                                      null) {
+                                                  if (datePicked3Date != null) {
                                                     safeSetState(() {
                                                       _model.datePicked3 =
                                                           DateTime(
-                                                        _datePicked3Date.year,
-                                                        _datePicked3Date.month,
-                                                        _datePicked3Date.day,
+                                                        datePicked3Date.year,
+                                                        datePicked3Date.month,
+                                                        datePicked3Date.day,
                                                       );
                                                     });
                                                   } else if (_model
@@ -2414,9 +2468,10 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                   width: double.infinity,
                                                   height: 56.0,
                                                   decoration: BoxDecoration(
-                                                    color: Color(0xFFF1F1F1),
+                                                    color:
+                                                        const Color(0xFFF1F1F1),
                                                     borderRadius:
-                                                        BorderRadius.only(
+                                                        const BorderRadius.only(
                                                       bottomLeft:
                                                           Radius.circular(6.0),
                                                       bottomRight:
@@ -2427,14 +2482,15 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                           Radius.circular(6.0),
                                                     ),
                                                     border: Border.all(
-                                                      color: Color(0x001E7A4C),
+                                                      color: const Color(
+                                                          0x001E7A4C),
                                                     ),
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(8.0, 0.0,
-                                                                8.0, 0.0),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            8.0, 0.0, 8.0, 0.0),
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -2465,9 +2521,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                       ? FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText
-                                                                      : Color(
+                                                                      : const Color(
                                                                           0xFFBEBEBE),
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -2482,7 +2538,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                         .bodyMediumIsCustom,
                                                               ),
                                                         ),
-                                                        Icon(
+                                                        const Icon(
                                                           Icons
                                                               .calendar_month_rounded,
                                                           color:
@@ -2494,7 +2550,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                       ),
@@ -2507,36 +2564,37 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                               .secondaryBackground,
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, 0.0),
                                                 child: Text(
                                                   'Data inicial*',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                               ),
                                               InkWell(
@@ -2546,7 +2604,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
-                                                  final _datePicked4Date =
+                                                  final datePicked4Date =
                                                       await showDatePicker(
                                                     context: context,
                                                     initialDate:
@@ -2610,14 +2668,13 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                     },
                                                   );
 
-                                                  if (_datePicked4Date !=
-                                                      null) {
+                                                  if (datePicked4Date != null) {
                                                     safeSetState(() {
                                                       _model.datePicked4 =
                                                           DateTime(
-                                                        _datePicked4Date.year,
-                                                        _datePicked4Date.month,
-                                                        _datePicked4Date.day,
+                                                        datePicked4Date.year,
+                                                        datePicked4Date.month,
+                                                        datePicked4Date.day,
                                                       );
                                                     });
                                                   } else if (_model
@@ -2633,9 +2690,10 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                   width: double.infinity,
                                                   height: 56.0,
                                                   decoration: BoxDecoration(
-                                                    color: Color(0xFFF1F1F1),
+                                                    color:
+                                                        const Color(0xFFF1F1F1),
                                                     borderRadius:
-                                                        BorderRadius.only(
+                                                        const BorderRadius.only(
                                                       bottomLeft:
                                                           Radius.circular(6.0),
                                                       bottomRight:
@@ -2646,14 +2704,15 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                           Radius.circular(6.0),
                                                     ),
                                                     border: Border.all(
-                                                      color: Color(0x001E7A4C),
+                                                      color: const Color(
+                                                          0x001E7A4C),
                                                     ),
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(8.0, 0.0,
-                                                                8.0, 0.0),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            8.0, 0.0, 8.0, 0.0),
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -2701,9 +2760,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                       ? FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText
-                                                                      : Color(
+                                                                      : const Color(
                                                                           0xFFBEBEBE),
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -2718,7 +2777,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                         .bodyMediumIsCustom,
                                                               ),
                                                         ),
-                                                        Icon(
+                                                        const Icon(
                                                           Icons
                                                               .calendar_month_rounded,
                                                           color:
@@ -2730,7 +2789,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                       ),
@@ -2743,36 +2803,37 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                               .secondaryBackground,
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, 0.0),
                                                 child: Text(
                                                   'Data final*',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                               ),
                                               InkWell(
@@ -2782,7 +2843,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
-                                                  final _datePicked5Date =
+                                                  final datePicked5Date =
                                                       await showDatePicker(
                                                     context: context,
                                                     initialDate:
@@ -2847,14 +2908,13 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                     },
                                                   );
 
-                                                  if (_datePicked5Date !=
-                                                      null) {
+                                                  if (datePicked5Date != null) {
                                                     safeSetState(() {
                                                       _model.datePicked5 =
                                                           DateTime(
-                                                        _datePicked5Date.year,
-                                                        _datePicked5Date.month,
-                                                        _datePicked5Date.day,
+                                                        datePicked5Date.year,
+                                                        datePicked5Date.month,
+                                                        datePicked5Date.day,
                                                       );
                                                     });
                                                   } else if (_model
@@ -2870,9 +2930,10 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                   width: double.infinity,
                                                   height: 56.0,
                                                   decoration: BoxDecoration(
-                                                    color: Color(0xFFF1F1F1),
+                                                    color:
+                                                        const Color(0xFFF1F1F1),
                                                     borderRadius:
-                                                        BorderRadius.only(
+                                                        const BorderRadius.only(
                                                       bottomLeft:
                                                           Radius.circular(6.0),
                                                       bottomRight:
@@ -2883,14 +2944,15 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                           Radius.circular(6.0),
                                                     ),
                                                     border: Border.all(
-                                                      color: Color(0x001E7A4C),
+                                                      color: const Color(
+                                                          0x001E7A4C),
                                                     ),
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(8.0, 0.0,
-                                                                8.0, 0.0),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            8.0, 0.0, 8.0, 0.0),
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -2938,9 +3000,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                       ? FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText
-                                                                      : Color(
+                                                                      : const Color(
                                                                           0xFFBEBEBE),
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -2955,7 +3017,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                         .bodyMediumIsCustom,
                                                               ),
                                                         ),
-                                                        Icon(
+                                                        const Icon(
                                                           Icons
                                                               .calendar_month_rounded,
                                                           color:
@@ -2967,7 +3029,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                       ),
@@ -2979,39 +3042,40 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                               .secondaryBackground,
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, 0.0),
                                                 child: Text(
                                                   'Inseminador',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                               ),
-                                              Container(
+                                              SizedBox(
                                                 width: double.infinity,
                                                 child: TextFormField(
                                                   controller: _model
@@ -3063,7 +3127,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                             ),
                                                     enabledBorder:
                                                         OutlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00000000),
                                                         width: 1.0,
@@ -3074,7 +3139,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                     ),
                                                     focusedBorder:
                                                         OutlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00000000),
                                                         width: 1.0,
@@ -3146,7 +3212,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                       .asValidator(context),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                       ),
@@ -3157,8 +3224,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            24.0, 0.0, 24.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
@@ -3172,7 +3239,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                     children: [
                                                       Align(
                                                         alignment:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                 -1.0, 0.0),
                                                         child: Text(
                                                           'Status*',
@@ -3183,7 +3250,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                 fontFamily: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF474747),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
@@ -3210,7 +3277,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                   ?.firstOrNull
                                                                   ?.statusReproducao,
                                                         ),
-                                                        options: [
+                                                        options: const [
                                                           'Não diagnosticado',
                                                           'Absorção',
                                                           'Aborto',
@@ -3266,19 +3333,16 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                         borderWidth: 0.0,
                                                         borderRadius: 8.0,
                                                         margin:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    12.0,
-                                                                    0.0,
-                                                                    12.0,
-                                                                    0.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(12.0,
+                                                                0.0, 12.0, 0.0),
                                                         hidesUnderline: true,
                                                         isOverButton: false,
                                                         isSearchable: false,
                                                         isMultiSelect: false,
                                                       ),
-                                                    ].divide(
-                                                        SizedBox(height: 8.0)),
+                                                    ].divide(const SizedBox(
+                                                        height: 8.0)),
                                                   ),
                                                 ),
                                                 if (_model.dropdownStatusValue !=
@@ -3327,7 +3391,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                           highlightColor: Colors
                                                               .transparent,
                                                           onTap: () async {
-                                                            final _datePicked6Date =
+                                                            final datePicked6Date =
                                                                 await showDatePicker(
                                                               context: context,
                                                               initialDate:
@@ -3392,16 +3456,16 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                               },
                                                             );
 
-                                                            if (_datePicked6Date !=
+                                                            if (datePicked6Date !=
                                                                 null) {
                                                               safeSetState(() {
                                                                 _model.datePicked6 =
                                                                     DateTime(
-                                                                  _datePicked6Date
+                                                                  datePicked6Date
                                                                       .year,
-                                                                  _datePicked6Date
+                                                                  datePicked6Date
                                                                       .month,
-                                                                  _datePicked6Date
+                                                                  datePicked6Date
                                                                       .day,
                                                                 );
                                                               });
@@ -3420,10 +3484,10 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                             height: 56.0,
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: Color(
+                                                              color: const Color(
                                                                   0xFFF1F1F1),
                                                               borderRadius:
-                                                                  BorderRadius
+                                                                  const BorderRadius
                                                                       .only(
                                                                 bottomLeft: Radius
                                                                     .circular(
@@ -3440,18 +3504,18 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                               ),
                                                               border:
                                                                   Border.all(
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0x001E7A4C),
                                                               ),
                                                             ),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
-                                                                          8.0,
-                                                                          0.0,
-                                                                          8.0,
-                                                                          0.0),
+                                                                      8.0,
+                                                                      0.0,
+                                                                      8.0,
+                                                                      0.0),
                                                               child: Row(
                                                                 mainAxisSize:
                                                                     MainAxisSize
@@ -3488,8 +3552,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                               valueOrDefault<Color>(
                                                                             _model.datePicked6 != null
                                                                                 ? FlutterFlowTheme.of(context).secondaryText
-                                                                                : Color(0xFFBEBEBE),
-                                                                            Color(0xFFBEBEBE),
+                                                                                : const Color(0xFFBEBEBE),
+                                                                            const Color(0xFFBEBEBE),
                                                                           ),
                                                                           fontSize:
                                                                               16.0,
@@ -3501,7 +3565,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                               !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                         ),
                                                                   ),
-                                                                  Icon(
+                                                                  const Icon(
                                                                     Icons
                                                                         .calendar_month_rounded,
                                                                     color: Color(
@@ -3513,57 +3577,68 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                             ),
                                                           ),
                                                         ),
-                                                      ].divide(SizedBox(
+                                                      ].divide(const SizedBox(
                                                           height: 8.0)),
                                                     ),
                                                   ),
-                                              ].divide(SizedBox(height: 24.0)),
+                                              ].divide(
+                                                  const SizedBox(height: 24.0)),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 0.0, 24.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              24.0, 0.0, 24.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Theme(
                                             data: ThemeData(
                                               checkboxTheme: CheckboxThemeData(
-                                                visualDensity: VisualDensity.compact,
+                                                visualDensity:
+                                                    VisualDensity.compact,
                                                 materialTapTargetSize:
-                                                    MaterialTapTargetSize.shrinkWrap,
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(4.0),
+                                                      BorderRadius.circular(
+                                                          4.0),
                                                 ),
                                               ),
                                               unselectedWidgetColor:
-                                                  FlutterFlowTheme.of(context).accent4,
+                                                  FlutterFlowTheme.of(context)
+                                                      .accent4,
                                             ),
                                             child: Checkbox(
-                                              value: _model.checkboxParidaValue ??=
-                                                  _model.parida,
+                                              value:
+                                                  _model.checkboxParidaValue ??=
+                                                      _model.parida,
                                               onChanged: (newValue) async {
-                                                safeSetState(() => _model
-                                                    .checkboxParidaValue = newValue!);
+                                                safeSetState(() =>
+                                                    _model.checkboxParidaValue =
+                                                        newValue!);
                                               },
-                                              side: (FlutterFlowTheme.of(context)
-                                                          .accent4 !=
-                                                      null)
-                                                  ? BorderSide(
-                                                      width: 2,
-                                                      color:
-                                                          FlutterFlowTheme.of(context)
-                                                              .accent4!,
-                                                    )
-                                                  : null,
+                                              side:
+                                                  (FlutterFlowTheme.of(context)
+                                                              .accent4 !=
+                                                          null)
+                                                      ? BorderSide(
+                                                          width: 2,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .accent4,
+                                                        )
+                                                      : null,
                                               activeColor:
-                                                  FlutterFlowTheme.of(context).primary,
+                                                  FlutterFlowTheme.of(context)
+                                                      .primary,
                                               checkColor:
-                                                  FlutterFlowTheme.of(context).info,
+                                                  FlutterFlowTheme.of(context)
+                                                      .info,
                                             ),
                                           ),
                                           Text(
@@ -3572,25 +3647,29 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 .bodyMedium
                                                 .override(
                                                   fontFamily:
-                                                      FlutterFlowTheme.of(context)
+                                                      FlutterFlowTheme.of(
+                                                              context)
                                                           .bodyMediumFamily,
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w500,
                                                   useGoogleFonts:
-                                                      !FlutterFlowTheme.of(context)
+                                                      !FlutterFlowTheme.of(
+                                                              context)
                                                           .bodyMediumIsCustom,
                                                 ),
                                           ),
-                                        ].divide(SizedBox(width: 8.0)),
+                                        ].divide(const SizedBox(width: 8.0)),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 0.0, 24.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              24.0, 0.0, 24.0, 0.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             'Data de parto',
@@ -3598,15 +3677,18 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 .bodyMedium
                                                 .override(
                                                   fontFamily:
-                                                      FlutterFlowTheme.of(context)
+                                                      FlutterFlowTheme.of(
+                                                              context)
                                                           .bodyMediumFamily,
-                                                  color: FlutterFlowTheme.of(context)
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
                                                       .primaryText,
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w600,
                                                   useGoogleFonts:
-                                                      !FlutterFlowTheme.of(context)
+                                                      !FlutterFlowTheme.of(
+                                                              context)
                                                           .bodyMediumIsCustom,
                                                 ),
                                           ),
@@ -3616,10 +3698,11 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             hoverColor: Colors.transparent,
                                             highlightColor: Colors.transparent,
                                             onTap: () async {
-                                              final _datePicked7Date =
+                                              final datePicked7Date =
                                                   await showDatePicker(
                                                 context: context,
-                                                initialDate: getCurrentTimestamp,
+                                                initialDate:
+                                                    getCurrentTimestamp,
                                                 firstDate: DateTime(1900),
                                                 lastDate: DateTime(2050),
                                                 builder: (context, child) {
@@ -3627,13 +3710,16 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                     context,
                                                     child!,
                                                     headerBackgroundColor:
-                                                        FlutterFlowTheme.of(context)
+                                                        FlutterFlowTheme.of(
+                                                                context)
                                                             .primary,
                                                     headerForegroundColor:
-                                                        FlutterFlowTheme.of(context)
+                                                        FlutterFlowTheme.of(
+                                                                context)
                                                             .info,
                                                     headerTextStyle:
-                                                        FlutterFlowTheme.of(context)
+                                                        FlutterFlowTheme.of(
+                                                                context)
                                                             .headlineLarge
                                                             .override(
                                                               fontFamily:
@@ -3641,43 +3727,51 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                           context)
                                                                       .headlineLargeFamily,
                                                               fontSize: 32.0,
-                                                              letterSpacing: 0.0,
+                                                              letterSpacing:
+                                                                  0.0,
                                                               fontWeight:
-                                                                  FontWeight.w600,
+                                                                  FontWeight
+                                                                      .w600,
                                                               useGoogleFonts:
                                                                   !FlutterFlowTheme.of(
                                                                           context)
                                                                       .headlineLargeIsCustom,
                                                             ),
                                                     pickerBackgroundColor:
-                                                        FlutterFlowTheme.of(context)
+                                                        FlutterFlowTheme.of(
+                                                                context)
                                                             .secondaryBackground,
                                                     pickerForegroundColor:
-                                                        FlutterFlowTheme.of(context)
+                                                        FlutterFlowTheme.of(
+                                                                context)
                                                             .primaryText,
                                                     selectedDateTimeBackgroundColor:
-                                                        FlutterFlowTheme.of(context)
+                                                        FlutterFlowTheme.of(
+                                                                context)
                                                             .primary,
                                                     selectedDateTimeForegroundColor:
-                                                        FlutterFlowTheme.of(context)
+                                                        FlutterFlowTheme.of(
+                                                                context)
                                                             .info,
                                                     actionButtonForegroundColor:
-                                                        FlutterFlowTheme.of(context)
+                                                        FlutterFlowTheme.of(
+                                                                context)
                                                             .primaryText,
                                                     iconSize: 24.0,
                                                   );
                                                 },
                                               );
 
-                                              if (_datePicked7Date != null) {
+                                              if (datePicked7Date != null) {
                                                 safeSetState(() {
                                                   _model.datePicked7 = DateTime(
-                                                    _datePicked7Date.year,
-                                                    _datePicked7Date.month,
-                                                    _datePicked7Date.day,
+                                                    datePicked7Date.year,
+                                                    datePicked7Date.month,
+                                                    datePicked7Date.day,
                                                   );
                                                 });
-                                              } else if (_model.datePicked7 != null) {
+                                              } else if (_model.datePicked7 !=
+                                                  null) {
                                                 safeSetState(() {
                                                   _model.datePicked7 =
                                                       getCurrentTimestamp;
@@ -3688,127 +3782,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                               width: double.infinity,
                                               height: 56.0,
                                               decoration: BoxDecoration(
-                                                color: Color(0xFFF1F1F1),
-                                                borderRadius: BorderRadius.only(
-                                                  bottomLeft: Radius.circular(6.0),
-                                                  bottomRight: Radius.circular(6.0),
-                                                  topLeft: Radius.circular(6.0),
-                                                  topRight: Radius.circular(6.0),
-                                                ),
-                                                border: Border.all(
-                                                  color: Color(0x001E7A4C),
-                                                ),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsetsDirectional.fromSTEB(
-                                                    8.0, 0.0, 8.0, 0.0),
-                                                child: Row(
-                                                  mainAxisSize: MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      _model.datePicked7 != null
-                                                          ? valueOrDefault<String>(
-                                                              dateTimeFormat(
-                                                                "d/M/y",
-                                                                _model.datePicked7,
-                                                                locale:
-                                                                    FFLocalizations.of(
-                                                                            context)
-                                                                        .languageCode,
-                                                              ),
-                                                              'Data',
-                                                            )
-                                                          : dateTimeFormat(
-                                                              "d/M/y",
-                                                              functions
-                                                                  .converterParaData(
-                                                                      _model
-                                                                          .editReproducao
-                                                                          ?.firstOrNull
-                                                                          ?.dataParto),
-                                                              locale:
-                                                                  FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                            ),
-                                                      style: FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMedium
-                                                          .override(
-                                                            fontFamily:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumFamily,
-                                                            color: FlutterFlowTheme.of(
-                                                                    context)
-                                                                .secondaryText,
-                                                            fontSize: 16.0,
-                                                            letterSpacing: 0.0,
-                                                            fontWeight: FontWeight.w600,
-                                                            useGoogleFonts:
-                                                                !FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumIsCustom,
-                                                          ),
-                                                    ),
-                                                    Icon(
-                                                      Icons.calendar_month_rounded,
-                                                      color: Color(0xFF181818),
-                                                      size: 24.0,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ].divide(SizedBox(height: 8.0)),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            24.0, 0.0, 24.0, 0.0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Align(
-                                              alignment: AlignmentDirectional(
-                                                  -1.0, 0.0),
-                                              child: Text(
-                                                'Anotações',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
-                                              ),
-                                            ),
-                                            Container(
-                                              width: double.infinity,
-                                              height: 104.0,
-                                              decoration: BoxDecoration(
-                                                color: Color(0xFFF1F1F1),
-                                                borderRadius: BorderRadius.only(
+                                                color: const Color(0xFFF1F1F1),
+                                                borderRadius:
+                                                    const BorderRadius.only(
                                                   bottomLeft:
                                                       Radius.circular(6.0),
                                                   bottomRight:
@@ -3818,12 +3794,144 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                       Radius.circular(6.0),
                                                 ),
                                                 border: Border.all(
-                                                  color: Color(0x001E7A4C),
+                                                  color:
+                                                      const Color(0x001E7A4C),
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
+                                                        8.0, 0.0, 8.0, 0.0),
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      _model.datePicked7 != null
+                                                          ? valueOrDefault<
+                                                              String>(
+                                                              dateTimeFormat(
+                                                                "d/M/y",
+                                                                _model
+                                                                    .datePicked7,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              ),
+                                                              'Data',
+                                                            )
+                                                          : dateTimeFormat(
+                                                              "d/M/y",
+                                                              functions.converterParaData(_model
+                                                                  .editReproducao
+                                                                  ?.firstOrNull
+                                                                  ?.dataParto),
+                                                              locale: FFLocalizations
+                                                                      .of(context)
+                                                                  .languageCode,
+                                                            ),
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondaryText,
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
+                                                    ),
+                                                    const Icon(
+                                                      Icons
+                                                          .calendar_month_rounded,
+                                                      color: Color(0xFF181818),
+                                                      size: 24.0,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ].divide(const SizedBox(height: 8.0)),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(24.0, 0.0, 24.0, 0.0),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Align(
+                                              alignment:
+                                                  const AlignmentDirectional(
+                                                      -1.0, 0.0),
+                                              child: Text(
+                                                'Anotações',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFF474747),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: double.infinity,
+                                              height: 104.0,
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFF1F1F1),
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  bottomLeft:
+                                                      Radius.circular(6.0),
+                                                  bottomRight:
+                                                      Radius.circular(6.0),
+                                                  topLeft: Radius.circular(6.0),
+                                                  topRight:
+                                                      Radius.circular(6.0),
+                                                ),
+                                                border: Border.all(
+                                                  color:
+                                                      const Color(0x001E7A4C),
+                                                ),
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         8.0, 0.0, 8.0, 0.0),
                                                 child: TextFormField(
                                                   controller: _model
@@ -3873,7 +3981,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                             ),
                                                     enabledBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00E0E3E7),
                                                         width: 2.0,
@@ -3884,7 +3993,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                     ),
                                                     focusedBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x0028A365),
                                                         width: 2.0,
@@ -3947,13 +4057,14 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 0.0, 0.0, 24.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 0.0, 0.0, 24.0),
                                       child: Container(
                                         width: double.infinity,
                                         height: 56.0,
@@ -3962,9 +4073,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                               .secondaryBackground,
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
@@ -3980,14 +4090,15 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                     width: 156.0,
                                                     height: 56.0,
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(24.0, 0.0,
-                                                                24.0, 0.0),
+                                                            24.0, 0.0),
                                                     iconPadding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(0.0, 0.0,
-                                                                0.0, 0.0),
-                                                    color: Color(0x004B39EF),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            0.0, 0.0, 0.0, 0.0),
+                                                    color:
+                                                        const Color(0x004B39EF),
                                                     textStyle: FlutterFlowTheme
                                                             .of(context)
                                                         .titleSmall
@@ -3996,8 +4107,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .titleSmallFamily,
-                                                          color:
-                                                              Color(0xFF1E7A4C),
+                                                          color: const Color(
+                                                              0xFF1E7A4C),
                                                           fontSize: 18.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -4008,7 +4119,8 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                                   .titleSmallIsCustom,
                                                         ),
                                                     elevation: 0.0,
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Color(0xFF1E7A4C),
                                                       width: 2.0,
                                                     ),
@@ -4018,12 +4130,13 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(width: 16.0)),
+                                            ].divide(
+                                                const SizedBox(width: 16.0)),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 24.0)),
+                                  ].divide(const SizedBox(height: 24.0)),
                                 ),
                               ),
                             ),

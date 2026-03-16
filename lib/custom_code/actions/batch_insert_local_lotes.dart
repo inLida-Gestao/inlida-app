@@ -27,36 +27,50 @@ Future<bool> batchInsertLocalLotes(List<dynamic> records) async {
         final Map<String, dynamic> source = Map<String, dynamic>.from(record);
         final Map<String, dynamic> mapped = {};
 
-        if (source['id_propriedade'] != null)
+        if (source['id_propriedade'] != null) {
           mapped['id_propriedade'] = _cleanNull(source['id_propriedade']);
-        if (source['id_animais'] != null)
+        }
+        if (source['id_animais'] != null) {
           mapped['id_animais'] = _cleanNull(source['id_animais']);
-        if (source['nome'] != null)
+        }
+        if (source['nome'] != null) {
           mapped['nome'] = _cleanNull(source['nome']);
-        if (source['anotacoes'] != null)
+        }
+        if (source['anotacoes'] != null) {
           mapped['anotacoes'] = _cleanNull(source['anotacoes']);
-        if (source['ativo'] != null)
+        }
+        if (source['ativo'] != null) {
           mapped['ativo'] = _cleanNull(source['ativo']);
-        if (source['motivo'] != null)
+        }
+        if (source['motivo'] != null) {
           mapped['motivo'] = _cleanNull(source['motivo']);
-        if (source['data_motivo'] != null)
+        }
+        if (source['data_motivo'] != null) {
           mapped['data_motivo'] = _cleanNull(source['data_motivo'].toString());
-        if (source['id_lote'] != null)
+        }
+        if (source['id_lote'] != null) {
           mapped['id_lote'] = _cleanNull(source['id_lote']);
-        if (source['deletado'] != null)
+        }
+        if (source['deletado'] != null) {
           mapped['deletado'] = _cleanNull(source['deletado']);
-        if (source['created_at'] != null)
+        }
+        if (source['created_at'] != null) {
           mapped['created_at'] = _cleanNull(source['created_at'].toString());
-        if (source['updated_at'] != null)
+        }
+        if (source['updated_at'] != null) {
           mapped['updated_at'] = _cleanNull(source['updated_at'].toString());
-        if (source['valorVenda'] != null)
+        }
+        if (source['valorVenda'] != null) {
           mapped['valorVenda'] = source['valorVenda'];
-        if (source['data_entrada_piquete'] != null)
+        }
+        if (source['data_entrada_piquete'] != null) {
           mapped['data_entrada_piquete'] =
               _cleanNull(source['data_entrada_piquete'].toString());
-        if (source['data_saida_piquete'] != null)
+        }
+        if (source['data_saida_piquete'] != null) {
           mapped['data_saida_piquete'] =
               _cleanNull(source['data_saida_piquete'].toString());
+        }
 
         batch.insert('local_lotes', mapped,
             conflictAlgorithm: ConflictAlgorithm.replace);

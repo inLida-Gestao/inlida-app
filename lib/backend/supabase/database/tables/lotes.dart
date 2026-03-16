@@ -9,7 +9,7 @@ class LotesTable extends SupabaseTable<LotesRow> {
 }
 
 class LotesRow extends SupabaseDataRow {
-  LotesRow(Map<String, dynamic> data) : super(data);
+  LotesRow(super.data);
 
   @override
   SupabaseTable get table => LotesTable();

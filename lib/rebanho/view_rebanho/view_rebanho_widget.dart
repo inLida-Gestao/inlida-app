@@ -145,7 +145,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
 
     return FutureBuilder<List<BuscarRebanhoRow>>(
       future: SQLiteManager.instance.buscarRebanho(
-        idRebanho: widget!.idRebanho,
+        idRebanho: widget.idRebanho,
       ),
       builder: (context, snapshot) {
         // Customize what your widget looks like when it's loading.
@@ -171,13 +171,14 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
             color: FlutterFlowTheme.of(context).secondaryBackground,
           ),
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      24.0, 0.0, 24.0, 0.0),
                   child: InkWell(
                     splashColor: Colors.transparent,
                     focusColor: Colors.transparent,
@@ -208,11 +209,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                     .bodyMediumIsCustom,
                               ),
                         ),
-                      ].divide(SizedBox(width: 16.0)),
+                      ].divide(const SizedBox(width: 16.0)),
                     ),
                   ),
                 ),
-                Divider(
+                const Divider(
                   thickness: 1.0,
                   color: Color(0xFFEDEDED),
                 ),
@@ -222,8 +223,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                     color: FlutterFlowTheme.of(context).secondaryBackground,
                   ),
                   child: Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 0.0, 24.0, 0.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,7 +242,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                               .override(
                                 fontFamily: FlutterFlowTheme.of(context)
                                     .bodyMediumFamily,
-                                color: Color(0xFF8E8E8E),
+                                color: const Color(0xFF8E8E8E),
                                 fontSize: 16.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w500,
@@ -251,7 +252,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                         ),
                         Container(
                           width: double.infinity,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Color(0x00F1F1F1),
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(6.0),
@@ -336,7 +337,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                         ),
                                   ),
                                 ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                       ],
@@ -353,7 +354,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                     child: Column(
                       children: [
                         Align(
-                          alignment: Alignment(0.0, 0),
+                          alignment: const Alignment(0.0, 0),
                           child: TabBar(
                             isScrollable: true,
                             labelColor: FlutterFlowTheme.of(context).secondary,
@@ -381,7 +382,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                 ),
                             indicatorColor:
                                 FlutterFlowTheme.of(context).primary,
-                            tabs: [
+                            tabs: const [
                               Tab(
                                 text: 'Informações',
                               ),
@@ -425,8 +426,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            24.0, 16.0, 24.0, 40.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(24.0, 16.0, 24.0, 40.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           crossAxisAlignment:
@@ -467,7 +468,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                   .bodyMediumIsCustom,
                                                         ),
                                                   ),
-                                                  Container(
+                                                  SizedBox(
                                                     width: double.infinity,
                                                     child: TextFormField(
                                                       controller: _model
@@ -498,7 +499,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFFBEBEBE),
                                                                   fontSize:
                                                                       16.0,
@@ -515,7 +516,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         enabledBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x00E0E3E7),
                                                             width: 2.0,
@@ -528,7 +529,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         focusedBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x004B39EF),
                                                             width: 2.0,
@@ -567,8 +568,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                       8.0),
                                                         ),
                                                         filled: true,
-                                                        fillColor:
-                                                            Color(0xFFF1F1F1),
+                                                        fillColor: const Color(
+                                                            0xFFF1F1F1),
                                                       ),
                                                       style: FlutterFlowTheme
                                                               .of(context)
@@ -592,7 +593,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           .asValidator(context),
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(height: 8.0)),
+                                                ].divide(const SizedBox(
+                                                    height: 8.0)),
                                               ),
                                             ),
                                             Container(
@@ -637,7 +639,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               .of(context)
                                                           .secondaryBackground,
                                                     ),
-                                                    child: Container(
+                                                    child: SizedBox(
                                                       width: double.infinity,
                                                       child: TextFormField(
                                                         controller: _model
@@ -677,7 +679,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                     fontFamily:
                                                                         FlutterFlowTheme.of(context)
                                                                             .bodyMediumFamily,
-                                                                    color: Color(
+                                                                    color: const Color(
                                                                         0xFFBEBEBE),
                                                                     fontSize:
                                                                         16.0,
@@ -693,7 +695,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           enabledBorder:
                                                               UnderlineInputBorder(
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Color(
                                                                   0x00E0E3E7),
                                                               width: 2.0,
@@ -706,7 +708,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           focusedBorder:
                                                               UnderlineInputBorder(
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Color(
                                                                   0x004B39EF),
                                                               width: 2.0,
@@ -746,7 +748,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           ),
                                                           filled: true,
                                                           fillColor:
-                                                              Color(0xFFF1F1F1),
+                                                              const Color(
+                                                                  0xFFF1F1F1),
                                                         ),
                                                         style: FlutterFlowTheme
                                                                 .of(context)
@@ -774,7 +777,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                       ),
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(height: 8.0)),
+                                                ].divide(const SizedBox(
+                                                    height: 8.0)),
                                               ),
                                             ),
                                             Container(
@@ -812,7 +816,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                   .bodyMediumIsCustom,
                                                         ),
                                                   ),
-                                                  Container(
+                                                  SizedBox(
                                                     width: double.infinity,
                                                     child: TextFormField(
                                                       controller: _model
@@ -856,7 +860,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFFBEBEBE),
                                                                   fontSize:
                                                                       16.0,
@@ -873,7 +877,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         enabledBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x00E0E3E7),
                                                             width: 2.0,
@@ -886,7 +890,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         focusedBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x004B39EF),
                                                             width: 2.0,
@@ -925,8 +929,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                       8.0),
                                                         ),
                                                         filled: true,
-                                                        fillColor:
-                                                            Color(0xFFF1F1F1),
+                                                        fillColor: const Color(
+                                                            0xFFF1F1F1),
                                                       ),
                                                       style: FlutterFlowTheme
                                                               .of(context)
@@ -950,7 +954,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           .asValidator(context),
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(height: 8.0)),
+                                                ].divide(const SizedBox(
+                                                    height: 8.0)),
                                               ),
                                             ),
                                             Container(
@@ -988,7 +993,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                   .bodyMediumIsCustom,
                                                         ),
                                                   ),
-                                                  Container(
+                                                  SizedBox(
                                                     width: double.infinity,
                                                     child: TextFormField(
                                                       controller: _model
@@ -1032,7 +1037,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFFBEBEBE),
                                                                   fontSize:
                                                                       16.0,
@@ -1049,7 +1054,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         enabledBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x00E0E3E7),
                                                             width: 2.0,
@@ -1062,7 +1067,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         focusedBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x004B39EF),
                                                             width: 2.0,
@@ -1101,8 +1106,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                       8.0),
                                                         ),
                                                         filled: true,
-                                                        fillColor:
-                                                            Color(0xFFF1F1F1),
+                                                        fillColor: const Color(
+                                                            0xFFF1F1F1),
                                                       ),
                                                       style: FlutterFlowTheme
                                                               .of(context)
@@ -1126,7 +1131,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           .asValidator(context),
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(height: 8.0)),
+                                                ].divide(const SizedBox(
+                                                    height: 8.0)),
                                               ),
                                             ),
                                             Container(
@@ -1167,7 +1173,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                   Container(
                                                     width: double.infinity,
                                                     height: 56.0,
-                                                    decoration: BoxDecoration(
+                                                    decoration:
+                                                        const BoxDecoration(
                                                       color: Color(0xFFF1F1F1),
                                                       borderRadius:
                                                           BorderRadius.only(
@@ -1187,12 +1194,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  8.0,
-                                                                  0.0,
-                                                                  8.0,
-                                                                  0.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(8.0,
+                                                              0.0, 8.0, 0.0),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
@@ -1234,7 +1238,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               ),
                                                             ),
                                                           Expanded(
-                                                            child: Container(
+                                                            child: SizedBox(
                                                               width: double
                                                                   .infinity,
                                                               child:
@@ -1262,7 +1266,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                       .override(
                                                                         fontFamily:
                                                                             FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                        color: Color(
+                                                                        color: const Color(
                                                                             0xFFBEBEBE),
                                                                         fontSize:
                                                                             16.0,
@@ -1276,7 +1280,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                   enabledBorder:
                                                                       UnderlineInputBorder(
                                                                     borderSide:
-                                                                        BorderSide(
+                                                                        const BorderSide(
                                                                       color: Color(
                                                                           0x00E0E3E7),
                                                                       width:
@@ -1289,7 +1293,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                   focusedBorder:
                                                                       UnderlineInputBorder(
                                                                     borderSide:
-                                                                        BorderSide(
+                                                                        const BorderSide(
                                                                       color: Color(
                                                                           0x004B39EF),
                                                                       width:
@@ -1353,12 +1357,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               ),
                                                             ),
                                                           ),
-                                                        ].divide(SizedBox(
+                                                        ].divide(const SizedBox(
                                                             width: 8.0)),
                                                       ),
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(height: 8.0)),
+                                                ].divide(const SizedBox(
+                                                    height: 8.0)),
                                               ),
                                             ),
                                             Container(
@@ -1419,7 +1424,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 double.infinity,
                                                             height: 56.0,
                                                             decoration:
-                                                                BoxDecoration(
+                                                                const BoxDecoration(
                                                               color: Color(
                                                                   0xFFF1F1F1),
                                                               borderRadius:
@@ -1447,14 +1452,14 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 Expanded(
                                                                   child:
                                                                       Padding(
-                                                                    padding: EdgeInsetsDirectional
+                                                                    padding: const EdgeInsetsDirectional
                                                                         .fromSTEB(
-                                                                            8.0,
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0),
+                                                                        8.0,
+                                                                        0.0,
+                                                                        0.0,
+                                                                        0.0),
                                                                     child:
-                                                                        Container(
+                                                                        SizedBox(
                                                                       width: double
                                                                           .infinity,
                                                                       child:
@@ -1484,7 +1489,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               .bodyMedium
                                                                               .override(
                                                                                 fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                color: Color(0xFFBEBEBE),
+                                                                                color: const Color(0xFFBEBEBE),
                                                                                 fontSize: 16.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.w600,
@@ -1493,7 +1498,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           enabledBorder:
                                                                               UnderlineInputBorder(
                                                                             borderSide:
-                                                                                BorderSide(
+                                                                                const BorderSide(
                                                                               color: Color(0x00E0E3E7),
                                                                               width: 2.0,
                                                                             ),
@@ -1503,7 +1508,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           focusedBorder:
                                                                               UnderlineInputBorder(
                                                                             borderSide:
-                                                                                BorderSide(
+                                                                                const BorderSide(
                                                                               color: Color(0x004B39EF),
                                                                               width: 2.0,
                                                                             ),
@@ -1550,7 +1555,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               ],
                                                             ),
                                                           ),
-                                                        ].divide(SizedBox(
+                                                        ].divide(const SizedBox(
                                                             height: 8.0)),
                                                       ),
                                                     ),
@@ -1600,7 +1605,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 double.infinity,
                                                             height: 56.0,
                                                             decoration:
-                                                                BoxDecoration(
+                                                                const BoxDecoration(
                                                               color: Color(
                                                                   0xFFF1F1F1),
                                                               borderRadius:
@@ -1622,13 +1627,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                             ),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
-                                                                          8.0,
-                                                                          0.0,
-                                                                          0.0,
-                                                                          0.0),
-                                                              child: Container(
+                                                                      8.0,
+                                                                      0.0,
+                                                                      0.0,
+                                                                      0.0),
+                                                              child: SizedBox(
                                                                 width: double
                                                                     .infinity,
                                                                 child:
@@ -1663,7 +1668,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           fontFamily:
                                                                               FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                           color:
-                                                                              Color(0xFFBEBEBE),
+                                                                              const Color(0xFFBEBEBE),
                                                                           fontSize:
                                                                               16.0,
                                                                           letterSpacing:
@@ -1676,7 +1681,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                     enabledBorder:
                                                                         UnderlineInputBorder(
                                                                       borderSide:
-                                                                          BorderSide(
+                                                                          const BorderSide(
                                                                         color: Color(
                                                                             0x00E0E3E7),
                                                                         width:
@@ -1689,7 +1694,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                     focusedBorder:
                                                                         UnderlineInputBorder(
                                                                       borderSide:
-                                                                          BorderSide(
+                                                                          const BorderSide(
                                                                         color: Color(
                                                                             0x004B39EF),
                                                                         width:
@@ -1749,12 +1754,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               ),
                                                             ),
                                                           ),
-                                                        ].divide(SizedBox(
+                                                        ].divide(const SizedBox(
                                                             height: 8.0)),
                                                       ),
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(width: 24.0)),
+                                                ].divide(const SizedBox(
+                                                    width: 24.0)),
                                               ),
                                             ),
                                             Container(
@@ -1815,7 +1821,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 double.infinity,
                                                             height: 56.0,
                                                             decoration:
-                                                                BoxDecoration(
+                                                                const BoxDecoration(
                                                               color: Color(
                                                                   0xFFF1F1F1),
                                                               borderRadius:
@@ -1843,14 +1849,14 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 Expanded(
                                                                   child:
                                                                       Padding(
-                                                                    padding: EdgeInsetsDirectional
+                                                                    padding: const EdgeInsetsDirectional
                                                                         .fromSTEB(
-                                                                            8.0,
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0),
+                                                                        8.0,
+                                                                        0.0,
+                                                                        0.0,
+                                                                        0.0),
                                                                     child:
-                                                                        Container(
+                                                                        SizedBox(
                                                                       width: double
                                                                           .infinity,
                                                                       child:
@@ -1884,7 +1890,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               .bodyMedium
                                                                               .override(
                                                                                 fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                color: Color(0xFFBEBEBE),
+                                                                                color: const Color(0xFFBEBEBE),
                                                                                 fontSize: 16.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.w600,
@@ -1893,7 +1899,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           enabledBorder:
                                                                               UnderlineInputBorder(
                                                                             borderSide:
-                                                                                BorderSide(
+                                                                                const BorderSide(
                                                                               color: Color(0x00E0E3E7),
                                                                               width: 2.0,
                                                                             ),
@@ -1903,7 +1909,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           focusedBorder:
                                                                               UnderlineInputBorder(
                                                                             borderSide:
-                                                                                BorderSide(
+                                                                                const BorderSide(
                                                                               color: Color(0x004B39EF),
                                                                               width: 2.0,
                                                                             ),
@@ -1950,7 +1956,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               ],
                                                             ),
                                                           ),
-                                                        ].divide(SizedBox(
+                                                        ].divide(const SizedBox(
                                                             height: 8.0)),
                                                       ),
                                                     ),
@@ -2000,7 +2006,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 double.infinity,
                                                             height: 56.0,
                                                             decoration:
-                                                                BoxDecoration(
+                                                                const BoxDecoration(
                                                               color: Color(
                                                                   0xFFF1F1F1),
                                                               borderRadius:
@@ -2028,14 +2034,14 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 Expanded(
                                                                   child:
                                                                       Padding(
-                                                                    padding: EdgeInsetsDirectional
+                                                                    padding: const EdgeInsetsDirectional
                                                                         .fromSTEB(
-                                                                            8.0,
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0),
+                                                                        8.0,
+                                                                        0.0,
+                                                                        0.0,
+                                                                        0.0),
                                                                     child:
-                                                                        Container(
+                                                                        SizedBox(
                                                                       width: double
                                                                           .infinity,
                                                                       child:
@@ -2065,7 +2071,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               .bodyMedium
                                                                               .override(
                                                                                 fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                color: Color(0xFFBEBEBE),
+                                                                                color: const Color(0xFFBEBEBE),
                                                                                 fontSize: 16.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.w600,
@@ -2074,7 +2080,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           enabledBorder:
                                                                               UnderlineInputBorder(
                                                                             borderSide:
-                                                                                BorderSide(
+                                                                                const BorderSide(
                                                                               color: Color(0x00E0E3E7),
                                                                               width: 2.0,
                                                                             ),
@@ -2084,7 +2090,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           focusedBorder:
                                                                               UnderlineInputBorder(
                                                                             borderSide:
-                                                                                BorderSide(
+                                                                                const BorderSide(
                                                                               color: Color(0x004B39EF),
                                                                               width: 2.0,
                                                                             ),
@@ -2131,12 +2137,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               ],
                                                             ),
                                                           ),
-                                                        ].divide(SizedBox(
+                                                        ].divide(const SizedBox(
                                                             height: 8.0)),
                                                       ),
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(width: 24.0)),
+                                                ].divide(const SizedBox(
+                                                    width: 24.0)),
                                               ),
                                             ),
                                             Container(
@@ -2179,7 +2186,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         MainAxisSize.max,
                                                     children: [
                                                       Expanded(
-                                                        child: Container(
+                                                        child: SizedBox(
                                                           width:
                                                               double.infinity,
                                                           child: TextFormField(
@@ -2223,7 +2230,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                       .override(
                                                                         fontFamily:
                                                                             FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                        color: Color(
+                                                                        color: const Color(
                                                                             0xFFBEBEBE),
                                                                         fontSize:
                                                                             16.0,
@@ -2237,7 +2244,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               enabledBorder:
                                                                   UnderlineInputBorder(
                                                                 borderSide:
-                                                                    BorderSide(
+                                                                    const BorderSide(
                                                                   color: Color(
                                                                       0x00E0E3E7),
                                                                   width: 2.0,
@@ -2250,7 +2257,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               focusedBorder:
                                                                   UnderlineInputBorder(
                                                                 borderSide:
-                                                                    BorderSide(
+                                                                    const BorderSide(
                                                                   color: Color(
                                                                       0x004B39EF),
                                                                   width: 2.0,
@@ -2289,8 +2296,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             8.0),
                                                               ),
                                                               filled: true,
-                                                              fillColor: Color(
-                                                                  0xFFF1F1F1),
+                                                              fillColor:
+                                                                  const Color(
+                                                                      0xFFF1F1F1),
                                                             ),
                                                             style: FlutterFlowTheme
                                                                     .of(context)
@@ -2320,7 +2328,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                       ),
                                                     ],
                                                   ),
-                                                ].divide(SizedBox(height: 8.0)),
+                                                ].divide(const SizedBox(
+                                                    height: 8.0)),
                                               ),
                                             ),
                                             Container(
@@ -2359,7 +2368,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         ),
                                                   ),
                                                   Container(
-                                                    child: Container(
+                                                    child: SizedBox(
                                                       width: double.infinity,
                                                       child: TextFormField(
                                                         controller: _model
@@ -2367,21 +2376,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                             TextEditingController(
                                                           text: () {
                                                             if (valueOrDefault<
-                                                                        String>(
-                                                                      containerBuscarRebanhoRowList
-                                                                          .firstOrNull
-                                                                          ?.raca,
-                                                                      'N/A',
-                                                                    ) ==
-                                                                    null ||
-                                                                valueOrDefault<
-                                                                        String>(
-                                                                      containerBuscarRebanhoRowList
-                                                                          .firstOrNull
-                                                                          ?.raca,
-                                                                      'N/A',
-                                                                    ) ==
-                                                                    '') {
+                                                                    String>(
+                                                                  containerBuscarRebanhoRowList
+                                                                      .firstOrNull
+                                                                      ?.raca,
+                                                                  'N/A',
+                                                                ) ==
+                                                                '') {
                                                               return 'N/A';
                                                             } else if (valueOrDefault<
                                                                     String>(
@@ -2419,7 +2420,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                     fontFamily:
                                                                         FlutterFlowTheme.of(context)
                                                                             .bodyMediumFamily,
-                                                                    color: Color(
+                                                                    color: const Color(
                                                                         0xFFBEBEBE),
                                                                     fontSize:
                                                                         16.0,
@@ -2435,7 +2436,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           enabledBorder:
                                                               UnderlineInputBorder(
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Color(
                                                                   0x00E0E3E7),
                                                               width: 2.0,
@@ -2448,7 +2449,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           focusedBorder:
                                                               UnderlineInputBorder(
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Color(
                                                                   0x004B39EF),
                                                               width: 2.0,
@@ -2488,7 +2489,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           ),
                                                           filled: true,
                                                           fillColor:
-                                                              Color(0xFFF1F1F1),
+                                                              const Color(
+                                                                  0xFFF1F1F1),
                                                         ),
                                                         style: FlutterFlowTheme
                                                                 .of(context)
@@ -2516,7 +2518,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                       ),
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(height: 8.0)),
+                                                ].divide(const SizedBox(
+                                                    height: 8.0)),
                                               ),
                                             ),
                                             if (responsiveVisibility(
@@ -2565,7 +2568,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                     Container(
                                                       width: double.infinity,
                                                       height: 56.0,
-                                                      decoration: BoxDecoration(
+                                                      decoration:
+                                                          const BoxDecoration(
                                                         color:
                                                             Color(0xFFF1F1F1),
                                                         borderRadius:
@@ -2586,18 +2590,15 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                       ),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    8.0,
-                                                                    0.0,
-                                                                    8.0,
-                                                                    0.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(8.0,
+                                                                0.0, 8.0, 0.0),
                                                         child: Row(
                                                           mainAxisSize:
                                                               MainAxisSize.max,
                                                           children: [
                                                             Expanded(
-                                                              child: Container(
+                                                              child: SizedBox(
                                                                 width: double
                                                                     .infinity,
                                                                 child:
@@ -2637,7 +2638,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           fontFamily:
                                                                               FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                           color:
-                                                                              Color(0xFFBEBEBE),
+                                                                              const Color(0xFFBEBEBE),
                                                                           fontSize:
                                                                               16.0,
                                                                           letterSpacing:
@@ -2650,7 +2651,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                     enabledBorder:
                                                                         UnderlineInputBorder(
                                                                       borderSide:
-                                                                          BorderSide(
+                                                                          const BorderSide(
                                                                         color: Color(
                                                                             0x00E0E3E7),
                                                                         width:
@@ -2663,7 +2664,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                     focusedBorder:
                                                                         UnderlineInputBorder(
                                                                       borderSide:
-                                                                          BorderSide(
+                                                                          const BorderSide(
                                                                         color: Color(
                                                                             0x004B39EF),
                                                                         width:
@@ -2700,7 +2701,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               8.0),
                                                                     ),
                                                                     contentPadding:
-                                                                        EdgeInsetsDirectional.fromSTEB(
+                                                                        const EdgeInsetsDirectional
+                                                                            .fromSTEB(
                                                                             8.0,
                                                                             0.0,
                                                                             0.0,
@@ -2732,8 +2734,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         ),
                                                       ),
                                                     ),
-                                                  ].divide(
-                                                      SizedBox(height: 8.0)),
+                                                  ].divide(const SizedBox(
+                                                      height: 8.0)),
                                                 ),
                                               ),
                                             Container(
@@ -2771,7 +2773,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 fontFamily: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF474747),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
@@ -2790,7 +2792,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               double.infinity,
                                                           height: 56.0,
                                                           decoration:
-                                                              BoxDecoration(
+                                                              const BoxDecoration(
                                                             color: Color(
                                                                 0xFFF1F1F1),
                                                             borderRadius:
@@ -2813,12 +2815,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           ),
                                                           child: Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
-                                                                        8.0,
-                                                                        0.0,
-                                                                        8.0,
-                                                                        0.0),
+                                                                    8.0,
+                                                                    0.0,
+                                                                    8.0,
+                                                                    0.0),
                                                             child: Row(
                                                               mainAxisSize:
                                                                   MainAxisSize
@@ -2837,7 +2839,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                         'null'))
                                                                   Expanded(
                                                                     child:
-                                                                        Container(
+                                                                        SizedBox(
                                                                       width: double
                                                                           .infinity,
                                                                       child:
@@ -2879,15 +2881,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                   'null') {
                                                                                 return 'N/A';
                                                                               } else if (valueOrDefault<String>(
-                                                                                        containerBuscarRebanhoRowList.firstOrNull?.dataNascMatriz,
-                                                                                        'N/A',
-                                                                                      ) ==
-                                                                                      null ||
-                                                                                  valueOrDefault<String>(
-                                                                                        containerBuscarRebanhoRowList.firstOrNull?.dataNascMatriz,
-                                                                                        'N/A',
-                                                                                      ) ==
-                                                                                      '') {
+                                                                                    containerBuscarRebanhoRowList.firstOrNull?.dataNascMatriz,
+                                                                                    'N/A',
+                                                                                  ) ==
+                                                                                  '') {
                                                                                 return 'N/A';
                                                                               } else {
                                                                                 return dateTimeFormat(
@@ -2928,7 +2925,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               .bodyMedium
                                                                               .override(
                                                                                 fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                color: Color(0xFFBEBEBE),
+                                                                                color: const Color(0xFFBEBEBE),
                                                                                 fontSize: 16.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.w600,
@@ -2937,7 +2934,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           enabledBorder:
                                                                               UnderlineInputBorder(
                                                                             borderSide:
-                                                                                BorderSide(
+                                                                                const BorderSide(
                                                                               color: Color(0x00E0E3E7),
                                                                               width: 1.0,
                                                                             ),
@@ -2947,7 +2944,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           focusedBorder:
                                                                               UnderlineInputBorder(
                                                                             borderSide:
-                                                                                BorderSide(
+                                                                                const BorderSide(
                                                                               color: Color(0x004B39EF),
                                                                               width: 1.0,
                                                                             ),
@@ -2974,7 +2971,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             borderRadius:
                                                                                 BorderRadius.circular(8.0),
                                                                           ),
-                                                                          contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                                                          contentPadding: const EdgeInsetsDirectional
+                                                                              .fromSTEB(
                                                                               8.0,
                                                                               0.0,
                                                                               0.0,
@@ -3124,14 +3122,15 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                       '.',
                                                                                     ))
                                                                                 .toList()
-                                                                                ?.toList()),
+                                                                                .toList()),
                                                                           );
                                                                           FFAppState().rebanhoLotesSelecionar =
                                                                               [];
                                                                           safeSetState(
                                                                               () {});
-                                                                          if (_model.lotes!.length >
-                                                                              0) {
+                                                                          if (_model
+                                                                              .lotes!
+                                                                              .isNotEmpty) {
                                                                             while (_model.index <
                                                                                 _model.lotes!.length) {
                                                                               FFAppState().addToRebanhoLotesSelecionar(LocalLotesStruct(
@@ -3154,7 +3153,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                 elevation: 0,
                                                                                 insetPadding: EdgeInsets.zero,
                                                                                 backgroundColor: Colors.transparent,
-                                                                                alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                                 child: ViewRebanhoWidget(
                                                                                   idRebanho: _model.matrizRebanho!.firstOrNull!.idRebanho!,
                                                                                 ),
@@ -3168,11 +3167,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             builder:
                                                                                 (alertDialogContext) {
                                                                               return AlertDialog(
-                                                                                content: Text('Nenhuma matriz associada a este animal'),
+                                                                                content: const Text('Nenhuma matriz associada a este animal'),
                                                                                 actions: [
                                                                                   TextButton(
                                                                                     onPressed: () => Navigator.pop(alertDialogContext),
-                                                                                    child: Text('Ok'),
+                                                                                    child: const Text('Ok'),
                                                                                   ),
                                                                                 ],
                                                                               );
@@ -3198,7 +3197,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                             ),
                                                           ),
                                                         ),
-                                                      ].divide(SizedBox(
+                                                      ].divide(const SizedBox(
                                                           height: 8.0)),
                                                     ),
                                                   ),
@@ -3225,7 +3224,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 fontFamily: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF474747),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
@@ -3244,7 +3243,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               double.infinity,
                                                           height: 56.0,
                                                           decoration:
-                                                              BoxDecoration(
+                                                              const BoxDecoration(
                                                             color: Color(
                                                                 0xFFF1F1F1),
                                                             borderRadius:
@@ -3267,12 +3266,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           ),
                                                           child: Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
-                                                                        8.0,
-                                                                        0.0,
-                                                                        8.0,
-                                                                        0.0),
+                                                                    8.0,
+                                                                    0.0,
+                                                                    8.0,
+                                                                    0.0),
                                                             child: Row(
                                                               mainAxisSize:
                                                                   MainAxisSize
@@ -3291,7 +3290,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                         'null'))
                                                                   Expanded(
                                                                     child:
-                                                                        Container(
+                                                                        SizedBox(
                                                                       width: double
                                                                           .infinity,
                                                                       child:
@@ -3354,7 +3353,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               .bodyMedium
                                                                               .override(
                                                                                 fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                color: Color(0xFFBEBEBE),
+                                                                                color: const Color(0xFFBEBEBE),
                                                                                 fontSize: 16.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.w600,
@@ -3363,7 +3362,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           enabledBorder:
                                                                               UnderlineInputBorder(
                                                                             borderSide:
-                                                                                BorderSide(
+                                                                                const BorderSide(
                                                                               color: Color(0x00E0E3E7),
                                                                               width: 1.0,
                                                                             ),
@@ -3373,7 +3372,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           focusedBorder:
                                                                               UnderlineInputBorder(
                                                                             borderSide:
-                                                                                BorderSide(
+                                                                                const BorderSide(
                                                                               color: Color(0x004B39EF),
                                                                               width: 1.0,
                                                                             ),
@@ -3400,7 +3399,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             borderRadius:
                                                                                 BorderRadius.circular(8.0),
                                                                           ),
-                                                                          contentPadding: EdgeInsetsDirectional.fromSTEB(
+                                                                          contentPadding: const EdgeInsetsDirectional
+                                                                              .fromSTEB(
                                                                               8.0,
                                                                               0.0,
                                                                               0.0,
@@ -3545,14 +3545,15 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               .instance
                                                                               .buscarLotes(
                                                                             idPropriedade:
-                                                                                functions.converterLista(_model.propriedades2?.map((e) => e.idPropriedade).withoutNulls.toList()?.toList()),
+                                                                                functions.converterLista(_model.propriedades2?.map((e) => e.idPropriedade).withoutNulls.toList().toList()),
                                                                           );
                                                                           FFAppState().rebanhoLotesSelecionar =
                                                                               [];
                                                                           safeSetState(
                                                                               () {});
-                                                                          if (_model.lotes2!.length >
-                                                                              0) {
+                                                                          if (_model
+                                                                              .lotes2!
+                                                                              .isNotEmpty) {
                                                                             while (_model.index <
                                                                                 _model.lotes2!.length) {
                                                                               FFAppState().addToRebanhoLotesSelecionar(LocalLotesStruct(
@@ -3575,7 +3576,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                 elevation: 0,
                                                                                 insetPadding: EdgeInsets.zero,
                                                                                 backgroundColor: Colors.transparent,
-                                                                                alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                                 child: ViewRebanhoWidget(
                                                                                   idRebanho: _model.reprodutorRebanho!.firstOrNull!.idRebanho!,
                                                                                 ),
@@ -3589,11 +3590,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             builder:
                                                                                 (alertDialogContext) {
                                                                               return AlertDialog(
-                                                                                content: Text('Nenhum reprodutor associado a este animal'),
+                                                                                content: const Text('Nenhum reprodutor associado a este animal'),
                                                                                 actions: [
                                                                                   TextButton(
                                                                                     onPressed: () => Navigator.pop(alertDialogContext),
-                                                                                    child: Text('Ok'),
+                                                                                    child: const Text('Ok'),
                                                                                   ),
                                                                                 ],
                                                                               );
@@ -3619,12 +3620,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                             ),
                                                           ),
                                                         ),
-                                                      ].divide(SizedBox(
+                                                      ].divide(const SizedBox(
                                                           height: 8.0)),
                                                     ),
                                                   ),
-                                                ].divide(
-                                                    SizedBox(height: 24.0)),
+                                                ].divide(const SizedBox(
+                                                    height: 24.0)),
                                               ),
                                             ),
                                             Row(
@@ -3677,7 +3678,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               double.infinity,
                                                           height: 56.0,
                                                           decoration:
-                                                              BoxDecoration(
+                                                              const BoxDecoration(
                                                             color: Color(
                                                                 0xFFF1F1F1),
                                                             borderRadius:
@@ -3705,14 +3706,15 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                             children: [
                                                               Expanded(
                                                                 child: Padding(
-                                                                  padding: EdgeInsetsDirectional
-                                                                      .fromSTEB(
+                                                                  padding:
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
                                                                           8.0,
                                                                           0.0,
                                                                           0.0,
                                                                           0.0),
                                                                   child:
-                                                                      Container(
+                                                                      SizedBox(
                                                                     width: double
                                                                         .infinity,
                                                                     child:
@@ -3748,7 +3750,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             .bodyMedium
                                                                             .override(
                                                                               fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                              color: Color(0xFFBEBEBE),
+                                                                              color: const Color(0xFFBEBEBE),
                                                                               fontSize: 16.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
@@ -3757,7 +3759,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                         enabledBorder:
                                                                             UnderlineInputBorder(
                                                                           borderSide:
-                                                                              BorderSide(
+                                                                              const BorderSide(
                                                                             color:
                                                                                 Color(0x00E0E3E7),
                                                                             width:
@@ -3769,7 +3771,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                         focusedBorder:
                                                                             UnderlineInputBorder(
                                                                           borderSide:
-                                                                              BorderSide(
+                                                                              const BorderSide(
                                                                             color:
                                                                                 Color(0x004B39EF),
                                                                             width:
@@ -3829,7 +3831,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                             ],
                                                           ),
                                                         ),
-                                                      ].divide(SizedBox(
+                                                      ].divide(const SizedBox(
                                                           height: 8.0)),
                                                     ),
                                                   ),
@@ -3878,7 +3880,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               double.infinity,
                                                           height: 56.0,
                                                           decoration:
-                                                              BoxDecoration(
+                                                              const BoxDecoration(
                                                             color: Color(
                                                                 0xFFF1F1F1),
                                                             borderRadius:
@@ -3906,14 +3908,15 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                             children: [
                                                               Expanded(
                                                                 child: Padding(
-                                                                  padding: EdgeInsetsDirectional
-                                                                      .fromSTEB(
+                                                                  padding:
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
                                                                           8.0,
                                                                           0.0,
                                                                           0.0,
                                                                           0.0),
                                                                   child:
-                                                                      Container(
+                                                                      SizedBox(
                                                                     width: double
                                                                         .infinity,
                                                                     child:
@@ -3947,7 +3950,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             .bodyMedium
                                                                             .override(
                                                                               fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                              color: Color(0xFFBEBEBE),
+                                                                              color: const Color(0xFFBEBEBE),
                                                                               fontSize: 16.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
@@ -3956,7 +3959,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                         enabledBorder:
                                                                             UnderlineInputBorder(
                                                                           borderSide:
-                                                                              BorderSide(
+                                                                              const BorderSide(
                                                                             color:
                                                                                 Color(0x00E0E3E7),
                                                                             width:
@@ -3968,7 +3971,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                         focusedBorder:
                                                                             UnderlineInputBorder(
                                                                           borderSide:
-                                                                              BorderSide(
+                                                                              const BorderSide(
                                                                             color:
                                                                                 Color(0x004B39EF),
                                                                             width:
@@ -4028,12 +4031,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                             ],
                                                           ),
                                                         ),
-                                                      ].divide(SizedBox(
+                                                      ].divide(const SizedBox(
                                                           height: 8.0)),
                                                     ),
                                                   ),
                                                 ),
-                                              ].divide(SizedBox(width: 24.0)),
+                                              ].divide(
+                                                  const SizedBox(width: 24.0)),
                                             ),
                                             Row(
                                               mainAxisSize: MainAxisSize.min,
@@ -4085,7 +4089,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               double.infinity,
                                                           height: 56.0,
                                                           decoration:
-                                                              BoxDecoration(
+                                                              const BoxDecoration(
                                                             color: Color(
                                                                 0xFFF1F1F1),
                                                             borderRadius:
@@ -4113,14 +4117,15 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                             children: [
                                                               Expanded(
                                                                 child: Padding(
-                                                                  padding: EdgeInsetsDirectional
-                                                                      .fromSTEB(
+                                                                  padding:
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
                                                                           8.0,
                                                                           0.0,
                                                                           0.0,
                                                                           0.0),
                                                                   child:
-                                                                      Container(
+                                                                      SizedBox(
                                                                     width: double
                                                                         .infinity,
                                                                     child:
@@ -4156,7 +4161,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             .bodyMedium
                                                                             .override(
                                                                               fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                              color: Color(0xFFBEBEBE),
+                                                                              color: const Color(0xFFBEBEBE),
                                                                               fontSize: 16.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
@@ -4165,7 +4170,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                         enabledBorder:
                                                                             UnderlineInputBorder(
                                                                           borderSide:
-                                                                              BorderSide(
+                                                                              const BorderSide(
                                                                             color:
                                                                                 Color(0x00E0E3E7),
                                                                             width:
@@ -4177,7 +4182,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                         focusedBorder:
                                                                             UnderlineInputBorder(
                                                                           borderSide:
-                                                                              BorderSide(
+                                                                              const BorderSide(
                                                                             color:
                                                                                 Color(0x004B39EF),
                                                                             width:
@@ -4237,7 +4242,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                             ],
                                                           ),
                                                         ),
-                                                      ].divide(SizedBox(
+                                                      ].divide(const SizedBox(
                                                           height: 8.0)),
                                                     ),
                                                   ),
@@ -4286,7 +4291,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               double.infinity,
                                                           height: 56.0,
                                                           decoration:
-                                                              BoxDecoration(
+                                                              const BoxDecoration(
                                                             color: Color(
                                                                 0xFFF1F1F1),
                                                             borderRadius:
@@ -4314,14 +4319,15 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                             children: [
                                                               Expanded(
                                                                 child: Padding(
-                                                                  padding: EdgeInsetsDirectional
-                                                                      .fromSTEB(
+                                                                  padding:
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
                                                                           8.0,
                                                                           0.0,
                                                                           0.0,
                                                                           0.0),
                                                                   child:
-                                                                      Container(
+                                                                      SizedBox(
                                                                     width: double
                                                                         .infinity,
                                                                     child:
@@ -4355,7 +4361,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             .bodyMedium
                                                                             .override(
                                                                               fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                              color: Color(0xFFBEBEBE),
+                                                                              color: const Color(0xFFBEBEBE),
                                                                               fontSize: 16.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.w600,
@@ -4364,7 +4370,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                         enabledBorder:
                                                                             UnderlineInputBorder(
                                                                           borderSide:
-                                                                              BorderSide(
+                                                                              const BorderSide(
                                                                             color:
                                                                                 Color(0x00E0E3E7),
                                                                             width:
@@ -4376,7 +4382,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                         focusedBorder:
                                                                             UnderlineInputBorder(
                                                                           borderSide:
-                                                                              BorderSide(
+                                                                              const BorderSide(
                                                                             color:
                                                                                 Color(0x004B39EF),
                                                                             width:
@@ -4436,12 +4442,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                             ],
                                                           ),
                                                         ),
-                                                      ].divide(SizedBox(
+                                                      ].divide(const SizedBox(
                                                           height: 8.0)),
                                                     ),
                                                   ),
                                                 ),
-                                              ].divide(SizedBox(width: 24.0)),
+                                              ].divide(
+                                                  const SizedBox(width: 24.0)),
                                             ),
                                             Column(
                                               mainAxisSize: MainAxisSize.max,
@@ -4475,7 +4482,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                 Container(
                                                   width: double.infinity,
                                                   height: 56.0,
-                                                  decoration: BoxDecoration(
+                                                  decoration:
+                                                      const BoxDecoration(
                                                     color: Color(0xFFF1F1F1),
                                                     borderRadius:
                                                         BorderRadius.only(
@@ -4496,13 +4504,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                       Expanded(
                                                         child: Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
-                                                                      8.0,
-                                                                      0.0,
-                                                                      0.0,
-                                                                      0.0),
-                                                          child: Container(
+                                                                  8.0,
+                                                                  0.0,
+                                                                  0.0,
+                                                                  0.0),
+                                                          child: SizedBox(
                                                             width:
                                                                 double.infinity,
                                                             child:
@@ -4536,7 +4544,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                       fontFamily:
                                                                           FlutterFlowTheme.of(context)
                                                                               .bodyMediumFamily,
-                                                                      color: Color(
+                                                                      color: const Color(
                                                                           0xFFBEBEBE),
                                                                       fontSize:
                                                                           16.0,
@@ -4552,7 +4560,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 enabledBorder:
                                                                     UnderlineInputBorder(
                                                                   borderSide:
-                                                                      BorderSide(
+                                                                      const BorderSide(
                                                                     color: Color(
                                                                         0x00E0E3E7),
                                                                     width: 2.0,
@@ -4565,7 +4573,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 focusedBorder:
                                                                     UnderlineInputBorder(
                                                                   borderSide:
-                                                                      BorderSide(
+                                                                      const BorderSide(
                                                                     color: Color(
                                                                         0x004B39EF),
                                                                     width: 2.0,
@@ -4633,7 +4641,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                     ],
                                                   ),
                                                 ),
-                                              ].divide(SizedBox(height: 8.0)),
+                                              ].divide(
+                                                  const SizedBox(height: 8.0)),
                                             ),
                                             Column(
                                               mainAxisSize: MainAxisSize.max,
@@ -4667,7 +4676,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                 Container(
                                                   width: double.infinity,
                                                   height: 104.0,
-                                                  decoration: BoxDecoration(
+                                                  decoration:
+                                                      const BoxDecoration(
                                                     color: Color(0xFFF1F1F1),
                                                     borderRadius:
                                                         BorderRadius.only(
@@ -4681,7 +4691,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           Radius.circular(6.0),
                                                     ),
                                                   ),
-                                                  child: Container(
+                                                  child: SizedBox(
                                                     width: double.infinity,
                                                     child: TextFormField(
                                                       controller: _model
@@ -4719,7 +4729,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFFBEBEBE),
                                                                   fontSize:
                                                                       16.0,
@@ -4736,7 +4746,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         enabledBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x00E0E3E7),
                                                             width: 2.0,
@@ -4749,7 +4759,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         focusedBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x004B39EF),
                                                             width: 2.0,
@@ -4788,12 +4798,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                       8.0),
                                                         ),
                                                         contentPadding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    8.0,
-                                                                    0.0,
-                                                                    16.0,
-                                                                    0.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(8.0,
+                                                                0.0, 16.0, 0.0),
                                                       ),
                                                       style: FlutterFlowTheme
                                                               .of(context)
@@ -4818,11 +4825,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                     ),
                                                   ),
                                                 ),
-                                              ].divide(SizedBox(height: 8.0)),
+                                              ].divide(
+                                                  const SizedBox(height: 8.0)),
                                             ),
                                             Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       0.0, 0.0, 0.0, 24.0),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.max,
@@ -4839,21 +4848,15 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         width: 155.0,
                                                         height: 56.0,
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    24.0,
-                                                                    0.0,
-                                                                    24.0,
-                                                                    0.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(24.0,
+                                                                0.0, 24.0, 0.0),
                                                         iconPadding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0),
-                                                        color:
-                                                            Color(0x001E7A4C),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(0.0,
+                                                                0.0, 0.0, 0.0),
+                                                        color: const Color(
+                                                            0x001E7A4C),
                                                         textStyle:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -4862,7 +4865,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .titleSmallFamily,
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF1E7A4C),
                                                                   fontSize:
                                                                       18.0,
@@ -4877,7 +4880,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           .titleSmallIsCustom,
                                                                 ),
                                                         elevation: 0.0,
-                                                        borderSide: BorderSide(
+                                                        borderSide:
+                                                            const BorderSide(
                                                           color:
                                                               Color(0xFF1E7A4C),
                                                           width: 2.0,
@@ -5152,9 +5156,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 safeSetState(
                                                                     () {});
                                                                 if (_model
-                                                                        .lotesRebView!
-                                                                        .length >
-                                                                    0) {
+                                                                    .lotesRebView!
+                                                                    .isNotEmpty) {
                                                                   while (_model
                                                                           .index <
                                                                       _model
@@ -5184,19 +5187,20 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                   }
                                                                 }
                                                                 final navigator =
-                                                                  Navigator.of(
-                                                                    context);
+                                                                    Navigator.of(
+                                                                        context);
                                                                 navigator.pop();
-                                                                await Future.delayed(
-                                                                  Duration
-                                                                    .zero);
+                                                                await Future
+                                                                    .delayed(
+                                                                        Duration
+                                                                            .zero);
                                                                 await showDialog(
                                                                   barrierColor:
                                                                       Colors
                                                                           .transparent,
                                                                   context:
-                                                                    navigator
-                                                                      .context,
+                                                                      navigator
+                                                                          .context,
                                                                   builder:
                                                                       (dialogContext) {
                                                                     return Dialog(
@@ -5208,13 +5212,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                       backgroundColor:
                                                                           Colors
                                                                               .transparent,
-                                                                      alignment: AlignmentDirectional(
+                                                                      alignment: const AlignmentDirectional(
                                                                               0.0,
                                                                               0.0)
                                                                           .resolve(
-                                                                            Directionality.of(navigator.context)),
+                                                                              Directionality.of(navigator.context)),
                                                                       child:
-                                                                          EditRebanhoWidget(),
+                                                                          const EditRebanhoWidget(),
                                                                     );
                                                                   },
                                                                 );
@@ -5223,7 +5227,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                     () {});
                                                               },
                                                         text: 'Editar',
-                                                        icon: Icon(
+                                                        icon: const Icon(
                                                           Icons.edit_sharp,
                                                           size: 24.0,
                                                         ),
@@ -5232,21 +5236,21 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           width: 155.0,
                                                           height: 56.0,
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
-                                                                      24.0,
-                                                                      0.0,
-                                                                      24.0,
-                                                                      0.0),
+                                                                  24.0,
+                                                                  0.0,
+                                                                  24.0,
+                                                                  0.0),
                                                           iconPadding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
-                                                                      0.0,
-                                                                      0.0,
-                                                                      0.0,
-                                                                      0.0),
-                                                          color:
-                                                              Color(0xFF28A365),
+                                                                  0.0,
+                                                                  0.0,
+                                                                  0.0,
+                                                                  0.0),
+                                                          color: const Color(
+                                                              0xFF28A365),
                                                           textStyle:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -5270,7 +5274,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                   ),
                                                           elevation: 0.0,
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Colors
                                                                 .transparent,
                                                             width: 1.0,
@@ -5291,10 +5295,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                       ),
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(width: 16.0)),
+                                                ].divide(const SizedBox(
+                                                    width: 16.0)),
                                               ),
                                             ),
-                                          ].divide(SizedBox(height: 24.0)),
+                                          ].divide(
+                                              const SizedBox(height: 24.0)),
                                         ),
                                       ),
                                     ),
@@ -5306,8 +5312,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                 children: [
                                   Flexible(
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 14.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 14.0, 0.0, 0.0),
                                       child: Container(
                                         width: double.infinity,
                                         decoration: BoxDecoration(
@@ -5325,9 +5332,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                 .toList();
                                             if (animais.isEmpty) {
                                               return Center(
-                                                child: Container(
+                                                child: SizedBox(
                                                   height: 250.0,
-                                                  child: EmptyCriasWidget(),
+                                                  child:
+                                                      const EmptyCriasWidget(),
                                                 ),
                                               );
                                             }
@@ -5349,9 +5357,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(0.0, 0.0,
-                                                                0.0, 24.0),
+                                                            0.0, 24.0),
                                                     child: Column(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -5360,12 +5368,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           builder: (context) =>
                                                               Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
-                                                                        24.0,
-                                                                        0.0,
-                                                                        24.0,
-                                                                        24.0),
+                                                                    24.0,
+                                                                    0.0,
+                                                                    24.0,
+                                                                    24.0),
                                                             child: InkWell(
                                                               splashColor: Colors
                                                                   .transparent,
@@ -5783,7 +5791,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                       backgroundColor:
                                                                           Colors
                                                                               .transparent,
-                                                                      alignment: AlignmentDirectional(
+                                                                      alignment: const AlignmentDirectional(
                                                                               0.0,
                                                                               0.0)
                                                                           .resolve(
@@ -5854,7 +5862,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               .bodyMedium
                                                                               .override(
                                                                                 fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                color: Color(0xFF474747),
+                                                                                color: const Color(0xFF474747),
                                                                                 fontSize: 16.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.w500,
@@ -5870,7 +5878,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               .bodyMedium
                                                                               .override(
                                                                                 fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                color: Color(0xFF5F5F5F),
+                                                                                color: const Color(0xFF5F5F5F),
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.normal,
                                                                                 useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
@@ -5902,15 +5910,15 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               )}',
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                     fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                    color: Color(0xFF5F5F5F),
+                                                                                    color: const Color(0xFF5F5F5F),
                                                                                     letterSpacing: 0.0,
                                                                                     fontWeight: FontWeight.normal,
                                                                                     useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                                   ),
                                                                             ),
-                                                                          ].divide(SizedBox(width: 4.0)),
+                                                                          ].divide(const SizedBox(width: 4.0)),
                                                                         ),
-                                                                      ].divide(SizedBox(
+                                                                      ].divide(const SizedBox(
                                                                               height: 2.0)),
                                                                     ),
                                                                   ),
@@ -5958,8 +5966,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                 children: [
                                   Flexible(
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Container(
                                         width: double.infinity,
                                         decoration: BoxDecoration(
@@ -5987,12 +5996,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                   children: [
                                                     Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  24.0,
-                                                                  0.0,
-                                                                  0.0,
-                                                                  0.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(24.0,
+                                                              0.0, 0.0, 0.0),
                                                       child: Text(
                                                         'Histórico das pesagens',
                                                         style: FlutterFlowTheme
@@ -6041,7 +6047,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 .toList();
                                                             if (pesagem
                                                                 .isEmpty) {
-                                                              return Center(
+                                                              return const Center(
                                                                 child:
                                                                     EmptyPesagemWidget(),
                                                               );
@@ -6082,7 +6088,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             .start,
                                                                     children: [
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional
+                                                                            .fromSTEB(
                                                                             24.0,
                                                                             12.0,
                                                                             24.0,
@@ -6105,7 +6112,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                   )} KG',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                         fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 16.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.w500,
@@ -6120,7 +6127,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                   ),
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                         fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                        color: Color(0xFF5F5F5F),
+                                                                                        color: const Color(0xFF5F5F5F),
                                                                                         letterSpacing: 0.0,
                                                                                         useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                                       ),
@@ -6133,11 +6140,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                 width: 100.0,
                                                                                 height: 24.0,
                                                                                 decoration: BoxDecoration(
-                                                                                  color: Color(0xFFB1CC29),
+                                                                                  color: const Color(0xFFB1CC29),
                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                 ),
                                                                                 child: Align(
-                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                   child: Text(
                                                                                     'Nascimento',
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -6155,11 +6162,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                 width: 100.0,
                                                                                 height: 24.0,
                                                                                 decoration: BoxDecoration(
-                                                                                  color: Color(0xFFB1CC29),
+                                                                                  color: const Color(0xFFB1CC29),
                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                 ),
                                                                                 child: Align(
-                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                   child: Text(
                                                                                     'Desmama',
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -6181,16 +6188,16 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                       context: context,
                                                                                       builder: (alertDialogContext) {
                                                                                         return AlertDialog(
-                                                                                          title: Text('Deletar pesagem'),
-                                                                                          content: Text('Tem certeza que deseja deletar esta pesagem ?'),
+                                                                                          title: const Text('Deletar pesagem'),
+                                                                                          content: const Text('Tem certeza que deseja deletar esta pesagem ?'),
                                                                                           actions: [
                                                                                             TextButton(
                                                                                               onPressed: () => Navigator.pop(alertDialogContext, false),
-                                                                                              child: Text('Não'),
+                                                                                              child: const Text('Não'),
                                                                                             ),
                                                                                             TextButton(
                                                                                               onPressed: () => Navigator.pop(alertDialogContext, true),
-                                                                                              child: Text('Sim'),
+                                                                                              child: const Text('Sim'),
                                                                                             ),
                                                                                           ],
                                                                                         );
@@ -6227,7 +6234,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           ],
                                                                         ),
                                                                       ),
-                                                                      Divider(
+                                                                      const Divider(
                                                                         height:
                                                                             1.0,
                                                                         thickness:
@@ -6244,14 +6251,15 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         ),
                                                       ),
                                                     ),
-                                                  ].divide(
-                                                      SizedBox(height: 8.0)),
+                                                  ].divide(const SizedBox(
+                                                      height: 8.0)),
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 24.0, 24.0, 24.0),
                                               child: FFButtonWidget(
                                                 onPressed: () async {
@@ -6276,23 +6284,25 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                   await _refreshHistPesagensAtual();
                                                 },
                                                 text: 'Adicionar pesagem',
-                                                icon: Icon(
+                                                icon: const Icon(
                                                   Icons.add,
                                                   size: 24.0,
                                                 ),
                                                 options: FFButtonOptions(
                                                   width: double.infinity,
                                                   height: 48.0,
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 0.0, 16.0, 0.0),
                                                   iconAlignment:
                                                       IconAlignment.start,
                                                   iconPadding:
-                                                      EdgeInsetsDirectional
-                                                          .fromSTEB(0.0, 0.0,
-                                                              0.0, 0.0),
-                                                  color: Color(0xFF28A365),
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          0.0, 0.0, 0.0, 0.0),
+                                                  color:
+                                                      const Color(0xFF28A365),
                                                   textStyle:
                                                       FlutterFlowTheme.of(
                                                               context)
@@ -6339,7 +6349,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                               FutureBuilder<List<BuscarSanidadesRebanhoRow>>(
                                 future: SQLiteManager.instance
                                     .buscarSanidadesRebanho(
-                                  idRebanho: widget!.idRebanho,
+                                  idRebanho: widget.idRebanho,
                                 ),
                                 builder: (context, snapshot) {
                                   // Customize what your widget looks like when it's loading.
@@ -6362,7 +6372,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                       snapshot.data!;
 
                                   return Container(
-                                    decoration: BoxDecoration(),
+                                    decoration: const BoxDecoration(),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
@@ -6381,10 +6391,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                       .toList();
                                               if (sanidades.isEmpty) {
                                                 return Center(
-                                                  child: Container(
+                                                  child: SizedBox(
                                                     height: 200.0,
                                                     child:
-                                                        EmptySanidadeWidget(),
+                                                        const EmptySanidadeWidget(),
                                                   ),
                                                 );
                                               }
@@ -6411,8 +6421,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                       children: [
                                                         Padding(
                                                           padding:
-                                                              EdgeInsets.all(
-                                                                  24.0),
+                                                              const EdgeInsets
+                                                                  .all(24.0),
                                                           child: Row(
                                                             mainAxisSize:
                                                                 MainAxisSize
@@ -6505,9 +6515,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             backgroundColor:
                                                                                 Colors.transparent,
                                                                             alignment:
-                                                                                AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                             child:
-                                                                                EditSanidadeAnimalWidget(),
+                                                                                const EditSanidadeAnimalWidget(),
                                                                           );
                                                                         },
                                                                       );
@@ -6540,7 +6550,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -6558,17 +6568,17 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                         children: List.generate(vacinas.length, (vacinasIndex) {
                                                                                           final vacinasItem = vacinas[vacinasIndex];
                                                                                           return Align(
-                                                                                            alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                             child: Container(
                                                                                               height: 23.0,
                                                                                               decoration: BoxDecoration(
-                                                                                                color: Color(0xFFB1CC29),
+                                                                                                color: const Color(0xFFB1CC29),
                                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                                               ),
                                                                                               child: Align(
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Padding(
-                                                                                                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                                   child: Text(
                                                                                                     vacinasItem,
                                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -6583,12 +6593,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                               ),
                                                                                             ),
                                                                                           );
-                                                                                        }).divide(SizedBox(width: 8.0)),
+                                                                                        }).divide(const SizedBox(width: 8.0)),
                                                                                       ),
                                                                                     );
                                                                                   },
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
                                                                         if ((sanidadesItem.antiparasitario == null || sanidadesItem.antiparasitario == '') &&
@@ -6609,7 +6619,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -6627,17 +6637,17 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                         children: List.generate(antiparasitario.length, (antiparasitarioIndex) {
                                                                                           final antiparasitarioItem = antiparasitario[antiparasitarioIndex];
                                                                                           return Align(
-                                                                                            alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                             child: Container(
                                                                                               height: 23.0,
                                                                                               decoration: BoxDecoration(
-                                                                                                color: Color(0xFFB1CC29),
+                                                                                                color: const Color(0xFFB1CC29),
                                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                                               ),
                                                                                               child: Align(
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Padding(
-                                                                                                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                   child: Text(
                                                                                                     antiparasitarioItem,
                                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -6652,12 +6662,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                               ),
                                                                                             ),
                                                                                           );
-                                                                                        }).divide(SizedBox(width: 8.0)),
+                                                                                        }).divide(const SizedBox(width: 8.0)),
                                                                                       ),
                                                                                     );
                                                                                   },
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
                                                                         if (((sanidadesItem.protocoloReprodutivo == null || sanidadesItem.protocoloReprodutivo == '') &&
@@ -6681,7 +6691,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -6699,17 +6709,17 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                         children: List.generate(protocolo.length, (protocoloIndex) {
                                                                                           final protocoloItem = protocolo[protocoloIndex];
                                                                                           return Align(
-                                                                                            alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                             child: Container(
                                                                                               height: 23.0,
                                                                                               decoration: BoxDecoration(
-                                                                                                color: Color(0xFFB1CC29),
+                                                                                                color: const Color(0xFFB1CC29),
                                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                                               ),
                                                                                               child: Align(
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Padding(
-                                                                                                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                   child: Text(
                                                                                                     protocoloItem,
                                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -6724,12 +6734,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                               ),
                                                                                             ),
                                                                                           );
-                                                                                        }).divide(SizedBox(width: 8.0)),
+                                                                                        }).divide(const SizedBox(width: 8.0)),
                                                                                       ),
                                                                                     );
                                                                                   },
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
                                                                         if ((sanidadesItem.tratamento == null || sanidadesItem.tratamento == '') &&
@@ -6750,7 +6760,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -6768,17 +6778,17 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                         children: List.generate(tratamenteSanidade.length, (tratamenteSanidadeIndex) {
                                                                                           final tratamenteSanidadeItem = tratamenteSanidade[tratamenteSanidadeIndex];
                                                                                           return Align(
-                                                                                            alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                             child: Container(
                                                                                               height: 23.0,
                                                                                               decoration: BoxDecoration(
-                                                                                                color: Color(0xFFB1CC29),
+                                                                                                color: const Color(0xFFB1CC29),
                                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                                               ),
                                                                                               child: Align(
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Padding(
-                                                                                                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                   child: Text(
                                                                                                     tratamenteSanidadeItem,
                                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -6793,12 +6803,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                               ),
                                                                                             ),
                                                                                           );
-                                                                                        }).divide(SizedBox(width: 8.0)),
+                                                                                        }).divide(const SizedBox(width: 8.0)),
                                                                                       ),
                                                                                     );
                                                                                   },
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
                                                                         if ((sanidadesItem.protocoloReprodutivo == null || sanidadesItem.protocoloReprodutivo == '') &&
@@ -6819,7 +6829,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -6832,17 +6842,17 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                     mainAxisSize: MainAxisSize.max,
                                                                                     children: [
                                                                                       Align(
-                                                                                        alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                        alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                         child: Container(
                                                                                           height: 23.0,
                                                                                           decoration: BoxDecoration(
-                                                                                            color: Color(0xFFB1CC29),
+                                                                                            color: const Color(0xFFB1CC29),
                                                                                             borderRadius: BorderRadius.circular(4.0),
                                                                                           ),
                                                                                           child: Align(
-                                                                                            alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                             child: Padding(
-                                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                               child: Text(
                                                                                                 valueOrDefault<String>(
                                                                                                   sanidadesItem.protocoloReprodutivo,
@@ -6860,10 +6870,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                           ),
                                                                                         ),
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 8.0)),
+                                                                                    ].divide(const SizedBox(width: 8.0)),
                                                                                   ),
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
                                                                         if ((sanidadesItem.protocoloD0 !=
@@ -6885,7 +6895,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -6898,17 +6908,17 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                     mainAxisSize: MainAxisSize.max,
                                                                                     children: [
                                                                                       Align(
-                                                                                        alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                        alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                         child: Container(
                                                                                           height: 23.0,
                                                                                           decoration: BoxDecoration(
-                                                                                            color: Color(0xFFB1CC29),
+                                                                                            color: const Color(0xFFB1CC29),
                                                                                             borderRadius: BorderRadius.circular(4.0),
                                                                                           ),
                                                                                           child: Align(
-                                                                                            alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                             child: Padding(
-                                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                               child: Text(
                                                                                                 valueOrDefault<String>(
                                                                                                   sanidadesItem.protocoloD0,
@@ -6926,10 +6936,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                           ),
                                                                                         ),
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 8.0)),
+                                                                                    ].divide(const SizedBox(width: 8.0)),
                                                                                   ),
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
                                                                         if ((sanidadesItem.protocoloRetirada !=
@@ -6951,7 +6961,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -6964,17 +6974,17 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                     mainAxisSize: MainAxisSize.max,
                                                                                     children: [
                                                                                       Align(
-                                                                                        alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                        alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                         child: Container(
                                                                                           height: 23.0,
                                                                                           decoration: BoxDecoration(
-                                                                                            color: Color(0xFFB1CC29),
+                                                                                            color: const Color(0xFFB1CC29),
                                                                                             borderRadius: BorderRadius.circular(4.0),
                                                                                           ),
                                                                                           child: Align(
-                                                                                            alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                             child: Padding(
-                                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                               child: Text(
                                                                                                 valueOrDefault<String>(
                                                                                                   sanidadesItem.protocoloRetirada,
@@ -6992,10 +7002,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                           ),
                                                                                         ),
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 8.0)),
+                                                                                    ].divide(const SizedBox(width: 8.0)),
                                                                                   ),
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
                                                                         if (responsiveVisibility(
@@ -7016,21 +7026,23 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                   useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                                 ),
                                                                           ),
-                                                                      ].divide(SizedBox(
+                                                                      ].divide(const SizedBox(
                                                                               height: 8.0)),
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ),
-                                                              Icon(
+                                                              const Icon(
                                                                 Icons
                                                                     .chevron_right,
                                                                 color: Color(
                                                                     0xFF5F5F5F),
                                                                 size: 24.0,
                                                               ),
-                                                            ].divide(SizedBox(
-                                                                width: 8.0)),
+                                                            ].divide(
+                                                                const SizedBox(
+                                                                    width:
+                                                                        8.0)),
                                                           ),
                                                         ),
                                                         Divider(
@@ -7059,7 +7071,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                     ),
                   ),
                 ),
-              ].divide(SizedBox(height: 24.0)),
+              ].divide(const SizedBox(height: 24.0)),
             ),
           ),
         );

@@ -47,8 +47,8 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
           elevation: 0,
           insetPadding: EdgeInsets.zero,
           backgroundColor: Colors.transparent,
-          alignment:
-              AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(ctx)),
+          alignment: const AlignmentDirectional(0.0, 0.0)
+              .resolve(Directionality.of(ctx)),
           child: ViewLoteWidget(
             idLote: idLote,
           ),
@@ -76,7 +76,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
           elevation: 0,
           insetPadding: EdgeInsets.zero,
           backgroundColor: Colors.transparent,
-          alignment: AlignmentDirectional(0.0, 0.0)
+          alignment: const AlignmentDirectional(0.0, 0.0)
               .resolve(Directionality.of(ctx)),
           child: EditLoteWidget(
             idLote: idLote,
@@ -124,22 +124,23 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
               color: FlutterFlowTheme.of(context).secondaryBackground,
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 0.0, 24.0, 0.0),
                     child: wrapWithModel(
                       model: _model.selecionarPropriedadeModel,
                       updateCallback: () => safeSetState(() {}),
-                      child: SelecionarPropriedadeWidget(),
+                      child: const SelecionarPropriedadeWidget(),
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 24.0, 24.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -149,7 +150,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                             width: 100.0,
                             height: 113.0,
                             decoration: BoxDecoration(
-                              color: Color(0xFFF8F8F8),
+                              color: const Color(0xFFF8F8F8),
                               borderRadius: BorderRadius.circular(8.0),
                               shape: BoxShape.rectangle,
                             ),
@@ -192,7 +193,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF8E8E8E),
+                                        color: const Color(0xFF8E8E8E),
                                         fontSize: 12.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.normal,
@@ -201,7 +202,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                 .bodyMediumIsCustom,
                                       ),
                                 ),
-                              ].divide(SizedBox(height: 0.0)),
+                              ].divide(const SizedBox(height: 0.0)),
                             ),
                           ),
                         ),
@@ -210,7 +211,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                             width: 100.0,
                             height: 113.0,
                             decoration: BoxDecoration(
-                              color: Color(0xFFF8F8F8),
+                              color: const Color(0xFFF8F8F8),
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                             child: Column(
@@ -252,7 +253,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF8E8E8E),
+                                        color: const Color(0xFF8E8E8E),
                                         fontSize: 12.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.normal,
@@ -261,7 +262,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                 .bodyMediumIsCustom,
                                       ),
                                 ),
-                              ].divide(SizedBox(height: 0.0)),
+                              ].divide(const SizedBox(height: 0.0)),
                             ),
                           ),
                         ),
@@ -269,7 +270,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                           child: Container(
                             width: 100.0,
                             height: 113.0,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: Color(0xFFF8F8F8),
                               borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(8.0),
@@ -318,7 +319,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF8E8E8E),
+                                        color: const Color(0xFF8E8E8E),
                                         fontSize: 12.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.normal,
@@ -327,24 +328,24 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                 .bodyMediumIsCustom,
                                       ),
                                 ),
-                              ].divide(SizedBox(height: 0.0)),
+                              ].divide(const SizedBox(height: 0.0)),
                             ),
                           ),
                         ),
-                      ].divide(SizedBox(width: 8.0)),
+                      ].divide(const SizedBox(width: 8.0)),
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
-                    child: Container(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 8.0, 24.0, 0.0),
+                    child: SizedBox(
                       width: double.infinity,
                       child: TextFormField(
                         controller: _model.pesquisarTextController,
                         focusNode: _model.pesquisarFocusNode,
                         onChanged: (_) => EasyDebounce.debounce(
                           '_model.pesquisarTextController',
-                          Duration(milliseconds: 2000),
+                          const Duration(milliseconds: 2000),
                           () => safeSetState(() {}),
                         ),
                         autofocus: false,
@@ -438,15 +439,15 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 8.0, 0.0, 16.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        0.0, 8.0, 0.0, 16.0),
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
@@ -469,7 +470,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                       return Padding(
                                         padding:
                                             MediaQuery.viewInsetsOf(context),
-                                        child: FiltroLotesWidget(),
+                                        child: const FiltroLotesWidget(),
                                       );
                                     },
                                   ).then((value) => safeSetState(() {}));
@@ -481,12 +482,13 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                     borderRadius: BorderRadius.circular(24.0),
                                     shape: BoxShape.rectangle,
                                     border: Border.all(
-                                      color: Color(0xFFBEBEBE),
+                                      color: const Color(0xFFBEBEBE),
                                     ),
                                   ),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        16.0, 8.0, 16.0, 8.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16.0, 8.0, 16.0, 8.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
@@ -498,7 +500,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF5F5F5F),
+                                                color: const Color(0xFF5F5F5F),
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w500,
                                                 useGoogleFonts:
@@ -517,7 +519,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                             fit: BoxFit.cover,
                                           ),
                                         ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                   ),
                                 ),
@@ -542,13 +544,12 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                               BorderRadius.circular(24.0),
                                           shape: BoxShape.rectangle,
                                           border: Border.all(
-                                            color: Color(0xFFBEBEBE),
+                                            color: const Color(0xFFBEBEBE),
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 8.0, 16.0, 8.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 8.0, 16.0, 8.0),
                                           child: Text(
                                             filtroLotesItem,
                                             style: FlutterFlowTheme.of(context)
@@ -562,7 +563,8 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                             .bodyMedium
                                                             .fontStyle,
                                                   ),
-                                                  color: Color(0xFF5F5F5F),
+                                                  color:
+                                                      const Color(0xFF5F5F5F),
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w500,
                                                   fontStyle:
@@ -574,23 +576,21 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                           ),
                                         ),
                                       );
-                                    }).divide(SizedBox(width: 8.0)),
+                                    }).divide(const SizedBox(width: 8.0)),
                                   );
                                 },
                               ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  Divider(
+                  const Divider(
                     thickness: 1.0,
                     color: Color(0xFFEDEDED),
                   ),
-                  if (FFAppState().propriedadeSelecionada.idPropriedade !=
-                          null &&
-                      FFAppState().propriedadeSelecionada.idPropriedade != '')
+                  if (FFAppState().propriedadeSelecionada.idPropriedade != '')
                     Flexible(
                       child: FutureBuilder<List<ListarLotesRow>>(
                         future: SQLiteManager.instance.listarLotes(
@@ -615,14 +615,15 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                           final containerListarLotesRowList = snapshot.data!;
 
                           return Container(
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Expanded(
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 14.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 14.0, 0.0, 0.0),
                                     child: Container(
                                       width: double.infinity,
                                       height: 100.0,
@@ -634,15 +635,16 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                         builder: (context) {
                                           final lote = containerListarLotesRowList
                                               .where((e) =>
-                                                  ((FFAppState().filtroAtivoLotes == null || FFAppState().filtroAtivoLotes == '') &&
+                                                  ((FFAppState().filtroAtivoLotes ==
+                                                          '') &&
                                                       (e.deletado == 'NAO') &&
-                                                      (_model.pesquisarTextController.text == null ||
-                                                          _model.pesquisarTextController.text ==
-                                                              '')) ||
+                                                      (_model.pesquisarTextController
+                                                              .text ==
+                                                          '')) ||
                                                   (((e.ativo == FFAppState().filtroAtivoLotes) ||
-                                                          (FFAppState().filtroAtivoLotes == null ||
-                                                              FFAppState().filtroAtivoLotes ==
-                                                                  '')) &&
+                                                          (FFAppState()
+                                                                  .filtroAtivoLotes ==
+                                                              '')) &&
                                                       (e.deletado == 'NAO') &&
                                                       ((e.nome!)
                                                           .toLowerCase()
@@ -657,10 +659,10 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                               .toList();
                                           if (lote.isEmpty) {
                                             return Center(
-                                              child: Container(
+                                              child: SizedBox(
                                                 width: double.infinity,
                                                 height: 230.0,
-                                                child: EmptyLoteWidget(),
+                                                child: const EmptyLoteWidget(),
                                               ),
                                             );
                                           }
@@ -681,9 +683,9 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(0.0, 0.0,
-                                                                0.0, 24.0),
+                                                            0.0, 24.0),
                                                     child: Column(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -692,12 +694,12 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                           builder: (context) =>
                                                               Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
-                                                                        24.0,
-                                                                        0.0,
-                                                                        24.0,
-                                                                        24.0),
+                                                                    24.0,
+                                                                    0.0,
+                                                                    24.0,
+                                                                    24.0),
                                                             child: Container(
                                                               child: Row(
                                                                 mainAxisSize:
@@ -730,7 +732,8 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                                           ),
                                                                         ),
                                                                         Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          padding: const EdgeInsetsDirectional
+                                                                              .fromSTEB(
                                                                               0.0,
                                                                               0.0,
                                                                               10.0,
@@ -756,7 +759,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                                                         ),
                                                                                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                               fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                              color: Color(0xFF474747),
+                                                                                              color: const Color(0xFF474747),
                                                                                               fontSize: 16.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FontWeight.w500,
@@ -770,15 +773,15 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                                               Container(
                                                                                 decoration: BoxDecoration(
                                                                                   color: valueOrDefault<Color>(
-                                                                                    loteItem.ativo == 'Ativo' ? Color(0xFFD6F5E5) : Color(0xFFF5D7D4),
-                                                                                    Color(0xFFD6F5E5),
+                                                                                    loteItem.ativo == 'Ativo' ? const Color(0xFFD6F5E5) : const Color(0xFFF5D7D4),
+                                                                                    const Color(0xFFD6F5E5),
                                                                                   ),
                                                                                   borderRadius: BorderRadius.circular(100.0),
                                                                                 ),
                                                                                 child: Align(
-                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                   child: Padding(
-                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 2.0, 8.0, 2.0),
+                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 2.0, 8.0, 2.0),
                                                                                     child: Text(
                                                                                       valueOrDefault<String>(
                                                                                         valueOrDefault<String>(
@@ -794,8 +797,8 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                             fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                                             color: valueOrDefault<Color>(
-                                                                                              loteItem.ativo == 'Ativo' ? FlutterFlowTheme.of(context).secondary : Color(0xFFCC3729),
-                                                                                              Color(0xFF1E7A4C),
+                                                                                              loteItem.ativo == 'Ativo' ? FlutterFlowTheme.of(context).secondary : const Color(0xFFCC3729),
+                                                                                              const Color(0xFF1E7A4C),
                                                                                             ),
                                                                                             letterSpacing: 0.0,
                                                                                             useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
@@ -804,10 +807,10 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                                                   ),
                                                                                 ),
                                                                               ),
-                                                                            ].divide(SizedBox(width: 8.0)),
+                                                                            ].divide(const SizedBox(width: 8.0)),
                                                                           ),
                                                                         ),
-                                                                      ].divide(SizedBox(
+                                                                      ].divide(const SizedBox(
                                                                               height: 2.0)),
                                                                     ),
                                                                   ),
@@ -816,33 +819,35 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                                         MainAxisSize
                                                                             .min,
                                                                     children: [
-                                                                        InkWell(
+                                                                      InkWell(
                                                                         splashColor:
-                                                                          Colors.transparent,
+                                                                            Colors.transparent,
                                                                         focusColor:
-                                                                          Colors.transparent,
+                                                                            Colors.transparent,
                                                                         hoverColor:
-                                                                          Colors.transparent,
+                                                                            Colors.transparent,
                                                                         highlightColor:
-                                                                          Colors.transparent,
+                                                                            Colors.transparent,
                                                                         onTap:
-                                                                          () async {
+                                                                            () async {
                                                                           await _openViewLote(
-                                                                          ctx: context,
-                                                                          idLote: loteItem.idLote!,
+                                                                            ctx:
+                                                                                context,
+                                                                            idLote:
+                                                                                loteItem.idLote!,
                                                                           );
                                                                         },
                                                                         child:
-                                                                          Icon(
+                                                                            Icon(
                                                                           Icons
-                                                                            .visibility_outlined,
-                                                                          color: FlutterFlowTheme.of(context)
-                                                                            .primaryText,
+                                                                              .visibility_outlined,
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).primaryText,
                                                                           size:
-                                                                            24.0,
+                                                                              24.0,
                                                                         ),
                                                                       ),
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                           width:
                                                                               16.0),
                                                                       InkWell(
@@ -857,12 +862,14 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                                         onTap:
                                                                             () async {
                                                                           await _openEditLote(
-                                                                            ctx: context,
-                                                                            idLote: loteItem.idLote!,
+                                                                            ctx:
+                                                                                context,
+                                                                            idLote:
+                                                                                loteItem.idLote!,
                                                                           );
                                                                         },
                                                                         child:
-                                                                            Icon(
+                                                                            const Icon(
                                                                           Icons
                                                                               .edit_outlined,
                                                                           color:
@@ -902,21 +909,19 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                         },
                       ),
                     ),
-                  if (FFAppState().propriedadeSelecionada.idPropriedade ==
-                          null ||
-                      FFAppState().propriedadeSelecionada.idPropriedade == '')
+                  if (FFAppState().propriedadeSelecionada.idPropriedade == '')
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 24.0, 0.0, 0.0),
                       child: wrapWithModel(
                         model: _model.emptyPropModel,
                         updateCallback: () => safeSetState(() {}),
-                        child: EmptyPropWidget(),
+                        child: const EmptyPropWidget(),
                       ),
                     ),
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 40.0, 0.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        0.0, 40.0, 0.0, 0.0),
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(

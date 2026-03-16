@@ -11,7 +11,7 @@ class PropriedadesChangeTrackerTable
 }
 
 class PropriedadesChangeTrackerRow extends SupabaseDataRow {
-  PropriedadesChangeTrackerRow(Map<String, dynamic> data) : super(data);
+  PropriedadesChangeTrackerRow(super.data);
 
   @override
   SupabaseTable get table => PropriedadesChangeTrackerTable();

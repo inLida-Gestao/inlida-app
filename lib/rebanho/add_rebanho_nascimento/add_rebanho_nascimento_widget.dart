@@ -49,7 +49,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimer = InstantTimer.periodic(
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         callback: (timer) async {
           if (FFAppState().rebuild == true) {
             safeSetState(() {});
@@ -111,7 +111,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
             child: InkWell(
               splashColor: Colors.transparent,
               focusColor: Colors.transparent,
@@ -140,17 +140,17 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                               !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                         ),
                   ),
-                ].divide(SizedBox(width: 16.0)),
+                ].divide(const SizedBox(width: 16.0)),
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 0.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 0.0, 0.0),
             child: Text(
               'Adicionar nascimento',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
                     fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                    color: Color(0xFF181818),
+                    color: const Color(0xFF181818),
                     fontSize: 24.0,
                     letterSpacing: 0.0,
                     fontWeight: FontWeight.w500,
@@ -162,7 +162,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
           Flexible(
             child: Container(
               width: double.infinity,
-              constraints: BoxConstraints(
+              constraints: const BoxConstraints(
                 maxHeight: 700.0,
               ),
               decoration: BoxDecoration(
@@ -171,9 +171,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
               child: Column(
                 children: [
                   Align(
-                    alignment: Alignment(0.0, 0),
+                    alignment: const Alignment(0.0, 0),
                     child: TabBar(
-                      labelColor: Color(0xFF1E7A4C),
+                      labelColor: const Color(0xFF1E7A4C),
                       unselectedLabelColor:
                           FlutterFlowTheme.of(context).accent3,
                       labelStyle: FlutterFlowTheme.of(context)
@@ -187,9 +187,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                             useGoogleFonts: !FlutterFlowTheme.of(context)
                                 .titleMediumIsCustom,
                           ),
-                      unselectedLabelStyle: TextStyle(),
-                      indicatorColor: Color(0xFF1E7A4C),
-                      tabs: [
+                      unselectedLabelStyle: const TextStyle(),
+                      indicatorColor: const Color(0xFF1E7A4C),
+                      tabs: const [
                         Tab(
                           text: 'Sobre o animal',
                         ),
@@ -214,7 +214,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                           key: _model.formKey2,
                           autovalidateMode: AutovalidateMode.disabled,
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 16.0, 24.0, 24.0),
                             child: SingleChildScrollView(
                               primary: false,
@@ -242,7 +242,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -253,7 +253,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               ),
                                         ),
                                         Expanded(
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller:
@@ -261,51 +261,50 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               focusNode:
                                                   _model.nAnimalFocusNode,
                                               onChanged: (value) {
-                                              final upperValue =
-                                                value.toUpperCase();
-                                              if (value != upperValue) {
-                                                _model
-                                                  .nAnimalTextController!
-                                                  .value = _model
-                                                    .nAnimalTextController!
-                                                    .value
-                                                    .copyWith(
+                                                final upperValue =
+                                                    value.toUpperCase();
+                                                if (value != upperValue) {
+                                                  _model.nAnimalTextController!
+                                                          .value =
+                                                      _model
+                                                          .nAnimalTextController!
+                                                          .value
+                                                          .copyWith(
                                                     text: upperValue,
-                                                    selection: TextSelection
-                                                      .collapsed(
-                                                        offset:
-                                                          upperValue
-                                                            .length),
-                                                    composing:
-                                                      TextRange.empty,
-                                                    );
-                                              }
+                                                    selection:
+                                                        TextSelection.collapsed(
+                                                            offset: upperValue
+                                                                .length),
+                                                    composing: TextRange.empty,
+                                                  );
+                                                }
                                               },
                                               autofocus: true,
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Número do animal',
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -315,7 +314,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -348,7 +347,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           8.0),
                                                 ),
                                                 filled: true,
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -373,7 +373,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -395,7 +395,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -412,7 +412,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryBackground,
                                           ),
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller:
@@ -422,27 +422,28 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Chip do animal',
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -452,7 +453,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -485,7 +486,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           8.0),
                                                 ),
                                                 filled: true,
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -527,7 +529,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   padding:
                                                       MediaQuery.viewInsetsOf(
                                                           context),
-                                                  child: SaibaMaisBTWidget(),
+                                                  child:
+                                                      const SaibaMaisBTWidget(),
                                                 );
                                               },
                                             ).then(
@@ -549,8 +552,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                             FlutterFlowTheme.of(
                                                                     context)
                                                                 .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF8E8E8E),
+                                                        color: const Color(
+                                                            0xFF8E8E8E),
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.normal,
@@ -560,7 +563,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                 .bodyMediumIsCustom,
                                                       ),
                                                 ),
-                                                TextSpan(
+                                                const TextSpan(
                                                   text: 'Saiba mais',
                                                   style: TextStyle(
                                                     color: Color(0xFF28A365),
@@ -586,7 +589,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -609,7 +612,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -620,7 +623,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               ),
                                         ),
                                         Expanded(
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller: _model
@@ -631,27 +634,28 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Código registro',
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -661,7 +665,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -694,7 +698,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           8.0),
                                                 ),
                                                 filled: true,
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -719,7 +724,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -742,7 +747,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -753,7 +758,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               ),
                                         ),
                                         Expanded(
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller: _model
@@ -764,27 +769,28 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Nome do animal',
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -794,7 +800,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -827,7 +833,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           8.0),
                                                 ),
                                                 filled: true,
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -852,7 +859,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -875,7 +882,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -889,7 +896,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                           controller: _model
                                                   .dropDownSexoValueController ??=
                                               FormFieldController<String>(null),
-                                          options: ['Macho', 'Fêmea'],
+                                          options: const ['Macho', 'Fêmea'],
                                           onChanged: (val) async {
                                             safeSetState(() =>
                                                 _model.dropDownSexoValue = val);
@@ -922,20 +929,19 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 .secondaryText,
                                             size: 24.0,
                                           ),
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                           elevation: 2.0,
-                                          borderColor: Color(0x00E0E3E7),
+                                          borderColor: const Color(0x00E0E3E7),
                                           borderWidth: 2.0,
                                           borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 4.0, 16.0, 4.0),
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                           hidesUnderline: true,
                                           isOverButton: true,
                                           isSearchable: false,
                                           isMultiSelect: false,
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -957,7 +963,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -976,9 +982,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 BorderRadius.circular(8.0),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 0.0, 16.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 16.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
@@ -1025,7 +1030,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1035,8 +1040,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                           .secondaryBackground,
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 2.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 2.0, 0.0, 0.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         crossAxisAlignment:
@@ -1051,7 +1057,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       FlutterFlowTheme.of(
                                                               context)
                                                           .bodyMediumFamily,
-                                                  color: Color(0xFF474747),
+                                                  color:
+                                                      const Color(0xFF474747),
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w600,
@@ -1067,7 +1074,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             hoverColor: Colors.transparent,
                                             highlightColor: Colors.transparent,
                                             onTap: () async {
-                                              final _datePicked1Date =
+                                              final datePicked1Date =
                                                   await showDatePicker(
                                                 context: context,
                                                 initialDate:
@@ -1079,7 +1086,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                     context,
                                                     child!,
                                                     headerBackgroundColor:
-                                                        Color(0xFF28A365),
+                                                        const Color(0xFF28A365),
                                                     headerForegroundColor:
                                                         FlutterFlowTheme.of(
                                                                 context)
@@ -1129,12 +1136,12 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 },
                                               );
 
-                                              if (_datePicked1Date != null) {
+                                              if (datePicked1Date != null) {
                                                 safeSetState(() {
                                                   _model.datePicked1 = DateTime(
-                                                    _datePicked1Date.year,
-                                                    _datePicked1Date.month,
-                                                    _datePicked1Date.day,
+                                                    datePicked1Date.year,
+                                                    datePicked1Date.month,
+                                                    datePicked1Date.day,
                                                   );
                                                 });
                                               } else if (_model.datePicked1 !=
@@ -1148,7 +1155,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             child: Container(
                                               width: double.infinity,
                                               height: 56.0,
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0xFFF1F1F1),
                                                 borderRadius: BorderRadius.only(
                                                   bottomLeft:
@@ -1161,8 +1168,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 0.0, 8.0, 0.0),
                                                 child: Row(
                                                   mainAxisSize:
@@ -1193,11 +1201,11 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                           Color>(
                                                                     _model.datePicked1 ==
                                                                             null
-                                                                        ? Color(
+                                                                        ? const Color(
                                                                             0xFFBEBEBE)
                                                                         : FlutterFlowTheme.of(context)
                                                                             .secondaryText,
-                                                                    Color(
+                                                                    const Color(
                                                                         0xFFBEBEBE),
                                                                   ),
                                                                   fontSize:
@@ -1228,7 +1236,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               ),
                                             ),
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
                                   ),
@@ -1252,7 +1260,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1263,7 +1271,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               ),
                                         ),
                                         Expanded(
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller: _model
@@ -1274,27 +1282,28 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Peso do animal',
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -1304,7 +1313,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -1337,7 +1346,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           8.0),
                                                 ),
                                                 filled: true,
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -1365,7 +1375,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1388,7 +1398,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1402,7 +1412,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                           controller: _model
                                                   .dPPorteValueController ??=
                                               FormFieldController<String>(null),
-                                          options: ['P', 'M', 'G'],
+                                          options: const ['P', 'M', 'G'],
                                           onChanged: (val) => safeSetState(
                                               () => _model.dPPorteValue = val),
                                           width: double.infinity,
@@ -1432,20 +1442,19 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 .secondaryText,
                                             size: 24.0,
                                           ),
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                           elevation: 2.0,
-                                          borderColor: Color(0x00E0E3E7),
+                                          borderColor: const Color(0x00E0E3E7),
                                           borderWidth: 2.0,
                                           borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 4.0, 16.0, 4.0),
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                           hidesUnderline: true,
                                           isOverButton: true,
                                           isSearchable: false,
                                           isMultiSelect: false,
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1468,7 +1477,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1541,20 +1550,19 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 .secondaryText,
                                             size: 24.0,
                                           ),
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                           elevation: 2.0,
-                                          borderColor: Color(0x00E0E3E7),
+                                          borderColor: const Color(0x00E0E3E7),
                                           borderWidth: 2.0,
                                           borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 4.0, 16.0, 4.0),
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                           hidesUnderline: true,
                                           isOverButton: true,
                                           isSearchable: true,
                                           isMultiSelect: false,
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1577,7 +1585,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1642,13 +1650,16 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       .secondaryText,
                                                   size: 24.0,
                                                 ),
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                                 elevation: 2.0,
-                                                borderColor: Color(0x00E0E3E7),
+                                                borderColor:
+                                                    const Color(0x00E0E3E7),
                                                 borderWidth: 2.0,
                                                 borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                margin:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 4.0, 16.0, 4.0),
                                                 hidesUnderline: true,
                                                 isOverButton: true,
@@ -1679,9 +1690,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   size: 24.0,
                                                 ),
                                               ),
-                                          ].divide(SizedBox(width: 8.0)),
+                                          ].divide(const SizedBox(width: 8.0)),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   if (responsiveVisibility(
@@ -1711,7 +1722,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       FlutterFlowTheme.of(
                                                               context)
                                                           .bodyMediumFamily,
-                                                  color: Color(0xFF474747),
+                                                  color:
+                                                      const Color(0xFF474747),
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w600,
@@ -1727,7 +1739,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             hoverColor: Colors.transparent,
                                             highlightColor: Colors.transparent,
                                             onTap: () async {
-                                              final _datePicked2Date =
+                                              final datePicked2Date =
                                                   await showDatePicker(
                                                 context: context,
                                                 initialDate:
@@ -1739,7 +1751,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                     context,
                                                     child!,
                                                     headerBackgroundColor:
-                                                        Color(0xFF28A365),
+                                                        const Color(0xFF28A365),
                                                     headerForegroundColor:
                                                         FlutterFlowTheme.of(
                                                                 context)
@@ -1789,12 +1801,12 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 },
                                               );
 
-                                              if (_datePicked2Date != null) {
+                                              if (datePicked2Date != null) {
                                                 safeSetState(() {
                                                   _model.datePicked2 = DateTime(
-                                                    _datePicked2Date.year,
-                                                    _datePicked2Date.month,
-                                                    _datePicked2Date.day,
+                                                    datePicked2Date.year,
+                                                    datePicked2Date.month,
+                                                    datePicked2Date.day,
                                                   );
                                                 });
                                               } else if (_model.datePicked2 !=
@@ -1808,7 +1820,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             child: Container(
                                               width: double.infinity,
                                               height: 56.0,
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0xFFF1F1F1),
                                                 borderRadius: BorderRadius.only(
                                                   bottomLeft:
@@ -1821,8 +1833,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 0.0, 8.0, 0.0),
                                                 child: Row(
                                                   mainAxisSize:
@@ -1853,11 +1866,11 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                           Color>(
                                                                     _model.datePicked2 ==
                                                                             null
-                                                                        ? Color(
+                                                                        ? const Color(
                                                                             0xFFBEBEBE)
                                                                         : FlutterFlowTheme.of(context)
                                                                             .secondaryText,
-                                                                    Color(
+                                                                    const Color(
                                                                         0xFFBEBEBE),
                                                                   ),
                                                                   fontSize:
@@ -1888,12 +1901,13 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               ),
                                             ),
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 0.0, 0.0, 8.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 0.0, 0.0, 8.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -1945,12 +1959,15 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             options: FFButtonOptions(
                                               width: 155.0,
                                               height: 56.0,
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 0.0, 24.0, 0.0),
-                                              iconPadding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                              color: Color(0x001E7A4C),
+                                              iconPadding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      0.0, 0.0, 0.0, 0.0),
+                                              color: const Color(0x001E7A4C),
                                               textStyle: FlutterFlowTheme.of(
                                                       context)
                                                   .titleSmall
@@ -1959,7 +1976,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .titleSmallFamily,
-                                                    color: Color(0xFF1E7A4C),
+                                                    color:
+                                                        const Color(0xFF1E7A4C),
                                                     fontSize: 18.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -1969,7 +1987,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                             .titleSmallIsCustom,
                                                   ),
                                               elevation: 0.0,
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0xFF1E7A4C),
                                                 width: 2.0,
                                               ),
@@ -1991,7 +2009,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       _model.tabBarController!
                                                               .index +
                                                           1),
-                                                  duration: Duration(
+                                                  duration: const Duration(
                                                       milliseconds: 300),
                                                   curve: Curves.ease,
                                                 );
@@ -2001,12 +2019,15 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             options: FFButtonOptions(
                                               width: 155.0,
                                               height: 56.0,
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 0.0, 24.0, 0.0),
-                                              iconPadding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                              color: Color(0xFF28A365),
+                                              iconPadding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      0.0, 0.0, 0.0, 0.0),
+                                              color: const Color(0xFF28A365),
                                               textStyle: FlutterFlowTheme.of(
                                                       context)
                                                   .titleSmall
@@ -2025,7 +2046,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                             .titleSmallIsCustom,
                                                   ),
                                               elevation: 3.0,
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Colors.transparent,
                                                 width: 1.0,
                                               ),
@@ -2034,18 +2055,18 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(width: 16.0)),
+                                      ].divide(const SizedBox(width: 16.0)),
                                     ),
                                   ),
-                                ].divide(SizedBox(height: 24.0)),
+                                ].divide(const SizedBox(height: 24.0)),
                               ),
                             ),
                           ),
                         ),
                         Container(
-                          decoration: BoxDecoration(),
+                          decoration: const BoxDecoration(),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 24.0, 24.0, 24.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -2066,7 +2087,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                         children: [
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
+                                                const AlignmentDirectional(
+                                                    -1.0, 0.0),
                                             child: Text(
                                               'Matriz',
                                               style: FlutterFlowTheme.of(
@@ -2077,7 +2099,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -2112,13 +2135,13 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         isGlobal: false,
                                                         avoidOverflow: true,
                                                         targetAnchor:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                     0.0, 1.0)
                                                                 .resolve(
                                                                     Directionality.of(
                                                                         context)),
                                                         followerAnchor:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                     0.0, -1.0)
                                                                 .resolve(
                                                                     Directionality.of(
@@ -2128,12 +2151,12 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           return Material(
                                                             color: Colors
                                                                 .transparent,
-                                                            child: Container(
+                                                            child: SizedBox(
                                                               height: 450.0,
                                                               width: double
                                                                   .infinity,
                                                               child:
-                                                                  PopupRebanhosWidget(
+                                                                  const PopupRebanhosWidget(
                                                                 sexo: 'Fêmea',
                                                               ),
                                                             ),
@@ -2155,12 +2178,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       ),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    16.0,
-                                                                    0.0,
-                                                                    16.0,
-                                                                    0.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(16.0,
+                                                                0.0, 16.0, 0.0),
                                                         child: Row(
                                                           mainAxisSize:
                                                               MainAxisSize.max,
@@ -2234,46 +2254,41 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                   .primaryText,
                                                               size: 24.0,
                                                             ),
-                                                          ].divide(SizedBox(
-                                                              width: 8.0)),
+                                                          ].divide(
+                                                              const SizedBox(
+                                                                  width: 8.0)),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                              if (FFAppState()
-                                                      .matrizSelecionada !=
-                                                  null)
-                                                InkWell(
-                                                  splashColor:
-                                                      Colors.transparent,
-                                                  focusColor:
-                                                      Colors.transparent,
-                                                  hoverColor:
-                                                      Colors.transparent,
-                                                  highlightColor:
-                                                      Colors.transparent,
-                                                  onTap: () async {
-                                                    FFAppState()
-                                                            .matrizSelecionada =
-                                                        AnimalSelecionadoStruct
-                                                            .fromSerializableMap(
-                                                                jsonDecode(
-                                                                    '{}'));
-                                                    safeSetState(() {});
-                                                  },
-                                                  child: Icon(
-                                                    Icons.close,
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .accent3,
-                                                    size: 24.0,
-                                                  ),
+                                              InkWell(
+                                                splashColor: Colors.transparent,
+                                                focusColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                highlightColor:
+                                                    Colors.transparent,
+                                                onTap: () async {
+                                                  FFAppState()
+                                                          .matrizSelecionada =
+                                                      AnimalSelecionadoStruct
+                                                          .fromSerializableMap(
+                                                              jsonDecode('{}'));
+                                                  safeSetState(() {});
+                                                },
+                                                child: Icon(
+                                                  Icons.close,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .accent3,
+                                                  size: 24.0,
                                                 ),
-                                            ].divide(SizedBox(width: 16.0)),
+                                              ),
+                                            ].divide(
+                                                const SizedBox(width: 16.0)),
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
                                     Container(
@@ -2296,7 +2311,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       FlutterFlowTheme.of(
                                                               context)
                                                           .bodyMediumFamily,
-                                                  color: Color(0xFF474747),
+                                                  color:
+                                                      const Color(0xFF474747),
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w600,
@@ -2328,13 +2344,13 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         isGlobal: false,
                                                         avoidOverflow: true,
                                                         targetAnchor:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                     0.0, 1.0)
                                                                 .resolve(
                                                                     Directionality.of(
                                                                         context)),
                                                         followerAnchor:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                     0.0, -1.0)
                                                                 .resolve(
                                                                     Directionality.of(
@@ -2344,12 +2360,12 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           return Material(
                                                             color: Colors
                                                                 .transparent,
-                                                            child: Container(
+                                                            child: SizedBox(
                                                               height: 450.0,
                                                               width: double
                                                                   .infinity,
                                                               child:
-                                                                  PopupRebanhosWidget(
+                                                                  const PopupRebanhosWidget(
                                                                 sexo: 'Macho',
                                                               ),
                                                             ),
@@ -2371,12 +2387,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       ),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    16.0,
-                                                                    0.0,
-                                                                    16.0,
-                                                                    0.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(16.0,
+                                                                0.0, 16.0, 0.0),
                                                         child: Row(
                                                           mainAxisSize:
                                                               MainAxisSize.max,
@@ -2450,49 +2463,44 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                   .primaryText,
                                                               size: 24.0,
                                                             ),
-                                                          ].divide(SizedBox(
-                                                              width: 8.0)),
+                                                          ].divide(
+                                                              const SizedBox(
+                                                                  width: 8.0)),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                              if (FFAppState()
-                                                      .reprodutorSelecionado !=
-                                                  null)
-                                                InkWell(
-                                                  splashColor:
-                                                      Colors.transparent,
-                                                  focusColor:
-                                                      Colors.transparent,
-                                                  hoverColor:
-                                                      Colors.transparent,
-                                                  highlightColor:
-                                                      Colors.transparent,
-                                                  onTap: () async {
-                                                    FFAppState()
-                                                            .reprodutorSelecionado =
-                                                        AnimalSelecionadoStruct
-                                                            .fromSerializableMap(
-                                                                jsonDecode(
-                                                                    '{}'));
-                                                    safeSetState(() {});
-                                                  },
-                                                  child: Icon(
-                                                    Icons.close,
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .accent3,
-                                                    size: 24.0,
-                                                  ),
+                                              InkWell(
+                                                splashColor: Colors.transparent,
+                                                focusColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                highlightColor:
+                                                    Colors.transparent,
+                                                onTap: () async {
+                                                  FFAppState()
+                                                          .reprodutorSelecionado =
+                                                      AnimalSelecionadoStruct
+                                                          .fromSerializableMap(
+                                                              jsonDecode('{}'));
+                                                  safeSetState(() {});
+                                                },
+                                                child: Icon(
+                                                  Icons.close,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .accent3,
+                                                  size: 24.0,
                                                 ),
-                                            ].divide(SizedBox(width: 16.0)),
+                                              ),
+                                            ].divide(
+                                                const SizedBox(width: 16.0)),
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                                 Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -2509,8 +2517,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   _model.tabBarController!
                                                           .index -
                                                       1),
-                                              duration:
-                                                  Duration(milliseconds: 300),
+                                              duration: const Duration(
+                                                  milliseconds: 300),
                                               curve: Curves.ease,
                                             );
                                           });
@@ -2519,13 +2527,12 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                         options: FFButtonOptions(
                                           width: 160.0,
                                           height: 56.0,
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           iconPadding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 0.0, 0.0, 0.0),
-                                          color: Color(0x004B39EF),
+                                              const EdgeInsetsDirectional
+                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                          color: const Color(0x004B39EF),
                                           textStyle: FlutterFlowTheme.of(
                                                   context)
                                               .titleSmall
@@ -2533,7 +2540,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .titleSmallFamily,
-                                                color: Color(0xFF1E7A4C),
+                                                color: const Color(0xFF1E7A4C),
                                                 fontSize: 18.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -2543,7 +2550,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         .titleSmallIsCustom,
                                               ),
                                           elevation: 0.0,
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFF1E7A4C),
                                             width: 2.0,
                                           ),
@@ -2564,8 +2571,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   _model.tabBarController!
                                                           .index +
                                                       1),
-                                              duration:
-                                                  Duration(milliseconds: 300),
+                                              duration: const Duration(
+                                                  milliseconds: 300),
                                               curve: Curves.ease,
                                             );
                                           });
@@ -2574,13 +2581,12 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                         options: FFButtonOptions(
                                           width: 160.0,
                                           height: 56.0,
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           iconPadding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 0.0, 0.0, 0.0),
-                                          color: Color(0xFF28A365),
+                                              const EdgeInsetsDirectional
+                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                          color: const Color(0xFF28A365),
                                           textStyle: FlutterFlowTheme.of(
                                                   context)
                                               .titleSmall
@@ -2598,7 +2604,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         .titleSmallIsCustom,
                                               ),
                                           elevation: 0.0,
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0x0028A365),
                                             width: 0.0,
                                           ),
@@ -2607,9 +2613,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(width: 16.0)),
+                                  ].divide(const SizedBox(width: 16.0)),
                                 ),
-                              ].divide(SizedBox(height: 24.0)),
+                              ].divide(const SizedBox(height: 24.0)),
                             ),
                           ),
                         ),
@@ -2617,7 +2623,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                           key: _model.formKey1,
                           autovalidateMode: AutovalidateMode.disabled,
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 24.0, 24.0, 24.0),
                             child: SingleChildScrollView(
                               child: Column(
@@ -2643,7 +2649,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -2690,20 +2696,19 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 .secondaryText,
                                             size: 24.0,
                                           ),
-                                          fillColor: Color(0xFFF1F1F1),
+                                          fillColor: const Color(0xFFF1F1F1),
                                           elevation: 0.0,
-                                          borderColor: Color(0x00E0E3E7),
+                                          borderColor: const Color(0x00E0E3E7),
                                           borderWidth: 0.0,
                                           borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 4.0, 16.0, 4.0),
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                           hidesUnderline: true,
                                           isOverButton: true,
                                           isSearchable: false,
                                           isMultiSelect: false,
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   if (_model.dPStatusValue == 'Vendido')
@@ -2714,8 +2719,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           crossAxisAlignment:
@@ -2731,7 +2736,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -2748,7 +2754,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
-                                                final _datePicked3Date =
+                                                final datePicked3Date =
                                                     await showDatePicker(
                                                   context: context,
                                                   initialDate:
@@ -2760,7 +2766,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       context,
                                                       child!,
                                                       headerBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       headerForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -2793,7 +2800,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                   context)
                                                               .primaryText,
                                                       selectedDateTimeBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       selectedDateTimeForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -2807,13 +2815,13 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   },
                                                 );
 
-                                                if (_datePicked3Date != null) {
+                                                if (datePicked3Date != null) {
                                                   safeSetState(() {
                                                     _model.datePicked3 =
                                                         DateTime(
-                                                      _datePicked3Date.year,
-                                                      _datePicked3Date.month,
-                                                      _datePicked3Date.day,
+                                                      datePicked3Date.year,
+                                                      datePicked3Date.month,
+                                                      datePicked3Date.day,
                                                     );
                                                   });
                                                 } else if (_model.datePicked3 !=
@@ -2827,7 +2835,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               child: Container(
                                                 width: double.infinity,
                                                 height: 56.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color(0xFFF1F1F1),
                                                   borderRadius:
                                                       BorderRadius.only(
@@ -2842,8 +2850,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -2875,12 +2884,12 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                         Color>(
                                                                   _model.datePicked3 ==
                                                                           null
-                                                                      ? Color(
+                                                                      ? const Color(
                                                                           0xFFBEBEBE)
                                                                       : FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText,
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -2922,8 +2931,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           crossAxisAlignment:
@@ -2939,7 +2948,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -2956,7 +2966,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
-                                                final _datePicked4Date =
+                                                final datePicked4Date =
                                                     await showDatePicker(
                                                   context: context,
                                                   initialDate:
@@ -2968,7 +2978,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       context,
                                                       child!,
                                                       headerBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       headerForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -3001,7 +3012,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                   context)
                                                               .primaryText,
                                                       selectedDateTimeBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       selectedDateTimeForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -3015,13 +3027,13 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   },
                                                 );
 
-                                                if (_datePicked4Date != null) {
+                                                if (datePicked4Date != null) {
                                                   safeSetState(() {
                                                     _model.datePicked4 =
                                                         DateTime(
-                                                      _datePicked4Date.year,
-                                                      _datePicked4Date.month,
-                                                      _datePicked4Date.day,
+                                                      datePicked4Date.year,
+                                                      datePicked4Date.month,
+                                                      datePicked4Date.day,
                                                     );
                                                   });
                                                 } else if (_model.datePicked4 !=
@@ -3035,7 +3047,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               child: Container(
                                                 width: double.infinity,
                                                 height: 56.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color(0xFFF1F1F1),
                                                   borderRadius:
                                                       BorderRadius.only(
@@ -3050,8 +3062,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -3083,12 +3096,12 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                         Color>(
                                                                   _model.datePicked4 ==
                                                                           null
-                                                                      ? Color(
+                                                                      ? const Color(
                                                                           0xFFBEBEBE)
                                                                       : FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText,
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -3144,7 +3157,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       FlutterFlowTheme.of(
                                                               context)
                                                           .bodyMediumFamily,
-                                                  color: Color(0xFF474747),
+                                                  color:
+                                                      const Color(0xFF474747),
                                                   fontSize: 16.0,
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w600,
@@ -3159,7 +3173,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                     .dPMotivoMorteValueController ??=
                                                 FormFieldController<String>(
                                                     null),
-                                            options: [
+                                            options: const [
                                               'ACIDENTE',
                                               'ANIMAL PEÇONHENTO',
                                               'ATAQUE AVE',
@@ -3205,20 +3219,20 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       .secondaryText,
                                               size: 24.0,
                                             ),
-                                            fillColor: Color(0xFFF1F1F1),
+                                            fillColor: const Color(0xFFF1F1F1),
                                             elevation: 2.0,
-                                            borderColor: Color(0x00E0E3E7),
+                                            borderColor:
+                                                const Color(0x00E0E3E7),
                                             borderWidth: 2.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 4.0, 16.0, 4.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                             hidesUnderline: true,
                                             isOverButton: true,
                                             isSearchable: false,
                                             isMultiSelect: false,
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
                                   if (_model.dPStatusValue == 'Movimentação')
@@ -3229,8 +3243,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           crossAxisAlignment:
@@ -3246,7 +3260,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -3263,7 +3278,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
-                                                final _datePicked5Date =
+                                                final datePicked5Date =
                                                     await showDatePicker(
                                                   context: context,
                                                   initialDate:
@@ -3275,7 +3290,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       context,
                                                       child!,
                                                       headerBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       headerForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -3308,7 +3324,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                   context)
                                                               .primaryText,
                                                       selectedDateTimeBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       selectedDateTimeForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -3322,13 +3339,13 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   },
                                                 );
 
-                                                if (_datePicked5Date != null) {
+                                                if (datePicked5Date != null) {
                                                   safeSetState(() {
                                                     _model.datePicked5 =
                                                         DateTime(
-                                                      _datePicked5Date.year,
-                                                      _datePicked5Date.month,
-                                                      _datePicked5Date.day,
+                                                      datePicked5Date.year,
+                                                      datePicked5Date.month,
+                                                      datePicked5Date.day,
                                                     );
                                                   });
                                                 } else if (_model.datePicked5 !=
@@ -3342,7 +3359,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               child: Container(
                                                 width: double.infinity,
                                                 height: 56.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color(0xFFF1F1F1),
                                                   borderRadius:
                                                       BorderRadius.only(
@@ -3357,8 +3374,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -3390,12 +3408,12 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                         Color>(
                                                                   _model.datePicked5 ==
                                                                           null
-                                                                      ? Color(
+                                                                      ? const Color(
                                                                           0xFFBEBEBE)
                                                                       : FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText,
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -3437,8 +3455,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             .secondaryBackground,
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 5.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           crossAxisAlignment:
@@ -3454,7 +3472,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -3464,7 +3483,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                             .bodyMediumIsCustom,
                                                   ),
                                             ),
-                                            Container(
+                                            SizedBox(
                                               width: double.infinity,
                                               height: 56.0,
                                               child: custom_widgets
@@ -3510,7 +3529,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -3523,7 +3542,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                         Container(
                                           width: double.infinity,
                                           height: 104.0,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             color: Color(0xFFF1F1F1),
                                             borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
@@ -3532,7 +3551,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               topRight: Radius.circular(6.0),
                                             ),
                                           ),
-                                          child: Container(
+                                          child: SizedBox(
                                             width: double.infinity,
                                             child: TextFormField(
                                               controller: _model
@@ -3542,27 +3561,28 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               autofocus: false,
                                               obscureText: false,
                                               decoration: InputDecoration(
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00E0E3E7),
                                                     width: 2.0,
                                                   ),
@@ -3572,7 +3592,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -3605,9 +3625,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           8.0),
                                                 ),
                                                 contentPadding:
-                                                    EdgeInsetsDirectional
-                                                        .fromSTEB(16.0, 0.0,
-                                                            16.0, 0.0),
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
+                                                        16.0, 0.0, 16.0, 0.0),
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -3632,12 +3652,13 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 0.0, 0.0, 8.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 0.0, 0.0, 8.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -3654,7 +3675,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       _model.tabBarController!
                                                               .index -
                                                           1),
-                                                  duration: Duration(
+                                                  duration: const Duration(
                                                       milliseconds: 300),
                                                   curve: Curves.ease,
                                                 );
@@ -3664,12 +3685,15 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             options: FFButtonOptions(
                                               width: 160.0,
                                               height: 56.0,
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 0.0, 24.0, 0.0),
-                                              iconPadding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                              color: Color(0x004B39EF),
+                                              iconPadding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      0.0, 0.0, 0.0, 0.0),
+                                              color: const Color(0x004B39EF),
                                               textStyle: FlutterFlowTheme.of(
                                                       context)
                                                   .titleSmall
@@ -3678,7 +3702,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .titleSmallFamily,
-                                                    color: Color(0xFF1E7A4C),
+                                                    color:
+                                                        const Color(0xFF1E7A4C),
                                                     fontSize: 18.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -3688,7 +3713,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                             .titleSmallIsCustom,
                                                   ),
                                               elevation: 0.0,
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0xFF1E7A4C),
                                                 width: 2.0,
                                               ),
@@ -3882,12 +3907,10 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         .reprodutorSelecionado
                                                         .idRebanho,
                                               );
-                                              if (_model.pesonascimentoTextController
-                                                          .text !=
-                                                      null &&
-                                                  _model.pesonascimentoTextController
-                                                          .text !=
-                                                      '') {
+                                              if (_model
+                                                      .pesonascimentoTextController
+                                                      .text !=
+                                                  '') {
                                                 await SQLiteManager.instance
                                                     .addPesagem(
                                                   dataPesagem: dateTimeFormat(
@@ -3962,7 +3985,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           .secondaryBackground,
                                                     ),
                                                   ),
-                                                  duration: Duration(
+                                                  duration: const Duration(
                                                       milliseconds: 4000),
                                                   backgroundColor:
                                                       FlutterFlowTheme.of(
@@ -3978,11 +4001,14 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             options: FFButtonOptions(
                                               width: 160.0,
                                               height: 56.0,
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 0.0, 24.0, 0.0),
-                                              iconPadding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                              iconPadding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      0.0, 0.0, 0.0, 0.0),
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .primary,
@@ -4004,7 +4030,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                             .titleSmallIsCustom,
                                                   ),
                                               elevation: 0.0,
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x0028A365),
                                                 width: 0.0,
                                               ),
@@ -4013,10 +4039,10 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(width: 16.0)),
+                                      ].divide(const SizedBox(width: 16.0)),
                                     ),
                                   ),
-                                ].divide(SizedBox(height: 24.0)),
+                                ].divide(const SizedBox(height: 24.0)),
                               ),
                             ),
                           ),
@@ -4028,7 +4054,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
               ),
             ),
           ),
-        ].divide(SizedBox(height: 24.0)),
+        ].divide(const SizedBox(height: 24.0)),
       ),
     );
   }

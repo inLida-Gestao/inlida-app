@@ -53,7 +53,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
     return Material(
       color: Colors.transparent,
       elevation: 5.0,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(0.0),
           bottomRight: Radius.circular(0.0),
@@ -64,7 +64,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
       child: Container(
         width: double.infinity,
         height: 790.0,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(0.0),
@@ -80,8 +80,8 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding:
-                      EdgeInsetsDirectional.fromSTEB(25.0, 25.0, 25.0, 25.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      25.0, 25.0, 25.0, 25.0),
                   child: InkWell(
                     splashColor: Colors.transparent,
                     focusColor: Colors.transparent,
@@ -123,7 +123,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                       .headlineSmall
                                       .fontStyle,
                                 ),
-                                color: Color(0xFF2F2F2F),
+                                color: const Color(0xFF2F2F2F),
                                 fontSize: 24.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w500,
@@ -163,7 +163,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                         .headlineSmall
                                         .fontStyle,
                                   ),
-                                  color: Color(0xFFBEBEBE),
+                                  color: const Color(0xFFBEBEBE),
                                   fontSize: 14.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.w600,
@@ -177,7 +177,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                     ),
                   ),
                 ),
-                Divider(
+                const Divider(
                   thickness: 1.0,
                   color: Color(0xFFBEBEBE),
                 ),
@@ -192,7 +192,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Container(
                             width: double.infinity,
@@ -201,7 +201,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -215,7 +215,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF2F2F2F),
+                                          color: const Color(0xFF2F2F2F),
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w500,
@@ -233,7 +233,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                         controller: _model
                                                 .dropDownValueController ??=
                                             FormFieldController<String>(null),
-                                        options: [
+                                        options: const [
                                           'Últimos 30 dias',
                                           'Últimos 60 dias',
                                           'Últimos 90 dias'
@@ -285,8 +285,8 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                         borderColor: Colors.transparent,
                                         borderWidth: 0.0,
                                         borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
+                                        margin: const EdgeInsetsDirectional
+                                            .fromSTEB(12.0, 0.0, 12.0, 0.0),
                                         hidesUnderline: true,
                                         isOverButton: false,
                                         isSearchable: false,
@@ -355,15 +355,15 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                       ),
-                                    ].divide(SizedBox(width: 8.0)),
+                                    ].divide(const SizedBox(width: 8.0)),
                                   ),
-                                ].divide(SizedBox(height: 8.0)),
+                                ].divide(const SizedBox(height: 8.0)),
                               ),
                             ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Container(
                             width: double.infinity,
@@ -372,7 +372,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -386,7 +386,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF2F2F2F),
+                                          color: const Color(0xFF2F2F2F),
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w500,
@@ -462,14 +462,15 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                               vacinaItem
                                                           ? '#1E7A4C'
                                                           : '#EDEDED',
-                                                      defaultColor:
-                                                          Color(0xFFEDEDED),
+                                                      defaultColor: const Color(
+                                                          0xFFEDEDED),
                                                     ),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 8.0, 16.0, 8.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -525,24 +526,24 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                               .primary,
                                                           size: 16.0,
                                                         ),
-                                                    ].divide(
-                                                        SizedBox(width: 8.0)),
+                                                    ].divide(const SizedBox(
+                                                        width: 8.0)),
                                                   ),
                                                 ),
                                               ),
                                             );
-                                          }).divide(SizedBox(width: 8.0)),
+                                          }).divide(const SizedBox(width: 8.0)),
                                         ),
                                       );
                                     },
                                   ),
-                                ].divide(SizedBox(height: 5.0)),
+                                ].divide(const SizedBox(height: 5.0)),
                               ),
                             ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Container(
                             width: double.infinity,
@@ -551,7 +552,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -565,7 +566,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF2F2F2F),
+                                          color: const Color(0xFF2F2F2F),
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w500,
@@ -644,14 +645,15 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                               antiparasitarioItem
                                                           ? '#1E7A4C'
                                                           : '#EDEDED',
-                                                      defaultColor:
-                                                          Color(0xFFEDEDED),
+                                                      defaultColor: const Color(
+                                                          0xFFEDEDED),
                                                     ),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 8.0, 16.0, 8.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -707,24 +709,24 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                               .primary,
                                                           size: 16.0,
                                                         ),
-                                                    ].divide(
-                                                        SizedBox(width: 8.0)),
+                                                    ].divide(const SizedBox(
+                                                        width: 8.0)),
                                                   ),
                                                 ),
                                               ),
                                             );
-                                          }).divide(SizedBox(width: 8.0)),
+                                          }).divide(const SizedBox(width: 8.0)),
                                         ),
                                       );
                                     },
                                   ),
-                                ].divide(SizedBox(height: 5.0)),
+                                ].divide(const SizedBox(height: 5.0)),
                               ),
                             ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Container(
                             width: double.infinity,
@@ -733,7 +735,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -747,7 +749,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF2F2F2F),
+                                          color: const Color(0xFF2F2F2F),
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w500,
@@ -825,14 +827,15 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                               tratamentosItem
                                                           ? '#1E7A4C'
                                                           : '#EDEDED',
-                                                      defaultColor:
-                                                          Color(0xFFEDEDED),
+                                                      defaultColor: const Color(
+                                                          0xFFEDEDED),
                                                     ),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 8.0, 16.0, 8.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -888,24 +891,24 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                               .primary,
                                                           size: 16.0,
                                                         ),
-                                                    ].divide(
-                                                        SizedBox(width: 8.0)),
+                                                    ].divide(const SizedBox(
+                                                        width: 8.0)),
                                                   ),
                                                 ),
                                               ),
                                             );
-                                          }).divide(SizedBox(width: 8.0)),
+                                          }).divide(const SizedBox(width: 8.0)),
                                         ),
                                       );
                                     },
                                   ),
-                                ].divide(SizedBox(height: 5.0)),
+                                ].divide(const SizedBox(height: 5.0)),
                               ),
                             ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Container(
                             width: double.infinity,
@@ -914,7 +917,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -928,7 +931,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF2F2F2F),
+                                          color: const Color(0xFF2F2F2F),
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w500,
@@ -1007,14 +1010,15 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                               protocolosItem
                                                           ? '#1E7A4C'
                                                           : '#EDEDED',
-                                                      defaultColor:
-                                                          Color(0xFFEDEDED),
+                                                      defaultColor: const Color(
+                                                          0xFFEDEDED),
                                                     ),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 8.0, 16.0, 8.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -1070,24 +1074,24 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                               .primary,
                                                           size: 16.0,
                                                         ),
-                                                    ].divide(
-                                                        SizedBox(width: 8.0)),
+                                                    ].divide(const SizedBox(
+                                                        width: 8.0)),
                                                   ),
                                                 ),
                                               ),
                                             );
-                                          }).divide(SizedBox(width: 8.0)),
+                                          }).divide(const SizedBox(width: 8.0)),
                                         ),
                                       );
                                     },
                                   ),
-                                ].divide(SizedBox(height: 5.0)),
+                                ].divide(const SizedBox(height: 5.0)),
                               ),
                             ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: FutureBuilder<List<ListarLotesRow>>(
                             future: SQLiteManager.instance.listarLotes(
@@ -1120,7 +1124,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                       .secondaryBackground,
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 0.0, 24.0, 0.0),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
@@ -1135,7 +1139,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF2F2F2F),
+                                              color: const Color(0xFF2F2F2F),
                                               fontSize: 18.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w500,
@@ -1224,18 +1228,16 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                               ? '#1E7A4C'
                                                               : '#EDEDED',
                                                           defaultColor:
-                                                              Color(0xFFEDEDED),
+                                                              const Color(
+                                                                  0xFFEDEDED),
                                                         ),
                                                       ),
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  16.0,
-                                                                  8.0,
-                                                                  16.0,
-                                                                  8.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(16.0,
+                                                              8.0, 16.0, 8.0),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.min,
@@ -1293,18 +1295,19 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                                   .primary,
                                                               size: 16.0,
                                                             ),
-                                                        ].divide(SizedBox(
+                                                        ].divide(const SizedBox(
                                                             width: 8.0)),
                                                       ),
                                                     ),
                                                   ),
                                                 );
-                                              }).divide(SizedBox(width: 8.0)),
+                                              }).divide(
+                                                  const SizedBox(width: 8.0)),
                                             ),
                                           );
                                         },
                                       ),
-                                    ].divide(SizedBox(height: 5.0)),
+                                    ].divide(const SizedBox(height: 5.0)),
                                   ),
                                 ),
                               );
@@ -1312,7 +1315,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: FutureBuilder<List<ListarRebanhosRow>>(
                             future: SQLiteManager.instance.listarRebanhos(
@@ -1345,7 +1348,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                       .secondaryBackground,
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 0.0, 24.0, 0.0),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
@@ -1360,7 +1363,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF2F2F2F),
+                                              color: const Color(0xFF2F2F2F),
                                               fontSize: 18.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w500,
@@ -1379,9 +1382,9 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                             scrollDirection: Axis.horizontal,
                                             child: Row(
                                               mainAxisSize: MainAxisSize.min,
-                                              children:
-                                                  List.generate(rebanho.length,
-                                                      (rebanhoIndex) {
+                                              children: List.generate(
+                                                  rebanho.length,
+                                                  (rebanhoIndex) {
                                                 final rebanhoItem =
                                                     rebanho[rebanhoIndex];
                                                 return InkWell(
@@ -1452,18 +1455,16 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                               ? '#1E7A4C'
                                                               : '#EDEDED',
                                                           defaultColor:
-                                                              Color(0xFFEDEDED),
+                                                              const Color(
+                                                                  0xFFEDEDED),
                                                         ),
                                                       ),
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  16.0,
-                                                                  8.0,
-                                                                  16.0,
-                                                                  8.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(16.0,
+                                                              8.0, 16.0, 8.0),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.min,
@@ -1522,13 +1523,14 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                                   .primary,
                                                               size: 16.0,
                                                             ),
-                                                        ].divide(SizedBox(
+                                                        ].divide(const SizedBox(
                                                             width: 8.0)),
                                                       ),
                                                     ),
                                                   ),
                                                 );
-                                              }).divide(SizedBox(width: 8.0)),
+                                              }).divide(
+                                                  const SizedBox(width: 8.0)),
                                             ),
                                           );
                                         },
@@ -1554,13 +1556,13 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                     isGlobal: false,
                                                     avoidOverflow: true,
                                                     targetAnchor:
-                                                        AlignmentDirectional(
+                                                        const AlignmentDirectional(
                                                                 0.0, 1.0)
                                                             .resolve(
                                                                 Directionality.of(
                                                                     context)),
                                                     followerAnchor:
-                                                        AlignmentDirectional(
+                                                        const AlignmentDirectional(
                                                                 0.0, -1.0)
                                                             .resolve(
                                                                 Directionality.of(
@@ -1569,12 +1571,12 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                       return Material(
                                                         color:
                                                             Colors.transparent,
-                                                        child: Container(
+                                                        child: SizedBox(
                                                           height: 450.0,
                                                           width:
                                                               double.infinity,
                                                           child:
-                                                              PopupRebanhosWidget(
+                                                              const PopupRebanhosWidget(
                                                             sanidade: true,
                                                           ),
                                                         ),
@@ -1595,9 +1597,9 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(16.0, 0.0,
-                                                                16.0, 0.0),
+                                                            16.0, 0.0),
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -1670,34 +1672,30 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                               ),
                                             ),
                                           ),
-                                          if (FFAppState()
-                                                  .rebanhoSanidadeSelecionado !=
-                                              null)
-                                            InkWell(
-                                              splashColor: Colors.transparent,
-                                              focusColor: Colors.transparent,
-                                              hoverColor: Colors.transparent,
-                                              highlightColor:
-                                                  Colors.transparent,
-                                              onTap: () async {
-                                                FFAppState()
-                                                        .rebanhoSanidadeSelecionado =
-                                                    AnimalSelecionadoStruct();
-                                                FFAppState()
-                                                    .filtroSanidadeAnimal = '';
-                                                safeSetState(() {});
-                                              },
-                                              child: Icon(
-                                                Icons.close,
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .accent3,
-                                                size: 24.0,
-                                              ),
+                                          InkWell(
+                                            splashColor: Colors.transparent,
+                                            focusColor: Colors.transparent,
+                                            hoverColor: Colors.transparent,
+                                            highlightColor: Colors.transparent,
+                                            onTap: () async {
+                                              FFAppState()
+                                                      .rebanhoSanidadeSelecionado =
+                                                  AnimalSelecionadoStruct();
+                                              FFAppState()
+                                                  .filtroSanidadeAnimal = '';
+                                              safeSetState(() {});
+                                            },
+                                            child: Icon(
+                                              Icons.close,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .accent3,
+                                              size: 24.0,
                                             ),
-                                        ].divide(SizedBox(width: 16.0)),
+                                          ),
+                                        ].divide(const SizedBox(width: 16.0)),
                                       ),
-                                    ].divide(SizedBox(height: 5.0)),
+                                    ].divide(const SizedBox(height: 5.0)),
                                   ),
                                 ),
                               );
@@ -1708,13 +1706,13 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                     ),
                   ),
                 ),
-                Divider(
+                const Divider(
                   thickness: 1.0,
                   color: Color(0xFFBEBEBE),
                 ),
                 Padding(
-                  padding:
-                      EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      24.0, 24.0, 24.0, 24.0),
                   child: FFButtonWidget(
                     onPressed: () async {
                       Navigator.pop(context);
@@ -1723,11 +1721,11 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                     options: FFButtonOptions(
                       width: double.infinity,
                       height: 47.0,
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                      iconPadding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                      color: Color(0xFF28A365),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          24.0, 0.0, 24.0, 0.0),
+                      iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 0.0, 0.0, 0.0),
+                      color: const Color(0xFF28A365),
                       textStyle: FlutterFlowTheme.of(context)
                           .titleSmall
                           .override(
@@ -1739,7 +1737,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                 .titleSmallIsCustom,
                           ),
                       elevation: 0.0,
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Colors.transparent,
                         width: 0.0,
                       ),

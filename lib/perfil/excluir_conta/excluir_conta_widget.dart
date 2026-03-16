@@ -55,7 +55,7 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
       height: 333.0,
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).primaryBackground,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(8.0),
           bottomRight: Radius.circular(8.0),
           topLeft: Radius.circular(8.0),
@@ -63,7 +63,7 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
         ),
       ),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -73,7 +73,7 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
               'Excluir conta',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
                     fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                    color: Color(0xFF181818),
+                    color: const Color(0xFF181818),
                     fontSize: 24.0,
                     letterSpacing: 0.0,
                     fontWeight: FontWeight.w600,
@@ -85,7 +85,7 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
               'Tem certeza que deseja excluir sua conta? \n\nEssa ação é irreversível.',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
                     fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                    color: Color(0xFF474747),
+                    color: const Color(0xFF474747),
                     fontSize: 16.0,
                     letterSpacing: 0.0,
                     fontWeight: FontWeight.w500,
@@ -111,17 +111,17 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
                       options: FFButtonOptions(
                         width: 135.0,
                         height: 56.0,
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
-                        iconPadding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                        color: Color(0x004B39EF),
+                        iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 0.0, 0.0, 0.0),
+                        color: const Color(0x004B39EF),
                         textStyle: FlutterFlowTheme.of(context)
                             .titleSmall
                             .override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).titleSmallFamily,
-                              color: Color(0xFFA32C21),
+                              color: const Color(0xFFA32C21),
                               fontSize: 18.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
@@ -129,7 +129,7 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
                                   .titleSmallIsCustom,
                             ),
                         elevation: 545645.0,
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Color(0xFFA32C21),
                           width: 1.0,
                         ),
@@ -141,9 +141,9 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
                   Expanded(
                     child: FFButtonWidget(
                       onPressed: () async {
-                        Function() _navigate = () {};
+                        Function() navigate = () {};
                         _model.apiResultrak = await DeleteUserCall.call(
-                          userId: widget!.user?.userID,
+                          userId: widget.user?.userID,
                         );
 
                         if ((_model.apiResultrak?.succeeded ?? true)) {
@@ -151,7 +151,7 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
                           await authManager.signOut();
                           GoRouter.of(context).clearRedirectLocation();
 
-                          _navigate = () => context.goNamedAuth(
+                          navigate = () => context.goNamedAuth(
                               TelaInicioWidget.routeName, context.mounted);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -162,14 +162,14 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
                                       .secondaryBackground,
                                 ),
                               ),
-                              duration: Duration(milliseconds: 4000),
+                              duration: const Duration(milliseconds: 4000),
                               backgroundColor:
                                   FlutterFlowTheme.of(context).secondary,
                             ),
                           );
                         }
 
-                        _navigate();
+                        navigate();
 
                         safeSetState(() {});
                       },
@@ -177,11 +177,11 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
                       options: FFButtonOptions(
                         width: 135.0,
                         height: 56.0,
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
-                        iconPadding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                        color: Color(0xFFCC3729),
+                        iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 0.0, 0.0, 0.0),
+                        color: const Color(0xFFCC3729),
                         textStyle: FlutterFlowTheme.of(context)
                             .titleSmall
                             .override(
@@ -196,7 +196,7 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
                                   .titleSmallIsCustom,
                             ),
                         elevation: 545645.0,
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Color(0xFFA32C21),
                           width: 1.0,
                         ),
@@ -205,10 +205,10 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
                       showLoadingIndicator: false,
                     ),
                   ),
-                ].divide(SizedBox(width: 8.0)),
+                ].divide(const SizedBox(width: 8.0)),
               ),
             ),
-          ].divide(SizedBox(height: 32.0)),
+          ].divide(const SizedBox(height: 32.0)),
         ),
       ),
     );

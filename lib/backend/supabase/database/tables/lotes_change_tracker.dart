@@ -10,7 +10,7 @@ class LotesChangeTrackerTable extends SupabaseTable<LotesChangeTrackerRow> {
 }
 
 class LotesChangeTrackerRow extends SupabaseDataRow {
-  LotesChangeTrackerRow(Map<String, dynamic> data) : super(data);
+  LotesChangeTrackerRow(super.data);
 
   @override
   SupabaseTable get table => LotesChangeTrackerTable();

@@ -54,12 +54,13 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
         color: FlutterFlowTheme.of(context).secondaryBackground,
       ),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
               child: InkWell(
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,
@@ -85,7 +86,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                             fontFamily:
                                 FlutterFlowTheme.of(context).bodyMediumFamily,
-                            color: Color(0xFF232908),
+                            color: const Color(0xFF232908),
                             fontSize: 22.0,
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.w500,
@@ -93,7 +94,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                                 .bodyMediumIsCustom,
                           ),
                     ),
-                  ].divide(SizedBox(width: 8.0)),
+                  ].divide(const SizedBox(width: 8.0)),
                 ),
               ),
             ),
@@ -101,10 +102,10 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Align(
-                  alignment: AlignmentDirectional(-1.0, -1.0),
+                  alignment: const AlignmentDirectional(-1.0, -1.0),
                   child: Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 8.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        0.0, 24.0, 0.0, 8.0),
                     child: Text(
                       'Nova senha*',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -114,7 +115,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                                   .bodyMedium
                                   .fontStyle,
                             ),
-                            color: Color(0xFF474747),
+                            color: const Color(0xFF474747),
                             fontSize: 16.0,
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.w600,
@@ -142,7 +143,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                                     .labelMedium
                                     .fontStyle,
                               ),
-                              color: Color(0xFFBEBEBE),
+                              color: const Color(0xFFBEBEBE),
                               letterSpacing: 0.0,
                               fontWeight: FlutterFlowTheme.of(context)
                                   .labelMedium
@@ -152,14 +153,14 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                                   .fontStyle,
                             ),
                     enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Color(0x00000000),
                         width: 2.0,
                       ),
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Color(0xFF28A365),
                         width: 2.0,
                       ),
@@ -190,7 +191,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                         _model.textFieldNovasenhaVisibility
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
-                        color: Color(0xFF8E8E8E),
+                        color: const Color(0xFF8E8E8E),
                         size: 24.0,
                       ),
                     ),
@@ -203,7 +204,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                           fontStyle:
                               FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                         ),
-                        color: Color(0xFF2F2F2F),
+                        color: const Color(0xFF2F2F2F),
                         letterSpacing: 0.0,
                         fontWeight:
                             FlutterFlowTheme.of(context).bodyMedium.fontWeight,
@@ -211,15 +212,15 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                             FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                       ),
                   keyboardType: TextInputType.name,
-                  cursorColor: Color(0xFF28A365),
+                  cursorColor: const Color(0xFF28A365),
                   validator: _model.textFieldNovasenhaTextControllerValidator
                       .asValidator(context),
                 ),
                 Align(
-                  alignment: AlignmentDirectional(-1.0, -1.0),
+                  alignment: const AlignmentDirectional(-1.0, -1.0),
                   child: Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 8.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        0.0, 24.0, 0.0, 8.0),
                     child: Text(
                       'Digite novamente a senha*',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -229,7 +230,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                                   .bodyMedium
                                   .fontStyle,
                             ),
-                            color: Color(0xFF474747),
+                            color: const Color(0xFF474747),
                             fontSize: 16.0,
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.w600,
@@ -257,7 +258,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                                     .labelMedium
                                     .fontStyle,
                               ),
-                              color: Color(0xFFBEBEBE),
+                              color: const Color(0xFFBEBEBE),
                               letterSpacing: 0.0,
                               fontWeight: FlutterFlowTheme.of(context)
                                   .labelMedium
@@ -267,14 +268,14 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                                   .fontStyle,
                             ),
                     enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Color(0x00000000),
                         width: 2.0,
                       ),
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Color(0xFF28A365),
                         width: 2.0,
                       ),
@@ -306,7 +307,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                         _model.textFieldConfirmacaoVisibility
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
-                        color: Color(0xFF8E8E8E),
+                        color: const Color(0xFF8E8E8E),
                         size: 24.0,
                       ),
                     ),
@@ -319,7 +320,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                           fontStyle:
                               FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                         ),
-                        color: Color(0xFF2F2F2F),
+                        color: const Color(0xFF2F2F2F),
                         letterSpacing: 0.0,
                         fontWeight:
                             FlutterFlowTheme.of(context).bodyMedium.fontWeight,
@@ -327,7 +328,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                             FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                       ),
                   keyboardType: TextInputType.name,
-                  cursorColor: Color(0xFF28A365),
+                  cursorColor: const Color(0xFF28A365),
                   validator: _model.textFieldConfirmacaoTextControllerValidator
                       .asValidator(context),
                 ),
@@ -335,7 +336,8 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
             ),
             Flexible(
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -348,23 +350,23 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                       options: FFButtonOptions(
                         width: 160.0,
                         height: 56.0,
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
-                        iconPadding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                        color: Color(0x00FFFFFF),
+                        iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 0.0, 0.0, 0.0),
+                        color: const Color(0x00FFFFFF),
                         textStyle: FlutterFlowTheme.of(context)
                             .titleSmall
                             .override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).titleSmallFamily,
-                              color: Color(0xFF1E7A4C),
+                              color: const Color(0xFF1E7A4C),
                               letterSpacing: 0.0,
                               useGoogleFonts: !FlutterFlowTheme.of(context)
                                   .titleSmallIsCustom,
                             ),
                         elevation: 0.0,
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Color(0xFF1E7A4C),
                           width: 1.0,
                         ),
@@ -389,7 +391,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                                     .secondaryBackground,
                               ),
                             ),
-                            duration: Duration(milliseconds: 4000),
+                            duration: const Duration(milliseconds: 4000),
                             backgroundColor:
                                 FlutterFlowTheme.of(context).secondary,
                           ),
@@ -400,11 +402,11 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                       options: FFButtonOptions(
                         width: 160.0,
                         height: 56.0,
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
-                        iconPadding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                        color: Color(0xFF28A365),
+                        iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 0.0, 0.0, 0.0),
+                        color: const Color(0xFF28A365),
                         textStyle: FlutterFlowTheme.of(context)
                             .titleSmall
                             .override(
@@ -415,21 +417,22 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                               useGoogleFonts: !FlutterFlowTheme.of(context)
                                   .titleSmallIsCustom,
                             ),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Colors.transparent,
                           width: 1.0,
                         ),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                     ),
-                  ].divide(SizedBox(width: 16.0)),
+                  ].divide(const SizedBox(width: 16.0)),
                 ),
               ),
             ),
             Align(
-              alignment: AlignmentDirectional(0.0, -1.0),
+              alignment: const AlignmentDirectional(0.0, -1.0),
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                 child: InkWell(
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,
@@ -438,7 +441,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                   onTap: () async {
                     if (currentUserEmail.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text(
                             'Email required!',
                           ),
@@ -458,7 +461,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                             color: FlutterFlowTheme.of(context).primaryText,
                           ),
                         ),
-                        duration: Duration(milliseconds: 4000),
+                        duration: const Duration(milliseconds: 4000),
                         backgroundColor: FlutterFlowTheme.of(context).secondary,
                       ),
                     );
@@ -473,7 +476,7 @@ class _EditSenhaWidgetState extends State<EditSenhaWidget> {
                                 .bodyMedium
                                 .fontStyle,
                           ),
-                          color: Color(0xFF1E7A4C),
+                          color: const Color(0xFF1E7A4C),
                           fontSize: 16.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.w600,

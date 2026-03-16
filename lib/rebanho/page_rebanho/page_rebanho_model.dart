@@ -1,22 +1,8 @@
-import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
-import '/flutter_flow/flutter_flow_icon_button.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/propriedade/selecionar_propriedade/selecionar_propriedade_widget.dart';
-import '/rebanho/filtros_ordenacao_rebanho/filtros_ordenacao_rebanho_widget.dart';
-import '/rebanho/filtros_rebanho/filtros_rebanho_widget.dart';
-import '/rebanho/view_rebanho/view_rebanho_widget.dart';
-import 'dart:ui';
-import '/flutter_flow/custom_functions.dart' as functions;
 import 'page_rebanho_widget.dart' show PageRebanhoWidget;
-import 'package:easy_debounce/easy_debounce.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:percent_indicator/percent_indicator.dart';
-import 'package:provider/provider.dart';
 
 class PageRebanhoModel extends FlutterFlowModel<PageRebanhoWidget> {
   ///  Local state fields for this component.

@@ -28,7 +28,7 @@ class AddRebanhoWidget extends StatefulWidget {
   const AddRebanhoWidget({
     super.key,
     int? nav,
-  }) : this.nav = nav ?? 0;
+  }) : nav = nav ?? 0;
 
   final int nav;
 
@@ -54,7 +54,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimer = InstantTimer.periodic(
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         callback: (timer) async {
           if (FFAppState().rebuild == true) {
             safeSetState(() {});
@@ -72,7 +72,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
       length: 3,
       initialIndex: min(
           valueOrDefault<int>(
-            widget!.nav,
+            widget.nav,
             0,
           ),
           2),
@@ -129,7 +129,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
@@ -159,17 +160,18 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                 .bodyMediumIsCustom,
                           ),
                     ),
-                  ].divide(SizedBox(width: 16.0)),
+                  ].divide(const SizedBox(width: 16.0)),
                 ),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 0.0, 0.0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 0.0, 0.0),
                 child: Text(
                   'Adicionar animal',
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily:
                             FlutterFlowTheme.of(context).bodyMediumFamily,
-                        color: Color(0xFF181818),
+                        color: const Color(0xFF181818),
                         fontSize: 24.0,
                         letterSpacing: 0.0,
                         fontWeight: FontWeight.w500,
@@ -181,7 +183,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
               Flexible(
                 child: Container(
                   width: double.infinity,
-                  constraints: BoxConstraints(
+                  constraints: const BoxConstraints(
                     maxHeight: 700.0,
                   ),
                   decoration: BoxDecoration(
@@ -190,9 +192,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                   child: Column(
                     children: [
                       Align(
-                        alignment: Alignment(0.0, 0),
+                        alignment: const Alignment(0.0, 0),
                         child: TabBar(
-                          labelColor: Color(0xFF1E7A4C),
+                          labelColor: const Color(0xFF1E7A4C),
                           unselectedLabelColor:
                               FlutterFlowTheme.of(context).accent3,
                           labelStyle: FlutterFlowTheme.of(context)
@@ -206,9 +208,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                 useGoogleFonts: !FlutterFlowTheme.of(context)
                                     .titleMediumIsCustom,
                               ),
-                          unselectedLabelStyle: TextStyle(),
-                          indicatorColor: Color(0xFF1E7A4C),
-                          tabs: [
+                          unselectedLabelStyle: const TextStyle(),
+                          indicatorColor: const Color(0xFF1E7A4C),
+                          tabs: const [
                             Tab(
                               text: 'Sobre o animal',
                             ),
@@ -233,7 +235,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                               key: _model.formKey1,
                               autovalidateMode: AutovalidateMode.disabled,
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 16.0, 24.0, 24.0),
                                 child: SingleChildScrollView(
                                   primary: false,
@@ -264,7 +266,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -275,7 +278,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   ),
                                             ),
                                             Expanded(
-                                              child: Container(
+                                              child: SizedBox(
                                                 width: double.infinity,
                                                 child: TextFormField(
                                                   controller: _model
@@ -283,26 +286,25 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   focusNode:
                                                       _model.nAnimalFocusNode,
                                                   onChanged: (value) {
-                                                  final upperValue =
-                                                    value.toUpperCase();
-                                                  if (value != upperValue) {
-                                                    _model
-                                                      .nAnimalTextController!
-                                                      .value = _model
-                                                        .nAnimalTextController!
-                                                        .value
-                                                        .copyWith(
-                                                        text:
-                                                          upperValue,
+                                                    final upperValue =
+                                                        value.toUpperCase();
+                                                    if (value != upperValue) {
+                                                      _model.nAnimalTextController!
+                                                              .value =
+                                                          _model
+                                                              .nAnimalTextController!
+                                                              .value
+                                                              .copyWith(
+                                                        text: upperValue,
                                                         selection: TextSelection
-                                                          .collapsed(
-                                                            offset:
-                                                              upperValue.length),
+                                                            .collapsed(
+                                                                offset:
+                                                                    upperValue
+                                                                        .length),
                                                         composing:
-                                                          TextRange
-                                                            .empty,
-                                                        );
-                                                  }
+                                                            TextRange.empty,
+                                                      );
+                                                    }
                                                   },
                                                   autofocus: true,
                                                   obscureText: false,
@@ -317,8 +319,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              Color(0xFFBEBEBE),
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -330,7 +332,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         ),
                                                     enabledBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00E0E3E7),
                                                         width: 2.0,
@@ -341,7 +344,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     focusedBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x004B39EF),
                                                         width: 2.0,
@@ -378,7 +382,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     filled: true,
                                                     fillColor:
-                                                        Color(0xFFF1F1F1),
+                                                        const Color(0xFFF1F1F1),
                                                   ),
                                                   style: FlutterFlowTheme.of(
                                                           context)
@@ -404,7 +408,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       Container(
@@ -428,7 +432,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -446,7 +451,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     FlutterFlowTheme.of(context)
                                                         .secondaryBackground,
                                               ),
-                                              child: Container(
+                                              child: SizedBox(
                                                 width: double.infinity,
                                                 child: TextFormField(
                                                   controller: _model
@@ -465,8 +470,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              Color(0xFFBEBEBE),
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -478,7 +483,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         ),
                                                     enabledBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00E0E3E7),
                                                         width: 2.0,
@@ -489,7 +495,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     focusedBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x004B39EF),
                                                         width: 2.0,
@@ -526,7 +533,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     filled: true,
                                                     fillColor:
-                                                        Color(0xFFF1F1F1),
+                                                        const Color(0xFFF1F1F1),
                                                   ),
                                                   style: FlutterFlowTheme.of(
                                                           context)
@@ -571,7 +578,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           .viewInsetsOf(
                                                               context),
                                                       child:
-                                                          SaibaMaisBTWidget(),
+                                                          const SaibaMaisBTWidget(),
                                                     );
                                                   },
                                                 ).then((value) =>
@@ -594,7 +601,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF8E8E8E),
                                                             letterSpacing: 0.0,
                                                             fontWeight:
@@ -606,7 +613,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                     .bodyMediumIsCustom,
                                                           ),
                                                     ),
-                                                    TextSpan(
+                                                    const TextSpan(
                                                       text: 'Saiba mais',
                                                       style: TextStyle(
                                                         color:
@@ -635,7 +642,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       Container(
@@ -660,7 +667,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -671,7 +679,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   ),
                                             ),
                                             Expanded(
-                                              child: Container(
+                                              child: SizedBox(
                                                 width: double.infinity,
                                                 child: TextFormField(
                                                   controller: _model
@@ -690,8 +698,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              Color(0xFFBEBEBE),
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -703,7 +711,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         ),
                                                     enabledBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00E0E3E7),
                                                         width: 2.0,
@@ -714,7 +723,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     focusedBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x004B39EF),
                                                         width: 2.0,
@@ -751,7 +761,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     filled: true,
                                                     fillColor:
-                                                        Color(0xFFF1F1F1),
+                                                        const Color(0xFFF1F1F1),
                                                   ),
                                                   style:
                                                       FlutterFlowTheme.of(
@@ -774,7 +784,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       Container(
@@ -799,7 +809,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -810,7 +821,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   ),
                                             ),
                                             Expanded(
-                                              child: Container(
+                                              child: SizedBox(
                                                 width: double.infinity,
                                                 child: TextFormField(
                                                   controller: _model
@@ -829,8 +840,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              Color(0xFFBEBEBE),
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -842,7 +853,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         ),
                                                     enabledBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00E0E3E7),
                                                         width: 2.0,
@@ -853,7 +865,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     focusedBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x004B39EF),
                                                         width: 2.0,
@@ -890,7 +903,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     filled: true,
                                                     fillColor:
-                                                        Color(0xFFF1F1F1),
+                                                        const Color(0xFFF1F1F1),
                                                   ),
                                                   style: FlutterFlowTheme.of(
                                                           context)
@@ -916,7 +929,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       Container(
@@ -941,7 +954,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -956,7 +970,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       .dropDownSexoValueController ??=
                                                   FormFieldController<String>(
                                                       null),
-                                              options: ['Macho', 'Fêmea'],
+                                              options: const ['Macho', 'Fêmea'],
                                               onChanged: (val) => safeSetState(
                                                   () => _model
                                                       .dropDownSexoValue = val),
@@ -990,20 +1004,23 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         .secondaryText,
                                                 size: 24.0,
                                               ),
-                                              fillColor: Color(0xFFF1F1F1),
+                                              fillColor:
+                                                  const Color(0xFFF1F1F1),
                                               elevation: 2.0,
-                                              borderColor: Color(0x00E0E3E7),
+                                              borderColor:
+                                                  const Color(0x00E0E3E7),
                                               borderWidth: 2.0,
                                               borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              margin:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 4.0, 16.0, 4.0),
                                               hidesUnderline: true,
                                               isOverButton: true,
                                               isSearchable: false,
                                               isMultiSelect: false,
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       Container(
@@ -1027,7 +1044,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -1082,13 +1100,16 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       .secondaryText,
                                                   size: 24.0,
                                                 ),
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                                 elevation: 2.0,
-                                                borderColor: Color(0x00E0E3E7),
+                                                borderColor:
+                                                    const Color(0x00E0E3E7),
                                                 borderWidth: 2.0,
                                                 borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                margin:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 4.0, 16.0, 4.0),
                                                 hidesUnderline: true,
                                                 isOverButton: true,
@@ -1140,13 +1161,16 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       .secondaryText,
                                                   size: 24.0,
                                                 ),
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                                 elevation: 2.0,
-                                                borderColor: Color(0x00E0E3E7),
+                                                borderColor:
+                                                    const Color(0x00E0E3E7),
                                                 borderWidth: 2.0,
                                                 borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                margin:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 4.0, 16.0, 4.0),
                                                 hidesUnderline: true,
                                                 isOverButton: true,
@@ -1177,7 +1201,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               .bodyMediumIsCustom,
                                                     ),
                                               ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       Container(
@@ -1187,9 +1211,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               .secondaryBackground,
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 2.0, 0.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0.0, 2.0, 0.0, 0.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
@@ -1197,24 +1220,25 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                             children: [
                                               Text(
                                                 'Data de nascimento',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFF474747),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                               ),
                                               InkWell(
                                                 splashColor: Colors.transparent,
@@ -1223,7 +1247,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
-                                                  final _datePicked1Date =
+                                                  final datePicked1Date =
                                                       await showDatePicker(
                                                     context: context,
                                                     initialDate:
@@ -1235,7 +1259,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         context,
                                                         child!,
                                                         headerBackgroundColor:
-                                                            Color(0xFF28A365),
+                                                            const Color(
+                                                                0xFF28A365),
                                                         headerForegroundColor:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -1285,14 +1310,13 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     },
                                                   );
 
-                                                  if (_datePicked1Date !=
-                                                      null) {
+                                                  if (datePicked1Date != null) {
                                                     safeSetState(() {
                                                       _model.datePicked1 =
                                                           DateTime(
-                                                        _datePicked1Date.year,
-                                                        _datePicked1Date.month,
-                                                        _datePicked1Date.day,
+                                                        datePicked1Date.year,
+                                                        datePicked1Date.month,
+                                                        datePicked1Date.day,
                                                       );
                                                     });
                                                   } else if (_model
@@ -1307,7 +1331,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 child: Container(
                                                   width: double.infinity,
                                                   height: 56.0,
-                                                  decoration: BoxDecoration(
+                                                  decoration:
+                                                      const BoxDecoration(
                                                     color: Color(0xFFF1F1F1),
                                                     borderRadius:
                                                         BorderRadius.only(
@@ -1323,9 +1348,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(16.0, 0.0,
-                                                                8.0, 0.0),
+                                                            8.0, 0.0),
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -1356,11 +1381,11 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                           Color>(
                                                                     _model.datePicked1 ==
                                                                             null
-                                                                        ? Color(
+                                                                        ? const Color(
                                                                             0xFFBEBEBE)
                                                                         : FlutterFlowTheme.of(context)
                                                                             .secondaryText,
-                                                                    Color(
+                                                                    const Color(
                                                                         0xFFBEBEBE),
                                                                   ),
                                                                   fontSize:
@@ -1390,7 +1415,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                       ),
@@ -1416,7 +1442,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -1427,7 +1454,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   ),
                                             ),
                                             Expanded(
-                                              child: Container(
+                                              child: SizedBox(
                                                 width: double.infinity,
                                                 child: TextFormField(
                                                   controller: _model
@@ -1446,8 +1473,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              Color(0xFFBEBEBE),
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -1459,7 +1486,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         ),
                                                     enabledBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00E0E3E7),
                                                         width: 2.0,
@@ -1470,7 +1498,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     focusedBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x004B39EF),
                                                         width: 2.0,
@@ -1507,7 +1536,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     filled: true,
                                                     fillColor:
-                                                        Color(0xFFF1F1F1),
+                                                        const Color(0xFFF1F1F1),
                                                   ),
                                                   style: FlutterFlowTheme.of(
                                                           context)
@@ -1537,7 +1566,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       Container(
@@ -1562,7 +1591,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -1577,7 +1607,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       .dPPorteValueController ??=
                                                   FormFieldController<String>(
                                                       null),
-                                              options: ['P', 'M', 'G'],
+                                              options: const ['P', 'M', 'G'],
                                               onChanged: (val) => safeSetState(
                                                   () => _model.dPPorteValue =
                                                       val),
@@ -1611,20 +1641,23 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         .secondaryText,
                                                 size: 24.0,
                                               ),
-                                              fillColor: Color(0xFFF1F1F1),
+                                              fillColor:
+                                                  const Color(0xFFF1F1F1),
                                               elevation: 2.0,
-                                              borderColor: Color(0x00E0E3E7),
+                                              borderColor:
+                                                  const Color(0x00E0E3E7),
                                               borderWidth: 2.0,
                                               borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              margin:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 4.0, 16.0, 4.0),
                                               hidesUnderline: true,
                                               isOverButton: true,
                                               isSearchable: false,
                                               isMultiSelect: false,
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       Container(
@@ -1649,7 +1682,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -1728,20 +1762,23 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         .secondaryText,
                                                 size: 24.0,
                                               ),
-                                              fillColor: Color(0xFFF1F1F1),
+                                              fillColor:
+                                                  const Color(0xFFF1F1F1),
                                               elevation: 2.0,
-                                              borderColor: Color(0x00E0E3E7),
+                                              borderColor:
+                                                  const Color(0x00E0E3E7),
                                               borderWidth: 2.0,
                                               borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              margin:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 4.0, 16.0, 4.0),
                                               hidesUnderline: true,
                                               isOverButton: true,
                                               isSearchable: true,
                                               isMultiSelect: false,
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       Container(
@@ -1766,7 +1803,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -1835,16 +1873,16 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       size: 24.0,
                                                     ),
                                                     fillColor:
-                                                        Color(0xFFF1F1F1),
+                                                        const Color(0xFFF1F1F1),
                                                     elevation: 2.0,
                                                     borderColor:
-                                                        Color(0x00E0E3E7),
+                                                        const Color(0x00E0E3E7),
                                                     borderWidth: 2.0,
                                                     borderRadius: 8.0,
                                                     margin:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(16.0, 4.0,
-                                                                16.0, 4.0),
+                                                            16.0, 4.0),
                                                     hidesUnderline: true,
                                                     isOverButton: true,
                                                     isSearchable: true,
@@ -1881,9 +1919,10 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       size: 24.0,
                                                     ),
                                                   ),
-                                              ].divide(SizedBox(width: 8.0)),
+                                              ].divide(
+                                                  const SizedBox(width: 8.0)),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       if (responsiveVisibility(
@@ -1906,24 +1945,25 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                             children: [
                                               Text(
                                                 'Data de entrada no lote',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFF474747),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                               ),
                                               InkWell(
                                                 splashColor: Colors.transparent,
@@ -1932,7 +1972,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
-                                                  final _datePicked2Date =
+                                                  final datePicked2Date =
                                                       await showDatePicker(
                                                     context: context,
                                                     initialDate:
@@ -1944,7 +1984,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         context,
                                                         child!,
                                                         headerBackgroundColor:
-                                                            Color(0xFF28A365),
+                                                            const Color(
+                                                                0xFF28A365),
                                                         headerForegroundColor:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -1994,14 +2035,13 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     },
                                                   );
 
-                                                  if (_datePicked2Date !=
-                                                      null) {
+                                                  if (datePicked2Date != null) {
                                                     safeSetState(() {
                                                       _model.datePicked2 =
                                                           DateTime(
-                                                        _datePicked2Date.year,
-                                                        _datePicked2Date.month,
-                                                        _datePicked2Date.day,
+                                                        datePicked2Date.year,
+                                                        datePicked2Date.month,
+                                                        datePicked2Date.day,
                                                       );
                                                     });
                                                   } else if (_model
@@ -2016,7 +2056,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 child: Container(
                                                   width: double.infinity,
                                                   height: 56.0,
-                                                  decoration: BoxDecoration(
+                                                  decoration:
+                                                      const BoxDecoration(
                                                     color: Color(0xFFF1F1F1),
                                                     borderRadius:
                                                         BorderRadius.only(
@@ -2032,9 +2073,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(16.0, 0.0,
-                                                                8.0, 0.0),
+                                                            8.0, 0.0),
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -2065,11 +2106,11 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                           Color>(
                                                                     _model.datePicked2 ==
                                                                             null
-                                                                        ? Color(
+                                                                        ? const Color(
                                                                             0xFFBEBEBE)
                                                                         : FlutterFlowTheme.of(context)
                                                                             .secondaryText,
-                                                                    Color(
+                                                                    const Color(
                                                                         0xFFBEBEBE),
                                                                   ),
                                                                   fontSize:
@@ -2099,12 +2140,13 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 0.0, 0.0, 8.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 0.0, 0.0, 8.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
@@ -2182,35 +2224,38 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 options: FFButtonOptions(
                                                   width: 155.0,
                                                   height: 56.0,
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           24.0, 0.0, 24.0, 0.0),
                                                   iconPadding:
-                                                      EdgeInsetsDirectional
-                                                          .fromSTEB(0.0, 0.0,
-                                                              0.0, 0.0),
-                                                  color: Color(0x001E7A4C),
-                                                  textStyle: FlutterFlowTheme
-                                                          .of(context)
-                                                      .titleSmall
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .titleSmallFamily,
-                                                        color:
-                                                            Color(0xFF1E7A4C),
-                                                        fontSize: 18.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .titleSmallIsCustom,
-                                                      ),
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          0.0, 0.0, 0.0, 0.0),
+                                                  color:
+                                                      const Color(0x001E7A4C),
+                                                  textStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .titleSmall
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .titleSmallFamily,
+                                                            color: const Color(
+                                                                0xFF1E7A4C),
+                                                            fontSize: 18.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .titleSmallIsCustom,
+                                                          ),
                                                   elevation: 0.0,
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0xFF1E7A4C),
                                                     width: 2.0,
                                                   ),
@@ -2233,7 +2278,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           _model.tabBarController!
                                                                   .index +
                                                               1),
-                                                      duration: Duration(
+                                                      duration: const Duration(
                                                           milliseconds: 300),
                                                       curve: Curves.ease,
                                                     );
@@ -2243,14 +2288,16 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 options: FFButtonOptions(
                                                   width: 155.0,
                                                   height: 56.0,
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           24.0, 0.0, 24.0, 0.0),
                                                   iconPadding:
-                                                      EdgeInsetsDirectional
-                                                          .fromSTEB(0.0, 0.0,
-                                                              0.0, 0.0),
-                                                  color: Color(0xFF28A365),
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          0.0, 0.0, 0.0, 0.0),
+                                                  color:
+                                                      const Color(0xFF28A365),
                                                   textStyle:
                                                       FlutterFlowTheme.of(
                                                               context)
@@ -2271,7 +2318,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                     .titleSmallIsCustom,
                                                           ),
                                                   elevation: 3.0,
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Colors.transparent,
                                                     width: 1.0,
                                                   ),
@@ -2281,18 +2328,18 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(width: 16.0)),
+                                          ].divide(const SizedBox(width: 16.0)),
                                         ),
                                       ),
-                                    ].divide(SizedBox(height: 24.0)),
+                                    ].divide(const SizedBox(height: 24.0)),
                                   ),
                                 ),
                               ),
                             ),
                             Container(
-                              decoration: BoxDecoration(),
+                              decoration: const BoxDecoration(),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 24.0, 24.0, 24.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
@@ -2313,29 +2360,31 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, 0.0),
                                                 child: Text(
                                                   'Matriz',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                               ),
                                               if (responsiveVisibility(
@@ -2347,7 +2396,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               ))
                                                 Align(
                                                   alignment:
-                                                      AlignmentDirectional(
+                                                      const AlignmentDirectional(
                                                           -1.0, 0.0),
                                                   child: Text(
                                                     'Não foi possível encontrar uma matriz.',
@@ -2390,14 +2439,14 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                             isGlobal: false,
                                                             avoidOverflow: true,
                                                             targetAnchor:
-                                                                AlignmentDirectional(
+                                                                const AlignmentDirectional(
                                                                         0.0,
                                                                         1.0)
                                                                     .resolve(
                                                                         Directionality.of(
                                                                             context)),
                                                             followerAnchor:
-                                                                AlignmentDirectional(
+                                                                const AlignmentDirectional(
                                                                         0.0,
                                                                         -1.0)
                                                                     .resolve(
@@ -2408,13 +2457,12 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               return Material(
                                                                 color: Colors
                                                                     .transparent,
-                                                                child:
-                                                                    Container(
+                                                                child: SizedBox(
                                                                   height: 450.0,
                                                                   width: double
                                                                       .infinity,
                                                                   child:
-                                                                      PopupRebanhosWidget(
+                                                                      const PopupRebanhosWidget(
                                                                     sexo:
                                                                         'Fêmea',
                                                                     sanidade:
@@ -2443,12 +2491,12 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           ),
                                                           child: Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
-                                                                        16.0,
-                                                                        0.0,
-                                                                        16.0,
-                                                                        0.0),
+                                                                    16.0,
+                                                                    0.0,
+                                                                    16.0,
+                                                                    0.0),
                                                             child: Row(
                                                               mainAxisSize:
                                                                   MainAxisSize
@@ -2527,39 +2575,38 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       ),
                                                     ),
                                                   ),
-                                                  if (FFAppState()
-                                                          .matrizSelecionada !=
-                                                      null)
-                                                    InkWell(
-                                                      splashColor:
-                                                          Colors.transparent,
-                                                      focusColor:
-                                                          Colors.transparent,
-                                                      hoverColor:
-                                                          Colors.transparent,
-                                                      highlightColor:
-                                                          Colors.transparent,
-                                                      onTap: () async {
-                                                        FFAppState()
-                                                                .matrizSelecionada =
-                                                            AnimalSelecionadoStruct
-                                                                .fromSerializableMap(
-                                                                    jsonDecode(
-                                                                        '{}'));
-                                                        safeSetState(() {});
-                                                      },
-                                                      child: Icon(
-                                                        Icons.close_rounded,
-                                                        color:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .accent3,
-                                                        size: 24.0,
-                                                      ),
+                                                  InkWell(
+                                                    splashColor:
+                                                        Colors.transparent,
+                                                    focusColor:
+                                                        Colors.transparent,
+                                                    hoverColor:
+                                                        Colors.transparent,
+                                                    highlightColor:
+                                                        Colors.transparent,
+                                                    onTap: () async {
+                                                      FFAppState()
+                                                              .matrizSelecionada =
+                                                          AnimalSelecionadoStruct
+                                                              .fromSerializableMap(
+                                                                  jsonDecode(
+                                                                      '{}'));
+                                                      safeSetState(() {});
+                                                    },
+                                                    child: Icon(
+                                                      Icons.close_rounded,
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .accent3,
+                                                      size: 24.0,
                                                     ),
-                                                ].divide(SizedBox(width: 16.0)),
+                                                  ),
+                                                ].divide(const SizedBox(
+                                                    width: 16.0)),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                         Container(
@@ -2575,24 +2622,25 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                             children: [
                                               Text(
                                                 'Reprodutor',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFF474747),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                               ),
                                               if (responsiveVisibility(
                                                 context: context,
@@ -2642,14 +2690,14 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                             isGlobal: false,
                                                             avoidOverflow: true,
                                                             targetAnchor:
-                                                                AlignmentDirectional(
+                                                                const AlignmentDirectional(
                                                                         0.0,
                                                                         1.0)
                                                                     .resolve(
                                                                         Directionality.of(
                                                                             context)),
                                                             followerAnchor:
-                                                                AlignmentDirectional(
+                                                                const AlignmentDirectional(
                                                                         0.0,
                                                                         -1.0)
                                                                     .resolve(
@@ -2660,13 +2708,12 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               return Material(
                                                                 color: Colors
                                                                     .transparent,
-                                                                child:
-                                                                    Container(
+                                                                child: SizedBox(
                                                                   height: 450.0,
                                                                   width: double
                                                                       .infinity,
                                                                   child:
-                                                                      PopupRebanhosWidget(
+                                                                      const PopupRebanhosWidget(
                                                                     sexo:
                                                                         'Macho',
                                                                     sanidade:
@@ -2695,12 +2742,12 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           ),
                                                           child: Padding(
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
-                                                                        16.0,
-                                                                        0.0,
-                                                                        16.0,
-                                                                        0.0),
+                                                                    16.0,
+                                                                    0.0,
+                                                                    16.0,
+                                                                    0.0),
                                                             child: Row(
                                                               mainAxisSize:
                                                                   MainAxisSize
@@ -2780,42 +2827,41 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       ),
                                                     ),
                                                   ),
-                                                  if (FFAppState()
-                                                          .reprodutorSelecionado !=
-                                                      null)
-                                                    InkWell(
-                                                      splashColor:
-                                                          Colors.transparent,
-                                                      focusColor:
-                                                          Colors.transparent,
-                                                      hoverColor:
-                                                          Colors.transparent,
-                                                      highlightColor:
-                                                          Colors.transparent,
-                                                      onTap: () async {
-                                                        FFAppState()
-                                                                .reprodutorSelecionado =
-                                                            AnimalSelecionadoStruct
-                                                                .fromSerializableMap(
-                                                                    jsonDecode(
-                                                                        '{}'));
-                                                        safeSetState(() {});
-                                                      },
-                                                      child: Icon(
-                                                        Icons.close_sharp,
-                                                        color:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .accent3,
-                                                        size: 24.0,
-                                                      ),
+                                                  InkWell(
+                                                    splashColor:
+                                                        Colors.transparent,
+                                                    focusColor:
+                                                        Colors.transparent,
+                                                    hoverColor:
+                                                        Colors.transparent,
+                                                    highlightColor:
+                                                        Colors.transparent,
+                                                    onTap: () async {
+                                                      FFAppState()
+                                                              .reprodutorSelecionado =
+                                                          AnimalSelecionadoStruct
+                                                              .fromSerializableMap(
+                                                                  jsonDecode(
+                                                                      '{}'));
+                                                      safeSetState(() {});
+                                                    },
+                                                    child: Icon(
+                                                      Icons.close_sharp,
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .accent3,
+                                                      size: 24.0,
                                                     ),
-                                                ].divide(SizedBox(width: 16.0)),
+                                                  ),
+                                                ].divide(const SizedBox(
+                                                    width: 16.0)),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                     Row(
                                       mainAxisSize: MainAxisSize.max,
@@ -2833,7 +2879,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       _model.tabBarController!
                                                               .index -
                                                           1),
-                                                  duration: Duration(
+                                                  duration: const Duration(
                                                       milliseconds: 300),
                                                   curve: Curves.ease,
                                                 );
@@ -2843,12 +2889,15 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                             options: FFButtonOptions(
                                               width: 160.0,
                                               height: 56.0,
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 0.0, 24.0, 0.0),
-                                              iconPadding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                              color: Color(0x004B39EF),
+                                              iconPadding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      0.0, 0.0, 0.0, 0.0),
+                                              color: const Color(0x004B39EF),
                                               textStyle: FlutterFlowTheme.of(
                                                       context)
                                                   .titleSmall
@@ -2857,7 +2906,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .titleSmallFamily,
-                                                    color: Color(0xFF1E7A4C),
+                                                    color:
+                                                        const Color(0xFF1E7A4C),
                                                     fontSize: 18.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -2867,7 +2917,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                             .titleSmallIsCustom,
                                                   ),
                                               elevation: 0.0,
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0xFF1E7A4C),
                                                 width: 2.0,
                                               ),
@@ -2889,7 +2939,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       _model.tabBarController!
                                                               .index +
                                                           1),
-                                                  duration: Duration(
+                                                  duration: const Duration(
                                                       milliseconds: 300),
                                                   curve: Curves.ease,
                                                 );
@@ -2899,12 +2949,15 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                             options: FFButtonOptions(
                                               width: 160.0,
                                               height: 56.0,
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 0.0, 24.0, 0.0),
-                                              iconPadding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                              color: Color(0xFF28A365),
+                                              iconPadding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      0.0, 0.0, 0.0, 0.0),
+                                              color: const Color(0xFF28A365),
                                               textStyle: FlutterFlowTheme.of(
                                                       context)
                                                   .titleSmall
@@ -2923,7 +2976,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                             .titleSmallIsCustom,
                                                   ),
                                               elevation: 0.0,
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x0028A365),
                                                 width: 0.0,
                                               ),
@@ -2932,9 +2985,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(width: 16.0)),
+                                      ].divide(const SizedBox(width: 16.0)),
                                     ),
-                                  ].divide(SizedBox(height: 24.0)),
+                                  ].divide(const SizedBox(height: 24.0)),
                                 ),
                               ),
                             ),
@@ -2942,15 +2995,15 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                               key: _model.formKey2,
                               autovalidateMode: AutovalidateMode.disabled,
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 24.0, 24.0, 24.0),
                                 child: SingleChildScrollView(
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 24.0, 0.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 24.0, 0.0, 0.0),
                                         child: Container(
                                           width: double.infinity,
                                           decoration: BoxDecoration(
@@ -2958,9 +3011,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 .secondaryBackground,
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 5.0, 0.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment:
@@ -2968,25 +3020,26 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               children: [
                                                 Text(
                                                   'Data da desmama',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                                 InkWell(
                                                   splashColor:
@@ -2998,7 +3051,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   highlightColor:
                                                       Colors.transparent,
                                                   onTap: () async {
-                                                    final _datePicked3Date =
+                                                    final datePicked3Date =
                                                         await showDatePicker(
                                                       context: context,
                                                       initialDate:
@@ -3011,7 +3064,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           context,
                                                           child!,
                                                           headerBackgroundColor:
-                                                              Color(0xFF28A365),
+                                                              const Color(
+                                                                  0xFF28A365),
                                                           headerForegroundColor:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -3060,15 +3114,14 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       },
                                                     );
 
-                                                    if (_datePicked3Date !=
+                                                    if (datePicked3Date !=
                                                         null) {
                                                       safeSetState(() {
                                                         _model.datePicked3 =
                                                             DateTime(
-                                                          _datePicked3Date.year,
-                                                          _datePicked3Date
-                                                              .month,
-                                                          _datePicked3Date.day,
+                                                          datePicked3Date.year,
+                                                          datePicked3Date.month,
+                                                          datePicked3Date.day,
                                                         );
                                                       });
                                                     } else if (_model
@@ -3083,7 +3136,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   child: Container(
                                                     width: double.infinity,
                                                     height: 56.0,
-                                                    decoration: BoxDecoration(
+                                                    decoration:
+                                                        const BoxDecoration(
                                                       color: Color(0xFFF1F1F1),
                                                       borderRadius:
                                                           BorderRadius.only(
@@ -3103,12 +3157,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  16.0,
-                                                                  0.0,
-                                                                  8.0,
-                                                                  0.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(16.0,
+                                                              0.0, 8.0, 0.0),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
@@ -3138,11 +3189,11 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                         Color>(
                                                                       _model.datePicked3 ==
                                                                               null
-                                                                          ? Color(
+                                                                          ? const Color(
                                                                               0xFFBEBEBE)
                                                                           : FlutterFlowTheme.of(context)
                                                                               .secondaryText,
-                                                                      Color(
+                                                                      const Color(
                                                                           0xFFBEBEBE),
                                                                     ),
                                                                     fontSize:
@@ -3198,7 +3249,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -3209,7 +3261,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   ),
                                             ),
                                             Expanded(
-                                              child: Container(
+                                              child: SizedBox(
                                                 width: double.infinity,
                                                 child: TextFormField(
                                                   controller: _model
@@ -3228,8 +3280,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              Color(0xFFBEBEBE),
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -3241,7 +3293,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         ),
                                                     enabledBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00E0E3E7),
                                                         width: 2.0,
@@ -3252,7 +3305,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     focusedBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x004B39EF),
                                                         width: 2.0,
@@ -3289,7 +3343,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     filled: true,
                                                     fillColor:
-                                                        Color(0xFFF1F1F1),
+                                                        const Color(0xFFF1F1F1),
                                                   ),
                                                   style: FlutterFlowTheme.of(
                                                           context)
@@ -3320,7 +3374,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       Container(
@@ -3344,7 +3398,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -3361,7 +3416,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
-                                                final _datePicked4Date =
+                                                final datePicked4Date =
                                                     await showDatePicker(
                                                   context: context,
                                                   initialDate:
@@ -3373,7 +3428,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       context,
                                                       child!,
                                                       headerBackgroundColor:
-                                                          Color(0xFF28A365),
+                                                          const Color(
+                                                              0xFF28A365),
                                                       headerForegroundColor:
                                                           FlutterFlowTheme.of(
                                                                   context)
@@ -3422,13 +3478,13 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   },
                                                 );
 
-                                                if (_datePicked4Date != null) {
+                                                if (datePicked4Date != null) {
                                                   safeSetState(() {
                                                     _model.datePicked4 =
                                                         DateTime(
-                                                      _datePicked4Date.year,
-                                                      _datePicked4Date.month,
-                                                      _datePicked4Date.day,
+                                                      datePicked4Date.year,
+                                                      datePicked4Date.month,
+                                                      datePicked4Date.day,
                                                     );
                                                   });
                                                 } else if (_model.datePicked4 !=
@@ -3442,7 +3498,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               child: Container(
                                                 width: double.infinity,
                                                 height: 56.0,
-                                                decoration: BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                   color: Color(0xFFF1F1F1),
                                                   borderRadius:
                                                       BorderRadius.only(
@@ -3457,8 +3513,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -3490,12 +3547,12 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                         Color>(
                                                                   _model.datePicked4 ==
                                                                           null
-                                                                      ? Color(
+                                                                      ? const Color(
                                                                           0xFFBEBEBE)
                                                                       : FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText,
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -3550,7 +3607,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -3561,7 +3619,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   ),
                                             ),
                                             Expanded(
-                                              child: Container(
+                                              child: SizedBox(
                                                 width: double.infinity,
                                                 child: TextFormField(
                                                   controller: _model
@@ -3580,8 +3638,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              Color(0xFFBEBEBE),
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -3593,7 +3651,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         ),
                                                     enabledBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00E0E3E7),
                                                         width: 2.0,
@@ -3604,7 +3663,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     focusedBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x004B39EF),
                                                         width: 2.0,
@@ -3641,7 +3701,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     filled: true,
                                                     fillColor:
-                                                        Color(0xFFF1F1F1),
+                                                        const Color(0xFFF1F1F1),
                                                   ),
                                                   style: FlutterFlowTheme.of(
                                                           context)
@@ -3672,7 +3732,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       Container(
@@ -3697,7 +3757,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -3749,20 +3810,23 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         .secondaryText,
                                                 size: 24.0,
                                               ),
-                                              fillColor: Color(0xFFF1F1F1),
+                                              fillColor:
+                                                  const Color(0xFFF1F1F1),
                                               elevation: 0.0,
-                                              borderColor: Color(0x00E0E3E7),
+                                              borderColor:
+                                                  const Color(0x00E0E3E7),
                                               borderWidth: 0.0,
                                               borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              margin:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 4.0, 16.0, 4.0),
                                               hidesUnderline: true,
                                               isOverButton: true,
                                               isSearchable: false,
                                               isMultiSelect: false,
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       Container(
@@ -3786,7 +3850,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -3836,20 +3901,23 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         .secondaryText,
                                                 size: 24.0,
                                               ),
-                                              fillColor: Color(0xFFF1F1F1),
+                                              fillColor:
+                                                  const Color(0xFFF1F1F1),
                                               elevation: 2.0,
-                                              borderColor: Color(0x00E0E3E7),
+                                              borderColor:
+                                                  const Color(0x00E0E3E7),
                                               borderWidth: 2.0,
                                               borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              margin:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 4.0, 16.0, 4.0),
                                               hidesUnderline: true,
                                               isOverButton: true,
                                               isSearchable: false,
                                               isMultiSelect: false,
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       if (_model.dPOrigemValue == 'Compra')
@@ -3860,9 +3928,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 .secondaryBackground,
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 5.0, 0.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment:
@@ -3870,25 +3937,26 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               children: [
                                                 Text(
                                                   'Data de compra',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                                 InkWell(
                                                   splashColor:
@@ -3900,7 +3968,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   highlightColor:
                                                       Colors.transparent,
                                                   onTap: () async {
-                                                    final _datePicked5Date =
+                                                    final datePicked5Date =
                                                         await showDatePicker(
                                                       context: context,
                                                       initialDate:
@@ -3913,7 +3981,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           context,
                                                           child!,
                                                           headerBackgroundColor:
-                                                              Color(0xFF28A365),
+                                                              const Color(
+                                                                  0xFF28A365),
                                                           headerForegroundColor:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -3946,7 +4015,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                       context)
                                                                   .primaryText,
                                                           selectedDateTimeBackgroundColor:
-                                                              Color(0xFF28A365),
+                                                              const Color(
+                                                                  0xFF28A365),
                                                           selectedDateTimeForegroundColor:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -3960,15 +4030,14 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       },
                                                     );
 
-                                                    if (_datePicked5Date !=
+                                                    if (datePicked5Date !=
                                                         null) {
                                                       safeSetState(() {
                                                         _model.datePicked5 =
                                                             DateTime(
-                                                          _datePicked5Date.year,
-                                                          _datePicked5Date
-                                                              .month,
-                                                          _datePicked5Date.day,
+                                                          datePicked5Date.year,
+                                                          datePicked5Date.month,
+                                                          datePicked5Date.day,
                                                         );
                                                       });
                                                     } else if (_model
@@ -3983,7 +4052,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   child: Container(
                                                     width: double.infinity,
                                                     height: 56.0,
-                                                    decoration: BoxDecoration(
+                                                    decoration:
+                                                        const BoxDecoration(
                                                       color: Color(0xFFF1F1F1),
                                                       borderRadius:
                                                           BorderRadius.only(
@@ -4003,12 +4073,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  16.0,
-                                                                  0.0,
-                                                                  8.0,
-                                                                  0.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(16.0,
+                                                              0.0, 8.0, 0.0),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
@@ -4038,11 +4105,11 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                         Color>(
                                                                       _model.datePicked5 ==
                                                                               null
-                                                                          ? Color(
+                                                                          ? const Color(
                                                                               0xFFBEBEBE)
                                                                           : FlutterFlowTheme.of(context)
                                                                               .secondaryText,
-                                                                      Color(
+                                                                      const Color(
                                                                           0xFFBEBEBE),
                                                                     ),
                                                                     fontSize:
@@ -4083,9 +4150,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 .secondaryBackground,
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 5.0, 0.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment:
@@ -4093,27 +4159,28 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               children: [
                                                 Text(
                                                   'Valor da compra (R\$)',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
-                                                Container(
+                                                SizedBox(
                                                   width: double.infinity,
                                                   height: 56.0,
                                                   child: custom_widgets
@@ -4149,9 +4216,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 .secondaryBackground,
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 5.0, 0.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment:
@@ -4159,25 +4225,26 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               children: [
                                                 Text(
                                                   'Data de venda',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                                 InkWell(
                                                   splashColor:
@@ -4189,7 +4256,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   highlightColor:
                                                       Colors.transparent,
                                                   onTap: () async {
-                                                    final _datePicked6Date =
+                                                    final datePicked6Date =
                                                         await showDatePicker(
                                                       context: context,
                                                       initialDate:
@@ -4202,7 +4269,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           context,
                                                           child!,
                                                           headerBackgroundColor:
-                                                              Color(0xFF28A365),
+                                                              const Color(
+                                                                  0xFF28A365),
                                                           headerForegroundColor:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -4235,7 +4303,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                       context)
                                                                   .primaryText,
                                                           selectedDateTimeBackgroundColor:
-                                                              Color(0xFF28A365),
+                                                              const Color(
+                                                                  0xFF28A365),
                                                           selectedDateTimeForegroundColor:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -4249,15 +4318,14 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       },
                                                     );
 
-                                                    if (_datePicked6Date !=
+                                                    if (datePicked6Date !=
                                                         null) {
                                                       safeSetState(() {
                                                         _model.datePicked6 =
                                                             DateTime(
-                                                          _datePicked6Date.year,
-                                                          _datePicked6Date
-                                                              .month,
-                                                          _datePicked6Date.day,
+                                                          datePicked6Date.year,
+                                                          datePicked6Date.month,
+                                                          datePicked6Date.day,
                                                         );
                                                       });
                                                     } else if (_model
@@ -4272,7 +4340,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   child: Container(
                                                     width: double.infinity,
                                                     height: 56.0,
-                                                    decoration: BoxDecoration(
+                                                    decoration:
+                                                        const BoxDecoration(
                                                       color: Color(0xFFF1F1F1),
                                                       borderRadius:
                                                           BorderRadius.only(
@@ -4292,12 +4361,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  16.0,
-                                                                  0.0,
-                                                                  8.0,
-                                                                  0.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(16.0,
+                                                              0.0, 8.0, 0.0),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
@@ -4327,11 +4393,11 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                         Color>(
                                                                       _model.datePicked6 ==
                                                                               null
-                                                                          ? Color(
+                                                                          ? const Color(
                                                                               0xFFBEBEBE)
                                                                           : FlutterFlowTheme.of(context)
                                                                               .secondaryText,
-                                                                      Color(
+                                                                      const Color(
                                                                           0xFFBEBEBE),
                                                                     ),
                                                                     fontSize:
@@ -4372,9 +4438,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 .secondaryBackground,
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 5.0, 0.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment:
@@ -4382,27 +4447,28 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               children: [
                                                 Text(
                                                   'Valor da venda (R\$)',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
-                                                Container(
+                                                SizedBox(
                                                   width: double.infinity,
                                                   height: 56.0,
                                                   child: custom_widgets
@@ -4439,9 +4505,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 .secondaryBackground,
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 5.0, 0.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment:
@@ -4449,25 +4514,26 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               children: [
                                                 Text(
                                                   'Data de movimentação entrada',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                                 InkWell(
                                                   splashColor:
@@ -4479,7 +4545,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   highlightColor:
                                                       Colors.transparent,
                                                   onTap: () async {
-                                                    final _datePicked7Date =
+                                                    final datePicked7Date =
                                                         await showDatePicker(
                                                       context: context,
                                                       initialDate:
@@ -4492,7 +4558,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           context,
                                                           child!,
                                                           headerBackgroundColor:
-                                                              Color(0xFF28A365),
+                                                              const Color(
+                                                                  0xFF28A365),
                                                           headerForegroundColor:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -4525,7 +4592,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                       context)
                                                                   .primaryText,
                                                           selectedDateTimeBackgroundColor:
-                                                              Color(0xFF28A365),
+                                                              const Color(
+                                                                  0xFF28A365),
                                                           selectedDateTimeForegroundColor:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -4539,15 +4607,14 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       },
                                                     );
 
-                                                    if (_datePicked7Date !=
+                                                    if (datePicked7Date !=
                                                         null) {
                                                       safeSetState(() {
                                                         _model.datePicked7 =
                                                             DateTime(
-                                                          _datePicked7Date.year,
-                                                          _datePicked7Date
-                                                              .month,
-                                                          _datePicked7Date.day,
+                                                          datePicked7Date.year,
+                                                          datePicked7Date.month,
+                                                          datePicked7Date.day,
                                                         );
                                                       });
                                                     } else if (_model
@@ -4562,7 +4629,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   child: Container(
                                                     width: double.infinity,
                                                     height: 56.0,
-                                                    decoration: BoxDecoration(
+                                                    decoration:
+                                                        const BoxDecoration(
                                                       color: Color(0xFFF1F1F1),
                                                       borderRadius:
                                                           BorderRadius.only(
@@ -4582,12 +4650,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  16.0,
-                                                                  0.0,
-                                                                  8.0,
-                                                                  0.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(16.0,
+                                                              0.0, 8.0, 0.0),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
@@ -4617,11 +4682,11 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                         Color>(
                                                                       _model.datePicked7 ==
                                                                               null
-                                                                          ? Color(
+                                                                          ? const Color(
                                                                               0xFFBEBEBE)
                                                                           : FlutterFlowTheme.of(context)
                                                                               .secondaryText,
-                                                                      Color(
+                                                                      const Color(
                                                                           0xFFBEBEBE),
                                                                     ),
                                                                     fontSize:
@@ -4663,9 +4728,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 .secondaryBackground,
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 5.0, 0.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment:
@@ -4673,25 +4737,26 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               children: [
                                                 Text(
                                                   'Data de movimentação saida',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                                 InkWell(
                                                   splashColor:
@@ -4703,7 +4768,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   highlightColor:
                                                       Colors.transparent,
                                                   onTap: () async {
-                                                    final _datePicked8Date =
+                                                    final datePicked8Date =
                                                         await showDatePicker(
                                                       context: context,
                                                       initialDate:
@@ -4716,7 +4781,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           context,
                                                           child!,
                                                           headerBackgroundColor:
-                                                              Color(0xFF28A365),
+                                                              const Color(
+                                                                  0xFF28A365),
                                                           headerForegroundColor:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -4749,7 +4815,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                       context)
                                                                   .primaryText,
                                                           selectedDateTimeBackgroundColor:
-                                                              Color(0xFF28A365),
+                                                              const Color(
+                                                                  0xFF28A365),
                                                           selectedDateTimeForegroundColor:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -4763,15 +4830,14 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       },
                                                     );
 
-                                                    if (_datePicked8Date !=
+                                                    if (datePicked8Date !=
                                                         null) {
                                                       safeSetState(() {
                                                         _model.datePicked8 =
                                                             DateTime(
-                                                          _datePicked8Date.year,
-                                                          _datePicked8Date
-                                                              .month,
-                                                          _datePicked8Date.day,
+                                                          datePicked8Date.year,
+                                                          datePicked8Date.month,
+                                                          datePicked8Date.day,
                                                         );
                                                       });
                                                     } else if (_model
@@ -4786,7 +4852,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   child: Container(
                                                     width: double.infinity,
                                                     height: 56.0,
-                                                    decoration: BoxDecoration(
+                                                    decoration:
+                                                        const BoxDecoration(
                                                       color: Color(0xFFF1F1F1),
                                                       borderRadius:
                                                           BorderRadius.only(
@@ -4806,12 +4873,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  16.0,
-                                                                  0.0,
-                                                                  8.0,
-                                                                  0.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(16.0,
+                                                              0.0, 8.0, 0.0),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
@@ -4841,11 +4905,11 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                         Color>(
                                                                       _model.datePicked8 ==
                                                                               null
-                                                                          ? Color(
+                                                                          ? const Color(
                                                                               0xFFBEBEBE)
                                                                           : FlutterFlowTheme.of(context)
                                                                               .secondaryText,
-                                                                      Color(
+                                                                      const Color(
                                                                           0xFFBEBEBE),
                                                                     ),
                                                                     fontSize:
@@ -4886,9 +4950,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 .secondaryBackground,
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 5.0, 0.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(0.0, 5.0, 0.0, 0.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment:
@@ -4896,25 +4959,26 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               children: [
                                                 Text(
                                                   'Data da Morte',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                                 InkWell(
                                                   splashColor:
@@ -4926,7 +4990,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   highlightColor:
                                                       Colors.transparent,
                                                   onTap: () async {
-                                                    final _datePicked9Date =
+                                                    final datePicked9Date =
                                                         await showDatePicker(
                                                       context: context,
                                                       initialDate:
@@ -4939,7 +5003,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           context,
                                                           child!,
                                                           headerBackgroundColor:
-                                                              Color(0xFF28A365),
+                                                              const Color(
+                                                                  0xFF28A365),
                                                           headerForegroundColor:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -4972,7 +5037,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                       context)
                                                                   .primaryText,
                                                           selectedDateTimeBackgroundColor:
-                                                              Color(0xFF28A365),
+                                                              const Color(
+                                                                  0xFF28A365),
                                                           selectedDateTimeForegroundColor:
                                                               FlutterFlowTheme.of(
                                                                       context)
@@ -4986,15 +5052,14 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       },
                                                     );
 
-                                                    if (_datePicked9Date !=
+                                                    if (datePicked9Date !=
                                                         null) {
                                                       safeSetState(() {
                                                         _model.datePicked9 =
                                                             DateTime(
-                                                          _datePicked9Date.year,
-                                                          _datePicked9Date
-                                                              .month,
-                                                          _datePicked9Date.day,
+                                                          datePicked9Date.year,
+                                                          datePicked9Date.month,
+                                                          datePicked9Date.day,
                                                         );
                                                       });
                                                     } else if (_model
@@ -5009,7 +5074,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   child: Container(
                                                     width: double.infinity,
                                                     height: 56.0,
-                                                    decoration: BoxDecoration(
+                                                    decoration:
+                                                        const BoxDecoration(
                                                       color: Color(0xFFF1F1F1),
                                                       borderRadius:
                                                           BorderRadius.only(
@@ -5029,12 +5095,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  16.0,
-                                                                  0.0,
-                                                                  8.0,
-                                                                  0.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(16.0,
+                                                              0.0, 8.0, 0.0),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
@@ -5064,11 +5127,11 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                         Color>(
                                                                       _model.datePicked9 ==
                                                                               null
-                                                                          ? Color(
+                                                                          ? const Color(
                                                                               0xFFBEBEBE)
                                                                           : FlutterFlowTheme.of(context)
                                                                               .secondaryText,
-                                                                      Color(
+                                                                      const Color(
                                                                           0xFFBEBEBE),
                                                                     ),
                                                                     fontSize:
@@ -5116,31 +5179,32 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                             children: [
                                               Text(
                                                 'Motivo da morte',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFF474747),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                               ),
                                               FlutterFlowDropDown<String>(
                                                 controller: _model
                                                         .dPMotivoMorteValueController ??=
                                                     FormFieldController<String>(
                                                         null),
-                                                options: [
+                                                options: const [
                                                   'ACIDENTE',
                                                   'ANIMAL PEÇONHENTO',
                                                   'ATAQUE AVE',
@@ -5190,20 +5254,24 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       .secondaryText,
                                                   size: 24.0,
                                                 ),
-                                                fillColor: Color(0xFFF1F1F1),
+                                                fillColor:
+                                                    const Color(0xFFF1F1F1),
                                                 elevation: 2.0,
-                                                borderColor: Color(0x00E0E3E7),
+                                                borderColor:
+                                                    const Color(0x00E0E3E7),
                                                 borderWidth: 2.0,
                                                 borderRadius: 8.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                margin:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 4.0, 16.0, 4.0),
                                                 hidesUnderline: true,
                                                 isOverButton: true,
                                                 isSearchable: false,
                                                 isMultiSelect: false,
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                       Container(
@@ -5227,7 +5295,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -5240,7 +5309,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                             Container(
                                               width: double.infinity,
                                               height: 104.0,
-                                              decoration: BoxDecoration(
+                                              decoration: const BoxDecoration(
                                                 color: Color(0xFFF1F1F1),
                                                 borderRadius: BorderRadius.only(
                                                   bottomLeft:
@@ -5252,7 +5321,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       Radius.circular(6.0),
                                                 ),
                                               ),
-                                              child: Container(
+                                              child: SizedBox(
                                                 width: double.infinity,
                                                 child: TextFormField(
                                                   controller: _model
@@ -5270,8 +5339,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              Color(0xFFBEBEBE),
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -5283,7 +5352,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         ),
                                                     enabledBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00E0E3E7),
                                                         width: 2.0,
@@ -5294,7 +5364,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     ),
                                                     focusedBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x004B39EF),
                                                         width: 2.0,
@@ -5330,9 +5401,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               8.0),
                                                     ),
                                                     contentPadding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(16.0, 0.0,
-                                                                16.0, 0.0),
+                                                            16.0, 0.0),
                                                   ),
                                                   style: FlutterFlowTheme.of(
                                                           context)
@@ -5358,7 +5429,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       ),
                                       Row(
@@ -5377,7 +5448,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         _model.tabBarController!
                                                                 .index -
                                                             1),
-                                                    duration: Duration(
+                                                    duration: const Duration(
                                                         milliseconds: 300),
                                                     curve: Curves.ease,
                                                   );
@@ -5387,34 +5458,36 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               options: FFButtonOptions(
                                                 width: 160.0,
                                                 height: 56.0,
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         24.0, 0.0, 24.0, 0.0),
                                                 iconPadding:
-                                                    EdgeInsetsDirectional
+                                                    const EdgeInsetsDirectional
                                                         .fromSTEB(
-                                                            0.0, 0.0, 0.0, 0.0),
-                                                color: Color(0x004B39EF),
-                                                textStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .titleSmall
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .titleSmallFamily,
-                                                      color: Color(0xFF1E7A4C),
-                                                      fontSize: 18.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .titleSmallIsCustom,
-                                                    ),
+                                                        0.0, 0.0, 0.0, 0.0),
+                                                color: const Color(0x004B39EF),
+                                                textStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .titleSmall
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .titleSmallFamily,
+                                                          color: const Color(
+                                                              0xFF1E7A4C),
+                                                          fontSize: 18.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .titleSmallIsCustom,
+                                                        ),
                                                 elevation: 0.0,
-                                                borderSide: BorderSide(
+                                                borderSide: const BorderSide(
                                                   color: Color(0xFF1E7A4C),
                                                   width: 2.0,
                                                 ),
@@ -5441,15 +5514,17 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     builder:
                                                         (alertDialogContext) {
                                                       return AlertDialog(
-                                                        title: Text('Status'),
-                                                        content: Text(
+                                                        title: const Text(
+                                                            'Status'),
+                                                        content: const Text(
                                                             'Selecione o status do animal.'),
                                                         actions: [
                                                           TextButton(
                                                             onPressed: () =>
                                                                 Navigator.pop(
                                                                     alertDialogContext),
-                                                            child: Text('Ok'),
+                                                            child: const Text(
+                                                                'Ok'),
                                                           ),
                                                         ],
                                                       );
@@ -5696,12 +5771,10 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           .reprodutorSelecionado
                                                           .idRebanho,
                                                 );
-                                                if (_model.pesonascimentoTextController
-                                                            .text !=
-                                                        null &&
-                                                    _model.pesonascimentoTextController
-                                                            .text !=
-                                                        '') {
+                                                if (_model
+                                                        .pesonascimentoTextController
+                                                        .text !=
+                                                    '') {
                                                   await SQLiteManager.instance
                                                       .addPesagem(
                                                     dataPesagem: dateTimeFormat(
@@ -5728,12 +5801,10 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     idRebanho: _model.idRebanho,
                                                   );
                                                 }
-                                                if (_model.pesodadesmamaTextController
-                                                            .text !=
-                                                        null &&
-                                                    _model.pesodadesmamaTextController
-                                                            .text !=
-                                                        '') {
+                                                if (_model
+                                                        .pesodadesmamaTextController
+                                                        .text !=
+                                                    '') {
                                                   await SQLiteManager.instance
                                                       .addPesagem(
                                                     dataPesagem: dateTimeFormat(
@@ -5760,12 +5831,10 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     idRebanho: _model.idRebanho,
                                                   );
                                                 }
-                                                if (_model.pesoAtualTextController
-                                                            .text !=
-                                                        null &&
-                                                    _model.pesoAtualTextController
-                                                            .text !=
-                                                        '') {
+                                                if (_model
+                                                        .pesoAtualTextController
+                                                        .text !=
+                                                    '') {
                                                   await SQLiteManager.instance
                                                       .addPesagem(
                                                     dataPesagem: dateTimeFormat(
@@ -5851,7 +5920,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                             .secondaryBackground,
                                                       ),
                                                     ),
-                                                    duration: Duration(
+                                                    duration: const Duration(
                                                         milliseconds: 4000),
                                                     backgroundColor:
                                                         FlutterFlowTheme.of(
@@ -5867,13 +5936,14 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               options: FFButtonOptions(
                                                 width: 160.0,
                                                 height: 56.0,
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         24.0, 0.0, 24.0, 0.0),
                                                 iconPadding:
-                                                    EdgeInsetsDirectional
+                                                    const EdgeInsetsDirectional
                                                         .fromSTEB(
-                                                            0.0, 0.0, 0.0, 0.0),
+                                                        0.0, 0.0, 0.0, 0.0),
                                                 color:
                                                     FlutterFlowTheme.of(context)
                                                         .primary,
@@ -5896,7 +5966,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                   .titleSmallIsCustom,
                                                         ),
                                                 elevation: 0.0,
-                                                borderSide: BorderSide(
+                                                borderSide: const BorderSide(
                                                   color: Color(0x0028A365),
                                                   width: 0.0,
                                                 ),
@@ -5905,9 +5975,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               ),
                                             ),
                                           ),
-                                        ].divide(SizedBox(width: 16.0)),
+                                        ].divide(const SizedBox(width: 16.0)),
                                       ),
-                                    ].divide(SizedBox(height: 24.0)),
+                                    ].divide(const SizedBox(height: 24.0)),
                                   ),
                                 ),
                               ),
@@ -5919,7 +5989,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                   ),
                 ),
               ),
-            ].divide(SizedBox(height: 24.0)),
+            ].divide(const SizedBox(height: 24.0)),
           ),
         ),
       ],

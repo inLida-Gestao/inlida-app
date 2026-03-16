@@ -47,7 +47,7 @@ class _SelecionarPropriedadeWidgetState
     context.watch<FFAppState>();
 
     return Container(
-      decoration: BoxDecoration(),
+      decoration: const BoxDecoration(),
       child: InkWell(
         splashColor: Colors.transparent,
         focusColor: Colors.transparent,
@@ -62,7 +62,7 @@ class _SelecionarPropriedadeWidgetState
             builder: (context) {
               return Padding(
                 padding: MediaQuery.viewInsetsOf(context),
-                child: SelecaoPropriedadeWidget(),
+                child: const SelecaoPropriedadeWidget(),
               );
             },
           ).then((value) => safeSetState(() {}));
@@ -70,22 +70,22 @@ class _SelecionarPropriedadeWidgetState
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Color(0xFFF1F1F1),
-            borderRadius: BorderRadius.only(
+            color: const Color(0xFFF1F1F1),
+            borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(100.0),
               bottomRight: Radius.circular(100.0),
               topLeft: Radius.circular(100.0),
               topRight: Radius.circular(100.0),
             ),
             border: Border.all(
-              color: Color(0xFFBEBEBE),
+              color: const Color(0xFFBEBEBE),
               width: 2.0,
             ),
           ),
           child: Container(
             decoration: BoxDecoration(
-              color: Color(0x00FFFFFF),
-              borderRadius: BorderRadius.only(
+              color: const Color(0x00FFFFFF),
+              borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(100.0),
                 bottomRight: Radius.circular(100.0),
                 topLeft: Radius.circular(100.0),
@@ -103,21 +103,21 @@ class _SelecionarPropriedadeWidgetState
                 Flexible(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Color(0xFFF1F1F1),
-                      borderRadius: BorderRadius.only(
+                      color: const Color(0xFFF1F1F1),
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(100.0),
                         bottomRight: Radius.circular(100.0),
                         topLeft: Radius.circular(100.0),
                         topRight: Radius.circular(100.0),
                       ),
                       border: Border.all(
-                        color: Color(0x00FFFFFF),
+                        color: const Color(0x00FFFFFF),
                         width: 2.0,
                       ),
                     ),
                     child: Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 0.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          8.0, 0.0, 0.0, 0.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -133,9 +133,7 @@ class _SelecionarPropriedadeWidgetState
                           Flexible(
                             child: Text(
                               valueOrDefault<String>(
-                                FFAppState().propriedadeSelecionada != null
-                                    ? FFAppState().propriedadeSelecionada.nome
-                                    : 'Nenhuma propriedade selecionada.',
+                                FFAppState().propriedadeSelecionada.nome,
                                 'Nenhuma propriedade selecionada.',
                               ).maybeHandleOverflow(
                                 maxChars: 32,
@@ -150,17 +148,9 @@ class _SelecionarPropriedadeWidgetState
                                           .bodyMedium
                                           .fontStyle,
                                     ),
-                                    color: FFAppState()
-                                                .propriedadeSelecionada !=
-                                            null
-                                        ? FlutterFlowTheme.of(context)
-                                            .primaryText
-                                        : FlutterFlowTheme.of(context).accent4,
-                                    fontSize:
-                                        FFAppState().propriedadeSelecionada !=
-                                                null
-                                            ? 14.0
-                                            : 12.0,
+                                    color: FlutterFlowTheme.of(context)
+                                        .primaryText,
+                                    fontSize: 14.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
                                     fontStyle: FlutterFlowTheme.of(context)
@@ -169,21 +159,20 @@ class _SelecionarPropriedadeWidgetState
                                   ),
                             ),
                           ),
-                        ].divide(SizedBox(width: 8.0)),
+                        ].divide(const SizedBox(width: 8.0)),
                       ),
                     ),
                   ),
                 ),
-                if (FFAppState().propriedadeSelecionada != null)
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
-                    child: Icon(
-                      Icons.arrow_drop_down_sharp,
-                      color: FlutterFlowTheme.of(context).primaryText,
-                      size: 24.0,
-                    ),
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 8.0, 0.0),
+                  child: Icon(
+                    Icons.arrow_drop_down_sharp,
+                    color: FlutterFlowTheme.of(context).primaryText,
+                    size: 24.0,
                   ),
-              ].divide(SizedBox(width: 8.0)),
+                ),
+              ].divide(const SizedBox(width: 8.0)),
             ),
           ),
         ),

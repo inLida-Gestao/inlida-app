@@ -11,7 +11,7 @@ class HistoricoPesagensChangeTrackerTable
 }
 
 class HistoricoPesagensChangeTrackerRow extends SupabaseDataRow {
-  HistoricoPesagensChangeTrackerRow(Map<String, dynamic> data) : super(data);
+  HistoricoPesagensChangeTrackerRow(super.data);
 
   @override
   SupabaseTable get table => HistoricoPesagensChangeTrackerTable();

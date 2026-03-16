@@ -52,7 +52,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
     return Material(
       color: Colors.transparent,
       elevation: 3.0,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(6.0),
           bottomRight: Radius.circular(6.0),
@@ -65,7 +65,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
         height: 197.0,
         decoration: BoxDecoration(
           color: FlutterFlowTheme.of(context).secondaryBackground,
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(6.0),
             bottomRight: Radius.circular(6.0),
             topLeft: Radius.circular(6.0),
@@ -73,7 +73,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
           ),
         ),
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -91,9 +91,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                     highlightColor: Colors.transparent,
                     onTap: () async {
                       if (FFAppState().propriedadeSelecionada.idPropriedade !=
-                              null &&
-                          FFAppState().propriedadeSelecionada.idPropriedade !=
-                              '') {
+                          '') {
                         _model.propriedadesNasc =
                             await SQLiteManager.instance.listarPropriedades(
                           userID: currentUserUid,
@@ -105,7 +103,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                         );
                         FFAppState().rebanhoLotesSelecionar = [];
                         safeSetState(() {});
-                        if (_model.lotesRebNasc!.length > 0) {
+                        if (_model.lotesRebNasc!.isNotEmpty) {
                           while (_model.index < _model.lotesRebNasc!.length) {
                             FFAppState()
                                 .addToRebanhoLotesSelecionar(LocalLotesStruct(
@@ -136,9 +134,9 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                               elevation: 0,
                               insetPadding: EdgeInsets.zero,
                               backgroundColor: Colors.transparent,
-                              alignment: AlignmentDirectional(0.0, 0.0)
+                              alignment: const AlignmentDirectional(0.0, 0.0)
                                   .resolve(Directionality.of(context)),
-                              child: AddRebanhoNascimentoWidget(),
+                              child: const AddRebanhoNascimentoWidget(),
                             );
                           },
                         );
@@ -147,14 +145,14 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                           context: context,
                           builder: (alertDialogContext) {
                             return AlertDialog(
-                              title: Text('Selecionar propriedade'),
-                              content: Text(
+                              title: const Text('Selecionar propriedade'),
+                              content: const Text(
                                   'Para adicionar um animal nascimento, selecione uma propriedade primeiro.'),
                               actions: [
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.pop(alertDialogContext),
-                                  child: Text('Ok'),
+                                  child: const Text('Ok'),
                                 ),
                               ],
                             );
@@ -167,7 +165,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.add,
                           color: Color(0xFF2F2F2F),
                           size: 24.0,
@@ -186,7 +184,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                                     .bodyMediumIsCustom,
                               ),
                         ),
-                      ].divide(SizedBox(width: 8.0)),
+                      ].divide(const SizedBox(width: 8.0)),
                     ),
                   ),
                 ),
@@ -205,9 +203,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                     highlightColor: Colors.transparent,
                     onTap: () async {
                       if (FFAppState().propriedadeSelecionada.idPropriedade !=
-                              null &&
-                          FFAppState().propriedadeSelecionada.idPropriedade !=
-                              '') {
+                          '') {
                         _model.propriedadessReb =
                             await SQLiteManager.instance.listarPropriedades(
                           userID: currentUserUid,
@@ -219,7 +215,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                         );
                         FFAppState().rebanhoLotesSelecionar = [];
                         safeSetState(() {});
-                        if (_model.lotesReb!.length > 0) {
+                        if (_model.lotesReb!.isNotEmpty) {
                           while (_model.index < _model.lotesReb!.length) {
                             FFAppState()
                                 .addToRebanhoLotesSelecionar(LocalLotesStruct(
@@ -250,9 +246,9 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                               elevation: 0,
                               insetPadding: EdgeInsets.zero,
                               backgroundColor: Colors.transparent,
-                              alignment: AlignmentDirectional(0.0, 0.0)
+                              alignment: const AlignmentDirectional(0.0, 0.0)
                                   .resolve(Directionality.of(context)),
-                              child: AddRebanhoWidget(),
+                              child: const AddRebanhoWidget(),
                             );
                           },
                         );
@@ -261,14 +257,14 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                           context: context,
                           builder: (alertDialogContext) {
                             return AlertDialog(
-                              title: Text('Selecionar propriedade'),
-                              content: Text(
+                              title: const Text('Selecionar propriedade'),
+                              content: const Text(
                                   'Para adicionar um animal, selecione uma propriedade primeiro.'),
                               actions: [
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.pop(alertDialogContext),
-                                  child: Text('Ok'),
+                                  child: const Text('Ok'),
                                 ),
                               ],
                             );
@@ -281,7 +277,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.add,
                           color: Color(0xFF2F2F2F),
                           size: 24.0,
@@ -300,7 +296,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                                     .bodyMediumIsCustom,
                               ),
                         ),
-                      ].divide(SizedBox(width: 8.0)),
+                      ].divide(const SizedBox(width: 8.0)),
                     ),
                   ),
                 ),
@@ -319,9 +315,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                     highlightColor: Colors.transparent,
                     onTap: () async {
                       if (FFAppState().propriedadeSelecionada.idPropriedade !=
-                              null &&
-                          FFAppState().propriedadeSelecionada.idPropriedade !=
-                              '') {
+                          '') {
                         await showDialog(
                           barrierColor: Colors.transparent,
                           context: context,
@@ -330,9 +324,9 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                               elevation: 0,
                               insetPadding: EdgeInsets.zero,
                               backgroundColor: Colors.transparent,
-                              alignment: AlignmentDirectional(0.0, 0.0)
+                              alignment: const AlignmentDirectional(0.0, 0.0)
                                   .resolve(Directionality.of(context)),
-                              child: AddRebanhoSemenWidget(),
+                              child: const AddRebanhoSemenWidget(),
                             );
                           },
                         );
@@ -341,14 +335,14 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                           context: context,
                           builder: (alertDialogContext) {
                             return AlertDialog(
-                              title: Text('Selecionar propriedade'),
-                              content: Text(
+                              title: const Text('Selecionar propriedade'),
+                              content: const Text(
                                   'Para adicionar um sêmen, selecione uma propriedade primeiro.'),
                               actions: [
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.pop(alertDialogContext),
-                                  child: Text('Ok'),
+                                  child: const Text('Ok'),
                                 ),
                               ],
                             );
@@ -359,7 +353,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.add,
                           color: Color(0xFF2F2F2F),
                           size: 24.0,
@@ -378,7 +372,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                                     .bodyMediumIsCustom,
                               ),
                         ),
-                      ].divide(SizedBox(width: 8.0)),
+                      ].divide(const SizedBox(width: 8.0)),
                     ),
                   ),
                 ),

@@ -8,6 +8,28 @@ Future<List<T>> _readQuery<T>(
 ) =>
     database.rawQuery(query).then((r) => r.map((e) => create(e)).toList());
 
+String _escapeSqlValue(String value) => value.replaceAll("'", "''");
+
+String _buildSqlMultiValueCondition(String column, String? rawValue) {
+  final values = (rawValue ?? '')
+      .split('|')
+      .map((value) => value.trim())
+      .where((value) => value.isNotEmpty)
+      .toList();
+
+  if (values.isEmpty) {
+    return '1=1';
+  }
+
+  if (values.length == 1) {
+    return "$column = '${_escapeSqlValue(values.first)}'";
+  }
+
+  final serializedValues =
+      values.map((value) => "'${_escapeSqlValue(value)}'").join(', ');
+  return '$column IN ($serializedValues)';
+}
+
 /// BEGIN LOCALCIDADES
 Future<List<LocalCidadesRow>> performLocalCidades(
   Database database, {
@@ -15,14 +37,14 @@ Future<List<LocalCidadesRow>> performLocalCidades(
 }) {
   final query = '''
 select id,cidade from local_cidades
-where uf =  '${uf}'
+where uf =  '$uf'
 order by cidade ASC;
 ''';
   return _readQuery(database, query, (d) => LocalCidadesRow(d));
 }
 
 class LocalCidadesRow extends SqliteRow {
-  LocalCidadesRow(Map<String, dynamic> data) : super(data);
+  LocalCidadesRow(super.data);
 
   String get cidade => data['cidade'] as String;
   int? get id => data['id'] as int?;
@@ -38,14 +60,14 @@ Future<List<ListarPropriedadesRow>> performListarPropriedades(
   final query = '''
 SELECT * FROM local_propriedades 
 WHERE 1=1
-AND (userID = '${userID}' OR usersID LIKE '%${userID}%') 
+AND (userID = '$userID' OR usersID LIKE '%$userID%') 
 AND deletado = 'NAO' 
 ''';
   return _readQuery(database, query, (d) => ListarPropriedadesRow(d));
 }
 
 class ListarPropriedadesRow extends SqliteRow {
-  ListarPropriedadesRow(Map<String, dynamic> data) : super(data);
+  ListarPropriedadesRow(super.data);
 
   int? get id => data['id'] as int?;
   String? get userID => data['userID'] as String?;
@@ -77,13 +99,13 @@ Future<List<BuscaPropriedadesPUTRow>> performBuscaPropriedadesPUT(
 }) {
   final query = '''
 SELECT * FROM local_propriedades
-WHERE datetime(created_at, 'localtime') >= datetime('${datePUT}', 'localtime')
+WHERE datetime(created_at, 'localtime') >= datetime('$datePUT', 'localtime')
 ''';
   return _readQuery(database, query, (d) => BuscaPropriedadesPUTRow(d));
 }
 
 class BuscaPropriedadesPUTRow extends SqliteRow {
-  BuscaPropriedadesPUTRow(Map<String, dynamic> data) : super(data);
+  BuscaPropriedadesPUTRow(super.data);
 
   String? get userID => data['userID'] as String?;
   String? get usersID => data['usersID'] as String?;
@@ -111,13 +133,13 @@ Future<List<BuscaPropriedadeRow>> performBuscaPropriedade(
 }) {
   final query = '''
 SELECT * FROM local_propriedades
-WHERE idPropriedade = '${idPropriedade}'
+WHERE idPropriedade = '$idPropriedade'
 ''';
   return _readQuery(database, query, (d) => BuscaPropriedadeRow(d));
 }
 
 class BuscaPropriedadeRow extends SqliteRow {
-  BuscaPropriedadeRow(Map<String, dynamic> data) : super(data);
+  BuscaPropriedadeRow(super.data);
 
   String? get userID => data['userID'] as String?;
   String? get usersID => data['usersID'] as String?;
@@ -144,13 +166,13 @@ Future<List<BuscaUsersPeloIDRow>> performBuscaUsersPeloID(
 }) {
   final query = '''
 SELECT * FROM local_users
-WHERE userID = '${userID}'
+WHERE userID = '$userID'
 ''';
   return _readQuery(database, query, (d) => BuscaUsersPeloIDRow(d));
 }
 
 class BuscaUsersPeloIDRow extends SqliteRow {
-  BuscaUsersPeloIDRow(Map<String, dynamic> data) : super(data);
+  BuscaUsersPeloIDRow(super.data);
 
   String? get userID => data['userID'] as String?;
   String? get nome => data['nome'] as String?;
@@ -170,13 +192,13 @@ Future<List<BuscaUsuarioPorEmailRow>> performBuscaUsuarioPorEmail(
   final query = '''
 SELECT * FROM local_users
 WHERE excluido = 0
-AND email = '${email}'
+AND email = '$email'
 ''';
   return _readQuery(database, query, (d) => BuscaUsuarioPorEmailRow(d));
 }
 
 class BuscaUsuarioPorEmailRow extends SqliteRow {
-  BuscaUsuarioPorEmailRow(Map<String, dynamic> data) : super(data);
+  BuscaUsuarioPorEmailRow(super.data);
 
   String? get userID => data['userID'] as String?;
   String? get nome => data['nome'] as String?;
@@ -195,13 +217,13 @@ Future<List<BuscaPropriedadesUPDATEDRow>> performBuscaPropriedadesUPDATED(
 }) {
   final query = '''
 SELECT * FROM local_propriedades
-WHERE datetime(updated_at, 'localtime') >= datetime('${dateUPT}', 'localtime')
+WHERE datetime(updated_at, 'localtime') >= datetime('$dateUPT', 'localtime')
 ''';
   return _readQuery(database, query, (d) => BuscaPropriedadesUPDATEDRow(d));
 }
 
 class BuscaPropriedadesUPDATEDRow extends SqliteRow {
-  BuscaPropriedadesUPDATEDRow(Map<String, dynamic> data) : super(data);
+  BuscaPropriedadesUPDATEDRow(super.data);
 
   String? get userID => data['userID'] as String?;
   String? get usersID => data['usersID'] as String?;
@@ -230,13 +252,13 @@ Future<List<BuscaUsersPropriedadesRow>> performBuscaUsersPropriedades(
 }) {
   final query = '''
 SELECT * FROM local_usuarios_propriedade
-where idPropriedade = '${idPropriedade}'
+where idPropriedade = '$idPropriedade'
 ''';
   return _readQuery(database, query, (d) => BuscaUsersPropriedadesRow(d));
 }
 
 class BuscaUsersPropriedadesRow extends SqliteRow {
-  BuscaUsersPropriedadesRow(Map<String, dynamic> data) : super(data);
+  BuscaUsersPropriedadesRow(super.data);
 
   String? get nome => data['nome'] as String?;
   String? get email => data['email'] as String?;
@@ -256,13 +278,13 @@ Future<List<ListarRebanhosRow>> performListarRebanhos(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
+WHERE idPropriedade = '$idPropriedade'
 ''';
   return _readQuery(database, query, (d) => ListarRebanhosRow(d));
 }
 
 class ListarRebanhosRow extends SqliteRow {
-  ListarRebanhosRow(Map<String, dynamic> data) : super(data);
+  ListarRebanhosRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get chip => data['chip'] as String?;
@@ -320,14 +342,14 @@ Future<List<BuscarRebanhoRow>> performBuscarRebanho(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idRebanho = '${idRebanho}'
+WHERE idRebanho = '$idRebanho'
 
 ''';
   return _readQuery(database, query, (d) => BuscarRebanhoRow(d));
 }
 
 class BuscarRebanhoRow extends SqliteRow {
-  BuscarRebanhoRow(Map<String, dynamic> data) : super(data);
+  BuscarRebanhoRow(super.data);
 
   String? get idPropriedade => data['idPropriedade'] as String?;
   String? get numeroAnimal => data['numeroAnimal'] as String?;
@@ -387,14 +409,14 @@ Future<List<BuscarRebanhoUPDATEDRow>> performBuscarRebanhoUPDATED(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE datetime(updated_at, 'localtime') >= datetime('${data}', 'localtime')
+WHERE datetime(updated_at, 'localtime') >= datetime('$data', 'localtime')
 
 ''';
   return _readQuery(database, query, (d) => BuscarRebanhoUPDATEDRow(d));
 }
 
 class BuscarRebanhoUPDATEDRow extends SqliteRow {
-  BuscarRebanhoUPDATEDRow(Map<String, dynamic> data) : super(data);
+  BuscarRebanhoUPDATEDRow(super.data);
 
   String? get idPropriedade => data['idPropriedade'] as String?;
   String? get numeroAnimal => data['numeroAnimal'] as String?;
@@ -452,14 +474,14 @@ Future<List<BuscarRebanhoPUTRow>> performBuscarRebanhoPUT(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE datetime(created_at, 'localtime') >= datetime('${data}', 'localtime')
+WHERE datetime(created_at, 'localtime') >= datetime('$data', 'localtime')
 
 ''';
   return _readQuery(database, query, (d) => BuscarRebanhoPUTRow(d));
 }
 
 class BuscarRebanhoPUTRow extends SqliteRow {
-  BuscarRebanhoPUTRow(Map<String, dynamic> data) : super(data);
+  BuscarRebanhoPUTRow(super.data);
 
   String? get idPropriedade => data['idPropriedade'] as String?;
   String? get numeroAnimal => data['numeroAnimal'] as String?;
@@ -519,14 +541,14 @@ Future<List<QTDAnimaisPropriedadeRow>> performQTDAnimaisPropriedade(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
+WHERE idPropriedade = '$idPropriedade'
 AND statusRebanho = 'Na propriedade'
 ''';
   return _readQuery(database, query, (d) => QTDAnimaisPropriedadeRow(d));
 }
 
 class QTDAnimaisPropriedadeRow extends SqliteRow {
-  QTDAnimaisPropriedadeRow(Map<String, dynamic> data) : super(data);
+  QTDAnimaisPropriedadeRow(super.data);
 
   int? get id => data['id'] as int?;
 }
@@ -540,13 +562,13 @@ Future<List<QTDDeAnimaisGeralRow>> performQTDDeAnimaisGeral(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade in (${idPropriedade})
+WHERE idPropriedade in ($idPropriedade)
 ''';
   return _readQuery(database, query, (d) => QTDDeAnimaisGeralRow(d));
 }
 
 class QTDDeAnimaisGeralRow extends SqliteRow {
-  QTDDeAnimaisGeralRow(Map<String, dynamic> data) : super(data);
+  QTDDeAnimaisGeralRow(super.data);
 
   String? get id => data['id'] as String?;
 }
@@ -560,7 +582,7 @@ Future<List<BuscarCriasRebanhoMatrizRow>> performBuscarCriasRebanhoMatriz(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE rebanhoIdMatriz = '${idRebanho}' 
+WHERE rebanhoIdMatriz = '$idRebanho' 
 AND deletado = 'NAO'
 
 ''';
@@ -568,7 +590,7 @@ AND deletado = 'NAO'
 }
 
 class BuscarCriasRebanhoMatrizRow extends SqliteRow {
-  BuscarCriasRebanhoMatrizRow(Map<String, dynamic> data) : super(data);
+  BuscarCriasRebanhoMatrizRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get nome => data['nome'] as String?;
@@ -599,19 +621,25 @@ Future<List<BuscaHistPesagensRow>> performBuscaHistPesagens(
 }) {
   final query = '''
 SELECT * FROM local_historico_pesagens
-WHERE idRebanho = '${idRebanho}'
+WHERE idRebanho = '$idRebanho'
 AND deletado = 'NAO'
 ''';
   return _readQuery(database, query, (d) => BuscaHistPesagensRow(d));
 }
 
 class BuscaHistPesagensRow extends SqliteRow {
-  BuscaHistPesagensRow(Map<String, dynamic> data) : super(data);
+  BuscaHistPesagensRow(super.data);
 
   String? get idRebanho => data['idRebanho'] as String?;
   String? get dataPesagem => data['dataPesagem'] as String?;
   String? get tipo => data['tipo'] as String?;
-  double? get peso => data['peso'] as double?;
+  double? get peso {
+    final v = data['peso'];
+    if (v == null) return null;
+    if (v is num) return v.toDouble();
+    if (v is String) return double.tryParse(v);
+    return null;
+  }
   String? get deletado => data['deletado'] as String?;
   String? get createdAt => data['created_at'] as String?;
   int? get id => data['id'] as int?;
@@ -627,18 +655,24 @@ Future<List<BuscaHistPesagensPUTRow>> performBuscaHistPesagensPUT(
 }) {
   final query = '''
 SELECT * FROM local_historico_pesagens
-WHERE datetime(created_at, 'localtime') >= datetime('${data}', 'localtime')
+WHERE datetime(created_at, 'localtime') >= datetime('$data', 'localtime')
 ''';
   return _readQuery(database, query, (d) => BuscaHistPesagensPUTRow(d));
 }
 
 class BuscaHistPesagensPUTRow extends SqliteRow {
-  BuscaHistPesagensPUTRow(Map<String, dynamic> data) : super(data);
+  BuscaHistPesagensPUTRow(super.data);
 
   String? get idRebanho => data['idRebanho'] as String?;
   String? get dataPesagem => data['dataPesagem'] as String?;
   String? get tipo => data['tipo'] as String?;
-  double? get peso => data['peso'] as double?;
+  double? get peso {
+    final v = data['peso'];
+    if (v == null) return null;
+    if (v is num) return v.toDouble();
+    if (v is String) return double.tryParse(v);
+    return null;
+  }
   String? get deletado => data['deletado'] as String?;
   String? get createdAt => data['created_at'] as String?;
   int? get id => data['id'] as int?;
@@ -651,7 +685,7 @@ class BuscaHistPesagensPUTRow extends SqliteRow {
 Future<List<BuscaHistPesagensUPDTRow>> performBuscaHistPesagensUPDT(
   Database database,
 ) {
-  final query = '''
+  const query = '''
 SELECT * FROM local_historico_pesagens
 WHERE deletado = 'SIM'
 ''';
@@ -659,12 +693,18 @@ WHERE deletado = 'SIM'
 }
 
 class BuscaHistPesagensUPDTRow extends SqliteRow {
-  BuscaHistPesagensUPDTRow(Map<String, dynamic> data) : super(data);
+  BuscaHistPesagensUPDTRow(super.data);
 
   String? get idRebanho => data['idRebanho'] as String?;
   String? get dataPesagem => data['dataPesagem'] as String?;
   String? get tipo => data['tipo'] as String?;
-  double? get peso => data['peso'] as double?;
+  double? get peso {
+    final v = data['peso'];
+    if (v == null) return null;
+    if (v is num) return v.toDouble();
+    if (v is String) return double.tryParse(v);
+    return null;
+  }
   String? get deletado => data['deletado'] as String?;
   String? get createdAt => data['created_at'] as String?;
   int? get id => data['id'] as int?;
@@ -683,15 +723,15 @@ Future<List<ListarRebanhosProgenereRow>> performListarRebanhosProgenere(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
-AND idRebanho <> '${idRebanho}'
-LIMIT ${limitReb} OFFSET ${offsetReb}
+WHERE idPropriedade = '$idPropriedade'
+AND idRebanho <> '$idRebanho'
+LIMIT $limitReb OFFSET $offsetReb
 ''';
   return _readQuery(database, query, (d) => ListarRebanhosProgenereRow(d));
 }
 
 class ListarRebanhosProgenereRow extends SqliteRow {
-  ListarRebanhosProgenereRow(Map<String, dynamic> data) : super(data);
+  ListarRebanhosProgenereRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get chip => data['chip'] as String?;
@@ -733,14 +773,14 @@ Future<List<ListarLotesRow>> performListarLotes(
 }) {
   final query = '''
 SELECT * FROM local_lotes
-WHERE id_propriedade = '${idPropriedade}'
+WHERE id_propriedade = '$idPropriedade'
 AND deletado = 'NAO'
 ''';
   return _readQuery(database, query, (d) => ListarLotesRow(d));
 }
 
 class ListarLotesRow extends SqliteRow {
-  ListarLotesRow(Map<String, dynamic> data) : super(data);
+  ListarLotesRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get idAnimais => data['id_animais'] as String?;
@@ -768,13 +808,13 @@ Future<List<LotesAtivoRow>> performLotesAtivo(
   final query = '''
 SELECT * FROM local_lotes
 WHERE ativo = 'Ativo'
-AND id_propriedade = '${idPropriedade}'
+AND id_propriedade = '$idPropriedade'
 ''';
   return _readQuery(database, query, (d) => LotesAtivoRow(d));
 }
 
 class LotesAtivoRow extends SqliteRow {
-  LotesAtivoRow(Map<String, dynamic> data) : super(data);
+  LotesAtivoRow(super.data);
 
   int? get id => data['id'] as int?;
 }
@@ -789,13 +829,13 @@ Future<List<LotesInativosRow>> performLotesInativos(
   final query = '''
 SELECT * FROM local_lotes
 WHERE ativo = 'Inativo'
-AND id_propriedade = '${idPropriedade}'
+AND id_propriedade = '$idPropriedade'
 ''';
   return _readQuery(database, query, (d) => LotesInativosRow(d));
 }
 
 class LotesInativosRow extends SqliteRow {
-  LotesInativosRow(Map<String, dynamic> data) : super(data);
+  LotesInativosRow(super.data);
 
   int? get id => data['id'] as int?;
 }
@@ -810,13 +850,13 @@ Future<List<AnimaisNoLoteRow>> performAnimaisNoLote(
   final query = '''
 SELECT * FROM local_rebanho
 WHERE loteNome <> 'null'
-AND idPropriedade = '${idPropriedade}'
+AND idPropriedade = '$idPropriedade'
 ''';
   return _readQuery(database, query, (d) => AnimaisNoLoteRow(d));
 }
 
 class AnimaisNoLoteRow extends SqliteRow {
-  AnimaisNoLoteRow(Map<String, dynamic> data) : super(data);
+  AnimaisNoLoteRow(super.data);
 
   String? get id => data['id'] as String?;
 }
@@ -830,13 +870,13 @@ Future<List<BuscarLoteRow>> performBuscarLote(
 }) {
   final query = '''
 SELECT * FROM local_lotes
-WHERE id_lote = '${idLote}'
+WHERE id_lote = '$idLote'
 ''';
   return _readQuery(database, query, (d) => BuscarLoteRow(d));
 }
 
 class BuscarLoteRow extends SqliteRow {
-  BuscarLoteRow(Map<String, dynamic> data) : super(data);
+  BuscarLoteRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get idAnimais => data['id_animais'] as String?;
@@ -863,7 +903,7 @@ Future<List<BuscarRebanhoLoteRow>> performBuscarRebanhoLote(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE loteID = '${idLote}'
+WHERE loteID = '$idLote'
 AND deletado = 'NAO'
 
 ''';
@@ -871,7 +911,7 @@ AND deletado = 'NAO'
 }
 
 class BuscarRebanhoLoteRow extends SqliteRow {
-  BuscarRebanhoLoteRow(Map<String, dynamic> data) : super(data);
+  BuscarRebanhoLoteRow(super.data);
 
   String? get idPropriedade => data['idPropriedade'] as String?;
   String? get numeroAnimal => data['numeroAnimal'] as String?;
@@ -916,14 +956,14 @@ Future<List<BuscarLotePUTRow>> performBuscarLotePUT(
 }) {
   final query = '''
 SELECT * FROM local_lotes
-WHERE datetime(created_at, 'localtime') >= datetime('${datePUT}', 'localtime')
+WHERE datetime(created_at, 'localtime') >= datetime('$datePUT', 'localtime')
 
 ''';
   return _readQuery(database, query, (d) => BuscarLotePUTRow(d));
 }
 
 class BuscarLotePUTRow extends SqliteRow {
-  BuscarLotePUTRow(Map<String, dynamic> data) : super(data);
+  BuscarLotePUTRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get idAnimais => data['id_animais'] as String?;
@@ -950,14 +990,14 @@ Future<List<BuscarLoteUPDTRow>> performBuscarLoteUPDT(
 }) {
   final query = '''
 SELECT * FROM local_lotes
-WHERE datetime(updated_at, 'localtime') >= datetime('${dateUPDT}', 'localtime')
+WHERE datetime(updated_at, 'localtime') >= datetime('$dateUPDT', 'localtime')
 
 ''';
   return _readQuery(database, query, (d) => BuscarLoteUPDTRow(d));
 }
 
 class BuscarLoteUPDTRow extends SqliteRow {
-  BuscarLoteUPDTRow(Map<String, dynamic> data) : super(data);
+  BuscarLoteUPDTRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get idAnimais => data['id_animais'] as String?;
@@ -984,13 +1024,13 @@ Future<List<CountLotesCadastradosRow>> performCountLotesCadastrados(
 }) {
   final query = '''
 SELECT * FROM local_lotes
-WHERE id_propriedade = '${idPropriedade}'
+WHERE id_propriedade = '$idPropriedade'
 ''';
   return _readQuery(database, query, (d) => CountLotesCadastradosRow(d));
 }
 
 class CountLotesCadastradosRow extends SqliteRow {
-  CountLotesCadastradosRow(Map<String, dynamic> data) : super(data);
+  CountLotesCadastradosRow(super.data);
 
   int? get id => data['id'] as int?;
 }
@@ -1004,13 +1044,13 @@ Future<List<ListarReproducoesRow>> performListarReproducoes(
 }) {
   final query = '''
 SELECT * FROM local_reproducao
-WHERE id_propriedade = '${idPropriedade}'
+WHERE id_propriedade = '$idPropriedade'
 ''';
   return _readQuery(database, query, (d) => ListarReproducoesRow(d));
 }
 
 class ListarReproducoesRow extends SqliteRow {
-  ListarReproducoesRow(Map<String, dynamic> data) : super(data);
+  ListarReproducoesRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get tipoReproducao => data['tipo_reproducao'] as String?;
@@ -1055,13 +1095,13 @@ Future<List<BuscarLotesRow>> performBuscarLotes(
   final query = '''
 SELECT * FROM local_lotes
 WHERE ativo = 'Ativo'
-AND id_propriedade = '${idPropriedade}'
+AND id_propriedade = '$idPropriedade'
 ''';
   return _readQuery(database, query, (d) => BuscarLotesRow(d));
 }
 
 class BuscarLotesRow extends SqliteRow {
-  BuscarLotesRow(Map<String, dynamic> data) : super(data);
+  BuscarLotesRow(super.data);
 
   String? get idLote => data['id_lote'] as String?;
   String? get nome => data['nome'] as String?;
@@ -1083,25 +1123,25 @@ Future<List<QTDReproducoesRow>> performQTDReproducoes(
   String? dataPrevFim,
   String? categoriaFiltro,
 }) {
-  final _tipoRepro = tipoRepro ?? '';
-  final _inseminador = inseminador ?? '';
-  final _loteNome = loteNome ?? '';
-  final _dataRepro = dataRepro ?? '';
-  final _dataReproFim = dataReproFim ?? '';
-  final _dataPrev = dataPrev ?? '';
-  final _dataPrevFim = dataPrevFim ?? '';
-  final _categoriaFiltro = categoriaFiltro ?? '';
+  final tipoRepro0 = tipoRepro ?? '';
+  final inseminador0 = inseminador ?? '';
+  final loteNome0 = loteNome ?? '';
+  final dataRepro0 = dataRepro ?? '';
+  final dataReproFim0 = dataReproFim ?? '';
+  final dataPrev0 = dataPrev ?? '';
+  final dataPrevFim0 = dataPrevFim ?? '';
+  final categoriaFiltro0 = categoriaFiltro ?? '';
   final query = '''
 SELECT * FROM local_reproducao
-WHERE id_propriedade = '${idPropriedade}'
-AND ('${_tipoRepro}' = '' OR tipo_reproducao = '${_tipoRepro}')
-AND ('${_inseminador}' = '' OR inseminador = '${_inseminador}')
-AND ('${_loteNome}' = '' OR loteNome = '${_loteNome}')
-AND ('${_dataRepro}' = '' OR date(data_inseminacao) >= date('${_dataRepro}'))
-AND ('${_dataReproFim}' = '' OR date(data_inseminacao) <= date('${_dataReproFim}'))
-AND ('${_dataPrev}' = '' OR date(previsao_parto) >= date('${_dataPrev}'))
-AND ('${_dataPrevFim}' = '' OR date(previsao_parto) <= date('${_dataPrevFim}'))
-AND ('${_categoriaFiltro}' = '' OR categoria IN (${_categoriaFiltro.split(',').where((e) => e.isNotEmpty).map((e) => "'${e.trim()}'").join(',')}))
+WHERE id_propriedade = '$idPropriedade'
+AND ('$tipoRepro0' = '' OR tipo_reproducao = '$tipoRepro0')
+AND ('$inseminador0' = '' OR inseminador = '$inseminador0')
+AND ('$loteNome0' = '' OR loteNome = '$loteNome0')
+AND ('$dataRepro0' = '' OR date(data_inseminacao) >= date('$dataRepro0'))
+AND ('$dataReproFim0' = '' OR date(data_inseminacao) <= date('$dataReproFim0'))
+AND ('$dataPrev0' = '' OR date(previsao_parto) >= date('$dataPrev0'))
+AND ('$dataPrevFim0' = '' OR date(previsao_parto) <= date('$dataPrevFim0'))
+AND ('$categoriaFiltro0' = '' OR categoria IN (${categoriaFiltro0.split(',').where((e) => e.isNotEmpty).map((e) => "'${e.trim()}'").join(',')}))
 AND deletado = 'NAO'
 
 
@@ -1110,7 +1150,7 @@ AND deletado = 'NAO'
 }
 
 class QTDReproducoesRow extends SqliteRow {
-  QTDReproducoesRow(Map<String, dynamic> data) : super(data);
+  QTDReproducoesRow(super.data);
 
   String? get id => data['id'] as String?;
 }
@@ -1124,7 +1164,7 @@ Future<List<QTDInseminacaoRow>> performQTDInseminacao(
 }) {
   final query = '''
 SELECT * FROM local_reproducao
-WHERE id_propriedade = '${idPropriedade}'
+WHERE id_propriedade = '$idPropriedade'
 AND tipo_reproducao = 'Inseminação'
 AND deletado = 'NAO'
 
@@ -1133,7 +1173,7 @@ AND deletado = 'NAO'
 }
 
 class QTDInseminacaoRow extends SqliteRow {
-  QTDInseminacaoRow(Map<String, dynamic> data) : super(data);
+  QTDInseminacaoRow(super.data);
 
   String? get id => data['id'] as String?;
 }
@@ -1147,7 +1187,7 @@ Future<List<QTDMontaNaturalRow>> performQTDMontaNatural(
 }) {
   final query = '''
 SELECT * FROM local_reproducao
-WHERE id_propriedade = '${idPropriedade}'
+WHERE id_propriedade = '$idPropriedade'
 AND tipo_reproducao = 'Monta Natural'
 AND deletado = 'NAO'
 
@@ -1156,7 +1196,7 @@ AND deletado = 'NAO'
 }
 
 class QTDMontaNaturalRow extends SqliteRow {
-  QTDMontaNaturalRow(Map<String, dynamic> data) : super(data);
+  QTDMontaNaturalRow(super.data);
 
   String? get id => data['id'] as String?;
 }
@@ -1170,13 +1210,13 @@ Future<List<BuscarReproducaoRow>> performBuscarReproducao(
 }) {
   final query = '''
 SELECT * FROM local_reproducao
-WHERE id_reproducao = '${idReproducao}'
+WHERE id_reproducao = '$idReproducao'
 ''';
   return _readQuery(database, query, (d) => BuscarReproducaoRow(d));
 }
 
 class BuscarReproducaoRow extends SqliteRow {
-  BuscarReproducaoRow(Map<String, dynamic> data) : super(data);
+  BuscarReproducaoRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get tipoReproducao => data['tipo_reproducao'] as String?;
@@ -1226,13 +1266,13 @@ Future<List<BuscarReproducaoPUTRow>> performBuscarReproducaoPUT(
 }) {
   final query = '''
 SELECT * FROM local_reproducao
-WHERE datetime(created_at, 'localtime') >= datetime('${datePUT}', 'localtime')
+WHERE datetime(created_at, 'localtime') >= datetime('$datePUT', 'localtime')
 ''';
   return _readQuery(database, query, (d) => BuscarReproducaoPUTRow(d));
 }
 
 class BuscarReproducaoPUTRow extends SqliteRow {
-  BuscarReproducaoPUTRow(Map<String, dynamic> data) : super(data);
+  BuscarReproducaoPUTRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get tipoReproducao => data['tipo_reproducao'] as String?;
@@ -1282,14 +1322,14 @@ Future<List<BuscarReproducaoUPDTRow>> performBuscarReproducaoUPDT(
 }) {
   final query = '''
 SELECT * FROM local_reproducao
-WHERE datetime(updated_at, 'localtime') >= datetime('${datePUT}', 'localtime')
+WHERE datetime(updated_at, 'localtime') >= datetime('$datePUT', 'localtime')
 
 ''';
   return _readQuery(database, query, (d) => BuscarReproducaoUPDTRow(d));
 }
 
 class BuscarReproducaoUPDTRow extends SqliteRow {
-  BuscarReproducaoUPDTRow(Map<String, dynamic> data) : super(data);
+  BuscarReproducaoUPDTRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get tipoReproducao => data['tipo_reproducao'] as String?;
@@ -1337,14 +1377,14 @@ Future<List<ListarSanidadesRow>> performListarSanidades(
 }) {
   final query = '''
 SELECT * FROM local_sanidade
-WHERE id_propriedade = '${idPropriedade}'
+WHERE id_propriedade = '$idPropriedade'
 AND deletado = 'NAO'
 ''';
   return _readQuery(database, query, (d) => ListarSanidadesRow(d));
 }
 
 class ListarSanidadesRow extends SqliteRow {
-  ListarSanidadesRow(Map<String, dynamic> data) : super(data);
+  ListarSanidadesRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get idRebanho => data['id_rebanho'] as String?;
@@ -1381,13 +1421,13 @@ Future<List<BuscarSanidadePUTRow>> performBuscarSanidadePUT(
 }) {
   final query = '''
 SELECT * FROM local_sanidade
-WHERE datetime(created_at, 'localtime') >= datetime('${datePUT}', 'localtime')
+WHERE datetime(created_at, 'localtime') >= datetime('$datePUT', 'localtime')
 ''';
   return _readQuery(database, query, (d) => BuscarSanidadePUTRow(d));
 }
 
 class BuscarSanidadePUTRow extends SqliteRow {
-  BuscarSanidadePUTRow(Map<String, dynamic> data) : super(data);
+  BuscarSanidadePUTRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get idRebanho => data['id_rebanho'] as String?;
@@ -1427,13 +1467,13 @@ Future<List<BuscarSanidadeUPDTRow>> performBuscarSanidadeUPDT(
 }) {
   final query = '''
 SELECT * FROM local_sanidade
-WHERE datetime(updated_at, 'localtime') >= datetime('${dateUPDT}', 'localtime')
+WHERE datetime(updated_at, 'localtime') >= datetime('$dateUPDT', 'localtime')
 ''';
   return _readQuery(database, query, (d) => BuscarSanidadeUPDTRow(d));
 }
 
 class BuscarSanidadeUPDTRow extends SqliteRow {
-  BuscarSanidadeUPDTRow(Map<String, dynamic> data) : super(data);
+  BuscarSanidadeUPDTRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get idRebanho => data['id_rebanho'] as String?;
@@ -1473,14 +1513,14 @@ Future<List<BuscarReproducoesRebanhoRow>> performBuscarReproducoesRebanho(
 }) {
   final query = '''
 SELECT * FROM local_reproducao
-WHERE (numMatriz = '${numAnimal}' OR numReprodutor = '${numAnimal}')
+WHERE (numMatriz = '$numAnimal' OR numReprodutor = '$numAnimal')
 AND deletado = 'NAO'
 ''';
   return _readQuery(database, query, (d) => BuscarReproducoesRebanhoRow(d));
 }
 
 class BuscarReproducoesRebanhoRow extends SqliteRow {
-  BuscarReproducoesRebanhoRow(Map<String, dynamic> data) : super(data);
+  BuscarReproducoesRebanhoRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get tipoReproducao => data['tipo_reproducao'] as String?;
@@ -1528,13 +1568,13 @@ Future<List<BuscarSanidadesRebanhoRow>> performBuscarSanidadesRebanho(
 }) {
   final query = '''
 SELECT * FROM local_sanidade
-WHERE id_rebanho = '${idRebanho}'
+WHERE id_rebanho = '$idRebanho'
 ''';
   return _readQuery(database, query, (d) => BuscarSanidadesRebanhoRow(d));
 }
 
 class BuscarSanidadesRebanhoRow extends SqliteRow {
-  BuscarSanidadesRebanhoRow(Map<String, dynamic> data) : super(data);
+  BuscarSanidadesRebanhoRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get idRebanho => data['id_rebanho'] as String?;
@@ -1579,24 +1619,26 @@ Future<List<BuscaRebanhoPaginadaRow>> performBuscaRebanhoPaginada(
   String? origem,
   String? statusReb,
 }) {
+  final statusCondition =
+      _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
-AND ('${sexo}' = '' OR sexo = '${sexo}')
-AND ('${categoria}' = '' OR categoria = '${categoria}')
-AND ('${raca}' = '' OR raca = '${raca}')
-AND ('${origem}' = '' OR origem = '${origem}')
-AND ('${statusReb}' = '' OR statusRebanho = '${statusReb}')
+WHERE idPropriedade = '$idPropriedade'
+AND ('$sexo' = '' OR sexo = '$sexo')
+AND ('$categoria' = '' OR categoria = '$categoria')
+AND ('$raca' = '' OR raca = '$raca')
+AND ('$origem' = '' OR origem = '$origem')
+AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY created_at DESC
-LIMIT ${limitReb} OFFSET ${offsetReb}
+LIMIT $limitReb OFFSET $offsetReb
 
 ''';
   return _readQuery(database, query, (d) => BuscaRebanhoPaginadaRow(d));
 }
 
 class BuscaRebanhoPaginadaRow extends SqliteRow {
-  BuscaRebanhoPaginadaRow(Map<String, dynamic> data) : super(data);
+  BuscaRebanhoPaginadaRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get chip => data['chip'] as String?;
@@ -1649,14 +1691,14 @@ Future<List<QTDAnimaisTotalPropriedadeRow>> performQTDAnimaisTotalPropriedade(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
+WHERE idPropriedade = '$idPropriedade'
 
 ''';
   return _readQuery(database, query, (d) => QTDAnimaisTotalPropriedadeRow(d));
 }
 
 class QTDAnimaisTotalPropriedadeRow extends SqliteRow {
-  QTDAnimaisTotalPropriedadeRow(Map<String, dynamic> data) : super(data);
+  QTDAnimaisTotalPropriedadeRow(super.data);
 
   int? get id => data['id'] as int?;
 }
@@ -1671,7 +1713,7 @@ Future<List<BuscarCriasRebanhoReprodutorRow>>
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE rebanhoIdReprodutor = '${idRebanho}' 
+WHERE rebanhoIdReprodutor = '$idRebanho' 
 AND deletado = 'NAO'
 
 ''';
@@ -1679,7 +1721,7 @@ AND deletado = 'NAO'
 }
 
 class BuscarCriasRebanhoReprodutorRow extends SqliteRow {
-  BuscarCriasRebanhoReprodutorRow(Map<String, dynamic> data) : super(data);
+  BuscarCriasRebanhoReprodutorRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get nome => data['nome'] as String?;
@@ -1710,7 +1752,7 @@ Future<List<BuscarRebanhoReproducaoLoteRow>> performBuscarRebanhoReproducaoLote(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE loteID = '${loteID}'
+WHERE loteID = '$loteID'
 AND sexo = 'Fêmea'
 
 ''';
@@ -1718,7 +1760,7 @@ AND sexo = 'Fêmea'
 }
 
 class BuscarRebanhoReproducaoLoteRow extends SqliteRow {
-  BuscarRebanhoReproducaoLoteRow(Map<String, dynamic> data) : super(data);
+  BuscarRebanhoReproducaoLoteRow(super.data);
 
   String? get idPropriedade => data['idPropriedade'] as String?;
   String? get numeroAnimal => data['numeroAnimal'] as String?;
@@ -1787,25 +1829,25 @@ Future<List<ListarReproducoesPaginadaRow>> performListarReproducoesPaginada(
 }) {
   final query = '''
 SELECT * FROM local_reproducao
-WHERE id_propriedade = '${idPropriedade}'
-AND ('${tipoRepro}' = '' OR tipo_reproducao = '${tipoRepro}')
-AND ('${inseminador}' = '' OR inseminador = '${inseminador}')
-AND ('${loteNome}' = '' OR loteNome = '${loteNome}')
-AND ('${dataRepro}' = '' OR date(data_inseminacao) >= date('${dataRepro}'))
-AND ('${dataReproFim}' = '' OR date(data_inseminacao) <= date('${dataReproFim}'))
-AND ('${dataPrev}' = '' OR date(previsao_parto) >= date('${dataPrev}'))
-AND ('${dataPrevFim}' = '' OR date(previsao_parto) <= date('${dataPrevFim}'))
-AND ('${categoriaFiltro}' = '' OR categoria IN (${(categoriaFiltro ?? '').split(',').where((e) => e.isNotEmpty).map((e) => "'${e.trim()}'").join(',')}))
+WHERE id_propriedade = '$idPropriedade'
+AND ('$tipoRepro' = '' OR tipo_reproducao = '$tipoRepro')
+AND ('$inseminador' = '' OR inseminador = '$inseminador')
+AND ('$loteNome' = '' OR loteNome = '$loteNome')
+AND ('$dataRepro' = '' OR date(data_inseminacao) >= date('$dataRepro'))
+AND ('$dataReproFim' = '' OR date(data_inseminacao) <= date('$dataReproFim'))
+AND ('$dataPrev' = '' OR date(previsao_parto) >= date('$dataPrev'))
+AND ('$dataPrevFim' = '' OR date(previsao_parto) <= date('$dataPrevFim'))
+AND ('$categoriaFiltro' = '' OR categoria IN (${(categoriaFiltro ?? '').split(',').where((e) => e.isNotEmpty).map((e) => "'${e.trim()}'").join(',')}))
 AND deletado = 'NAO'
 ORDER BY created_at DESC
-LIMIT ${limitRep} OFFSET ${offsetRep}
+LIMIT $limitRep OFFSET $offsetRep
 
 ''';
   return _readQuery(database, query, (d) => ListarReproducoesPaginadaRow(d));
 }
 
 class ListarReproducoesPaginadaRow extends SqliteRow {
-  ListarReproducoesPaginadaRow(Map<String, dynamic> data) : super(data);
+  ListarReproducoesPaginadaRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get tipoReproducao => data['tipo_reproducao'] as String?;
@@ -1853,13 +1895,13 @@ Future<List<CountAnimaisLoteRow>> performCountAnimaisLote(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE loteNome = '${loteNome}'
+WHERE loteNome = '$loteNome'
 ''';
   return _readQuery(database, query, (d) => CountAnimaisLoteRow(d));
 }
 
 class CountAnimaisLoteRow extends SqliteRow {
-  CountAnimaisLoteRow(Map<String, dynamic> data) : super(data);
+  CountAnimaisLoteRow(super.data);
 
   int? get id => data['id'] as int?;
 }
@@ -1876,16 +1918,16 @@ Future<List<BuscarRebanhoNumRow>> performBuscarRebanhoNum(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE numeroAnimal = '${numeroAnimal}'
-AND nome = '${nome}'
-AND dataNascimento = '${dataNascimento}'
-AND raca = '${raca}'
+WHERE numeroAnimal = '$numeroAnimal'
+AND nome = '$nome'
+AND dataNascimento = '$dataNascimento'
+AND raca = '$raca'
 ''';
   return _readQuery(database, query, (d) => BuscarRebanhoNumRow(d));
 }
 
 class BuscarRebanhoNumRow extends SqliteRow {
-  BuscarRebanhoNumRow(Map<String, dynamic> data) : super(data);
+  BuscarRebanhoNumRow(super.data);
 
   String? get idPropriedade => data['idPropriedade'] as String?;
   String? get numeroAnimal => data['numeroAnimal'] as String?;
@@ -1945,19 +1987,23 @@ Future<List<BuscaRebanhoPaginadaPesquisaRow>>
   String? categoria,
   String? raca,
   String? origem,
+  String? loteId,
   String? pesquisa,
   String? statusReb,
 }) {
+  final statusCondition =
+      _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
-AND ('${sexo}' = '' OR sexo = '${sexo}')
-AND ('${categoria}' = '' OR categoria = '${categoria}')
-AND ('${raca}' = '' OR raca = '${raca}')
-AND ('${origem}' = '' OR origem = '${origem}')
-AND ('${pesquisa}' = '' OR numeroAnimal LIKE '%${pesquisa}%' OR nome LIKE '%${pesquisa}%' 
-OR chip LIKE '%${pesquisa}%')
-AND ('${statusReb}' = '' OR statusRebanho = '${statusReb}')
+WHERE idPropriedade = '$idPropriedade'
+AND ('$sexo' = '' OR sexo = '$sexo')
+AND ('$categoria' = '' OR categoria = '$categoria')
+AND ('$raca' = '' OR raca = '$raca')
+AND ('$origem' = '' OR origem = '$origem')
+AND ('$loteId' = '' OR loteID = '$loteId')
+AND ('$pesquisa' = '' OR numeroAnimal LIKE '%$pesquisa%' OR nome LIKE '%$pesquisa%' 
+OR chip LIKE '%$pesquisa%')
+AND $statusCondition
 AND deletado = 'NAO'
 LIMIT 100
 
@@ -1966,7 +2012,7 @@ LIMIT 100
 }
 
 class BuscaRebanhoPaginadaPesquisaRow extends SqliteRow {
-  BuscaRebanhoPaginadaPesquisaRow(Map<String, dynamic> data) : super(data);
+  BuscaRebanhoPaginadaPesquisaRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get chip => data['chip'] as String?;
@@ -2029,18 +2075,18 @@ Future<List<ListarReproducoesPesqRow>> performListarReproducoesPesq(
 }) {
   final query = '''
 SELECT * FROM local_reproducao a
-WHERE a.id_propriedade = '${idPropriedade}'
-AND ('${tipoRepro}' = '' OR a.tipo_reproducao = '${tipoRepro}')
-AND ('${inseminador}' = '' OR a.inseminador = '${inseminador}')
-AND ('${loteNome}' = '' OR a.loteNome = '${loteNome}')
-AND ('${pesquisa}' = '' OR a.numMatriz LIKE '%${pesquisa}%' OR a.nomeMatriz LIKE '%${pesquisa}%' OR 
-a.numReprodutor LIKE '%${pesquisa}%' OR a.nomeReprodutor LIKE '%${pesquisa}%' OR 
-a.chipMatriz LIKE '%${pesquisa}%' OR a.chipReprodutor LIKE '%${pesquisa}%')
-AND ('${dataRepro}' = '' OR date(data_inseminacao) >= date('${dataRepro}'))
-AND ('${dataReproFim}' = '' OR date(data_inseminacao) <= date('${dataReproFim}'))
-AND ('${dataPrev}' = '' OR date(previsao_parto) >= date('${dataPrev}'))
-AND ('${dataPrevFim}' = '' OR date(previsao_parto) <= date('${dataPrevFim}'))
-AND ('${categoriaFiltro}' = '' OR a.categoria IN (${(categoriaFiltro ?? '').split(',').where((e) => e.isNotEmpty).map((e) => "'${e.trim()}'").join(',')}))
+WHERE a.id_propriedade = '$idPropriedade'
+AND ('$tipoRepro' = '' OR a.tipo_reproducao = '$tipoRepro')
+AND ('$inseminador' = '' OR a.inseminador = '$inseminador')
+AND ('$loteNome' = '' OR a.loteNome = '$loteNome')
+AND ('$pesquisa' = '' OR a.numMatriz LIKE '%$pesquisa%' OR a.nomeMatriz LIKE '%$pesquisa%' OR 
+a.numReprodutor LIKE '%$pesquisa%' OR a.nomeReprodutor LIKE '%$pesquisa%' OR 
+a.chipMatriz LIKE '%$pesquisa%' OR a.chipReprodutor LIKE '%$pesquisa%')
+AND ('$dataRepro' = '' OR date(data_inseminacao) >= date('$dataRepro'))
+AND ('$dataReproFim' = '' OR date(data_inseminacao) <= date('$dataReproFim'))
+AND ('$dataPrev' = '' OR date(previsao_parto) >= date('$dataPrev'))
+AND ('$dataPrevFim' = '' OR date(previsao_parto) <= date('$dataPrevFim'))
+AND ('$categoriaFiltro' = '' OR a.categoria IN (${(categoriaFiltro ?? '').split(',').where((e) => e.isNotEmpty).map((e) => "'${e.trim()}'").join(',')}))
 AND deletado = 'NAO'
 ORDER BY created_at DESC
 --LIMIT 100
@@ -2050,7 +2096,7 @@ ORDER BY created_at DESC
 }
 
 class ListarReproducoesPesqRow extends SqliteRow {
-  ListarReproducoesPesqRow(Map<String, dynamic> data) : super(data);
+  ListarReproducoesPesqRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get tipoReproducao => data['tipo_reproducao'] as String?;
@@ -2108,28 +2154,28 @@ Future<List<BuscaSanidadesPesqRow>> performBuscaSanidadesPesq(
 SELECT ls.* 
 FROM local_sanidade ls
 LEFT JOIN local_rebanho lr ON ls.id_rebanho = lr.idRebanho
-WHERE ls.id_propriedade = '${idPropriedade}'
-AND ('${idLote}' = '' OR ls.id_lote = '${idLote}')
-AND ('${pesquisa}' = '' OR 
-     ls.vacinacao LIKE '%${pesquisa}%' OR 
-     ls.antiparasitario LIKE '%${pesquisa}%' OR 
-     ls.tratamento LIKE '%${pesquisa}%' OR 
-     ls.protocolo_reprodutivo LIKE '%${pesquisa}%' OR
-     lr.numeroAnimal LIKE '%${pesquisa}%' OR
-     lr.nome LIKE '%${pesquisa}%')
-AND ('${vacinas}' = '' OR ls.vacinacao LIKE '%${vacinas}%')
-AND ('${antiparasitario}' = '' OR ls.antiparasitario LIKE '%${antiparasitario}%')
-AND ('${tratamentos}' = '' OR ls.tratamento LIKE '%${tratamentos}%')
-AND ('${protocolo}' = '' OR ls.protocolo_reprodutivo LIKE '%${protocolo}%')
-AND ('${idRebanho}' = '' OR ls.id_rebanho = '${idRebanho}')
-AND ('${dataSanidade}' = '' OR ls.data_sanidade >= '${dataSanidade}')
+WHERE ls.id_propriedade = '$idPropriedade'
+AND ('$idLote' = '' OR ls.id_lote = '$idLote')
+AND ('$pesquisa' = '' OR 
+     ls.vacinacao LIKE '%$pesquisa%' OR 
+     ls.antiparasitario LIKE '%$pesquisa%' OR 
+     ls.tratamento LIKE '%$pesquisa%' OR 
+     ls.protocolo_reprodutivo LIKE '%$pesquisa%' OR
+     lr.numeroAnimal LIKE '%$pesquisa%' OR
+     lr.nome LIKE '%$pesquisa%')
+AND ('$vacinas' = '' OR ls.vacinacao LIKE '%$vacinas%')
+AND ('$antiparasitario' = '' OR ls.antiparasitario LIKE '%$antiparasitario%')
+AND ('$tratamentos' = '' OR ls.tratamento LIKE '%$tratamentos%')
+AND ('$protocolo' = '' OR ls.protocolo_reprodutivo LIKE '%$protocolo%')
+AND ('$idRebanho' = '' OR ls.id_rebanho = '$idRebanho')
+AND ('$dataSanidade' = '' OR ls.data_sanidade >= '$dataSanidade')
 AND ls.deletado = 'NAO'
 ''';
   return _readQuery(database, query, (d) => BuscaSanidadesPesqRow(d));
 }
 
 class BuscaSanidadesPesqRow extends SqliteRow {
-  BuscaSanidadesPesqRow(Map<String, dynamic> data) : super(data);
+  BuscaSanidadesPesqRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get idRebanho => data['id_rebanho'] as String?;
@@ -2178,22 +2224,22 @@ Future<List<BuscaSanidadesPaginadaRow>> performBuscaSanidadesPaginada(
 }) {
   final query = '''
 SELECT * FROM local_sanidade
-WHERE id_propriedade = '${idPropriedade}'
-AND ('${idLote}' = '' OR id_lote = '${idLote}')
-AND ('${vacinas}' = ''OR vacinacao LIKE '%${vacinas}%')
-AND ('${antiparasitario}' = '' OR antiparasitario LIKE '%${antiparasitario}%')
-AND ('${tratamentos}' = ''OR tratamento LIKE '%${tratamentos}%')
-AND ('${protocolo}' = '' OR protocolo_reprodutivo LIKE '%${protocolo}%')
-AND ('${idRebanho}' = '' OR id_rebanho = '${idRebanho}')
-AND ('${dataSanidade}' = '' OR data_sanidade >= '${dataSanidade}')
+WHERE id_propriedade = '$idPropriedade'
+AND ('$idLote' = '' OR id_lote = '$idLote')
+AND ('$vacinas' = ''OR vacinacao LIKE '%$vacinas%')
+AND ('$antiparasitario' = '' OR antiparasitario LIKE '%$antiparasitario%')
+AND ('$tratamentos' = ''OR tratamento LIKE '%$tratamentos%')
+AND ('$protocolo' = '' OR protocolo_reprodutivo LIKE '%$protocolo%')
+AND ('$idRebanho' = '' OR id_rebanho = '$idRebanho')
+AND ('$dataSanidade' = '' OR data_sanidade >= '$dataSanidade')
 AND deletado = 'NAO'
-LIMIT ${limitRows} OFFSET ${offsetRows}
+LIMIT $limitRows OFFSET $offsetRows
 ''';
   return _readQuery(database, query, (d) => BuscaSanidadesPaginadaRow(d));
 }
 
 class BuscaSanidadesPaginadaRow extends SqliteRow {
-  BuscaSanidadesPaginadaRow(Map<String, dynamic> data) : super(data);
+  BuscaSanidadesPaginadaRow(super.data);
 
   String? get idPropriedade => data['id_propriedade'] as String?;
   String? get idRebanho => data['id_rebanho'] as String?;
@@ -2233,14 +2279,14 @@ Future<List<QTDSanidadesRow>> performQTDSanidades(
 }) {
   final query = '''
 SELECT * FROM local_sanidade
-WHERE id_propriedade = '${idPropriedade}'
+WHERE id_propriedade = '$idPropriedade'
 AND deletado = 'NAO'
 ''';
   return _readQuery(database, query, (d) => QTDSanidadesRow(d));
 }
 
 class QTDSanidadesRow extends SqliteRow {
-  QTDSanidadesRow(Map<String, dynamic> data) : super(data);
+  QTDSanidadesRow(super.data);
 
   int? get id => data['id'] as int?;
 }
@@ -2254,13 +2300,13 @@ Future<List<BuscaUserLogadoRow>> performBuscaUserLogado(
 }) {
   final query = '''
 SELECT * FROM local_users
-WHERE email = '${email}'
+WHERE email = '$email'
 ''';
   return _readQuery(database, query, (d) => BuscaUserLogadoRow(d));
 }
 
 class BuscaUserLogadoRow extends SqliteRow {
-  BuscaUserLogadoRow(Map<String, dynamic> data) : super(data);
+  BuscaUserLogadoRow(super.data);
 
   String? get userID => data['userID'] as String?;
   String? get nome => data['nome'] as String?;
@@ -2281,13 +2327,13 @@ Future<List<QtdAnimaisNoLoteRow>> performQtdAnimaisNoLote(
 }) {
   final query = '''
 select count(*) as qtd_animais from local_rebanho
-where loteID = '${loteID}'
+where loteID = '$loteID'
 ''';
   return _readQuery(database, query, (d) => QtdAnimaisNoLoteRow(d));
 }
 
 class QtdAnimaisNoLoteRow extends SqliteRow {
-  QtdAnimaisNoLoteRow(Map<String, dynamic> data) : super(data);
+  QtdAnimaisNoLoteRow(super.data);
 
   int? get qtdAnimais => data['qtd_animais'] as int?;
 }
@@ -2301,13 +2347,13 @@ Future<List<BuscarAnimaisDoLoteRow>> performBuscarAnimaisDoLote(
 }) {
   final query = '''
 select * from local_rebanho
-where loteID = '${loteid}'
+where loteID = '$loteid'
 ''';
   return _readQuery(database, query, (d) => BuscarAnimaisDoLoteRow(d));
 }
 
 class BuscarAnimaisDoLoteRow extends SqliteRow {
-  BuscarAnimaisDoLoteRow(Map<String, dynamic> data) : super(data);
+  BuscarAnimaisDoLoteRow(super.data);
 
   String? get idRebanho => data['idRebanho'] as String?;
 }
@@ -2326,24 +2372,26 @@ Future<List<RebanhoPagOrdNumCresRow>> performRebanhoPagOrdNumCres(
   String? origem,
   String? statusReb,
 }) {
+  final statusCondition =
+      _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
-AND ('${sexo}' = '' OR sexo = '${sexo}')
-AND ('${categoria}' = '' OR categoria = '${categoria}')
-AND ('${raca}' = '' OR raca = '${raca}')
-AND ('${origem}' = '' OR origem = '${origem}')
-AND ('${statusReb}' = '' OR statusRebanho = '${statusReb}')
+WHERE idPropriedade = '$idPropriedade'
+AND ('$sexo' = '' OR sexo = '$sexo')
+AND ('$categoria' = '' OR categoria = '$categoria')
+AND ('$raca' = '' OR raca = '$raca')
+AND ('$origem' = '' OR origem = '$origem')
+AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY numeroAnimal ASC
-LIMIT ${limitReb} OFFSET ${offsetReb}
+LIMIT $limitReb OFFSET $offsetReb
 
 ''';
   return _readQuery(database, query, (d) => RebanhoPagOrdNumCresRow(d));
 }
 
 class RebanhoPagOrdNumCresRow extends SqliteRow {
-  RebanhoPagOrdNumCresRow(Map<String, dynamic> data) : super(data);
+  RebanhoPagOrdNumCresRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get chip => data['chip'] as String?;
@@ -2401,24 +2449,26 @@ Future<List<RebanhoPagOrdNumDescRow>> performRebanhoPagOrdNumDesc(
   String? origem,
   String? statusReb,
 }) {
+  final statusCondition =
+      _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
-AND ('${sexo}' = '' OR sexo = '${sexo}')
-AND ('${categoria}' = '' OR categoria = '${categoria}')
-AND ('${raca}' = '' OR raca = '${raca}')
-AND ('${origem}' = '' OR origem = '${origem}')
-AND ('${statusReb}' = '' OR statusRebanho = '${statusReb}')
+WHERE idPropriedade = '$idPropriedade'
+AND ('$sexo' = '' OR sexo = '$sexo')
+AND ('$categoria' = '' OR categoria = '$categoria')
+AND ('$raca' = '' OR raca = '$raca')
+AND ('$origem' = '' OR origem = '$origem')
+AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY numeroAnimal DESC
-LIMIT ${limitReb} OFFSET ${offsetReb}
+LIMIT $limitReb OFFSET $offsetReb
 
 ''';
   return _readQuery(database, query, (d) => RebanhoPagOrdNumDescRow(d));
 }
 
 class RebanhoPagOrdNumDescRow extends SqliteRow {
-  RebanhoPagOrdNumDescRow(Map<String, dynamic> data) : super(data);
+  RebanhoPagOrdNumDescRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get chip => data['chip'] as String?;
@@ -2476,24 +2526,26 @@ Future<List<RebanhoPagOrdNomCresRow>> performRebanhoPagOrdNomCres(
   String? origem,
   String? statusReb,
 }) {
+  final statusCondition =
+      _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
-AND ('${sexo}' = '' OR sexo = '${sexo}')
-AND ('${categoria}' = '' OR categoria = '${categoria}')
-AND ('${raca}' = '' OR raca = '${raca}')
-AND ('${origem}' = '' OR origem = '${origem}')
-AND ('${statusReb}' = '' OR statusRebanho = '${statusReb}')
+WHERE idPropriedade = '$idPropriedade'
+AND ('$sexo' = '' OR sexo = '$sexo')
+AND ('$categoria' = '' OR categoria = '$categoria')
+AND ('$raca' = '' OR raca = '$raca')
+AND ('$origem' = '' OR origem = '$origem')
+AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY nome ASC
-LIMIT ${limitReb} OFFSET ${offsetReb}
+LIMIT $limitReb OFFSET $offsetReb
 
 ''';
   return _readQuery(database, query, (d) => RebanhoPagOrdNomCresRow(d));
 }
 
 class RebanhoPagOrdNomCresRow extends SqliteRow {
-  RebanhoPagOrdNomCresRow(Map<String, dynamic> data) : super(data);
+  RebanhoPagOrdNomCresRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get chip => data['chip'] as String?;
@@ -2551,24 +2603,26 @@ Future<List<RebanhoPagOrdNomDescRow>> performRebanhoPagOrdNomDesc(
   String? origem,
   String? statusReb,
 }) {
+  final statusCondition =
+      _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
-AND ('${sexo}' = '' OR sexo = '${sexo}')
-AND ('${categoria}' = '' OR categoria = '${categoria}')
-AND ('${raca}' = '' OR raca = '${raca}')
-AND ('${origem}' = '' OR origem = '${origem}')
-AND ('${statusReb}' = '' OR statusRebanho = '${statusReb}')
+WHERE idPropriedade = '$idPropriedade'
+AND ('$sexo' = '' OR sexo = '$sexo')
+AND ('$categoria' = '' OR categoria = '$categoria')
+AND ('$raca' = '' OR raca = '$raca')
+AND ('$origem' = '' OR origem = '$origem')
+AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY nome DESC
-LIMIT ${limitReb} OFFSET ${offsetReb}
+LIMIT $limitReb OFFSET $offsetReb
 
 ''';
   return _readQuery(database, query, (d) => RebanhoPagOrdNomDescRow(d));
 }
 
 class RebanhoPagOrdNomDescRow extends SqliteRow {
-  RebanhoPagOrdNomDescRow(Map<String, dynamic> data) : super(data);
+  RebanhoPagOrdNomDescRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get chip => data['chip'] as String?;
@@ -2626,26 +2680,28 @@ Future<List<RebanhoPagOrdDataCresRow>> performRebanhoPagOrdDataCres(
   String? origem,
   String? statusReb,
 }) {
+  final statusCondition =
+      _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
-AND ('${sexo}' = '' OR sexo = '${sexo}')
-AND ('${categoria}' = '' OR categoria = '${categoria}')
-AND ('${raca}' = '' OR raca = '${raca}')
-AND ('${origem}' = '' OR origem = '${origem}')
-AND ('${statusReb}' = '' OR statusRebanho = '${statusReb}')
+WHERE idPropriedade = '$idPropriedade'
+AND ('$sexo' = '' OR sexo = '$sexo')
+AND ('$categoria' = '' OR categoria = '$categoria')
+AND ('$raca' = '' OR raca = '$raca')
+AND ('$origem' = '' OR origem = '$origem')
+AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY 
   CASE WHEN dataNascimento IS NULL OR dataNascimento = '' OR dataNascimento = 'null' THEN 1 ELSE 0 END,
   dataNascimento ASC
-LIMIT ${limitReb} OFFSET ${offsetReb}
+LIMIT $limitReb OFFSET $offsetReb
 
 ''';
   return _readQuery(database, query, (d) => RebanhoPagOrdDataCresRow(d));
 }
 
 class RebanhoPagOrdDataCresRow extends SqliteRow {
-  RebanhoPagOrdDataCresRow(Map<String, dynamic> data) : super(data);
+  RebanhoPagOrdDataCresRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get chip => data['chip'] as String?;
@@ -2703,26 +2759,28 @@ Future<List<RebanhoPagOrdDataDescRow>> performRebanhoPagOrdDataDesc(
   String? origem,
   String? statusReb,
 }) {
+  final statusCondition =
+      _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
-AND ('${sexo}' = '' OR sexo = '${sexo}')
-AND ('${categoria}' = '' OR categoria = '${categoria}')
-AND ('${raca}' = '' OR raca = '${raca}')
-AND ('${origem}' = '' OR origem = '${origem}')
-AND ('${statusReb}' = '' OR statusRebanho = '${statusReb}')
+WHERE idPropriedade = '$idPropriedade'
+AND ('$sexo' = '' OR sexo = '$sexo')
+AND ('$categoria' = '' OR categoria = '$categoria')
+AND ('$raca' = '' OR raca = '$raca')
+AND ('$origem' = '' OR origem = '$origem')
+AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY 
   CASE WHEN dataNascimento IS NULL OR dataNascimento = '' OR dataNascimento = 'null' THEN 1 ELSE 0 END,
   dataNascimento DESC
-LIMIT ${limitReb} OFFSET ${offsetReb}
+LIMIT $limitReb OFFSET $offsetReb
 
 ''';
   return _readQuery(database, query, (d) => RebanhoPagOrdDataDescRow(d));
 }
 
 class RebanhoPagOrdDataDescRow extends SqliteRow {
-  RebanhoPagOrdDataDescRow(Map<String, dynamic> data) : super(data);
+  RebanhoPagOrdDataDescRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get chip => data['chip'] as String?;
@@ -2776,7 +2834,7 @@ Future<List<ListarPropriedadesCrescNomeRow>> performListarPropriedadesCrescNome(
   final query = '''
 SELECT * FROM local_propriedades 
 WHERE 1=1
-AND (userID = '${userID}' OR usersID LIKE '%${userID}%') 
+AND (userID = '$userID' OR usersID LIKE '%$userID%') 
 AND deletado = 'NAO' 
 ORDER BY nome ASC;
 ''';
@@ -2784,7 +2842,7 @@ ORDER BY nome ASC;
 }
 
 class ListarPropriedadesCrescNomeRow extends SqliteRow {
-  ListarPropriedadesCrescNomeRow(Map<String, dynamic> data) : super(data);
+  ListarPropriedadesCrescNomeRow(super.data);
 
   int? get id => data['id'] as int?;
   String? get userID => data['userID'] as String?;
@@ -2817,7 +2875,7 @@ Future<List<ListarPropriedadesDecNomeRow>> performListarPropriedadesDecNome(
   final query = '''
 SELECT * FROM local_propriedades 
 WHERE 1=1
-AND (userID = '${userID}' OR usersID LIKE '%${userID}%') 
+AND (userID = '$userID' OR usersID LIKE '%$userID%') 
 AND deletado = 'NAO' 
 ORDER BY nome DESC;
 ''';
@@ -2825,7 +2883,7 @@ ORDER BY nome DESC;
 }
 
 class ListarPropriedadesDecNomeRow extends SqliteRow {
-  ListarPropriedadesDecNomeRow(Map<String, dynamic> data) : super(data);
+  ListarPropriedadesDecNomeRow(super.data);
 
   int? get id => data['id'] as int?;
   String? get userID => data['userID'] as String?;
@@ -2863,25 +2921,26 @@ Future<List<BuscaRebanhoPopupRow>> performBuscaRebanhoPopup(
   int limit = 30,
 }) {
   final conditions = StringBuffer();
-  conditions.write("idPropriedade = '${idPropriedade}' AND deletado = 'NAO'");
+  conditions.write("idPropriedade = '$idPropriedade' AND deletado = 'NAO'");
 
   if (pesquisa != null && pesquisa.isNotEmpty) {
-    conditions.write(" AND (numeroAnimal LIKE '${pesquisa}%' OR nome LIKE '${pesquisa}%' OR chip LIKE '${pesquisa}%')");
+    conditions.write(
+        " AND (numeroAnimal LIKE '$pesquisa%' OR nome LIKE '$pesquisa%' OR chip LIKE '$pesquisa%')");
   }
   if (sexo != null && sexo.isNotEmpty) {
-    conditions.write(" AND sexo = '${sexo}'");
+    conditions.write(" AND sexo = '$sexo'");
   }
   if (statusRebanho != null && statusRebanho.isNotEmpty) {
-    conditions.write(" AND statusRebanho = '${statusRebanho}'");
+    conditions.write(" AND statusRebanho = '$statusRebanho'");
   }
   if (categoria != null && categoria.isNotEmpty) {
-    conditions.write(" AND categoria = '${categoria}'");
+    conditions.write(" AND categoria = '$categoria'");
   }
   if (categoriaExcluir != null && categoriaExcluir.isNotEmpty) {
-    conditions.write(" AND categoria != '${categoriaExcluir}'");
+    conditions.write(" AND categoria != '$categoriaExcluir'");
   }
   if (excludeIdRebanho != null && excludeIdRebanho.isNotEmpty) {
-    conditions.write(" AND idRebanho != '${excludeIdRebanho}'");
+    conditions.write(" AND idRebanho != '$excludeIdRebanho'");
   }
 
   final query = '''
@@ -2889,13 +2948,13 @@ SELECT idRebanho, numeroAnimal, nome, dataNascimento, raca, chip, categoria, sex
 FROM local_rebanho
 WHERE ${conditions.toString()}
 ORDER BY numeroAnimal ASC
-LIMIT ${limit}
+LIMIT $limit
 ''';
   return _readQuery(database, query, (d) => BuscaRebanhoPopupRow(d));
 }
 
 class BuscaRebanhoPopupRow extends SqliteRow {
-  BuscaRebanhoPopupRow(Map<String, dynamic> data) : super(data);
+  BuscaRebanhoPopupRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get chip => data['chip'] as String?;
@@ -2948,7 +3007,7 @@ Future<List<RebanhoPopupSPRow>> performRebanhoPopupSP(
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE idPropriedade = '${idPropriedade}'
+WHERE idPropriedade = '$idPropriedade'
 AND deletado = 'NAO'
 LIMIT 30
 
@@ -2957,7 +3016,7 @@ LIMIT 30
 }
 
 class RebanhoPopupSPRow extends SqliteRow {
-  RebanhoPopupSPRow(Map<String, dynamic> data) : super(data);
+  RebanhoPopupSPRow(super.data);
 
   String? get numeroAnimal => data['numeroAnimal'] as String?;
   String? get chip => data['chip'] as String?;
@@ -3010,14 +3069,14 @@ Future<List<ListaInseminadoresRow>> performListaInseminadores(
 }) {
   final query = '''
 select distinct(inseminador) from local_reproducao
-where id_propriedade = '${propriedade}'
+where id_propriedade = '$propriedade'
 order by inseminador desc
 ''';
   return _readQuery(database, query, (d) => ListaInseminadoresRow(d));
 }
 
 class ListaInseminadoresRow extends SqliteRow {
-  ListaInseminadoresRow(Map<String, dynamic> data) : super(data);
+  ListaInseminadoresRow(super.data);
 
   String? get inseminador => data['inseminador'] as String?;
 }

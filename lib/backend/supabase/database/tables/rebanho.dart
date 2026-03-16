@@ -9,7 +9,7 @@ class RebanhoTable extends SupabaseTable<RebanhoRow> {
 }
 
 class RebanhoRow extends SupabaseDataRow {
-  RebanhoRow(Map<String, dynamic> data) : super(data);
+  RebanhoRow(super.data);
 
   @override
   SupabaseTable get table => RebanhoTable();

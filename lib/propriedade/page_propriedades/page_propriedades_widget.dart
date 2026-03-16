@@ -47,7 +47,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimer = InstantTimer.periodic(
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         callback: (timer) async {
           _model.temNet = await actions.checkInternetConnection();
 
@@ -77,7 +77,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
     return Stack(
       children: [
         AnimatedContainer(
-          duration: Duration(milliseconds: 350),
+          duration: const Duration(milliseconds: 350),
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
             color: FlutterFlowTheme.of(context).secondaryBackground,
@@ -109,17 +109,17 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                         snapshot.data!;
 
                     return Container(
-                      decoration: BoxDecoration(),
+                      decoration: const BoxDecoration(),
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
                             child: Container(
                               width: double.infinity,
-                              decoration: BoxDecoration(),
+                              decoration: const BoxDecoration(),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -127,13 +127,13 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                   Expanded(
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFF8F8F8),
+                                        color: const Color(0xFFF8F8F8),
                                         borderRadius:
                                             BorderRadius.circular(6.0),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 12.0, 12.0, 12.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(12.0, 12.0, 12.0, 12.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           mainAxisAlignment:
@@ -184,7 +184,8 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF2F2F2F),
+                                                    color:
+                                                        const Color(0xFF2F2F2F),
                                                     fontSize: 12.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight:
@@ -195,7 +196,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                             .bodyMediumIsCustom,
                                                   ),
                                             ),
-                                          ].divide(SizedBox(height: 0.0)),
+                                          ].divide(const SizedBox(height: 0.0)),
                                         ),
                                       ),
                                     ),
@@ -203,13 +204,13 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                   Expanded(
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFF8F8F8),
+                                        color: const Color(0xFFF8F8F8),
                                         borderRadius:
                                             BorderRadius.circular(6.0),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 12.0, 12.0, 12.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(12.0, 12.0, 12.0, 12.0),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           mainAxisAlignment:
@@ -261,7 +262,8 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF2F2F2F),
+                                                    color:
+                                                        const Color(0xFF2F2F2F),
                                                     fontSize: 12.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight:
@@ -272,26 +274,26 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                             .bodyMediumIsCustom,
                                                   ),
                                             ),
-                                          ].divide(SizedBox(height: 0.0)),
+                                          ].divide(const SizedBox(height: 0.0)),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ].divide(SizedBox(width: 8.0)),
+                                ].divide(const SizedBox(width: 8.0)),
                               ),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
-                            child: Container(
+                            child: SizedBox(
                               width: double.infinity,
                               child: TextFormField(
                                 controller: _model.pesquisarTextController,
                                 focusNode: _model.pesquisarFocusNode,
                                 onChanged: (_) => EasyDebounce.debounce(
                                   '_model.pesquisarTextController',
-                                  Duration(milliseconds: 2000),
+                                  const Duration(milliseconds: 2000),
                                   () => safeSetState(() {}),
                                 ),
                                 autofocus: false,
@@ -396,7 +398,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
                             child: Container(
                               width: double.infinity,
@@ -440,7 +442,8 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                             return Padding(
                                               padding: MediaQuery.viewInsetsOf(
                                                   context),
-                                              child: FiltroPropriedadesWidget(),
+                                              child:
+                                                  const FiltroPropriedadesWidget(),
                                             );
                                           },
                                         ).then((value) => safeSetState(() {}));
@@ -453,13 +456,12 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                               BorderRadius.circular(24.0),
                                           shape: BoxShape.rectangle,
                                           border: Border.all(
-                                            color: Color(0xFFBEBEBE),
+                                            color: const Color(0xFFBEBEBE),
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 8.0, 16.0, 8.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 8.0, 16.0, 8.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
@@ -490,7 +492,8 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
-                                            ].divide(SizedBox(width: 8.0)),
+                                            ].divide(
+                                                const SizedBox(width: 8.0)),
                                           ),
                                         ),
                                       ),
@@ -504,13 +507,12 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                               BorderRadius.circular(24.0),
                                           shape: BoxShape.rectangle,
                                           border: Border.all(
-                                            color: Color(0xFFBEBEBE),
+                                            color: const Color(0xFFBEBEBE),
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 8.0, 16.0, 8.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 8.0, 16.0, 8.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
@@ -536,7 +538,8 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                   .bodyMediumIsCustom,
                                                         ),
                                               ),
-                                            ].divide(SizedBox(width: 8.0)),
+                                            ].divide(
+                                                const SizedBox(width: 8.0)),
                                           ),
                                         ),
                                       ),
@@ -560,12 +563,14 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                     BorderRadius.circular(24.0),
                                                 shape: BoxShape.rectangle,
                                                 border: Border.all(
-                                                  color: Color(0xFFBEBEBE),
+                                                  color:
+                                                      const Color(0xFFBEBEBE),
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 8.0, 16.0, 8.0),
                                                 child: Row(
                                                   mainAxisSize:
@@ -588,26 +593,26 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                     .bodyMediumIsCustom,
                                                           ),
                                                     ),
-                                                  ].divide(
-                                                      SizedBox(width: 8.0)),
+                                                  ].divide(const SizedBox(
+                                                      width: 8.0)),
                                                 ),
                                               ),
                                             );
-                                          }).divide(SizedBox(width: 8.0)),
+                                          }).divide(const SizedBox(width: 8.0)),
                                         );
                                       },
                                     ),
-                                  ].divide(SizedBox(width: 8.0)),
+                                  ].divide(const SizedBox(width: 8.0)),
                                 ),
                               ),
                             ),
                           ),
-                          Divider(
+                          const Divider(
                             thickness: 1.0,
                             color: Color(0xFFEDEDED),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -624,7 +629,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                     return Padding(
                                       padding: MediaQuery.viewInsetsOf(context),
                                       child:
-                                          FiltrosOrdenacaoPropriedadeWidget(),
+                                          const FiltrosOrdenacaoPropriedadeWidget(),
                                     );
                                   },
                                 ).then((value) => safeSetState(() {}));
@@ -634,20 +639,17 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                 height: 40.0,
                                 decoration: BoxDecoration(
                                   color: valueOrDefault<Color>(
-                                    FFAppState().ordenacaoRebanho == null ||
-                                            FFAppState().ordenacaoRebanho == ''
+                                    FFAppState().ordenacaoRebanho == ''
                                         ? FlutterFlowTheme.of(context)
                                             .secondaryBackground
-                                        : Color(0xFFD6F5E5),
+                                        : const Color(0xFFD6F5E5),
                                     FlutterFlowTheme.of(context)
                                         .secondaryBackground,
                                   ),
                                   borderRadius: BorderRadius.circular(100.0),
                                   border: Border.all(
                                     color: valueOrDefault<Color>(
-                                      FFAppState().ordenacaoRebanho == null ||
-                                              FFAppState().ordenacaoRebanho ==
-                                                  ''
+                                      FFAppState().ordenacaoRebanho == ''
                                           ? FlutterFlowTheme.of(context)
                                               .tertiary
                                           : FlutterFlowTheme.of(context)
@@ -657,7 +659,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -712,12 +714,8 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                               context)
                                                           .bodyMediumFamily,
                                                   color: valueOrDefault<Color>(
-                                                    FFAppState()
-                                                                    .ordenacaoPropriedade ==
-                                                                null ||
-                                                            FFAppState()
-                                                                    .ordenacaoPropriedade ==
-                                                                ''
+                                                    FFAppState().ordenacaoPropriedade ==
+                                                            ''
                                                         ? FlutterFlowTheme.of(
                                                                 context)
                                                             .accent3
@@ -736,16 +734,12 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                           .bodyMediumIsCustom,
                                                 ),
                                           ),
-                                        ].divide(SizedBox(width: 8.0)),
+                                        ].divide(const SizedBox(width: 8.0)),
                                       ),
                                       if ((FFAppState().ordenacaoPropTipo !=
-                                                  null &&
-                                              FFAppState().ordenacaoPropTipo !=
-                                                  '') &&
+                                              '') &&
                                           (FFAppState().ordenacaoPropTipo !=
-                                                  null &&
-                                              FFAppState().ordenacaoPropTipo !=
-                                                  ''))
+                                              ''))
                                         SizedBox(
                                           height: 100.0,
                                           child: VerticalDivider(
@@ -758,16 +752,10 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           if ((FFAppState()
-                                                          .ordenacaoPropriedade !=
-                                                      null &&
-                                                  FFAppState()
-                                                          .ordenacaoPropriedade !=
-                                                      '') &&
+                                                      .ordenacaoPropriedade !=
+                                                  '') &&
                                               (FFAppState().ordenacaoPropTipo !=
-                                                      null &&
-                                                  FFAppState()
-                                                          .ordenacaoPropTipo !=
-                                                      ''))
+                                                  ''))
                                             Text(
                                               valueOrDefault<String>(
                                                 () {
@@ -829,9 +817,9 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                       .secondary,
                                               size: 24.0,
                                             ),
-                                        ].divide(SizedBox(width: 6.0)),
+                                        ].divide(const SizedBox(width: 6.0)),
                                       ),
-                                    ].divide(SizedBox(width: 8.0)),
+                                    ].divide(const SizedBox(width: 8.0)),
                                   ),
                                 ),
                               ),
@@ -858,7 +846,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                   builder: (context) {
                                     return Padding(
                                       padding: MediaQuery.viewInsetsOf(context),
-                                      child: OrdernarPropriedadesWidget(),
+                                      child: const OrdernarPropriedadesWidget(),
                                     );
                                   },
                                 ).then((value) => safeSetState(() {}));
@@ -875,16 +863,14 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       12.0, 8.0, 12.0, 8.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       if (FFAppState().filtroTipoOrdenacao !=
-                                              null &&
-                                          FFAppState().filtroTipoOrdenacao !=
-                                              '')
+                                          '')
                                         Container(
                                           decoration: BoxDecoration(
                                             color: FlutterFlowTheme.of(context)
@@ -936,13 +922,12 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                   .bodyMediumIsCustom,
                                                         ),
                                               ),
-                                            ].divide(SizedBox(width: 8.0)),
+                                            ].divide(
+                                                const SizedBox(width: 8.0)),
                                           ),
                                         ),
                                       if (FFAppState().filtroTipoOrdenacao !=
-                                              null &&
-                                          FFAppState().filtroTipoOrdenacao !=
-                                              '')
+                                          '')
                                         SizedBox(
                                           height: 100.0,
                                           child: VerticalDivider(
@@ -974,11 +959,8 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                 context)
                                                             .bodyMediumFamily,
                                                     color: FFAppState()
-                                                                    .filtroTipoOrdenacao !=
-                                                                null &&
-                                                            FFAppState()
-                                                                    .filtroTipoOrdenacao !=
-                                                                ''
+                                                                .filtroTipoOrdenacao !=
+                                                            ''
                                                         ? FlutterFlowTheme.of(
                                                                 context)
                                                             .secondary
@@ -997,18 +979,15 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                             Icon(
                                               Icons.keyboard_arrow_down,
                                               color: FFAppState()
-                                                              .filtroTipoOrdenacao !=
-                                                          null &&
-                                                      FFAppState()
-                                                              .filtroTipoOrdenacao !=
-                                                          ''
+                                                          .filtroTipoOrdenacao !=
+                                                      ''
                                                   ? FlutterFlowTheme.of(context)
                                                       .secondary
                                                   : FlutterFlowTheme.of(context)
                                                       .accent3,
                                               size: 20.0,
                                             ),
-                                          ].divide(SizedBox(width: 8.0)),
+                                          ].divide(const SizedBox(width: 8.0)),
                                         ),
                                       ),
                                     ],
@@ -1017,11 +996,10 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                               ),
                             ),
                           if (containerBodyOfflineListarPropriedadesRowList
-                                  .length ==
-                              0)
+                              .isEmpty)
                             Builder(
                               builder: (context) => Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: InkWell(
                                   splashColor: Colors.transparent,
@@ -1039,11 +1017,11 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                           elevation: 0,
                                           insetPadding: EdgeInsets.zero,
                                           backgroundColor: Colors.transparent,
-                                          alignment: AlignmentDirectional(
+                                          alignment: const AlignmentDirectional(
                                                   0.0, 0.0)
                                               .resolve(
                                                   Directionality.of(context)),
-                                          child: AddPropriedadeWidget(),
+                                          child: const AddPropriedadeWidget(),
                                         );
                                       },
                                     );
@@ -1053,7 +1031,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      boxShadow: [
+                                      boxShadow: const [
                                         BoxShadow(
                                           blurRadius: 4.0,
                                           color: Color(0x41000040),
@@ -1066,8 +1044,9 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                       borderRadius: BorderRadius.circular(6.0),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          32.0, 32.0, 32.0, 32.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              32.0, 32.0, 32.0, 32.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -1104,7 +1083,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                     .bodyMediumIsCustom,
                                                           ),
                                                 ),
-                                                TextSpan(
+                                                const TextSpan(
                                                   text:
                                                       '\nClique aqui para adicionar',
                                                   style: TextStyle(
@@ -1130,7 +1109,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                             ),
                                             textAlign: TextAlign.center,
                                           ),
-                                        ].divide(SizedBox(height: 24.0)),
+                                        ].divide(const SizedBox(height: 24.0)),
                                       ),
                                     ),
                                   ),
@@ -1147,8 +1126,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                   return Visibility(
                                     visible:
                                         containerBodyOfflineListarPropriedadesRowList
-                                                .length >
-                                            0,
+                                            .isNotEmpty,
                                     child: FutureBuilder<
                                         List<ListarPropriedadesCrescNomeRow>>(
                                       future: SQLiteManager.instance
@@ -1187,36 +1165,29 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                               final propriedade =
                                                   listaPropriedadesCresNomeListarPropriedadesCrescNomeRowList
                                                       .where((e) =>
-                                                          ((FFAppState().filtroPropAtividades == null || FFAppState().filtroPropAtividades == '') &&
+                                                          ((FFAppState().filtroPropAtividades == '') &&
                                                               (FFAppState().filtroPropEstados ==
-                                                                      null ||
-                                                                  FFAppState().filtroPropEstados ==
-                                                                      '') &&
+                                                                  '') &&
                                                               (FFAppState().filtroPropCidades ==
-                                                                      null ||
-                                                                  FFAppState().filtroPropCidades ==
-                                                                      '') &&
+                                                                  '') &&
                                                               (FFAppState().filtroNumeroAnimais ==
                                                                   0.0) &&
                                                               (_model.pesquisarTextController.text ==
-                                                                      null ||
-                                                                  _model.pesquisarTextController.text ==
-                                                                      '') &&
+                                                                  '') &&
                                                               (e.deletado ==
                                                                   'NAO')) ||
                                                           (((e.atividades!).contains(
                                                                   FFAppState()
                                                                       .filtroPropAtividades)) &&
                                                               ((e.cidade == FFAppState().filtroPropCidades) ||
-                                                                  (FFAppState().filtroPropCidades == null ||
-                                                                      FFAppState().filtroPropCidades ==
-                                                                          '')) &&
+                                                                  (FFAppState().filtroPropCidades ==
+                                                                      '')) &&
                                                               ((e.estado == FFAppState().filtroPropEstados) ||
                                                                   (FFAppState().filtroPropEstados ==
-                                                                          null ||
-                                                                      FFAppState().filtroPropEstados ==
-                                                                          '')) &&
-                                                              ((functions.convertIntToDouble(valueOrDefault<int>(
+                                                                      '')) &&
+                                                              ((functions.convertIntToDouble(
+                                                                          valueOrDefault<
+                                                                              int>(
                                                                         (String
                                                                             qtdAnimais) {
                                                                           return qtdAnimais == '[]'
@@ -1225,9 +1196,16 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                         }(e.rebanhosID!),
                                                                         0,
                                                                       )) ==
-                                                                      FFAppState().filtroNumeroAnimais) ||
-                                                                  (FFAppState().filtroNumeroAnimais == 0.0)) &&
-                                                              ((e.nome!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase())) &&
+                                                                      FFAppState()
+                                                                          .filtroNumeroAnimais) ||
+                                                                  (FFAppState().filtroNumeroAnimais ==
+                                                                      0.0)) &&
+                                                              ((e.nome!)
+                                                                  .toLowerCase()
+                                                                  .contains(_model
+                                                                      .pesquisarTextController
+                                                                      .text
+                                                                      .toLowerCase())) &&
                                                               (e.deletado == 'NAO')))
                                                       .toList();
 
@@ -1257,12 +1235,12 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                 (context) =>
                                                                     Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
-                                                                          0.0,
-                                                                          9.0,
-                                                                          0.0,
-                                                                          8.0),
+                                                                      0.0,
+                                                                      9.0,
+                                                                      0.0,
+                                                                      8.0),
                                                               child: InkWell(
                                                                 splashColor: Colors
                                                                     .transparent,
@@ -1298,7 +1276,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                         backgroundColor:
                                                                             Colors.transparent,
                                                                         alignment:
-                                                                            AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                            const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                         child:
                                                                             ViewPropriedadesWidget(
                                                                           idPropriedade:
@@ -1322,7 +1300,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                             CrossAxisAlignment.start,
                                                                         children: [
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 0.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -1345,7 +1323,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                             ),
                                                                           ),
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 0.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -1358,7 +1336,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                               ),
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                     fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                    color: Color(0xFF474747),
+                                                                                    color: const Color(0xFF474747),
                                                                                     fontSize: 16.0,
                                                                                     letterSpacing: 0.0,
                                                                                     fontWeight: FontWeight.w500,
@@ -1376,7 +1354,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                             )}',
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                  color: Color(0xFF474747),
+                                                                                  color: const Color(0xFF474747),
                                                                                   fontSize: 14.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
@@ -1396,17 +1374,17 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                           16.0,
                                                                     ),
                                                                   ]
-                                                                      .addToStart(SizedBox(
+                                                                      .addToStart(const SizedBox(
                                                                           width:
                                                                               24.0))
-                                                                      .addToEnd(SizedBox(
+                                                                      .addToEnd(const SizedBox(
                                                                           width:
                                                                               24.0)),
                                                                 ),
                                                               ),
                                                             ),
                                                           ),
-                                                          Divider(
+                                                          const Divider(
                                                             thickness: 1.0,
                                                             color: Color(
                                                                 0xFFEDEDED),
@@ -1430,8 +1408,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                   return Visibility(
                                     visible:
                                         containerBodyOfflineListarPropriedadesRowList
-                                                .length >
-                                            0,
+                                            .isNotEmpty,
                                     child: FutureBuilder<
                                         List<ListarPropriedadesDecNomeRow>>(
                                       future: SQLiteManager.instance
@@ -1470,36 +1447,29 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                               final propriedade =
                                                   listaPropriedadesDecresNomeListarPropriedadesDecNomeRowList
                                                       .where((e) =>
-                                                          ((FFAppState().filtroPropAtividades == null || FFAppState().filtroPropAtividades == '') &&
+                                                          ((FFAppState().filtroPropAtividades == '') &&
                                                               (FFAppState().filtroPropEstados ==
-                                                                      null ||
-                                                                  FFAppState().filtroPropEstados ==
-                                                                      '') &&
+                                                                  '') &&
                                                               (FFAppState().filtroPropCidades ==
-                                                                      null ||
-                                                                  FFAppState().filtroPropCidades ==
-                                                                      '') &&
+                                                                  '') &&
                                                               (FFAppState().filtroNumeroAnimais ==
                                                                   0.0) &&
                                                               (_model.pesquisarTextController.text ==
-                                                                      null ||
-                                                                  _model.pesquisarTextController.text ==
-                                                                      '') &&
+                                                                  '') &&
                                                               (e.deletado ==
                                                                   'NAO')) ||
                                                           (((e.atividades!).contains(
                                                                   FFAppState()
                                                                       .filtroPropAtividades)) &&
                                                               ((e.cidade == FFAppState().filtroPropCidades) ||
-                                                                  (FFAppState().filtroPropCidades == null ||
-                                                                      FFAppState().filtroPropCidades ==
-                                                                          '')) &&
+                                                                  (FFAppState().filtroPropCidades ==
+                                                                      '')) &&
                                                               ((e.estado == FFAppState().filtroPropEstados) ||
                                                                   (FFAppState().filtroPropEstados ==
-                                                                          null ||
-                                                                      FFAppState().filtroPropEstados ==
-                                                                          '')) &&
-                                                              ((functions.convertIntToDouble(valueOrDefault<int>(
+                                                                      '')) &&
+                                                              ((functions.convertIntToDouble(
+                                                                          valueOrDefault<
+                                                                              int>(
                                                                         (String
                                                                             qtdAnimais) {
                                                                           return qtdAnimais == '[]'
@@ -1508,9 +1478,16 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                         }(e.rebanhosID!),
                                                                         0,
                                                                       )) ==
-                                                                      FFAppState().filtroNumeroAnimais) ||
-                                                                  (FFAppState().filtroNumeroAnimais == 0.0)) &&
-                                                              ((e.nome!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase())) &&
+                                                                      FFAppState()
+                                                                          .filtroNumeroAnimais) ||
+                                                                  (FFAppState().filtroNumeroAnimais ==
+                                                                      0.0)) &&
+                                                              ((e.nome!)
+                                                                  .toLowerCase()
+                                                                  .contains(_model
+                                                                      .pesquisarTextController
+                                                                      .text
+                                                                      .toLowerCase())) &&
                                                               (e.deletado == 'NAO')))
                                                       .toList();
 
@@ -1540,12 +1517,12 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                 (context) =>
                                                                     Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
-                                                                          0.0,
-                                                                          9.0,
-                                                                          0.0,
-                                                                          8.0),
+                                                                      0.0,
+                                                                      9.0,
+                                                                      0.0,
+                                                                      8.0),
                                                               child: InkWell(
                                                                 splashColor: Colors
                                                                     .transparent,
@@ -1581,7 +1558,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                         backgroundColor:
                                                                             Colors.transparent,
                                                                         alignment:
-                                                                            AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                            const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                         child:
                                                                             ViewPropriedadesWidget(
                                                                           idPropriedade:
@@ -1605,7 +1582,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                             CrossAxisAlignment.start,
                                                                         children: [
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 0.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -1628,7 +1605,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                             ),
                                                                           ),
                                                                           Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            padding: const EdgeInsetsDirectional.fromSTEB(
                                                                                 0.0,
                                                                                 0.0,
                                                                                 0.0,
@@ -1641,7 +1618,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                               ),
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                     fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                    color: Color(0xFF474747),
+                                                                                    color: const Color(0xFF474747),
                                                                                     fontSize: 16.0,
                                                                                     letterSpacing: 0.0,
                                                                                     fontWeight: FontWeight.w500,
@@ -1659,7 +1636,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                             )}',
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                  color: Color(0xFF474747),
+                                                                                  color: const Color(0xFF474747),
                                                                                   fontSize: 14.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
@@ -1679,17 +1656,17 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                           16.0,
                                                                     ),
                                                                   ]
-                                                                      .addToStart(SizedBox(
+                                                                      .addToStart(const SizedBox(
                                                                           width:
                                                                               24.0))
-                                                                      .addToEnd(SizedBox(
+                                                                      .addToEnd(const SizedBox(
                                                                           width:
                                                                               24.0)),
                                                                 ),
                                                               ),
                                                             ),
                                                           ),
-                                                          Divider(
+                                                          const Divider(
                                                             thickness: 1.0,
                                                             color: Color(
                                                                 0xFFEDEDED),
@@ -1710,8 +1687,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                   return Visibility(
                                     visible:
                                         containerBodyOfflineListarPropriedadesRowList
-                                                .length >
-                                            0,
+                                            .isNotEmpty,
                                     child: Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
@@ -1723,20 +1699,15 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                           final propriedade =
                                               containerBodyOfflineListarPropriedadesRowList
                                                   .where((e) =>
-                                                      ((FFAppState().filtroPropAtividades == null || FFAppState().filtroPropAtividades == '') &&
-                                                          (FFAppState().filtroPropEstados == null ||
-                                                              FFAppState().filtroPropEstados ==
-                                                                  '') &&
-                                                          (FFAppState().filtroPropCidades == null ||
-                                                              FFAppState().filtroPropCidades ==
-                                                                  '') &&
+                                                      ((FFAppState().filtroPropAtividades == '') &&
+                                                          (FFAppState().filtroPropEstados ==
+                                                              '') &&
+                                                          (FFAppState().filtroPropCidades ==
+                                                              '') &&
                                                           (FFAppState().filtroNumeroAnimais ==
                                                               0.0) &&
                                                           (_model.pesquisarTextController.text ==
-                                                                  null ||
-                                                              _model.pesquisarTextController
-                                                                      .text ==
-                                                                  '') &&
+                                                              '') &&
                                                           (e.deletado ==
                                                               'NAO')) ||
                                                       (((e.atividades!).contains(
@@ -1744,15 +1715,13 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                   .filtroPropAtividades)) &&
                                                           ((e.cidade == FFAppState().filtroPropCidades) ||
                                                               (FFAppState().filtroPropCidades ==
-                                                                      null ||
-                                                                  FFAppState().filtroPropCidades ==
-                                                                      '')) &&
+                                                                  '')) &&
                                                           ((e.estado == FFAppState().filtroPropEstados) ||
                                                               (FFAppState().filtroPropEstados ==
-                                                                      null ||
-                                                                  FFAppState().filtroPropEstados ==
-                                                                      '')) &&
-                                                          ((functions.convertIntToDouble(valueOrDefault<int>(
+                                                                  '')) &&
+                                                          ((functions.convertIntToDouble(
+                                                                      valueOrDefault<
+                                                                          int>(
                                                                     (String
                                                                         qtdAnimais) {
                                                                       return qtdAnimais ==
@@ -1764,9 +1733,16 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                     }(e.rebanhosID!),
                                                                     0,
                                                                   )) ==
-                                                                  FFAppState().filtroNumeroAnimais) ||
-                                                              (FFAppState().filtroNumeroAnimais == 0.0)) &&
-                                                          ((e.nome!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase())) &&
+                                                                  FFAppState()
+                                                                      .filtroNumeroAnimais) ||
+                                                              (FFAppState().filtroNumeroAnimais ==
+                                                                  0.0)) &&
+                                                          ((e.nome!)
+                                                              .toLowerCase()
+                                                              .contains(_model
+                                                                  .pesquisarTextController
+                                                                  .text
+                                                                  .toLowerCase())) &&
                                                           (e.deletado == 'NAO')))
                                                   .toList()
                                                   .sortedList(keyOf: (e) => e.createdAt!, desc: true)
@@ -1796,12 +1772,12 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                         builder: (context) =>
                                                             Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
-                                                                      0.0,
-                                                                      9.0,
-                                                                      0.0,
-                                                                      8.0),
+                                                                  0.0,
+                                                                  9.0,
+                                                                  0.0,
+                                                                  8.0),
                                                           child: InkWell(
                                                             splashColor: Colors
                                                                 .transparent,
@@ -1836,7 +1812,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                     backgroundColor:
                                                                         Colors
                                                                             .transparent,
-                                                                    alignment: AlignmentDirectional(
+                                                                    alignment: const AlignmentDirectional(
                                                                             0.0,
                                                                             0.0)
                                                                         .resolve(
@@ -1866,7 +1842,8 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                             .start,
                                                                     children: [
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional
+                                                                            .fromSTEB(
                                                                             0.0,
                                                                             0.0,
                                                                             0.0,
@@ -1894,7 +1871,8 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                         ),
                                                                       ),
                                                                       Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional
+                                                                            .fromSTEB(
                                                                             0.0,
                                                                             0.0,
                                                                             0.0,
@@ -1910,7 +1888,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                               .bodyMedium
                                                                               .override(
                                                                                 fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                color: Color(0xFF474747),
+                                                                                color: const Color(0xFF474747),
                                                                                 fontSize: 16.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.w500,
@@ -1932,7 +1910,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                             .bodyMedium
                                                                             .override(
                                                                               fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                              color: Color(0xFF474747),
+                                                                              color: const Color(0xFF474747),
                                                                               fontSize: 14.0,
                                                                               letterSpacing: 0.0,
                                                                               fontWeight: FontWeight.normal,
@@ -1952,18 +1930,18 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                 ),
                                                               ]
                                                                   .addToStart(
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                           width:
                                                                               24.0))
                                                                   .addToEnd(
-                                                                      SizedBox(
+                                                                      const SizedBox(
                                                                           width:
                                                                               24.0)),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      Divider(
+                                                      const Divider(
                                                         thickness: 1.0,
                                                         color:
                                                             Color(0xFFEDEDED),
@@ -1982,7 +1960,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                               },
                             ),
                           ),
-                        ].divide(SizedBox(height: 16.0)),
+                        ].divide(const SizedBox(height: 16.0)),
                       ),
                     );
                   },

@@ -47,7 +47,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimer = InstantTimer.periodic(
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         callback: (timer) async {
           _model.temNet = await actions.checkInternetConnection();
 
@@ -142,7 +142,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
 
     return SafeArea(
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 350),
+        duration: const Duration(milliseconds: 350),
         curve: Curves.easeInOut,
         width: double.infinity,
         height: double.infinity,
@@ -153,7 +153,8 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
           mainAxisSize: MainAxisSize.max,
           children: [
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 32.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 32.0),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
@@ -183,18 +184,18 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                               !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                         ),
                   ),
-                ].divide(SizedBox(width: 16.0)),
+                ].divide(const SizedBox(width: 16.0)),
               ),
             ),
             Expanded(
               child: Align(
-                alignment: AlignmentDirectional(-1.0, 0.0),
+                alignment: const AlignmentDirectional(-1.0, 0.0),
                 child: Column(
                   children: [
                     Align(
-                      alignment: Alignment(0.0, 0),
+                      alignment: const Alignment(0.0, 0),
                       child: TabBar(
-                        labelColor: Color(0xFF1E7A4C),
+                        labelColor: const Color(0xFF1E7A4C),
                         unselectedLabelColor:
                             FlutterFlowTheme.of(context).secondaryText,
                         labelStyle:
@@ -207,9 +208,9 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                   useGoogleFonts: !FlutterFlowTheme.of(context)
                                       .titleMediumIsCustom,
                                 ),
-                        unselectedLabelStyle: TextStyle(),
-                        indicatorColor: Color(0xFF1E7A4C),
-                        tabs: [
+                        unselectedLabelStyle: const TextStyle(),
+                        indicatorColor: const Color(0xFF1E7A4C),
+                        tabs: const [
                           Tab(
                             text: 'Informações',
                           ),
@@ -228,7 +229,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                         controller: _model.tabBarController,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 16.0, 24.0, 16.0),
                             child: SingleChildScrollView(
                               primary: false,
@@ -250,7 +251,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF8E8E8E),
+                                              color: const Color(0xFF8E8E8E),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w500,
@@ -271,7 +272,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 24.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w500,
@@ -301,7 +302,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -319,7 +320,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                           onChanged: (_) =>
                                               EasyDebounce.debounce(
                                             '_model.nomePropriedadeTextController',
-                                            Duration(milliseconds: 2000),
+                                            const Duration(milliseconds: 2000),
                                             () => safeSetState(() {}),
                                           ),
                                           autofocus: true,
@@ -327,27 +328,27 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                           obscureText: false,
                                           decoration: InputDecoration(
                                             hintText: ' Nome da propriedade*',
-                                            hintStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .labelMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      lineHeight: 1.0,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .labelMediumIsCustom,
-                                                    ),
+                                            hintStyle: FlutterFlowTheme.of(
+                                                    context)
+                                                .labelMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .labelMediumFamily,
+                                                  color:
+                                                      const Color(0xFF474747),
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  lineHeight: 1.0,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .labelMediumIsCustom,
+                                                ),
                                             enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00E0E3E7),
                                                 width: 2.0,
                                               ),
@@ -355,7 +356,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                   BorderRadius.circular(8.0),
                                             ),
                                             focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x0028A365),
                                                 width: 2.0,
                                               ),
@@ -384,7 +385,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                   BorderRadius.circular(8.0),
                                             ),
                                             filled: true,
-                                            fillColor: Color(0xFFF1F1F1),
+                                            fillColor: const Color(0xFFF1F1F1),
                                           ),
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
@@ -392,7 +393,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -405,7 +406,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                               .nomePropriedadeTextControllerValidator
                                               .asValidator(context),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -427,7 +428,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -443,7 +444,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                           onChanged: (_) =>
                                               EasyDebounce.debounce(
                                             '_model.ufTextController',
-                                            Duration(milliseconds: 2000),
+                                            const Duration(milliseconds: 2000),
                                             () => safeSetState(() {}),
                                           ),
                                           autofocus: true,
@@ -451,27 +452,27 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                           obscureText: false,
                                           decoration: InputDecoration(
                                             hintText: ' Nome da propriedade*',
-                                            hintStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .labelMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      lineHeight: 1.0,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .labelMediumIsCustom,
-                                                    ),
+                                            hintStyle: FlutterFlowTheme.of(
+                                                    context)
+                                                .labelMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .labelMediumFamily,
+                                                  color:
+                                                      const Color(0xFF474747),
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  lineHeight: 1.0,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .labelMediumIsCustom,
+                                                ),
                                             enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00E0E3E7),
                                                 width: 2.0,
                                               ),
@@ -479,7 +480,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                   BorderRadius.circular(8.0),
                                             ),
                                             focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x0028A365),
                                                 width: 2.0,
                                               ),
@@ -508,7 +509,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                   BorderRadius.circular(8.0),
                                             ),
                                             filled: true,
-                                            fillColor: Color(0xFFF1F1F1),
+                                            fillColor: const Color(0xFFF1F1F1),
                                           ),
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
@@ -516,7 +517,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -529,7 +530,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                               .ufTextControllerValidator
                                               .asValidator(context),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -551,7 +552,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -568,7 +569,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                           onChanged: (_) =>
                                               EasyDebounce.debounce(
                                             '_model.cidadeTextController',
-                                            Duration(milliseconds: 2000),
+                                            const Duration(milliseconds: 2000),
                                             () => safeSetState(() {}),
                                           ),
                                           autofocus: true,
@@ -576,27 +577,27 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                           obscureText: false,
                                           decoration: InputDecoration(
                                             hintText: ' Nome da propriedade*',
-                                            hintStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .labelMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .labelMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      lineHeight: 1.0,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .labelMediumIsCustom,
-                                                    ),
+                                            hintStyle: FlutterFlowTheme.of(
+                                                    context)
+                                                .labelMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .labelMediumFamily,
+                                                  color:
+                                                      const Color(0xFF474747),
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  lineHeight: 1.0,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .labelMediumIsCustom,
+                                                ),
                                             enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00E0E3E7),
                                                 width: 2.0,
                                               ),
@@ -604,7 +605,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                   BorderRadius.circular(8.0),
                                             ),
                                             focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x0028A365),
                                                 width: 2.0,
                                               ),
@@ -633,7 +634,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                   BorderRadius.circular(8.0),
                                             ),
                                             filled: true,
-                                            fillColor: Color(0xFFF1F1F1),
+                                            fillColor: const Color(0xFFF1F1F1),
                                           ),
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
@@ -641,7 +642,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -654,7 +655,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                               .cidadeTextControllerValidator
                                               .asValidator(context),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -676,7 +677,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -689,7 +690,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                         Container(
                                           width: double.infinity,
                                           height: 56.0,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             color: Color(0xFFF1F1F1),
                                             borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
@@ -699,9 +700,8 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 0.0, 16.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 16.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -709,7 +709,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                       .spaceBetween,
                                               children: [
                                                 Expanded(
-                                                  child: Container(
+                                                  child: SizedBox(
                                                     width: double.infinity,
                                                     child: TextFormField(
                                                       controller: _model
@@ -731,7 +731,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF474747),
                                                                   fontSize:
                                                                       16.0,
@@ -748,7 +748,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                         enabledBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x00E0E3E7),
                                                             width: 2.0,
@@ -761,7 +761,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                         focusedBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x004B39EF),
                                                             width: 2.0,
@@ -808,7 +808,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF474747),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -829,7 +829,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -851,7 +851,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -864,7 +864,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                         Container(
                                           width: double.infinity,
                                           height: 56.0,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             color: Color(0xFFF1F1F1),
                                             borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
@@ -874,9 +874,8 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 0.0, 16.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 16.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -884,7 +883,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                       .spaceBetween,
                                               children: [
                                                 Expanded(
-                                                  child: Container(
+                                                  child: SizedBox(
                                                     width: double.infinity,
                                                     child: TextFormField(
                                                       controller: _model
@@ -906,7 +905,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF474747),
                                                                   fontSize:
                                                                       16.0,
@@ -923,7 +922,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                         enabledBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x00E0E3E7),
                                                             width: 2.0,
@@ -936,7 +935,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                         focusedBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x004B39EF),
                                                             width: 2.0,
@@ -983,7 +982,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF474747),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -1004,7 +1003,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1026,7 +1025,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1039,7 +1038,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                         Container(
                                           width: double.infinity,
                                           height: 56.0,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             color: Color(0xFFF1F1F1),
                                             borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
@@ -1049,9 +1048,8 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 0.0, 16.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 16.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -1059,7 +1057,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                       .spaceBetween,
                                               children: [
                                                 Expanded(
-                                                  child: Container(
+                                                  child: SizedBox(
                                                     width: double.infinity,
                                                     child: TextFormField(
                                                       controller: _model
@@ -1081,7 +1079,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF474747),
                                                                   fontSize:
                                                                       16.0,
@@ -1098,7 +1096,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                         enabledBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x00E0E3E7),
                                                             width: 2.0,
@@ -1111,7 +1109,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                         focusedBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x004B39EF),
                                                             width: 2.0,
@@ -1158,7 +1156,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF474747),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -1179,7 +1177,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1201,7 +1199,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1214,7 +1212,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                         Container(
                                           width: double.infinity,
                                           height: 56.0,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             color: Color(0xFFF1F1F1),
                                             borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
@@ -1224,9 +1222,8 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 0.0, 16.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 16.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -1234,7 +1231,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                       .spaceBetween,
                                               children: [
                                                 Expanded(
-                                                  child: Container(
+                                                  child: SizedBox(
                                                     width: double.infinity,
                                                     child: TextFormField(
                                                       controller: _model
@@ -1256,7 +1253,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF474747),
                                                                   fontSize:
                                                                       16.0,
@@ -1273,7 +1270,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                         enabledBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x00E0E3E7),
                                                             width: 2.0,
@@ -1286,7 +1283,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                         focusedBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x004B39EF),
                                                             width: 2.0,
@@ -1333,7 +1330,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF474747),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -1354,7 +1351,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1376,7 +1373,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1389,7 +1386,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                         Container(
                                           width: double.infinity,
                                           height: 56.0,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             color: Color(0xFFF1F1F1),
                                             borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
@@ -1399,9 +1396,8 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 0.0, 16.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 16.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -1409,7 +1405,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                       .spaceBetween,
                                               children: [
                                                 Expanded(
-                                                  child: Container(
+                                                  child: SizedBox(
                                                     width: double.infinity,
                                                     child: TextFormField(
                                                       controller: _model
@@ -1430,7 +1426,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF474747),
                                                                   fontSize:
                                                                       16.0,
@@ -1447,7 +1443,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                         enabledBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x00E0E3E7),
                                                             width: 2.0,
@@ -1460,7 +1456,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                         focusedBorder:
                                                             UnderlineInputBorder(
                                                           borderSide:
-                                                              BorderSide(
+                                                              const BorderSide(
                                                             color: Color(
                                                                 0x004B39EF),
                                                             width: 2.0,
@@ -1507,7 +1503,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF474747),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -1530,7 +1526,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1554,7 +1550,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1567,7 +1563,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                         Container(
                                           width: double.infinity,
                                           height: 56.0,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             color: Color(0xFFF1F1F1),
                                             borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
@@ -1577,9 +1573,8 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 0.0, 16.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 16.0, 0.0),
                                             child: Builder(
                                               builder: (context) {
                                                 final varAtiv = functions
@@ -1602,7 +1597,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                         varAtiv[varAtivIndex];
                                                     return Align(
                                                       alignment:
-                                                          AlignmentDirectional(
+                                                          const AlignmentDirectional(
                                                               -1.0, 0.0),
                                                       child: Container(
                                                         decoration:
@@ -1617,8 +1612,8 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                         ),
                                                         child: Padding(
                                                           padding:
-                                                              EdgeInsets.all(
-                                                                  8.0),
+                                                              const EdgeInsets
+                                                                  .all(8.0),
                                                           child: Text(
                                                             varAtivItem,
                                                             style: FlutterFlowTheme
@@ -1645,14 +1640,14 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                         ),
                                                       ),
                                                     );
-                                                  }).divide(
-                                                      SizedBox(width: 8.0)),
+                                                  }).divide(const SizedBox(
+                                                      width: 8.0)),
                                                 );
                                               },
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Container(
@@ -1674,7 +1669,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1687,7 +1682,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                         Container(
                                           width: double.infinity,
                                           height: 104.0,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             color: Color(0xFFF1F1F1),
                                             borderRadius: BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
@@ -1697,9 +1692,8 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 0.0, 0.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 0.0, 0.0),
                                             child: TextFormField(
                                               controller:
                                                   _model.textController9,
@@ -1710,27 +1704,28 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Anotações',
-                                                hintStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFFBEBEBE),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                hintStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 enabledBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x00FFFFFF),
                                                     width: 2.0,
                                                   ),
@@ -1740,7 +1735,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                 ),
                                                 focusedBorder:
                                                     UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                                  borderSide: const BorderSide(
                                                     color: Color(0x004B39EF),
                                                     width: 2.0,
                                                   ),
@@ -1798,7 +1793,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                   Row(
@@ -1814,33 +1809,33 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                           options: FFButtonOptions(
                                             width: 155.0,
                                             height: 56.0,
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    24.0, 0.0, 24.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                             iconPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional
+                                                    .fromSTEB(
                                                     0.0, 0.0, 0.0, 0.0),
-                                            color: Color(0x001E7A4C),
-                                            textStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .titleSmall
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .titleSmallFamily,
-                                                      color: Color(0xFF1E7A4C),
-                                                      fontSize: 18.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .titleSmallIsCustom,
-                                                    ),
+                                            color: const Color(0x001E7A4C),
+                                            textStyle: FlutterFlowTheme.of(
+                                                    context)
+                                                .titleSmall
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .titleSmallFamily,
+                                                  color:
+                                                      const Color(0xFF1E7A4C),
+                                                  fontSize: 18.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .titleSmallIsCustom,
+                                                ),
                                             elevation: 0.0,
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFF1E7A4C),
                                               width: 2.0,
                                             ),
@@ -1857,14 +1852,14 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                   '';
                                               safeSetState(() {});
                                               final navigator =
-                                                Navigator.of(context);
+                                                  Navigator.of(context);
                                               navigator.pop();
                                               await Future.delayed(
-                                                Duration.zero);
+                                                  Duration.zero);
                                               await showDialog(
                                                 barrierColor:
                                                     Colors.transparent,
-                                              context: navigator.context,
+                                                context: navigator.context,
                                                 builder: (dialogContext) {
                                                   return Dialog(
                                                     elevation: 0,
@@ -1873,31 +1868,34 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                     backgroundColor:
                                                         Colors.transparent,
                                                     alignment:
-                                                        AlignmentDirectional(
+                                                        const AlignmentDirectional(
                                                                 0.0, 0.0)
-                                                            .resolve(
-                                                                Directionality.of(
-                                                        navigator.context)),
+                                                            .resolve(Directionality
+                                                                .of(navigator
+                                                                    .context)),
                                                     child:
-                                                        EditPropriedadeWidget(),
+                                                        const EditPropriedadeWidget(),
                                                   );
                                                 },
                                               );
                                             },
                                             text: 'Editar',
-                                            icon: Icon(
+                                            icon: const Icon(
                                               Icons.edit_sharp,
                                               size: 24.0,
                                             ),
                                             options: FFButtonOptions(
                                               width: 155.0,
                                               height: 56.0,
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 0.0, 24.0, 0.0),
-                                              iconPadding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                              color: Color(0xFF28A365),
+                                              iconPadding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      0.0, 0.0, 0.0, 0.0),
+                                              color: const Color(0xFF28A365),
                                               textStyle: FlutterFlowTheme.of(
                                                       context)
                                                   .titleSmall
@@ -1916,7 +1914,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                             .titleSmallIsCustom,
                                                   ),
                                               elevation: 3.0,
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Colors.transparent,
                                                 width: 1.0,
                                               ),
@@ -1926,9 +1924,9 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(width: 16.0)),
+                                    ].divide(const SizedBox(width: 16.0)),
                                   ),
-                                ].divide(SizedBox(height: 32.0)),
+                                ].divide(const SizedBox(height: 32.0)),
                               ),
                             ),
                           ),
@@ -1939,7 +1937,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                 .stream(primaryKey: ['id'])
                                 .eqOrNull(
                                   'idPropriedade',
-                                  widget!.idPropriedade,
+                                  widget.idPropriedade,
                                 )
                                 .map((list) => list
                                     .map((item) => UsersPropriedadesRow(item))
@@ -1964,9 +1962,9 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                   snapshot.data!;
 
                               return Container(
-                                decoration: BoxDecoration(),
+                                decoration: const BoxDecoration(),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 16.0, 24.0, 0.0),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
@@ -2001,7 +1999,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                           .viewInsetsOf(
                                                               context),
                                                       child: AddUsuarioWidget(
-                                                        idPropriedade: widget!
+                                                        idPropriedade: widget
                                                             .idPropriedade!,
                                                         donoPropriedade:
                                                             valueOrDefault<
@@ -2028,7 +2026,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                             .secondaryBackground,
                                                       ),
                                                     ),
-                                                    duration: Duration(
+                                                    duration: const Duration(
                                                         milliseconds: 4000),
                                                     backgroundColor:
                                                         FlutterFlowTheme.of(
@@ -2039,19 +2037,22 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                               }
                                             },
                                             text: 'Adicionar usuário',
-                                            icon: Icon(
+                                            icon: const Icon(
                                               Icons.add,
                                               size: 15.0,
                                             ),
                                             options: FFButtonOptions(
                                               width: 341.0,
                                               height: 56.0,
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 0.0, 24.0, 0.0),
-                                              iconPadding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                              color: Color(0x001E7A4C),
+                                              iconPadding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      0.0, 0.0, 0.0, 0.0),
+                                              color: const Color(0x001E7A4C),
                                               textStyle: FlutterFlowTheme.of(
                                                       context)
                                                   .titleSmall
@@ -2072,7 +2073,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                             .titleSmallIsCustom,
                                                   ),
                                               elevation: 0.0,
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0xFF1E7A4C),
                                                 width: 2.0,
                                               ),
@@ -2080,17 +2081,16 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                   BorderRadius.circular(8.0),
                                             ),
                                           ),
-                                        ].divide(SizedBox(width: 16.0)),
+                                        ].divide(const SizedBox(width: 16.0)),
                                       ),
                                       if (containerUsersPropriedadesRowList
-                                              .length >
-                                          0)
+                                          .isNotEmpty)
                                         Flexible(
                                           child: Container(
-                                            constraints: BoxConstraints(
+                                            constraints: const BoxConstraints(
                                               maxHeight: 600.0,
                                             ),
-                                            decoration: BoxDecoration(),
+                                            decoration: const BoxDecoration(),
                                             child: Builder(
                                               builder: (context) {
                                                 final usersProp =
@@ -2109,7 +2109,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                             usersPropIndex];
                                                     return Container(
                                                       decoration:
-                                                          BoxDecoration(),
+                                                          const BoxDecoration(),
                                                       child: Column(
                                                         mainAxisSize:
                                                             MainAxisSize.min,
@@ -2166,7 +2166,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                             ),
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                  color: Color(0xFF474747),
+                                                                                  color: const Color(0xFF474747),
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.w600,
                                                                                   useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
@@ -2179,7 +2179,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                             ),
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                   fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                  color: Color(0xFF8E8E8E),
+                                                                                  color: const Color(0xFF8E8E8E),
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.w600,
                                                                                   useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
@@ -2188,9 +2188,10 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                         ],
                                                                       ),
                                                                     ),
-                                                                  ].divide(SizedBox(
-                                                                      width:
-                                                                          8.0)),
+                                                                  ].divide(
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8.0)),
                                                                 ),
                                                               ),
                                                               FuncaoUserWidget(
@@ -2203,16 +2204,18 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                                                     usersPropItem
                                                                         .userId!,
                                                               ),
-                                                            ].divide(SizedBox(
-                                                                width: 8.0)),
+                                                            ].divide(
+                                                                const SizedBox(
+                                                                    width:
+                                                                        8.0)),
                                                           ),
-                                                          Divider(
+                                                          const Divider(
                                                             height: 1.0,
                                                             thickness: 1.0,
                                                             color: Color(
                                                                 0xFFEDEDED),
                                                           ),
-                                                        ].divide(SizedBox(
+                                                        ].divide(const SizedBox(
                                                             height: 16.0)),
                                                       ),
                                                     );
@@ -2223,8 +2226,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                           ),
                                         ),
                                       if (containerUsersPropriedadesRowList
-                                              .length ==
-                                          0)
+                                          .isEmpty)
                                         Container(
                                           width: double.infinity,
                                           height: 100.0,
@@ -2268,7 +2270,7 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                             ],
                                           ),
                                         ),
-                                    ].divide(SizedBox(height: 24.0)),
+                                    ].divide(const SizedBox(height: 24.0)),
                                   ),
                                 ),
                               );

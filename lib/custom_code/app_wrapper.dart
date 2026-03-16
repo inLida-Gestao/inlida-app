@@ -5,7 +5,7 @@ Widget buildAppWithTextScaleLimiter(Widget app) {
     builder: (context) {
       return MediaQuery(
         data: MediaQuery.of(context).copyWith(
-          textScaleFactor: 1.0,
+          textScaler: TextScaler.linear(1.0),
         ),
         child: app,
       );

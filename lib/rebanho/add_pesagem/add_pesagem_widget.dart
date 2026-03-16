@@ -73,7 +73,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
       height: 400.0,
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(0.0),
           bottomRight: Radius.circular(0.0),
           topLeft: Radius.circular(16.0),
@@ -84,7 +84,8 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
         mainAxisSize: MainAxisSize.max,
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 24.0),
+            padding:
+                const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 24.0),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -99,7 +100,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                               .headlineSmall
                               .fontStyle,
                         ),
-                        color: Color(0xFF14181B),
+                        color: const Color(0xFF14181B),
                         fontSize: 24.0,
                         letterSpacing: 0.0,
                         fontWeight: FontWeight.w500,
@@ -132,7 +133,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
               ],
             ),
           ),
-          Divider(
+          const Divider(
             thickness: 1.0,
             color: Color(0xFFBEBEBE),
           ),
@@ -142,7 +143,8 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
               color: FlutterFlowTheme.of(context).secondaryBackground,
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24.0, 2.0, 24.0, 0.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 2.0, 24.0, 0.0),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,7 +154,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily:
                               FlutterFlowTheme.of(context).bodyMediumFamily,
-                          color: Color(0xFF474747),
+                          color: const Color(0xFF474747),
                           fontSize: 16.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.w600,
@@ -163,7 +165,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                   Container(
                     width: double.infinity,
                     height: 56.0,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Color(0xFFF1F1F1),
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(6.0),
@@ -173,15 +175,15 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                       ),
                     ),
                     child: Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          8.0, 0.0, 8.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
-                          final _datePickedDate = await showDatePicker(
+                          final datePickedDate = await showDatePicker(
                             context: context,
                             initialDate: getCurrentTimestamp,
                             firstDate: DateTime(1900),
@@ -190,7 +192,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                               return wrapInMaterialDatePickerTheme(
                                 context,
                                 child!,
-                                headerBackgroundColor: Color(0xFF28A365),
+                                headerBackgroundColor: const Color(0xFF28A365),
                                 headerForegroundColor:
                                     FlutterFlowTheme.of(context).info,
                                 headerTextStyle: FlutterFlowTheme.of(context)
@@ -211,7 +213,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                                 pickerForegroundColor:
                                     FlutterFlowTheme.of(context).primaryText,
                                 selectedDateTimeBackgroundColor:
-                                    Color(0xFF28A365),
+                                    const Color(0xFF28A365),
                                 selectedDateTimeForegroundColor:
                                     FlutterFlowTheme.of(context).info,
                                 actionButtonForegroundColor:
@@ -221,12 +223,12 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                             },
                           );
 
-                          if (_datePickedDate != null) {
+                          if (datePickedDate != null) {
                             safeSetState(() {
                               _model.datePicked = DateTime(
-                                _datePickedDate.year,
-                                _datePickedDate.month,
-                                _datePickedDate.day,
+                                datePickedDate.year,
+                                datePickedDate.month,
+                                datePickedDate.day,
                               );
                             });
                           } else if (_model.datePicked != null) {
@@ -262,7 +264,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                                                 .accent4
                                             : FlutterFlowTheme.of(context)
                                                 .primaryText,
-                                        Color(0xFFBEBEBE),
+                                        const Color(0xFFBEBEBE),
                                       ),
                                       fontSize: 14.0,
                                       letterSpacing: 0.0,
@@ -287,7 +289,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                       ),
                     ),
                   ),
-                ].divide(SizedBox(height: 8.0)),
+                ].divide(const SizedBox(height: 8.0)),
               ),
             ),
           ),
@@ -297,7 +299,8 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
               color: FlutterFlowTheme.of(context).secondaryBackground,
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24.0, 12.0, 24.0, 24.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 12.0, 24.0, 24.0),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,7 +310,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily:
                               FlutterFlowTheme.of(context).bodyMediumFamily,
-                          color: Color(0xFF474747),
+                          color: const Color(0xFF474747),
                           fontSize: 16.0,
                           letterSpacing: 0.0,
                           fontWeight: FontWeight.w600,
@@ -316,7 +319,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                         ),
                   ),
                   Container(
-                    child: Container(
+                    child: SizedBox(
                       width: double.infinity,
                       child: TextFormField(
                         controller: _model.pesoTextController,
@@ -331,7 +334,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                               .override(
                                 fontFamily: FlutterFlowTheme.of(context)
                                     .bodyMediumFamily,
-                                color: Color(0xFFBEBEBE),
+                                color: const Color(0xFFBEBEBE),
                                 fontSize: 16.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w600,
@@ -339,14 +342,14 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                                     .bodyMediumIsCustom,
                               ),
                           enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color(0x00E0E3E7),
                               width: 2.0,
                             ),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color(0x004B39EF),
                               width: 2.0,
                             ),
@@ -367,7 +370,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           filled: true,
-                          fillColor: Color(0xFFF1F1F1),
+                          fillColor: const Color(0xFFF1F1F1),
                         ),
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
@@ -383,16 +386,17 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                       ),
                     ),
                   ),
-                ].divide(SizedBox(height: 8.0)),
+                ].divide(const SizedBox(height: 8.0)),
               ),
             ),
           ),
-          Divider(
+          const Divider(
             thickness: 1.0,
             color: Color(0xFFBEBEBE),
           ),
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
+            padding:
+                const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
             child: FFButtonWidget(
               onPressed: () async {
                 final pesoInteiro =
@@ -441,9 +445,11 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
               options: FFButtonOptions(
                 width: double.infinity,
                 height: 47.0,
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                color: Color(0xFF28A365),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                iconPadding:
+                    const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                color: const Color(0xFF28A365),
                 textStyle: FlutterFlowTheme.of(context).titleSmall.override(
                       fontFamily: FlutterFlowTheme.of(context).titleSmallFamily,
                       color: Colors.white,
@@ -454,7 +460,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                           !FlutterFlowTheme.of(context).titleSmallIsCustom,
                     ),
                 elevation: 0.0,
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   color: Colors.transparent,
                   width: 0.0,
                 ),
@@ -463,7 +469,9 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
               showLoadingIndicator: false,
             ),
           ),
-        ].addToStart(SizedBox(height: 16.0)).addToEnd(SizedBox(height: 16.0)),
+        ]
+            .addToStart(const SizedBox(height: 16.0))
+            .addToEnd(const SizedBox(height: 16.0)),
       ),
     );
   }

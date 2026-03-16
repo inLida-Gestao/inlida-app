@@ -75,7 +75,7 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
         return Material(
           color: Colors.transparent,
           elevation: 5.0,
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(0.0),
               bottomRight: Radius.circular(0.0),
@@ -86,7 +86,7 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
           child: Container(
             width: double.infinity,
             height: 400.0,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(0.0),
@@ -99,15 +99,16 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                  padding:
+                      const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: FlutterFlowTheme.of(context).secondaryBackground,
                     ),
                     child: Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          24.0, 0.0, 24.0, 0.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -119,7 +120,7 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                                   .override(
                                     fontFamily: FlutterFlowTheme.of(context)
                                         .bodyMediumFamily,
-                                    color: Color(0xFF2F2F2F),
+                                    color: const Color(0xFF2F2F2F),
                                     fontSize: 22.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
@@ -152,15 +153,14 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                     ),
                   ),
                 ),
-                Divider(
+                const Divider(
                   thickness: 1.0,
                   color: Color(0xFFF1F1F1),
                 ),
-                if (FFAppState().propriedadeSelecionada.idPropriedade != null &&
-                    FFAppState().propriedadeSelecionada.idPropriedade != '')
+                if (FFAppState().propriedadeSelecionada.idPropriedade != '')
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 0.0, 24.0, 0.0),
                     child: InkWell(
                       splashColor: Colors.transparent,
                       focusColor: Colors.transparent,
@@ -201,7 +201,7 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                                       .bodyMediumIsCustom,
                                 ),
                           ),
-                        ].divide(SizedBox(width: 8.0)),
+                        ].divide(const SizedBox(width: 8.0)),
                       ),
                     ),
                   ),
@@ -214,7 +214,7 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 24.0, 24.0, 24.0),
                         child: Builder(
                           builder: (context) {
@@ -307,7 +307,8 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                                                             .bodyMedium
                                                             .fontStyle,
                                                   ),
-                                                  color: Color(0xFF474747),
+                                                  color:
+                                                      const Color(0xFF474747),
                                                   letterSpacing: 0.0,
                                                   fontWeight: FontWeight.w600,
                                                   fontStyle:
@@ -318,13 +319,15 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                                                 ),
                                           ),
                                         ]
-                                            .divide(SizedBox(width: 10.0))
-                                            .addToStart(SizedBox(width: 8.0))
-                                            .addToEnd(SizedBox(width: 8.0)),
+                                            .divide(const SizedBox(width: 10.0))
+                                            .addToStart(
+                                                const SizedBox(width: 8.0))
+                                            .addToEnd(
+                                                const SizedBox(width: 8.0)),
                                       ),
                                     ),
                                   );
-                                }).divide(SizedBox(height: 16.0)),
+                                }).divide(const SizedBox(height: 16.0)),
                               ),
                             );
                           },
@@ -334,8 +337,8 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                   ),
                 if (!(optionsListarPropriedadesRowList.isNotEmpty))
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 0.0, 24.0, 0.0),
                     child: InkWell(
                       splashColor: Colors.transparent,
                       focusColor: Colors.transparent,
@@ -351,7 +354,7 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                         decoration: BoxDecoration(
                           color:
                               FlutterFlowTheme.of(context).secondaryBackground,
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
                               blurRadius: 4.0,
                               color: Color(0x41000040),
@@ -364,7 +367,7 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                           borderRadius: BorderRadius.circular(6.0),
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               32.0, 32.0, 32.0, 32.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
@@ -396,7 +399,7 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                    TextSpan(
+                                    const TextSpan(
                                       text: '\nClique aqui para adicionar',
                                       style: TextStyle(
                                         color: Color(0xFF1E7A4C),
@@ -417,7 +420,7 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                            ].divide(SizedBox(height: 24.0)),
+                            ].divide(const SizedBox(height: 24.0)),
                           ),
                         ),
                       ),

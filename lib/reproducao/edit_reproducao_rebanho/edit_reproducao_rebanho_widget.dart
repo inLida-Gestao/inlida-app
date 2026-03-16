@@ -95,14 +95,15 @@ class _EditReproducaoRebanhoWidgetState
       BuildContext context, BuscarReproducaoRow? reproducao) {
     final appStateNum = FFAppState().reprodutorSelecionado.numAnimal;
     final hasAppStateSelection =
-      appStateNum.trim().isNotEmpty && appStateNum.toLowerCase() != 'null';
+        appStateNum.trim().isNotEmpty && appStateNum.toLowerCase() != 'null';
 
     final numero = hasAppStateSelection
         ? _normalizeDisplayText(appStateNum, 'S/N')
         : _normalizeDisplayText(reproducao?.numReprodutor, 'S/N');
 
     final nome = hasAppStateSelection
-        ? _normalizeDisplayText(FFAppState().reprodutorSelecionado.nomeAnimal, 'S/N')
+        ? _normalizeDisplayText(
+            FFAppState().reprodutorSelecionado.nomeAnimal, 'S/N')
         : _normalizeDisplayText(reproducao?.nomeReprodutor, 'S/N');
 
     final nascimento = hasAppStateSelection
@@ -131,12 +132,12 @@ class _EditReproducaoRebanhoWidgetState
       await Future.wait([
         Future(() async {
           _model.instantTimer1 = InstantTimer.periodic(
-            duration: Duration(milliseconds: 250),
+            duration: const Duration(milliseconds: 250),
             callback: (timer) async {
               if (_model.refresh <= 3) {
                 _model.editReproducao =
                     await SQLiteManager.instance.buscarReproducao(
-                  idReproducao: widget!.idReproducao,
+                  idReproducao: widget.idReproducao,
                 );
                 _model.tipoReproducao =
                     _model.editReproducao?.firstOrNull?.tipoReproducao ??
@@ -150,12 +151,14 @@ class _EditReproducaoRebanhoWidgetState
                         ? true
                         : false;
                 final dataParto = _model.editReproducao?.firstOrNull?.dataParto;
-                _model.parida =
-                    (_model.editReproducao?.firstOrNull?.parida == 'SIM' ||
-                     _model.editReproducao?.firstOrNull?.parida == 'Sim' ||
-                     (dataParto != null && dataParto.isNotEmpty && dataParto != '-'))
-                        ? true
-                        : false;
+                _model.parida = (_model.editReproducao?.firstOrNull?.parida ==
+                            'SIM' ||
+                        _model.editReproducao?.firstOrNull?.parida == 'Sim' ||
+                        (dataParto != null &&
+                            dataParto.isNotEmpty &&
+                            dataParto != '-'))
+                    ? true
+                    : false;
                 safeSetState(() {});
                 _model.refresh = _model.refresh + 1;
                 safeSetState(() {});
@@ -167,7 +170,7 @@ class _EditReproducaoRebanhoWidgetState
         }),
         Future(() async {
           _model.instantTimerrr = InstantTimer.periodic(
-            duration: Duration(milliseconds: 250),
+            duration: const Duration(milliseconds: 250),
             callback: (timer) async {
               if (FFAppState().rebuild == true) {
                 safeSetState(() {});
@@ -199,14 +202,14 @@ class _EditReproducaoRebanhoWidgetState
     context.watch<FFAppState>();
 
     return Container(
-      decoration: BoxDecoration(),
+      decoration: const BoxDecoration(),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
           Expanded(
             child: FutureBuilder<List<BuscarReproducaoRow>>(
               future: SQLiteManager.instance.buscarReproducao(
-                idReproducao: widget!.idReproducao,
+                idReproducao: widget.idReproducao,
               ),
               builder: (context, snapshot) {
                 // Customize what your widget looks like when it's loading.
@@ -226,7 +229,7 @@ class _EditReproducaoRebanhoWidgetState
                 final containerBuscarReproducaoRowList = snapshot.data!;
 
                 return Container(
-                  decoration: BoxDecoration(),
+                  decoration: const BoxDecoration(),
                   child: Container(
                     width: double.infinity,
                     height: double.infinity,
@@ -234,8 +237,8 @@ class _EditReproducaoRebanhoWidgetState
                       color: FlutterFlowTheme.of(context).secondaryBackground,
                     ),
                     child: Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 24.0, 0.0, 0.0),
                       child: SingleChildScrollView(
                         primary: false,
                         child: Column(
@@ -243,7 +246,7 @@ class _EditReproducaoRebanhoWidgetState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -284,7 +287,7 @@ class _EditReproducaoRebanhoWidgetState
                                                         .bodyMediumIsCustom,
                                               ),
                                         ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                   ),
                                   if (FFAppState().userLogado.permissao ==
@@ -292,7 +295,7 @@ class _EditReproducaoRebanhoWidgetState
                                     FlutterFlowIconButton(
                                       borderRadius: 8.0,
                                       buttonSize: 40.0,
-                                      fillColor: Color(0x0028A365),
+                                      fillColor: const Color(0x0028A365),
                                       icon: FaIcon(
                                         FontAwesomeIcons.trashAlt,
                                         color:
@@ -309,7 +312,7 @@ class _EditReproducaoRebanhoWidgetState
                                         }
                                         await SQLiteManager.instance
                                             .deleteReproducaoReb(
-                                          idReproducao: widget!.idReproducao,
+                                          idReproducao: widget.idReproducao,
                                           updatedat: dateTimeFormat(
                                             "yyyy-MM-dd HH:mm:ss",
                                             getCurrentTimestamp,
@@ -320,15 +323,15 @@ class _EditReproducaoRebanhoWidgetState
                                         Navigator.pop(context);
                                       },
                                     ),
-                                ].divide(SizedBox(width: 16.0)),
+                                ].divide(const SizedBox(width: 16.0)),
                               ),
                             ),
-                            Divider(
+                            const Divider(
                               thickness: 2.0,
                               color: Color(0xFFEDEDED),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Container(
                                 width: double.infinity,
@@ -411,7 +414,9 @@ class _EditReproducaoRebanhoWidgetState
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                    if (containerBuscarReproducaoRowList.firstOrNull != null)
+                                    if (containerBuscarReproducaoRowList
+                                            .firstOrNull !=
+                                        null)
                                       Text(
                                         'Lote: ${containerBuscarReproducaoRowList.firstOrNull?.loteNome != null && containerBuscarReproducaoRowList.firstOrNull?.loteNome != '' && containerBuscarReproducaoRowList.firstOrNull?.loteNome != 'null' ? containerBuscarReproducaoRowList.firstOrNull?.loteNome : 'Sem lote'}',
                                         style: FlutterFlowTheme.of(context)
@@ -420,8 +425,9 @@ class _EditReproducaoRebanhoWidgetState
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: FlutterFlowTheme.of(context)
-                                                  .secondaryText,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryText,
                                               fontSize: 14.0,
                                               letterSpacing: 0.0,
                                               useGoogleFonts:
@@ -434,7 +440,7 @@ class _EditReproducaoRebanhoWidgetState
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Container(
                                 width: double.infinity,
@@ -448,7 +454,7 @@ class _EditReproducaoRebanhoWidgetState
                                   children: [
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Tipo de reprodução',
                                         style: FlutterFlowTheme.of(context)
@@ -457,7 +463,7 @@ class _EditReproducaoRebanhoWidgetState
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF474747),
+                                              color: const Color(0xFF474747),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -480,8 +486,8 @@ class _EditReproducaoRebanhoWidgetState
                                         width: double.infinity,
                                         height: 74.0,
                                         decoration: BoxDecoration(
-                                          color: Color(0xFFF1F1F1),
-                                          borderRadius: BorderRadius.only(
+                                          color: const Color(0xFFF1F1F1),
+                                          borderRadius: const BorderRadius.only(
                                             bottomLeft: Radius.circular(6.0),
                                             bottomRight: Radius.circular(6.0),
                                             topLeft: Radius.circular(6.0),
@@ -492,13 +498,12 @@ class _EditReproducaoRebanhoWidgetState
                                                     'Inseminação'
                                                 ? FlutterFlowTheme.of(context)
                                                     .secondary
-                                                : Color(0x00000000),
+                                                : const Color(0x00000000),
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
@@ -530,26 +535,28 @@ class _EditReproducaoRebanhoWidgetState
                                                 ),
                                               Text(
                                                 'Inseminação',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 20.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFF474747),
+                                                          fontSize: 20.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                               ),
-                                            ].divide(SizedBox(width: 10.0)),
+                                            ].divide(
+                                                const SizedBox(width: 10.0)),
                                           ),
                                         ),
                                       ),
@@ -567,8 +574,8 @@ class _EditReproducaoRebanhoWidgetState
                                         width: double.infinity,
                                         height: 74.0,
                                         decoration: BoxDecoration(
-                                          color: Color(0xFFF1F1F1),
-                                          borderRadius: BorderRadius.only(
+                                          color: const Color(0xFFF1F1F1),
+                                          borderRadius: const BorderRadius.only(
                                             bottomLeft: Radius.circular(6.0),
                                             bottomRight: Radius.circular(6.0),
                                             topLeft: Radius.circular(6.0),
@@ -579,13 +586,12 @@ class _EditReproducaoRebanhoWidgetState
                                                     'Monta Natural'
                                                 ? FlutterFlowTheme.of(context)
                                                     .secondary
-                                                : Color(0x00000000),
+                                                : const Color(0x00000000),
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
@@ -617,36 +623,38 @@ class _EditReproducaoRebanhoWidgetState
                                                 ),
                                               Text(
                                                 'Monta natural',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 20.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFF474747),
+                                                          fontSize: 20.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                               ),
-                                            ].divide(SizedBox(width: 10.0)),
+                                            ].divide(
+                                                const SizedBox(width: 10.0)),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Container(
                                 width: double.infinity,
@@ -659,7 +667,7 @@ class _EditReproducaoRebanhoWidgetState
                                   children: [
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Score corporal',
                                         style: FlutterFlowTheme.of(context)
@@ -668,7 +676,7 @@ class _EditReproducaoRebanhoWidgetState
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF474747),
+                                              color: const Color(0xFF474747),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -682,20 +690,20 @@ class _EditReproducaoRebanhoWidgetState
                                       width: double.infinity,
                                       height: 60.0,
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFF1F1F1),
-                                        borderRadius: BorderRadius.only(
+                                        color: const Color(0xFFF1F1F1),
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(6.0),
                                           bottomRight: Radius.circular(6.0),
                                           topLeft: Radius.circular(6.0),
                                           topRight: Radius.circular(6.0),
                                         ),
                                         border: Border.all(
-                                          color: Color(0x001E7A4C),
+                                          color: const Color(0x001E7A4C),
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            8.0, 0.0, 8.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
@@ -703,7 +711,7 @@ class _EditReproducaoRebanhoWidgetState
                                           children: [
                                             Container(
                                               width: 48.0,
-                                              decoration: BoxDecoration(),
+                                              decoration: const BoxDecoration(),
                                               child: Visibility(
                                                 visible: _model.score > 0.5,
                                                 child: InkWell(
@@ -734,7 +742,7 @@ class _EditReproducaoRebanhoWidgetState
                                                     ),
                                                     child: Align(
                                                       alignment:
-                                                          AlignmentDirectional(
+                                                          const AlignmentDirectional(
                                                               0.0, 0.0),
                                                       child: FaIcon(
                                                         FontAwesomeIcons.minus,
@@ -771,7 +779,7 @@ class _EditReproducaoRebanhoWidgetState
                                             ),
                                             Container(
                                               width: 48.0,
-                                              decoration: BoxDecoration(),
+                                              decoration: const BoxDecoration(),
                                               child: Visibility(
                                                 visible: _model.score < 5.0,
                                                 child: InkWell(
@@ -812,11 +820,11 @@ class _EditReproducaoRebanhoWidgetState
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(width: 10.0)),
+                                          ].divide(const SizedBox(width: 10.0)),
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             ),
@@ -827,14 +835,14 @@ class _EditReproducaoRebanhoWidgetState
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Reprodutor*',
                                         style: FlutterFlowTheme.of(context)
@@ -843,7 +851,7 @@ class _EditReproducaoRebanhoWidgetState
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF474747),
+                                              color: const Color(0xFF474747),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -865,18 +873,20 @@ class _EditReproducaoRebanhoWidgetState
                                             context: context,
                                             isGlobal: false,
                                             avoidOverflow: true,
-                                            targetAnchor: AlignmentDirectional(
-                                                    0.0, 1.0)
-                                                .resolve(
-                                                    Directionality.of(context)),
+                                            targetAnchor:
+                                                const AlignmentDirectional(
+                                                        0.0, 1.0)
+                                                    .resolve(Directionality.of(
+                                                        context)),
                                             followerAnchor:
-                                                AlignmentDirectional(0.0, -1.0)
+                                                const AlignmentDirectional(
+                                                        0.0, -1.0)
                                                     .resolve(Directionality.of(
                                                         context)),
                                             builder: (dialogContext) {
                                               return Material(
                                                 color: Colors.transparent,
-                                                child: Container(
+                                                child: SizedBox(
                                                   height: 450.0,
                                                   width: double.infinity,
                                                   child: PopupRebanhosWidget(
@@ -900,9 +910,8 @@ class _EditReproducaoRebanhoWidgetState
                                                 BorderRadius.circular(8.0),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 0.0, 16.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 16.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -950,7 +959,7 @@ class _EditReproducaoRebanhoWidgetState
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             ),
@@ -962,14 +971,14 @@ class _EditReproducaoRebanhoWidgetState
                                       .secondaryBackground,
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 0.0, 24.0, 0.0),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Align(
-                                        alignment:
-                                            AlignmentDirectional(-1.0, 0.0),
+                                        alignment: const AlignmentDirectional(
+                                            -1.0, 0.0),
                                         child: Text(
                                           'Data da inseminação*',
                                           style: FlutterFlowTheme.of(context)
@@ -978,7 +987,7 @@ class _EditReproducaoRebanhoWidgetState
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -995,7 +1004,7 @@ class _EditReproducaoRebanhoWidgetState
                                         hoverColor: Colors.transparent,
                                         highlightColor: Colors.transparent,
                                         onTap: () async {
-                                          final _datePicked1Date =
+                                          final datePicked1Date =
                                               await showDatePicker(
                                             context: context,
                                             initialDate: getCurrentTimestamp,
@@ -1048,12 +1057,12 @@ class _EditReproducaoRebanhoWidgetState
                                             },
                                           );
 
-                                          if (_datePicked1Date != null) {
+                                          if (datePicked1Date != null) {
                                             safeSetState(() {
                                               _model.datePicked1 = DateTime(
-                                                _datePicked1Date.year,
-                                                _datePicked1Date.month,
-                                                _datePicked1Date.day,
+                                                datePicked1Date.year,
+                                                datePicked1Date.month,
+                                                datePicked1Date.day,
                                               );
                                             });
                                           } else if (_model.datePicked1 !=
@@ -1068,21 +1077,21 @@ class _EditReproducaoRebanhoWidgetState
                                           width: double.infinity,
                                           height: 56.0,
                                           decoration: BoxDecoration(
-                                            color: Color(0xFFF1F1F1),
-                                            borderRadius: BorderRadius.only(
+                                            color: const Color(0xFFF1F1F1),
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
                                               bottomRight: Radius.circular(6.0),
                                               topLeft: Radius.circular(6.0),
                                               topRight: Radius.circular(6.0),
                                             ),
                                             border: Border.all(
-                                              color: Color(0x001E7A4C),
+                                              color: const Color(0x001E7A4C),
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    8.0, 0.0, 8.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -1128,9 +1137,10 @@ class _EditReproducaoRebanhoWidgetState
                                                                   ? FlutterFlowTheme.of(
                                                                           context)
                                                                       .secondaryText
-                                                                  : Color(
+                                                                  : const Color(
                                                                       0xFFBEBEBE),
-                                                              Color(0xFFBEBEBE),
+                                                              const Color(
+                                                                  0xFFBEBEBE),
                                                             ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -1142,7 +1152,7 @@ class _EditReproducaoRebanhoWidgetState
                                                                     .bodyMediumIsCustom,
                                                           ),
                                                 ),
-                                                Icon(
+                                                const Icon(
                                                   Icons.calendar_month_rounded,
                                                   color: Color(0xFF181818),
                                                   size: 24.0,
@@ -1152,18 +1162,19 @@ class _EditReproducaoRebanhoWidgetState
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(height: 8.0)),
+                                    ].divide(const SizedBox(height: 8.0)),
                                   ),
                                 ),
                               ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Align(
-                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    alignment:
+                                        const AlignmentDirectional(-1.0, 0.0),
                                     child: Text(
                                       'Ressinc',
                                       style: FlutterFlowTheme.of(context)
@@ -1172,7 +1183,7 @@ class _EditReproducaoRebanhoWidgetState
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF474747),
+                                            color: const Color(0xFF474747),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1197,7 +1208,7 @@ class _EditReproducaoRebanhoWidgetState
                                                     containerBuscarReproducaoRowList
                                                         .firstOrNull?.ressinc),
                                           ),
-                                          options: [
+                                          options: const [
                                             'Tradicional',
                                             'Precoce',
                                             'Superprecoce'
@@ -1238,9 +1249,8 @@ class _EditReproducaoRebanhoWidgetState
                                           borderColor: Colors.transparent,
                                           borderWidth: 0.0,
                                           borderRadius: 8.0,
-                                          margin:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  12.0, 0.0, 12.0, 0.0),
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(12.0, 0.0, 12.0, 0.0),
                                           hidesUnderline: true,
                                           isOverButton: false,
                                           isSearchable: false,
@@ -1271,19 +1281,20 @@ class _EditReproducaoRebanhoWidgetState
                                             });
                                           },
                                         ),
-                                    ].divide(SizedBox(width: 8.0)),
+                                    ].divide(const SizedBox(width: 8.0)),
                                   ),
-                                ].divide(SizedBox(height: 8.0)),
+                                ].divide(const SizedBox(height: 8.0)),
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Align(
-                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    alignment:
+                                        const AlignmentDirectional(-1.0, 0.0),
                                     child: Text(
                                       'GnRH',
                                       style: FlutterFlowTheme.of(context)
@@ -1292,7 +1303,7 @@ class _EditReproducaoRebanhoWidgetState
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF474747),
+                                            color: const Color(0xFF474747),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1311,7 +1322,7 @@ class _EditReproducaoRebanhoWidgetState
                                               containerBuscarReproducaoRowList
                                                   .firstOrNull?.gnrh),
                                     ),
-                                    options: ['Sim', 'Não'],
+                                    options: const ['Sim', 'Não'],
                                     onChanged: (val) => safeSetState(
                                         () => _model.dropdownGnrhValue = val),
                                     width: double.infinity,
@@ -1344,24 +1355,26 @@ class _EditReproducaoRebanhoWidgetState
                                     borderColor: Colors.transparent,
                                     borderWidth: 0.0,
                                     borderRadius: 8.0,
-                                    margin: EdgeInsetsDirectional.fromSTEB(
-                                        12.0, 0.0, 12.0, 0.0),
+                                    margin:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            12.0, 0.0, 12.0, 0.0),
                                     hidesUnderline: true,
                                     isOverButton: false,
                                     isSearchable: false,
                                     isMultiSelect: false,
                                   ),
-                                ].divide(SizedBox(height: 8.0)),
+                                ].divide(const SizedBox(height: 8.0)),
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Align(
-                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    alignment:
+                                        const AlignmentDirectional(-1.0, 0.0),
                                     child: Text(
                                       'Cio',
                                       style: FlutterFlowTheme.of(context)
@@ -1370,7 +1383,7 @@ class _EditReproducaoRebanhoWidgetState
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF474747),
+                                            color: const Color(0xFF474747),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1389,7 +1402,7 @@ class _EditReproducaoRebanhoWidgetState
                                               containerBuscarReproducaoRowList
                                                   .firstOrNull?.cio),
                                     ),
-                                    options: ['Sim', 'Não'],
+                                    options: const ['Sim', 'Não'],
                                     onChanged: (val) => safeSetState(
                                         () => _model.dropdownCioValue = val),
                                     width: double.infinity,
@@ -1422,14 +1435,15 @@ class _EditReproducaoRebanhoWidgetState
                                     borderColor: Colors.transparent,
                                     borderWidth: 0.0,
                                     borderRadius: 8.0,
-                                    margin: EdgeInsetsDirectional.fromSTEB(
-                                        12.0, 0.0, 12.0, 0.0),
+                                    margin:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            12.0, 0.0, 12.0, 0.0),
                                     hidesUnderline: true,
                                     isOverButton: false,
                                     isSearchable: false,
                                     isMultiSelect: false,
                                   ),
-                                ].divide(SizedBox(height: 8.0)),
+                                ].divide(const SizedBox(height: 8.0)),
                               ),
                             ),
                             if (_model.tipoReproducao == 'Inseminação')
@@ -1440,14 +1454,14 @@ class _EditReproducaoRebanhoWidgetState
                                       .secondaryBackground,
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 0.0, 24.0, 0.0),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Align(
-                                        alignment:
-                                            AlignmentDirectional(-1.0, 0.0),
+                                        alignment: const AlignmentDirectional(
+                                            -1.0, 0.0),
                                         child: Text(
                                           'Data de partida do sêmen',
                                           style: FlutterFlowTheme.of(context)
@@ -1456,7 +1470,7 @@ class _EditReproducaoRebanhoWidgetState
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1473,7 +1487,7 @@ class _EditReproducaoRebanhoWidgetState
                                         hoverColor: Colors.transparent,
                                         highlightColor: Colors.transparent,
                                         onTap: () async {
-                                          final _datePicked2Date =
+                                          final datePicked2Date =
                                               await showDatePicker(
                                             context: context,
                                             initialDate: getCurrentTimestamp,
@@ -1526,12 +1540,12 @@ class _EditReproducaoRebanhoWidgetState
                                             },
                                           );
 
-                                          if (_datePicked2Date != null) {
+                                          if (datePicked2Date != null) {
                                             safeSetState(() {
                                               _model.datePicked2 = DateTime(
-                                                _datePicked2Date.year,
-                                                _datePicked2Date.month,
-                                                _datePicked2Date.day,
+                                                datePicked2Date.year,
+                                                datePicked2Date.month,
+                                                datePicked2Date.day,
                                               );
                                             });
                                           } else if (_model.datePicked2 !=
@@ -1546,21 +1560,21 @@ class _EditReproducaoRebanhoWidgetState
                                           width: double.infinity,
                                           height: 56.0,
                                           decoration: BoxDecoration(
-                                            color: Color(0xFFF1F1F1),
-                                            borderRadius: BorderRadius.only(
+                                            color: const Color(0xFFF1F1F1),
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
                                               bottomRight: Radius.circular(6.0),
                                               topLeft: Radius.circular(6.0),
                                               topRight: Radius.circular(6.0),
                                             ),
                                             border: Border.all(
-                                              color: Color(0x001E7A4C),
+                                              color: const Color(0x001E7A4C),
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    8.0, 0.0, 8.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -1608,9 +1622,10 @@ class _EditReproducaoRebanhoWidgetState
                                                                   ? FlutterFlowTheme.of(
                                                                           context)
                                                                       .secondaryText
-                                                                  : Color(
+                                                                  : const Color(
                                                                       0xFFBEBEBE),
-                                                              Color(0xFFBEBEBE),
+                                                              const Color(
+                                                                  0xFFBEBEBE),
                                                             ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -1622,7 +1637,7 @@ class _EditReproducaoRebanhoWidgetState
                                                                     .bodyMediumIsCustom,
                                                           ),
                                                 ),
-                                                Icon(
+                                                const Icon(
                                                   Icons.calendar_month_rounded,
                                                   color: Color(0xFF181818),
                                                   size: 24.0,
@@ -1632,13 +1647,13 @@ class _EditReproducaoRebanhoWidgetState
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(height: 8.0)),
+                                    ].divide(const SizedBox(height: 8.0)),
                                   ),
                                 ),
                               ),
                             if (_model.tipoReproducao == 'Inseminação')
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Container(
                                   width: double.infinity,
@@ -1650,8 +1665,8 @@ class _EditReproducaoRebanhoWidgetState
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Align(
-                                        alignment:
-                                            AlignmentDirectional(-1.0, 0.0),
+                                        alignment: const AlignmentDirectional(
+                                            -1.0, 0.0),
                                         child: Text(
                                           'Partida do sêmen',
                                           style: FlutterFlowTheme.of(context)
@@ -1660,7 +1675,7 @@ class _EditReproducaoRebanhoWidgetState
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1675,21 +1690,20 @@ class _EditReproducaoRebanhoWidgetState
                                         width: double.infinity,
                                         height: 60.0,
                                         decoration: BoxDecoration(
-                                          color: Color(0xFFF1F1F1),
-                                          borderRadius: BorderRadius.only(
+                                          color: const Color(0xFFF1F1F1),
+                                          borderRadius: const BorderRadius.only(
                                             bottomLeft: Radius.circular(6.0),
                                             bottomRight: Radius.circular(6.0),
                                             topLeft: Radius.circular(6.0),
                                             topRight: Radius.circular(6.0),
                                           ),
                                           border: Border.all(
-                                            color: Color(0x001E7A4C),
+                                            color: const Color(0x001E7A4C),
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  8.0, 0.0, 8.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
@@ -1697,7 +1711,8 @@ class _EditReproducaoRebanhoWidgetState
                                             children: [
                                               Container(
                                                 width: 48.0,
-                                                decoration: BoxDecoration(),
+                                                decoration:
+                                                    const BoxDecoration(),
                                                 child: Visibility(
                                                   visible:
                                                       _model.partidaSemen > 1,
@@ -1731,7 +1746,7 @@ class _EditReproducaoRebanhoWidgetState
                                                       ),
                                                       child: Align(
                                                         alignment:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                 0.0, 0.0),
                                                         child: FaIcon(
                                                           FontAwesomeIcons
@@ -1772,7 +1787,8 @@ class _EditReproducaoRebanhoWidgetState
                                               ),
                                               Container(
                                                 width: 48.0,
-                                                decoration: BoxDecoration(),
+                                                decoration:
+                                                    const BoxDecoration(),
                                                 child: Visibility(
                                                   visible:
                                                       _model.partidaSemen < 5,
@@ -1816,11 +1832,12 @@ class _EditReproducaoRebanhoWidgetState
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(width: 10.0)),
+                                            ].divide(
+                                                const SizedBox(width: 10.0)),
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(height: 8.0)),
+                                    ].divide(const SizedBox(height: 8.0)),
                                   ),
                                 ),
                               ),
@@ -1855,14 +1872,14 @@ class _EditReproducaoRebanhoWidgetState
                                       .secondaryBackground,
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 0.0, 24.0, 0.0),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Align(
-                                        alignment:
-                                            AlignmentDirectional(-1.0, 0.0),
+                                        alignment: const AlignmentDirectional(
+                                            -1.0, 0.0),
                                         child: Text(
                                           'Data inicial*',
                                           style: FlutterFlowTheme.of(context)
@@ -1871,7 +1888,7 @@ class _EditReproducaoRebanhoWidgetState
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1888,7 +1905,7 @@ class _EditReproducaoRebanhoWidgetState
                                         hoverColor: Colors.transparent,
                                         highlightColor: Colors.transparent,
                                         onTap: () async {
-                                          final _datePicked3Date =
+                                          final datePicked3Date =
                                               await showDatePicker(
                                             context: context,
                                             initialDate: getCurrentTimestamp,
@@ -1941,12 +1958,12 @@ class _EditReproducaoRebanhoWidgetState
                                             },
                                           );
 
-                                          if (_datePicked3Date != null) {
+                                          if (datePicked3Date != null) {
                                             safeSetState(() {
                                               _model.datePicked3 = DateTime(
-                                                _datePicked3Date.year,
-                                                _datePicked3Date.month,
-                                                _datePicked3Date.day,
+                                                datePicked3Date.year,
+                                                datePicked3Date.month,
+                                                datePicked3Date.day,
                                               );
                                             });
                                           } else if (_model.datePicked3 !=
@@ -1961,21 +1978,21 @@ class _EditReproducaoRebanhoWidgetState
                                           width: double.infinity,
                                           height: 56.0,
                                           decoration: BoxDecoration(
-                                            color: Color(0xFFF1F1F1),
-                                            borderRadius: BorderRadius.only(
+                                            color: const Color(0xFFF1F1F1),
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
                                               bottomRight: Radius.circular(6.0),
                                               topLeft: Radius.circular(6.0),
                                               topRight: Radius.circular(6.0),
                                             ),
                                             border: Border.all(
-                                              color: Color(0x001E7A4C),
+                                              color: const Color(0x001E7A4C),
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    8.0, 0.0, 8.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -2023,9 +2040,10 @@ class _EditReproducaoRebanhoWidgetState
                                                                   ? FlutterFlowTheme.of(
                                                                           context)
                                                                       .secondaryText
-                                                                  : Color(
+                                                                  : const Color(
                                                                       0xFFBEBEBE),
-                                                              Color(0xFFBEBEBE),
+                                                              const Color(
+                                                                  0xFFBEBEBE),
                                                             ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -2037,7 +2055,7 @@ class _EditReproducaoRebanhoWidgetState
                                                                     .bodyMediumIsCustom,
                                                           ),
                                                 ),
-                                                Icon(
+                                                const Icon(
                                                   Icons.calendar_month_rounded,
                                                   color: Color(0xFF181818),
                                                   size: 24.0,
@@ -2047,7 +2065,7 @@ class _EditReproducaoRebanhoWidgetState
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(height: 8.0)),
+                                    ].divide(const SizedBox(height: 8.0)),
                                   ),
                                 ),
                               ),
@@ -2059,14 +2077,14 @@ class _EditReproducaoRebanhoWidgetState
                                       .secondaryBackground,
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 0.0, 24.0, 0.0),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Align(
-                                        alignment:
-                                            AlignmentDirectional(-1.0, 0.0),
+                                        alignment: const AlignmentDirectional(
+                                            -1.0, 0.0),
                                         child: Text(
                                           'Data final*',
                                           style: FlutterFlowTheme.of(context)
@@ -2075,7 +2093,7 @@ class _EditReproducaoRebanhoWidgetState
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -2092,7 +2110,7 @@ class _EditReproducaoRebanhoWidgetState
                                         hoverColor: Colors.transparent,
                                         highlightColor: Colors.transparent,
                                         onTap: () async {
-                                          final _datePicked4Date =
+                                          final datePicked4Date =
                                               await showDatePicker(
                                             context: context,
                                             initialDate: getCurrentTimestamp,
@@ -2145,12 +2163,12 @@ class _EditReproducaoRebanhoWidgetState
                                             },
                                           );
 
-                                          if (_datePicked4Date != null) {
+                                          if (datePicked4Date != null) {
                                             safeSetState(() {
                                               _model.datePicked4 = DateTime(
-                                                _datePicked4Date.year,
-                                                _datePicked4Date.month,
-                                                _datePicked4Date.day,
+                                                datePicked4Date.year,
+                                                datePicked4Date.month,
+                                                datePicked4Date.day,
                                               );
                                             });
                                           } else if (_model.datePicked4 !=
@@ -2165,21 +2183,21 @@ class _EditReproducaoRebanhoWidgetState
                                           width: double.infinity,
                                           height: 56.0,
                                           decoration: BoxDecoration(
-                                            color: Color(0xFFF1F1F1),
-                                            borderRadius: BorderRadius.only(
+                                            color: const Color(0xFFF1F1F1),
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
                                               bottomRight: Radius.circular(6.0),
                                               topLeft: Radius.circular(6.0),
                                               topRight: Radius.circular(6.0),
                                             ),
                                             border: Border.all(
-                                              color: Color(0x001E7A4C),
+                                              color: const Color(0x001E7A4C),
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    8.0, 0.0, 8.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -2227,9 +2245,10 @@ class _EditReproducaoRebanhoWidgetState
                                                                   ? FlutterFlowTheme.of(
                                                                           context)
                                                                       .secondaryText
-                                                                  : Color(
+                                                                  : const Color(
                                                                       0xFFBEBEBE),
-                                                              Color(0xFFBEBEBE),
+                                                              const Color(
+                                                                  0xFFBEBEBE),
                                                             ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -2241,7 +2260,7 @@ class _EditReproducaoRebanhoWidgetState
                                                                     .bodyMediumIsCustom,
                                                           ),
                                                 ),
-                                                Icon(
+                                                const Icon(
                                                   Icons.calendar_month_rounded,
                                                   color: Color(0xFF181818),
                                                   size: 24.0,
@@ -2251,7 +2270,7 @@ class _EditReproducaoRebanhoWidgetState
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(height: 8.0)),
+                                    ].divide(const SizedBox(height: 8.0)),
                                   ),
                                 ),
                               ),
@@ -2290,14 +2309,16 @@ class _EditReproducaoRebanhoWidgetState
                                           .secondaryBackground,
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          24.0, 0.0, 24.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              24.0, 0.0, 24.0, 0.0),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
+                                                const AlignmentDirectional(
+                                                    -1.0, 0.0),
                                             child: Text(
                                               'Inseminador',
                                               style: FlutterFlowTheme.of(
@@ -2308,7 +2329,8 @@ class _EditReproducaoRebanhoWidgetState
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -2319,7 +2341,7 @@ class _EditReproducaoRebanhoWidgetState
                                                   ),
                                             ),
                                           ),
-                                          Container(
+                                          SizedBox(
                                             width: double.infinity,
                                             child: Autocomplete<String>(
                                               initialValue: TextEditingValue(
@@ -2373,7 +2395,7 @@ class _EditReproducaoRebanhoWidgetState
                                                                     .bodyMediumIsCustom,
                                                           ),
                                                   textHighlightStyle:
-                                                      TextStyle(),
+                                                      const TextStyle(),
                                                   elevation: 4.0,
                                                   optionBackgroundColor:
                                                       FlutterFlowTheme.of(
@@ -2452,7 +2474,8 @@ class _EditReproducaoRebanhoWidgetState
                                                             ),
                                                     enabledBorder:
                                                         OutlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00000000),
                                                         width: 1.0,
@@ -2463,7 +2486,8 @@ class _EditReproducaoRebanhoWidgetState
                                                     ),
                                                     focusedBorder:
                                                         OutlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00000000),
                                                         width: 1.0,
@@ -2537,7 +2561,7 @@ class _EditReproducaoRebanhoWidgetState
                                               },
                                             ),
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                     ),
                                   );
@@ -2551,7 +2575,7 @@ class _EditReproducaoRebanhoWidgetState
                               desktop: false,
                             ))
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -2585,7 +2609,7 @@ class _EditReproducaoRebanhoWidgetState
                                                 width: 2,
                                                 color:
                                                     FlutterFlowTheme.of(context)
-                                                        .alternate!,
+                                                        .alternate,
                                               )
                                             : null,
                                         activeColor:
@@ -2611,7 +2635,7 @@ class _EditReproducaoRebanhoWidgetState
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                  ].divide(SizedBox(width: 8.0)),
+                                  ].divide(const SizedBox(width: 8.0)),
                                 ),
                               ),
                             Container(
@@ -2621,7 +2645,7 @@ class _EditReproducaoRebanhoWidgetState
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
@@ -2633,28 +2657,30 @@ class _EditReproducaoRebanhoWidgetState
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
                                             Align(
-                                              alignment: AlignmentDirectional(
-                                                  -1.0, 0.0),
+                                              alignment:
+                                                  const AlignmentDirectional(
+                                                      -1.0, 0.0),
                                               child: Text(
                                                 'Diagnóstico*',
-                                                style: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFF474747),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFF474747),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                               ),
                                             ),
                                             FlutterFlowDropDown<String>(
@@ -2666,7 +2692,7 @@ class _EditReproducaoRebanhoWidgetState
                                                         .firstOrNull
                                                         ?.statusReproducao,
                                               ),
-                                              options: [
+                                              options: const [
                                                 'Não diagnosticado',
                                                 'Absorção',
                                                 'Aborto',
@@ -2714,15 +2740,16 @@ class _EditReproducaoRebanhoWidgetState
                                               borderColor: Colors.transparent,
                                               borderWidth: 0.0,
                                               borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              margin:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       12.0, 0.0, 12.0, 0.0),
                                               hidesUnderline: true,
                                               isOverButton: false,
                                               isSearchable: false,
                                               isMultiSelect: false,
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                         if (_model.dropdownStatusValue !=
                                                 null &&
@@ -2763,7 +2790,7 @@ class _EditReproducaoRebanhoWidgetState
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
-                                                  final _datePicked5Date =
+                                                  final datePicked5Date =
                                                       await showDatePicker(
                                                     context: context,
                                                     initialDate:
@@ -2827,14 +2854,13 @@ class _EditReproducaoRebanhoWidgetState
                                                     },
                                                   );
 
-                                                  if (_datePicked5Date !=
-                                                      null) {
+                                                  if (datePicked5Date != null) {
                                                     safeSetState(() {
                                                       _model.datePicked5 =
                                                           DateTime(
-                                                        _datePicked5Date.year,
-                                                        _datePicked5Date.month,
-                                                        _datePicked5Date.day,
+                                                        datePicked5Date.year,
+                                                        datePicked5Date.month,
+                                                        datePicked5Date.day,
                                                       );
                                                     });
                                                   } else if (_model
@@ -2850,9 +2876,10 @@ class _EditReproducaoRebanhoWidgetState
                                                   width: double.infinity,
                                                   height: 56.0,
                                                   decoration: BoxDecoration(
-                                                    color: Color(0xFFF1F1F1),
+                                                    color:
+                                                        const Color(0xFFF1F1F1),
                                                     borderRadius:
-                                                        BorderRadius.only(
+                                                        const BorderRadius.only(
                                                       bottomLeft:
                                                           Radius.circular(6.0),
                                                       bottomRight:
@@ -2863,14 +2890,15 @@ class _EditReproducaoRebanhoWidgetState
                                                           Radius.circular(6.0),
                                                     ),
                                                     border: Border.all(
-                                                      color: Color(0x001E7A4C),
+                                                      color: const Color(
+                                                          0x001E7A4C),
                                                     ),
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(8.0, 0.0,
-                                                                8.0, 0.0),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            8.0, 0.0, 8.0, 0.0),
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -2925,7 +2953,7 @@ class _EditReproducaoRebanhoWidgetState
                                                                         .bodyMediumIsCustom,
                                                               ),
                                                         ),
-                                                        Icon(
+                                                        const Icon(
                                                           Icons
                                                               .calendar_month_rounded,
                                                           color:
@@ -2937,47 +2965,36 @@ class _EditReproducaoRebanhoWidgetState
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
-                                      ].divide(SizedBox(height: 24.0)),
+                                      ].divide(const SizedBox(height: 24.0)),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             ),
                             if ((_model.tipoReproducao == 'Inseminação') &&
                                 ((_model.datePicked1 != null) ||
                                     (dateTimeFormat(
-                                              "d/M/y",
-                                              functions.converterParaData(_model
-                                                  .editReproducao
-                                                  ?.firstOrNull
-                                                  ?.dataInseminacao),
-                                              locale:
-                                                  FFLocalizations.of(context)
-                                                      .languageCode,
-                                            ) !=
-                                            null &&
-                                        dateTimeFormat(
-                                              "d/M/y",
-                                              functions.converterParaData(_model
-                                                  .editReproducao
-                                                  ?.firstOrNull
-                                                  ?.dataInseminacao),
-                                              locale:
-                                                  FFLocalizations.of(context)
-                                                      .languageCode,
-                                            ) !=
-                                            '')))
+                                          "d/M/y",
+                                          functions.converterParaData(_model
+                                              .editReproducao
+                                              ?.firstOrNull
+                                              ?.dataInseminacao),
+                                          locale: FFLocalizations.of(context)
+                                              .languageCode,
+                                        ) !=
+                                        '')))
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Previsão do parto',
                                         style: FlutterFlowTheme.of(context)
@@ -2986,7 +3003,7 @@ class _EditReproducaoRebanhoWidgetState
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF474747),
+                                              color: const Color(0xFF474747),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -3000,20 +3017,20 @@ class _EditReproducaoRebanhoWidgetState
                                       width: double.infinity,
                                       height: 56.0,
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFF1F1F1),
-                                        borderRadius: BorderRadius.only(
+                                        color: const Color(0xFFF1F1F1),
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(6.0),
                                           bottomRight: Radius.circular(6.0),
                                           topLeft: Radius.circular(6.0),
                                           topRight: Radius.circular(6.0),
                                         ),
                                         border: Border.all(
-                                          color: Color(0x001E7A4C),
+                                          color: const Color(0x001E7A4C),
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            8.0, 0.0, 8.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
@@ -3069,19 +3086,19 @@ class _EditReproducaoRebanhoWidgetState
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             if (_model.tipoReproducao == 'Monta Natural')
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Previsão do parto',
                                         style: FlutterFlowTheme.of(context)
@@ -3090,7 +3107,7 @@ class _EditReproducaoRebanhoWidgetState
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF474747),
+                                              color: const Color(0xFF474747),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -3106,7 +3123,7 @@ class _EditReproducaoRebanhoWidgetState
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
-                                        final _datePicked6Date =
+                                        final datePicked6Date =
                                             await showDatePicker(
                                           context: context,
                                           initialDate: getCurrentTimestamp,
@@ -3159,12 +3176,12 @@ class _EditReproducaoRebanhoWidgetState
                                           },
                                         );
 
-                                        if (_datePicked6Date != null) {
+                                        if (datePicked6Date != null) {
                                           safeSetState(() {
                                             _model.datePicked6 = DateTime(
-                                              _datePicked6Date.year,
-                                              _datePicked6Date.month,
-                                              _datePicked6Date.day,
+                                              datePicked6Date.year,
+                                              datePicked6Date.month,
+                                              datePicked6Date.day,
                                             );
                                           });
                                         } else if (_model.datePicked6 != null) {
@@ -3178,21 +3195,20 @@ class _EditReproducaoRebanhoWidgetState
                                         width: double.infinity,
                                         height: 56.0,
                                         decoration: BoxDecoration(
-                                          color: Color(0xFFF1F1F1),
-                                          borderRadius: BorderRadius.only(
+                                          color: const Color(0xFFF1F1F1),
+                                          borderRadius: const BorderRadius.only(
                                             bottomLeft: Radius.circular(6.0),
                                             bottomRight: Radius.circular(6.0),
                                             topLeft: Radius.circular(6.0),
                                             topRight: Radius.circular(6.0),
                                           ),
                                           border: Border.all(
-                                            color: Color(0x001E7A4C),
+                                            color: const Color(0x001E7A4C),
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  8.0, 0.0, 8.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
@@ -3231,7 +3247,7 @@ class _EditReproducaoRebanhoWidgetState
                                                               .bodyMediumIsCustom,
                                                     ),
                                               ),
-                                              Icon(
+                                              const Icon(
                                                 Icons.calendar_month_rounded,
                                                 color: Color(0xFF181818),
                                                 size: 24.0,
@@ -3241,11 +3257,11 @@ class _EditReproducaoRebanhoWidgetState
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -3278,7 +3294,7 @@ class _EditReproducaoRebanhoWidgetState
                                               width: 2,
                                               color:
                                                   FlutterFlowTheme.of(context)
-                                                      .accent4!,
+                                                      .accent4,
                                             )
                                           : null,
                                       activeColor:
@@ -3303,11 +3319,11 @@ class _EditReproducaoRebanhoWidgetState
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                                ].divide(SizedBox(width: 8.0)),
+                                ].divide(const SizedBox(width: 8.0)),
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -3337,7 +3353,7 @@ class _EditReproducaoRebanhoWidgetState
                                     hoverColor: Colors.transparent,
                                     highlightColor: Colors.transparent,
                                     onTap: () async {
-                                      final _datePicked7Date =
+                                      final datePicked7Date =
                                           await showDatePicker(
                                         context: context,
                                         initialDate: getCurrentTimestamp,
@@ -3389,12 +3405,12 @@ class _EditReproducaoRebanhoWidgetState
                                         },
                                       );
 
-                                      if (_datePicked7Date != null) {
+                                      if (datePicked7Date != null) {
                                         safeSetState(() {
                                           _model.datePicked7 = DateTime(
-                                            _datePicked7Date.year,
-                                            _datePicked7Date.month,
-                                            _datePicked7Date.day,
+                                            datePicked7Date.year,
+                                            datePicked7Date.month,
+                                            datePicked7Date.day,
                                           );
                                         });
                                       } else if (_model.datePicked7 != null) {
@@ -3408,20 +3424,20 @@ class _EditReproducaoRebanhoWidgetState
                                       width: double.infinity,
                                       height: 56.0,
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFF1F1F1),
-                                        borderRadius: BorderRadius.only(
+                                        color: const Color(0xFFF1F1F1),
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(6.0),
                                           bottomRight: Radius.circular(6.0),
                                           topLeft: Radius.circular(6.0),
                                           topRight: Radius.circular(6.0),
                                         ),
                                         border: Border.all(
-                                          color: Color(0x001E7A4C),
+                                          color: const Color(0x001E7A4C),
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            8.0, 0.0, 8.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
@@ -3473,7 +3489,7 @@ class _EditReproducaoRebanhoWidgetState
                                                             .bodyMediumIsCustom,
                                                   ),
                                             ),
-                                            Icon(
+                                            const Icon(
                                               Icons.calendar_month_rounded,
                                               color: Color(0xFF181818),
                                               size: 24.0,
@@ -3483,7 +3499,7 @@ class _EditReproducaoRebanhoWidgetState
                                       ),
                                     ),
                                   ),
-                                ].divide(SizedBox(height: 8.0)),
+                                ].divide(const SizedBox(height: 8.0)),
                               ),
                             ),
                             if ((functions.converterParaData(_model
@@ -3497,7 +3513,7 @@ class _EditReproducaoRebanhoWidgetState
                                         ?.dataParto) !=
                                     null))
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 0.0, 0.0),
                                 child: RichText(
                                   textScaler: MediaQuery.of(context).textScaler,
@@ -3550,7 +3566,7 @@ class _EditReproducaoRebanhoWidgetState
                                               : '-',
                                           '-',
                                         ),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 16.0,
                                         ),
                                       )
@@ -3578,14 +3594,14 @@ class _EditReproducaoRebanhoWidgetState
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Anotações',
                                         style: FlutterFlowTheme.of(context)
@@ -3594,7 +3610,7 @@ class _EditReproducaoRebanhoWidgetState
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF474747),
+                                              color: const Color(0xFF474747),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -3608,20 +3624,20 @@ class _EditReproducaoRebanhoWidgetState
                                       width: double.infinity,
                                       height: 104.0,
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFF1F1F1),
-                                        borderRadius: BorderRadius.only(
+                                        color: const Color(0xFFF1F1F1),
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(6.0),
                                           bottomRight: Radius.circular(6.0),
                                           topLeft: Radius.circular(6.0),
                                           topRight: Radius.circular(6.0),
                                         ),
                                         border: Border.all(
-                                          color: Color(0x001E7A4C),
+                                          color: const Color(0x001E7A4C),
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            8.0, 0.0, 8.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                         child: TextFormField(
                                           controller: _model
                                                   .textFieldAnotacoesTextController ??=
@@ -3664,7 +3680,7 @@ class _EditReproducaoRebanhoWidgetState
                                                               .labelMediumIsCustom,
                                                     ),
                                             enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00E0E3E7),
                                                 width: 2.0,
                                               ),
@@ -3672,7 +3688,7 @@ class _EditReproducaoRebanhoWidgetState
                                                   BorderRadius.circular(8.0),
                                             ),
                                             focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x0028A365),
                                                 width: 2.0,
                                               ),
@@ -3724,12 +3740,12 @@ class _EditReproducaoRebanhoWidgetState
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 24.0),
                               child: Container(
                                 width: double.infinity,
@@ -3739,7 +3755,7 @@ class _EditReproducaoRebanhoWidgetState
                                       .secondaryBackground,
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 0.0, 24.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -3754,33 +3770,33 @@ class _EditReproducaoRebanhoWidgetState
                                           options: FFButtonOptions(
                                             width: 156.0,
                                             height: 56.0,
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    24.0, 0.0, 24.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                             iconPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional
+                                                    .fromSTEB(
                                                     0.0, 0.0, 0.0, 0.0),
-                                            color: Color(0x004B39EF),
-                                            textStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .titleSmall
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .titleSmallFamily,
-                                                      color: Color(0xFF1E7A4C),
-                                                      fontSize: 18.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .titleSmallIsCustom,
-                                                    ),
+                                            color: const Color(0x004B39EF),
+                                            textStyle: FlutterFlowTheme.of(
+                                                    context)
+                                                .titleSmall
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .titleSmallFamily,
+                                                  color:
+                                                      const Color(0xFF1E7A4C),
+                                                  fontSize: 18.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .titleSmallIsCustom,
+                                                ),
                                             elevation: 0.0,
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0xFF1E7A4C),
                                               width: 2.0,
                                             ),
@@ -3889,7 +3905,7 @@ class _EditReproducaoRebanhoWidgetState
                                                     .textFieldAnotacoesTextController
                                                     .text,
                                                 idReproducao:
-                                                    widget!.idReproducao,
+                                                    widget.idReproducao,
                                                 deletado: 'NAO',
                                                 updatedAt: dateTimeFormat(
                                                   "yyyy-MM-dd HH:mm:ss",
@@ -3955,9 +3971,13 @@ class _EditReproducaoRebanhoWidgetState
                                                   _model.dropdownRessincValue,
                                                   '-',
                                                 ),
-                                                parida: (_model.checkboxParidaValue ?? _model.parida) == true
-                                                    ? 'Sim'
-                                                    : 'Não',
+                                                parida:
+                                                    (_model.checkboxParidaValue ??
+                                                                _model
+                                                                    .parida) ==
+                                                            true
+                                                        ? 'Sim'
+                                                        : 'Não',
                                                 dataParto: _model.datePicked7 !=
                                                         null
                                                     ? dateTimeFormat(
@@ -4055,7 +4075,7 @@ class _EditReproducaoRebanhoWidgetState
                                                     .textFieldAnotacoesTextController
                                                     .text,
                                                 idReproducao:
-                                                    widget!.idReproducao,
+                                                    widget.idReproducao,
                                                 deletado: 'NAO',
                                                 updatedAt: dateTimeFormat(
                                                   "yyyy-MM-dd HH:mm:ss",
@@ -4121,9 +4141,13 @@ class _EditReproducaoRebanhoWidgetState
                                                   _model.dropdownRessincValue,
                                                   '-',
                                                 ),
-                                                parida: (_model.checkboxParidaValue ?? _model.parida) == true
-                                                    ? 'Sim'
-                                                    : 'Não',
+                                                parida:
+                                                    (_model.checkboxParidaValue ??
+                                                                _model
+                                                                    .parida) ==
+                                                            true
+                                                        ? 'Sim'
+                                                        : 'Não',
                                                 dataParto: _model.datePicked7 !=
                                                         null
                                                     ? dateTimeFormat(
@@ -4172,7 +4196,7 @@ class _EditReproducaoRebanhoWidgetState
                                                         .secondaryBackground,
                                                   ),
                                                 ),
-                                                duration: Duration(
+                                                duration: const Duration(
                                                     milliseconds: 4000),
                                                 backgroundColor:
                                                     FlutterFlowTheme.of(context)
@@ -4185,13 +4209,13 @@ class _EditReproducaoRebanhoWidgetState
                                           text: 'Salvar',
                                           options: FFButtonOptions(
                                             height: 56.0,
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    24.0, 0.0, 24.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                             iconPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional
+                                                    .fromSTEB(
                                                     0.0, 0.0, 0.0, 0.0),
-                                            color: Color(0xFF28A365),
+                                            color: const Color(0xFF28A365),
                                             textStyle:
                                                 FlutterFlowTheme.of(context)
                                                     .titleSmall
@@ -4211,7 +4235,7 @@ class _EditReproducaoRebanhoWidgetState
                                                               .titleSmallIsCustom,
                                                     ),
                                             elevation: 0.0,
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Colors.transparent,
                                               width: 1.0,
                                             ),
@@ -4220,12 +4244,12 @@ class _EditReproducaoRebanhoWidgetState
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(width: 16.0)),
+                                    ].divide(const SizedBox(width: 16.0)),
                                   ),
                                 ),
                               ),
                             ),
-                          ].divide(SizedBox(height: 24.0)),
+                          ].divide(const SizedBox(height: 24.0)),
                         ),
                       ),
                     ),

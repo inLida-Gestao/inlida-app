@@ -16,7 +16,7 @@ import 'package:flutter/services.dart';
 
 class CurrencyInputBR2 extends StatefulWidget {
   const CurrencyInputBR2(
-      {Key? key,
+      {super.key,
       this.width,
       this.height,
       this.initialValue,
@@ -28,8 +28,7 @@ class CurrencyInputBR2 extends StatefulWidget {
       this.textColor,
       this.fontSize,
       this.borderRadius,
-      this.contentPadding})
-      : super(key: key);
+      this.contentPadding});
 
   final double? width;
   final double? height;
@@ -101,7 +100,7 @@ class _CurrencyInputBRState extends State<CurrencyInputBR2> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: widget.width,
       height: widget.height,
       child: TextField(
@@ -121,7 +120,7 @@ class _CurrencyInputBRState extends State<CurrencyInputBR2> {
           filled: widget.fillColor != null,
           fillColor: widget.fillColor,
           contentPadding: widget.contentPadding ??
-              EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(widget.borderRadius ?? 8),
             borderSide: BorderSide(
@@ -160,7 +159,7 @@ class _CurrencyInputFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     if (newValue.text.isEmpty) {
-      return TextEditingValue(
+      return const TextEditingValue(
         text: 'R\$ 0,00',
         selection: TextSelection.collapsed(offset: 8),
       );
@@ -170,7 +169,7 @@ class _CurrencyInputFormatter extends TextInputFormatter {
     String numbers = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
 
     if (numbers.isEmpty) {
-      return TextEditingValue(
+      return const TextEditingValue(
         text: 'R\$ 0,00',
         selection: TextSelection.collapsed(offset: 8),
       );

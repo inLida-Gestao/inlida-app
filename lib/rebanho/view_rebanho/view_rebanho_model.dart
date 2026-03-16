@@ -1,24 +1,9 @@
-import '/auth/supabase_auth/auth_util.dart';
-import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
-import '/components/empty_crias_widget.dart';
-import '/components/empty_pesagem_widget.dart';
-import '/components/empty_sanidade_widget.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
-import '/rebanho/add_pesagem/add_pesagem_widget.dart';
-import '/rebanho/edit_rebanho/edit_rebanho_widget.dart';
 import '/rebanho/reproducoes_view_rebanho/reproducoes_view_rebanho_widget.dart';
 import '/rebanho/view_rebanho/view_rebanho_widget.dart';
-import '/sanidade/edit_sanidade_animal/edit_sanidade_animal_widget.dart';
-import 'dart:ui';
-import '/flutter_flow/custom_functions.dart' as functions;
 import 'view_rebanho_widget.dart' show ViewRebanhoWidget;
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
 class ViewRebanhoModel extends FlutterFlowModel<ViewRebanhoWidget> {
   ///  Local state fields for this component.

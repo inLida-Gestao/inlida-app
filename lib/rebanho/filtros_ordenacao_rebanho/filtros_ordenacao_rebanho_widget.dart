@@ -46,11 +46,11 @@ class _FiltrosOrdenacaoRebanhoWidgetState
     context.watch<FFAppState>();
 
     return Align(
-      alignment: AlignmentDirectional(0.0, 1.0),
+      alignment: const AlignmentDirectional(0.0, 1.0),
       child: Material(
         color: Colors.transparent,
         elevation: 5.0,
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(0.0),
             bottomRight: Radius.circular(0.0),
@@ -60,7 +60,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
         ),
         child: Container(
           width: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(0.0),
@@ -74,7 +74,8 @@ class _FiltrosOrdenacaoRebanhoWidgetState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(25.0, 25.0, 25.0, 25.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    25.0, 25.0, 25.0, 25.0),
                 child: InkWell(
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,
@@ -114,7 +115,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                         .headlineSmall
                                         .fontStyle,
                                   ),
-                                  color: Color(0xFF2F2F2F),
+                                  color: const Color(0xFF2F2F2F),
                                   fontSize: 24.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.w500,
@@ -145,7 +146,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                       .headlineSmall
                                       .fontStyle,
                                 ),
-                                color: Color(0xFFBEBEBE),
+                                color: const Color(0xFFBEBEBE),
                                 fontSize: 14.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w600,
@@ -159,12 +160,13 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                   ),
                 ),
               ),
-              Divider(
+              const Divider(
                 thickness: 1.0,
                 color: Color(0xFFBEBEBE),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 24.0),
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 24.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,18 +206,16 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                         height: 40.0,
                         decoration: BoxDecoration(
                           color: valueOrDefault<Color>(
-                            FFAppState().ordenacaoRebanho == null ||
-                                    FFAppState().ordenacaoRebanho == ''
+                            FFAppState().ordenacaoRebanho == ''
                                 ? FlutterFlowTheme.of(context)
                                     .secondaryBackground
-                                : Color(0xFFD6F5E5),
+                                : const Color(0xFFD6F5E5),
                             FlutterFlowTheme.of(context).secondaryBackground,
                           ),
                           borderRadius: BorderRadius.circular(100.0),
                           border: Border.all(
                             color: valueOrDefault<Color>(
-                              FFAppState().ordenacaoRebanho == null ||
-                                      FFAppState().ordenacaoRebanho == ''
+                              FFAppState().ordenacaoRebanho == ''
                                   ? FlutterFlowTheme.of(context).accent3
                                   : FlutterFlowTheme.of(context).secondary,
                               FlutterFlowTheme.of(context).accent3,
@@ -223,7 +223,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -249,9 +249,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
                                       color: valueOrDefault<Color>(
-                                        FFAppState().ordenacaoRebanho == null ||
-                                                FFAppState().ordenacaoRebanho ==
-                                                    ''
+                                        FFAppState().ordenacaoRebanho == ''
                                             ? FlutterFlowTheme.of(context)
                                                 .accent3
                                             : FlutterFlowTheme.of(context)
@@ -279,7 +277,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                   color: FlutterFlowTheme.of(context).secondary,
                                   size: 24.0,
                                 ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                       ),
@@ -288,8 +286,8 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                       width: double.infinity,
                       height: 74.0,
                       decoration: BoxDecoration(
-                        color: Color(0xFFF1F1F1),
-                        borderRadius: BorderRadius.only(
+                        color: const Color(0xFFF1F1F1),
+                        borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(6.0),
                           bottomRight: Radius.circular(6.0),
                           topLeft: Radius.circular(6.0),
@@ -298,11 +296,11 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                         border: Border.all(
                           color: FFAppState().ordenacaoRebanhoTipo == 'numero'
                               ? FlutterFlowTheme.of(context).secondary
-                              : Color(0x00000000),
+                              : const Color(0x00000000),
                         ),
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
@@ -329,8 +327,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                               ),
                             if ((FFAppState().ordenacaoRebanhoTipo !=
                                     'numero') ||
-                                (FFAppState().ordenacaoRebanhoTipo == null ||
-                                    FFAppState().ordenacaoRebanhoTipo == ''))
+                                (FFAppState().ordenacaoRebanhoTipo == ''))
                               InkWell(
                                 splashColor: Colors.transparent,
                                 focusColor: Colors.transparent,
@@ -357,7 +354,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                   .override(
                                     fontFamily: FlutterFlowTheme.of(context)
                                         .bodyMediumFamily,
-                                    color: Color(0xFF474747),
+                                    color: const Color(0xFF474747),
                                     fontSize: 18.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
@@ -366,7 +363,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                             .bodyMediumIsCustom,
                                   ),
                             ),
-                          ].divide(SizedBox(width: 10.0)),
+                          ].divide(const SizedBox(width: 10.0)),
                         ),
                       ),
                     ),
@@ -374,8 +371,8 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                       width: double.infinity,
                       height: 74.0,
                       decoration: BoxDecoration(
-                        color: Color(0xFFF1F1F1),
-                        borderRadius: BorderRadius.only(
+                        color: const Color(0xFFF1F1F1),
+                        borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(6.0),
                           bottomRight: Radius.circular(6.0),
                           topLeft: Radius.circular(6.0),
@@ -384,11 +381,11 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                         border: Border.all(
                           color: FFAppState().ordenacaoRebanhoTipo == 'nome'
                               ? FlutterFlowTheme.of(context).secondary
-                              : Color(0x00000000),
+                              : const Color(0x00000000),
                         ),
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
@@ -414,8 +411,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                 ),
                               ),
                             if ((FFAppState().ordenacaoRebanhoTipo != 'nome') ||
-                                (FFAppState().ordenacaoRebanhoTipo == null ||
-                                    FFAppState().ordenacaoRebanhoTipo == ''))
+                                (FFAppState().ordenacaoRebanhoTipo == ''))
                               InkWell(
                                 splashColor: Colors.transparent,
                                 focusColor: Colors.transparent,
@@ -442,7 +438,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                   .override(
                                     fontFamily: FlutterFlowTheme.of(context)
                                         .bodyMediumFamily,
-                                    color: Color(0xFF474747),
+                                    color: const Color(0xFF474747),
                                     fontSize: 18.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
@@ -451,7 +447,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                             .bodyMediumIsCustom,
                                   ),
                             ),
-                          ].divide(SizedBox(width: 10.0)),
+                          ].divide(const SizedBox(width: 10.0)),
                         ),
                       ),
                     ),
@@ -459,8 +455,8 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                       width: double.infinity,
                       height: 74.0,
                       decoration: BoxDecoration(
-                        color: Color(0xFFF1F1F1),
-                        borderRadius: BorderRadius.only(
+                        color: const Color(0xFFF1F1F1),
+                        borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(6.0),
                           bottomRight: Radius.circular(6.0),
                           topLeft: Radius.circular(6.0),
@@ -470,11 +466,11 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                           color:
                               FFAppState().ordenacaoRebanhoTipo == 'nascimento'
                                   ? FlutterFlowTheme.of(context).secondary
-                                  : Color(0x00000000),
+                                  : const Color(0x00000000),
                         ),
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
@@ -502,8 +498,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                               ),
                             if ((FFAppState().ordenacaoRebanhoTipo !=
                                     'nascimento') ||
-                                (FFAppState().ordenacaoRebanhoTipo == null ||
-                                    FFAppState().ordenacaoRebanhoTipo == ''))
+                                (FFAppState().ordenacaoRebanhoTipo == ''))
                               InkWell(
                                 splashColor: Colors.transparent,
                                 focusColor: Colors.transparent,
@@ -531,7 +526,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                   .override(
                                     fontFamily: FlutterFlowTheme.of(context)
                                         .bodyMediumFamily,
-                                    color: Color(0xFF474747),
+                                    color: const Color(0xFF474747),
                                     fontSize: 18.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
@@ -540,19 +535,20 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                             .bodyMediumIsCustom,
                                   ),
                             ),
-                          ].divide(SizedBox(width: 10.0)),
+                          ].divide(const SizedBox(width: 10.0)),
                         ),
                       ),
                     ),
-                  ].divide(SizedBox(height: 16.0)),
+                  ].divide(const SizedBox(height: 16.0)),
                 ),
               ),
-              Divider(
+              const Divider(
                 thickness: 1.0,
                 color: Color(0xFFBEBEBE),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 16.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    24.0, 16.0, 24.0, 16.0),
                 child: FFButtonWidget(
                   onPressed: () async {
                     Navigator.pop(context);
@@ -561,11 +557,11 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                   options: FFButtonOptions(
                     width: double.infinity,
                     height: 47.0,
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                    iconPadding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                    color: Color(0xFF28A365),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 0.0, 24.0, 0.0),
+                    iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                        0.0, 0.0, 0.0, 0.0),
+                    color: const Color(0xFF28A365),
                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
                           fontFamily:
                               FlutterFlowTheme.of(context).titleSmallFamily,
@@ -575,7 +571,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                               !FlutterFlowTheme.of(context).titleSmallIsCustom,
                         ),
                     elevation: 0.0,
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Colors.transparent,
                       width: 0.0,
                     ),

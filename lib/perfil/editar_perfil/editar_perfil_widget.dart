@@ -64,7 +64,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
       future: UsersTable().querySingleRow(
         queryFn: (q) => q.eqOrNull(
           'userID',
-          widget!.user,
+          widget.user,
         ),
       ),
       builder: (context, snapshot) {
@@ -93,12 +93,13 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
             color: FlutterFlowTheme.of(context).secondaryBackground,
           ),
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                  padding:
+                      const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                   child: InkWell(
                     splashColor: Colors.transparent,
                     focusColor: Colors.transparent,
@@ -126,7 +127,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                               .override(
                                 fontFamily: FlutterFlowTheme.of(context)
                                     .bodyMediumFamily,
-                                color: Color(0xFF232908),
+                                color: const Color(0xFF232908),
                                 fontSize: 22.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w500,
@@ -134,12 +135,13 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                     .bodyMediumIsCustom,
                               ),
                         ),
-                      ].divide(SizedBox(width: 8.0)),
+                      ].divide(const SizedBox(width: 8.0)),
                     ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 51.0, 0.0, 0.0),
+                  padding:
+                      const EdgeInsetsDirectional.fromSTEB(0.0, 51.0, 0.0, 0.0),
                   child: Container(
                     width: double.infinity,
                     height: 60.0,
@@ -151,7 +153,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Align(
-                          alignment: AlignmentDirectional(-1.0, -1.0),
+                          alignment: const AlignmentDirectional(-1.0, -1.0),
                           child: Text(
                             'Propriedade',
                             style: FlutterFlowTheme.of(context)
@@ -163,7 +165,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                         .bodyMedium
                                         .fontStyle,
                                   ),
-                                  color: Color(0xFF8E8E8E),
+                                  color: const Color(0xFF8E8E8E),
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.w500,
@@ -174,7 +176,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                           ),
                         ),
                         Align(
-                          alignment: AlignmentDirectional(-1.0, -1.0),
+                          alignment: const AlignmentDirectional(-1.0, -1.0),
                           child: Text(
                             valueOrDefault<String>(
                               containerUsersRow?.nome,
@@ -206,10 +208,10 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Align(
-                      alignment: AlignmentDirectional(-1.0, -1.0),
+                      alignment: const AlignmentDirectional(-1.0, -1.0),
                       child: Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 24.0, 0.0, 0.0),
                         child: Text(
                           'Nome',
                           style:
@@ -220,7 +222,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                           .bodyMedium
                                           .fontStyle,
                                     ),
-                                    color: Color(0xFF474747),
+                                    color: const Color(0xFF474747),
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -251,7 +253,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                         .labelMedium
                                         .fontStyle,
                                   ),
-                                  color: Color(0xFFBEBEBE),
+                                  color: const Color(0xFFBEBEBE),
                                   letterSpacing: 0.0,
                                   fontWeight: FlutterFlowTheme.of(context)
                                       .labelMedium
@@ -268,7 +270,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                           borderRadius: BorderRadius.circular(4.0),
                         ),
                         focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFF28A365),
                             width: 0.0,
                           ),
@@ -289,7 +291,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                           borderRadius: BorderRadius.circular(4.0),
                         ),
                         filled: true,
-                        fillColor: Color(0xFFF1F1F1),
+                        fillColor: const Color(0xFFF1F1F1),
                       ),
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                             font: GoogleFonts.poppins(
@@ -298,7 +300,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                   .bodyMedium
                                   .fontStyle,
                             ),
-                            color: Color(0xFF474747),
+                            color: const Color(0xFF474747),
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.w600,
                             fontStyle: FlutterFlowTheme.of(context)
@@ -306,15 +308,15 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                 .fontStyle,
                           ),
                       keyboardType: TextInputType.name,
-                      cursorColor: Color(0xFF28A365),
+                      cursorColor: const Color(0xFF28A365),
                       validator:
                           _model.textController1Validator.asValidator(context),
                     ),
                     Align(
-                      alignment: AlignmentDirectional(-1.0, -1.0),
+                      alignment: const AlignmentDirectional(-1.0, -1.0),
                       child: Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 24.0, 0.0, 0.0),
                         child: Text(
                           'E-mail',
                           style:
@@ -325,7 +327,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                           .bodyMedium
                                           .fontStyle,
                                     ),
-                                    color: Color(0xFF474747),
+                                    color: const Color(0xFF474747),
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -358,7 +360,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                         .labelMedium
                                         .fontStyle,
                                   ),
-                                  color: Color(0xFFBEBEBE),
+                                  color: const Color(0xFFBEBEBE),
                                   letterSpacing: 0.0,
                                   fontWeight: FlutterFlowTheme.of(context)
                                       .labelMedium
@@ -375,7 +377,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                           borderRadius: BorderRadius.circular(4.0),
                         ),
                         focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             color: Color(0xFF28A365),
                             width: 0.0,
                           ),
@@ -396,7 +398,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                           borderRadius: BorderRadius.circular(4.0),
                         ),
                         filled: true,
-                        fillColor: Color(0xFFF1F1F1),
+                        fillColor: const Color(0xFFF1F1F1),
                       ),
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                             font: GoogleFonts.poppins(
@@ -405,7 +407,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                   .bodyMedium
                                   .fontStyle,
                             ),
-                            color: Color(0xFF474747),
+                            color: const Color(0xFF474747),
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.w600,
                             fontStyle: FlutterFlowTheme.of(context)
@@ -413,7 +415,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                 .fontStyle,
                           ),
                       keyboardType: TextInputType.name,
-                      cursorColor: Color(0xFF28A365),
+                      cursorColor: const Color(0xFF28A365),
                       validator:
                           _model.textController2Validator.asValidator(context),
                       inputFormatters: [
@@ -428,10 +430,10 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                       ],
                     ),
                     Align(
-                      alignment: AlignmentDirectional(-1.0, -1.0),
+                      alignment: const AlignmentDirectional(-1.0, -1.0),
                       child: Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 24.0, 0.0, 0.0),
                         child: Text(
                           'Função',
                           style:
@@ -442,7 +444,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                           .bodyMedium
                                           .fontStyle,
                                     ),
-                                    color: Color(0xFF474747),
+                                    color: const Color(0xFF474747),
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -458,7 +460,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                           FormFieldController<String>(
                         _model.dropDownValue ??= containerUsersRow?.funcao,
                       ),
-                      options: [
+                      options: const [
                         'Não Atuo na Atividade',
                         'Estudante',
                         'Colaborador Campo',
@@ -475,7 +477,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                           .override(
                             fontFamily:
                                 FlutterFlowTheme.of(context).bodyMediumFamily,
-                            color: Color(0xFF474747),
+                            color: const Color(0xFF474747),
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.w600,
                             useGoogleFonts: !FlutterFlowTheme.of(context)
@@ -487,23 +489,23 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                         color: FlutterFlowTheme.of(context).secondaryText,
                         size: 24.0,
                       ),
-                      fillColor: Color(0xFFF1F1F1),
+                      fillColor: const Color(0xFFF1F1F1),
                       elevation: 2.0,
-                      borderColor: Color(0xFFF1F1F1),
+                      borderColor: const Color(0xFFF1F1F1),
                       borderWidth: 0.0,
                       borderRadius: 8.0,
-                      margin:
-                          EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
+                      margin: const EdgeInsetsDirectional.fromSTEB(
+                          12.0, 0.0, 12.0, 0.0),
                       hidesUnderline: true,
                       isOverButton: false,
                       isSearchable: false,
                       isMultiSelect: false,
                     ),
                     Align(
-                      alignment: AlignmentDirectional(-1.0, -1.0),
+                      alignment: const AlignmentDirectional(-1.0, -1.0),
                       child: Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 24.0, 0.0, 0.0),
                         child: Text(
                           'Telefone',
                           style:
@@ -514,7 +516,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                           .bodyMedium
                                           .fontStyle,
                                     ),
-                                    color: Color(0xFF474747),
+                                    color: const Color(0xFF474747),
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
@@ -525,7 +527,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                         ),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: double.infinity,
                       child: TextFormField(
                         controller: _model.textController3 ??=
@@ -545,7 +547,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                           .labelMedium
                                           .fontStyle,
                                     ),
-                                    color: Color(0xFF474747),
+                                    color: const Color(0xFF474747),
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
                                     fontStyle: FlutterFlowTheme.of(context)
@@ -560,7 +562,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                             borderRadius: BorderRadius.circular(4.0),
                           ),
                           focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color(0xFF28A365),
                               width: 0.0,
                             ),
@@ -581,7 +583,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                             borderRadius: BorderRadius.circular(4.0),
                           ),
                           filled: true,
-                          fillColor: Color(0xFFF1F1F1),
+                          fillColor: const Color(0xFFF1F1F1),
                         ),
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               font: GoogleFonts.poppins(
@@ -590,7 +592,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                     .bodyMedium
                                     .fontStyle,
                               ),
-                              color: Color(0xFF474747),
+                              color: const Color(0xFF474747),
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
                               fontStyle: FlutterFlowTheme.of(context)
@@ -598,7 +600,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                   .fontStyle,
                             ),
                         keyboardType: TextInputType.phone,
-                        cursorColor: Color(0xFF28A365),
+                        cursorColor: const Color(0xFF28A365),
                         validator: _model.textController3Validator
                             .asValidator(context),
                         inputFormatters: [_model.textFieldMask3],
@@ -608,8 +610,8 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                 ),
                 Flexible(
                   child: Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        0.0, 24.0, 0.0, 0.0),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -622,17 +624,17 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                             text: 'Cancelar',
                             options: FFButtonOptions(
                               height: 56.0,
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
-                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                              iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
-                              color: Color(0x00FFFFFF),
+                              color: const Color(0x00FFFFFF),
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
                                     fontFamily: FlutterFlowTheme.of(context)
                                         .titleSmallFamily,
-                                    color: Color(0xFF1E7A4C),
+                                    color: const Color(0xFF1E7A4C),
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w600,
                                     useGoogleFonts:
@@ -640,7 +642,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                             .titleSmallIsCustom,
                                   ),
                               elevation: 0.0,
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Color(0xFF1E7A4C),
                                 width: 2.0,
                               ),
@@ -677,7 +679,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                           .secondaryBackground,
                                     ),
                                   ),
-                                  duration: Duration(milliseconds: 4000),
+                                  duration: const Duration(milliseconds: 4000),
                                   backgroundColor:
                                       FlutterFlowTheme.of(context).secondary,
                                 ),
@@ -687,11 +689,11 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                             text: 'Salvar',
                             options: FFButtonOptions(
                               height: 56.0,
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
-                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                              iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
-                              color: Color(0xFF28A365),
+                              color: const Color(0xFF28A365),
                               textStyle: FlutterFlowTheme.of(context)
                                   .titleSmall
                                   .override(
@@ -704,7 +706,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                                             .titleSmallIsCustom,
                                   ),
                               elevation: 0.0,
-                              borderSide: BorderSide(
+                              borderSide: const BorderSide(
                                 color: Colors.transparent,
                                 width: 1.0,
                               ),
@@ -712,7 +714,7 @@ class _EditarPerfilWidgetState extends State<EditarPerfilWidget> {
                             ),
                           ),
                         ),
-                      ].divide(SizedBox(width: 16.0)),
+                      ].divide(const SizedBox(width: 16.0)),
                     ),
                   ),
                 ),

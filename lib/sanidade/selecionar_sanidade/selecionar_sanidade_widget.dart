@@ -47,7 +47,7 @@ class _SelecionarSanidadeWidgetState extends State<SelecionarSanidadeWidget> {
     return Material(
       color: Colors.transparent,
       elevation: 5.0,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(0.0),
           bottomRight: Radius.circular(0.0),
@@ -58,7 +58,7 @@ class _SelecionarSanidadeWidgetState extends State<SelecionarSanidadeWidget> {
       child: Container(
         width: double.infinity,
         height: 500.0,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(0.0),
@@ -73,7 +73,8 @@ class _SelecionarSanidadeWidgetState extends State<SelecionarSanidadeWidget> {
             mainAxisSize: MainAxisSize.max,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 24.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    16.0, 16.0, 16.0, 24.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -103,7 +104,7 @@ class _SelecionarSanidadeWidgetState extends State<SelecionarSanidadeWidget> {
                                       .headlineSmall
                                       .fontStyle,
                                 ),
-                                color: Color(0xFF14181B),
+                                color: const Color(0xFF14181B),
                                 fontSize: 24.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w500,
@@ -122,7 +123,7 @@ class _SelecionarSanidadeWidgetState extends State<SelecionarSanidadeWidget> {
                   ],
                 ),
               ),
-              Divider(
+              const Divider(
                 thickness: 1.0,
                 color: Color(0xFFBEBEBE),
               ),
@@ -138,7 +139,7 @@ class _SelecionarSanidadeWidgetState extends State<SelecionarSanidadeWidget> {
                           List.generate(sanidadeOp.length, (sanidadeOpIndex) {
                         final sanidadeOpItem = sanidadeOp[sanidadeOpIndex];
                         return Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               16.0, 12.0, 16.0, 0.0),
                           child: Container(
                             width: double.infinity,
@@ -146,12 +147,12 @@ class _SelecionarSanidadeWidgetState extends State<SelecionarSanidadeWidget> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8.0),
                               border: Border.all(
-                                color: Color(0x00E0E3E7),
+                                color: const Color(0x00E0E3E7),
                                 width: 2.0,
                               ),
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   16.0, 12.0, 8.0, 12.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -269,8 +270,8 @@ class _SelecionarSanidadeWidgetState extends State<SelecionarSanidadeWidget> {
                                           color: FFAppState().sanidade.contains(
                                                       sanidadeOpItem) ==
                                                   true
-                                              ? Color(0xFF1E7A4C)
-                                              : Color(0xFF474747),
+                                              ? const Color(0xFF1E7A4C)
+                                              : const Color(0xFF474747),
                                           fontSize: 16.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.normal,
@@ -280,7 +281,7 @@ class _SelecionarSanidadeWidgetState extends State<SelecionarSanidadeWidget> {
                                                   .fontStyle,
                                         ),
                                   ),
-                                ].divide(SizedBox(width: 10.0)),
+                                ].divide(const SizedBox(width: 10.0)),
                               ),
                             ),
                           ),
@@ -290,12 +291,13 @@ class _SelecionarSanidadeWidgetState extends State<SelecionarSanidadeWidget> {
                   );
                 },
               ),
-              Divider(
+              const Divider(
                 thickness: 1.0,
                 color: Color(0xFFBEBEBE),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    24.0, 24.0, 24.0, 24.0),
                 child: FFButtonWidget(
                   onPressed: () async {
                     Navigator.pop(context);
@@ -304,11 +306,11 @@ class _SelecionarSanidadeWidgetState extends State<SelecionarSanidadeWidget> {
                   options: FFButtonOptions(
                     width: double.infinity,
                     height: 47.0,
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                    iconPadding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                    color: Color(0xFF28A365),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 0.0, 24.0, 0.0),
+                    iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                        0.0, 0.0, 0.0, 0.0),
+                    color: const Color(0xFF28A365),
                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
                           fontFamily:
                               FlutterFlowTheme.of(context).titleSmallFamily,
@@ -320,7 +322,7 @@ class _SelecionarSanidadeWidgetState extends State<SelecionarSanidadeWidget> {
                               !FlutterFlowTheme.of(context).titleSmallIsCustom,
                         ),
                     elevation: 0.0,
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Colors.transparent,
                       width: 0.0,
                     ),

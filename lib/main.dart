@@ -31,7 +31,7 @@ void main() async {
       builder: (context) {
         return MediaQuery(
           data: MediaQuery.maybeOf(context)?.copyWith(
-                textScaleFactor: 1.0,
+                textScaler: TextScaler.linear(1.0),
               ) ??
               const MediaQueryData(),
           child: ChangeNotifierProvider(
@@ -45,6 +45,8 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   State<MyApp> createState() => _MyAppState();
@@ -95,7 +97,7 @@ class _MyAppState extends State<MyApp> {
       });
     jwtTokenStream.listen((_) {});
     Future.delayed(
-      Duration(milliseconds: 2500),
+      const Duration(milliseconds: 2500),
       () => _appStateNotifier.stopShowingSplashImage(),
     );
   }
@@ -114,7 +116,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'inLida',
       scrollBehavior: MyAppScrollBehavior(),
-      localizationsDelegates: [
+      localizationsDelegates: const [
         FFLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

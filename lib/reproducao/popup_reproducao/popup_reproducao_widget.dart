@@ -49,7 +49,7 @@ class _PopupReproducaoWidgetState extends State<PopupReproducaoWidget> {
     return Material(
       color: Colors.transparent,
       elevation: 3.0,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(6.0),
           bottomRight: Radius.circular(6.0),
@@ -62,7 +62,7 @@ class _PopupReproducaoWidgetState extends State<PopupReproducaoWidget> {
         height: 148.0,
         decoration: BoxDecoration(
           color: FlutterFlowTheme.of(context).secondaryBackground,
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(6.0),
             bottomRight: Radius.circular(6.0),
             topLeft: Radius.circular(6.0),
@@ -70,7 +70,7 @@ class _PopupReproducaoWidgetState extends State<PopupReproducaoWidget> {
           ),
         ),
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -88,20 +88,18 @@ class _PopupReproducaoWidgetState extends State<PopupReproducaoWidget> {
                     highlightColor: Colors.transparent,
                     onTap: () async {
                       if (FFAppState().propriedadeSelecionada.idPropriedade ==
-                              null ||
-                          FFAppState().propriedadeSelecionada.idPropriedade ==
-                              '') {
+                          '') {
                         await showDialog(
                           context: context,
                           builder: (alertDialogContext) {
                             return AlertDialog(
-                              content:
-                                  Text('Selecione uma propriedade primeiro.'),
+                              content: const Text(
+                                  'Selecione uma propriedade primeiro.'),
                               actions: [
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.pop(alertDialogContext),
-                                  child: Text('Ok'),
+                                  child: const Text('Ok'),
                                 ),
                               ],
                             );
@@ -117,7 +115,7 @@ class _PopupReproducaoWidgetState extends State<PopupReproducaoWidget> {
                         FFAppState().rebanhoSelecionado = RebanhoStruct();
                         safeSetState(() {});
                         await showDialog(
-                          barrierColor: Color(0x00FFFFFF),
+                          barrierColor: const Color(0x00FFFFFF),
                           barrierDismissible: false,
                           context: context,
                           builder: (dialogContext) {
@@ -125,9 +123,9 @@ class _PopupReproducaoWidgetState extends State<PopupReproducaoWidget> {
                               elevation: 0,
                               insetPadding: EdgeInsets.zero,
                               backgroundColor: Colors.transparent,
-                              alignment: AlignmentDirectional(0.0, 0.0)
+                              alignment: const AlignmentDirectional(0.0, 0.0)
                                   .resolve(Directionality.of(context)),
-                              child: AddReproducaoRebanhoWidget(),
+                              child: const AddReproducaoRebanhoWidget(),
                             );
                           },
                         );
@@ -136,7 +134,7 @@ class _PopupReproducaoWidgetState extends State<PopupReproducaoWidget> {
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.add,
                           color: Color(0xFF2F2F2F),
                           size: 24.0,
@@ -155,7 +153,7 @@ class _PopupReproducaoWidgetState extends State<PopupReproducaoWidget> {
                                     .bodyMediumIsCustom,
                               ),
                         ),
-                      ].divide(SizedBox(width: 8.0)),
+                      ].divide(const SizedBox(width: 8.0)),
                     ),
                   ),
                 ),
@@ -174,20 +172,18 @@ class _PopupReproducaoWidgetState extends State<PopupReproducaoWidget> {
                     highlightColor: Colors.transparent,
                     onTap: () async {
                       if (FFAppState().propriedadeSelecionada.idPropriedade ==
-                              null ||
-                          FFAppState().propriedadeSelecionada.idPropriedade ==
-                              '') {
+                          '') {
                         await showDialog(
                           context: context,
                           builder: (alertDialogContext) {
                             return AlertDialog(
-                              content:
-                                  Text('Selecione uma propriedade primeiro.'),
+                              content: const Text(
+                                  'Selecione uma propriedade primeiro.'),
                               actions: [
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.pop(alertDialogContext),
-                                  child: Text('Ok'),
+                                  child: const Text('Ok'),
                                 ),
                               ],
                             );
@@ -203,7 +199,7 @@ class _PopupReproducaoWidgetState extends State<PopupReproducaoWidget> {
                         FFAppState().rebanhoSelecionado = RebanhoStruct();
                         safeSetState(() {});
                         await showDialog(
-                          barrierColor: Color(0x00FFFFFF),
+                          barrierColor: const Color(0x00FFFFFF),
                           barrierDismissible: false,
                           context: context,
                           builder: (dialogContext) {
@@ -211,9 +207,9 @@ class _PopupReproducaoWidgetState extends State<PopupReproducaoWidget> {
                               elevation: 0,
                               insetPadding: EdgeInsets.zero,
                               backgroundColor: Colors.transparent,
-                              alignment: AlignmentDirectional(0.0, 0.0)
+                              alignment: const AlignmentDirectional(0.0, 0.0)
                                   .resolve(Directionality.of(context)),
-                              child: AddReproducaoLoteWidget(),
+                              child: const AddReproducaoLoteWidget(),
                             );
                           },
                         );
@@ -222,7 +218,7 @@ class _PopupReproducaoWidgetState extends State<PopupReproducaoWidget> {
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.add,
                           color: Color(0xFF2F2F2F),
                           size: 24.0,
@@ -241,7 +237,7 @@ class _PopupReproducaoWidgetState extends State<PopupReproducaoWidget> {
                                     .bodyMediumIsCustom,
                               ),
                         ),
-                      ].divide(SizedBox(width: 8.0)),
+                      ].divide(const SizedBox(width: 8.0)),
                     ),
                   ),
                 ),

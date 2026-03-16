@@ -11,7 +11,7 @@ class ViewReproducaoDetalhadaTable
 }
 
 class ViewReproducaoDetalhadaRow extends SupabaseDataRow {
-  ViewReproducaoDetalhadaRow(Map<String, dynamic> data) : super(data);
+  ViewReproducaoDetalhadaRow(super.data);
 
   @override
   SupabaseTable get table => ViewReproducaoDetalhadaTable();

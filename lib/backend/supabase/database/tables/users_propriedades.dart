@@ -10,7 +10,7 @@ class UsersPropriedadesTable extends SupabaseTable<UsersPropriedadesRow> {
 }
 
 class UsersPropriedadesRow extends SupabaseDataRow {
-  UsersPropriedadesRow(Map<String, dynamic> data) : super(data);
+  UsersPropriedadesRow(super.data);
 
   @override
   SupabaseTable get table => UsersPropriedadesTable();

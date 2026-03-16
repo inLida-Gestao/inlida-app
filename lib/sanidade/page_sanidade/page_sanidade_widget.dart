@@ -69,27 +69,30 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
         color: FlutterFlowTheme.of(context).secondaryBackground,
       ),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
               child: wrapWithModel(
                 model: _model.selecionarPropriedadeModel,
                 updateCallback: () => safeSetState(() {}),
-                child: SelecionarPropriedadeWidget(),
+                child: const SelecionarPropriedadeWidget(),
               ),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: FlutterFlowTheme.of(context).secondaryBackground,
                 ),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      24.0, 0.0, 24.0, 0.0),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -99,7 +102,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                         Container(
                           width: 123.0,
                           height: 122.0,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Color(0xFFF8F8F8),
                             shape: BoxShape.rectangle,
                           ),
@@ -157,7 +160,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                         Container(
                           width: 123.0,
                           height: 122.0,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Color(0xFFF8F8F8),
                             shape: BoxShape.rectangle,
                           ),
@@ -216,7 +219,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                         Container(
                           width: 123.0,
                           height: 122.0,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Color(0xFFF8F8F8),
                             shape: BoxShape.rectangle,
                           ),
@@ -273,7 +276,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                         Container(
                           width: 123.0,
                           height: 122.0,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Color(0xFFF8F8F8),
                             shape: BoxShape.rectangle,
                           ),
@@ -329,22 +332,23 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                             ],
                           ),
                         ),
-                      ].divide(SizedBox(width: 8.0)),
+                      ].divide(const SizedBox(width: 8.0)),
                     ),
                   ),
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
-              child: Container(
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 0.0),
+              child: SizedBox(
                 width: double.infinity,
                 child: TextFormField(
                   controller: _model.pesquisarTextController,
                   focusNode: _model.pesquisarFocusNode,
                   onChanged: (_) => EasyDebounce.debounce(
                     '_model.pesquisarTextController',
-                    Duration(milliseconds: 2000),
+                    const Duration(milliseconds: 2000),
                     () => safeSetState(() {}),
                   ),
                   autofocus: false,
@@ -436,7 +440,8 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
               ),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 16.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 16.0),
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -462,7 +467,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                             builder: (context) {
                               return Padding(
                                 padding: MediaQuery.viewInsetsOf(context),
-                                child: FiltroSanidadesWidget(),
+                                child: const FiltroSanidadesWidget(),
                               );
                             },
                           ).then((value) => safeSetState(() {}));
@@ -474,11 +479,11 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                             borderRadius: BorderRadius.circular(24.0),
                             shape: BoxShape.rectangle,
                             border: Border.all(
-                              color: Color(0xFFBEBEBE),
+                              color: const Color(0xFFBEBEBE),
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 8.0, 16.0, 8.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -505,13 +510,12 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                              ].divide(SizedBox(width: 8.0)),
+                              ].divide(const SizedBox(width: 8.0)),
                             ),
                           ),
                         ),
                       ),
-                      if (FFAppState().filtroDataSanidadeTxt != null &&
-                          FFAppState().filtroDataSanidadeTxt != '')
+                      if (FFAppState().filtroDataSanidadeTxt != '')
                         Container(
                           decoration: BoxDecoration(
                             color: FlutterFlowTheme.of(context)
@@ -519,11 +523,11 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                             borderRadius: BorderRadius.circular(24.0),
                             shape: BoxShape.rectangle,
                             border: Border.all(
-                              color: Color(0xFFBEBEBE),
+                              color: const Color(0xFFBEBEBE),
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 8.0, 16.0, 8.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -541,7 +545,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                 .bodyMediumIsCustom,
                                       ),
                                 ),
-                              ].divide(SizedBox(width: 8.0)),
+                              ].divide(const SizedBox(width: 8.0)),
                             ),
                           ),
                         ),
@@ -562,11 +566,11 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                   borderRadius: BorderRadius.circular(24.0),
                                   shape: BoxShape.rectangle,
                                   border: Border.all(
-                                    color: Color(0xFFBEBEBE),
+                                    color: const Color(0xFFBEBEBE),
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 8.0, 16.0, 8.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -585,33 +589,33 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                       ),
-                                    ].divide(SizedBox(width: 8.0)),
+                                    ].divide(const SizedBox(width: 8.0)),
                                   ),
                                 ),
                               );
-                            }).divide(SizedBox(width: 8.0)),
+                            }).divide(const SizedBox(width: 8.0)),
                           );
                         },
                       ),
-                    ].divide(SizedBox(width: 8.0)),
+                    ].divide(const SizedBox(width: 8.0)),
                   ),
                 ),
               ),
             ),
-            Divider(
+            const Divider(
               thickness: 1.0,
               color: Color(0xFFEDEDED),
             ),
             Flexible(
               child: Container(
-                decoration: BoxDecoration(),
+                decoration: const BoxDecoration(),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Expanded(
                       child: Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 14.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 14.0, 0.0, 0.0),
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -620,8 +624,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                           ),
                           child: Builder(
                             builder: (context) {
-                              if (_model.pesquisarTextController.text != null &&
-                                  _model.pesquisarTextController.text != '') {
+                              if (_model.pesquisarTextController.text != '') {
                                 return FutureBuilder<
                                     List<BuscaSanidadesPesqRow>>(
                                   future:
@@ -668,7 +671,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                         snapshot.data!;
 
                                     return Container(
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: Builder(
                                         builder: (context) {
                                           final sanidades =
@@ -676,9 +679,10 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                   .toList();
                                           if (sanidades.isEmpty) {
                                             return Center(
-                                              child: Container(
+                                              child: SizedBox(
                                                 height: 200.0,
-                                                child: EmptySanidadeWidget(),
+                                                child:
+                                                    const EmptySanidadeWidget(),
                                               ),
                                             );
                                           }
@@ -722,7 +726,8 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                       snapshot.data!;
 
                                                   return Container(
-                                                    decoration: BoxDecoration(),
+                                                    decoration:
+                                                        const BoxDecoration(),
                                                     child: FutureBuilder<
                                                         List<BuscarRebanhoRow>>(
                                                       future: SQLiteManager
@@ -773,8 +778,9 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                 builder:
                                                                     (context) =>
                                                                         Padding(
-                                                                  padding: EdgeInsetsDirectional
-                                                                      .fromSTEB(
+                                                                  padding:
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
                                                                           24.0,
                                                                           24.0,
                                                                           24.0,
@@ -866,9 +872,9 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                             backgroundColor:
                                                                                 Colors.transparent,
                                                                             alignment:
-                                                                                AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                             child:
-                                                                                EditSanidadeAnimalWidget(),
+                                                                                const EditSanidadeAnimalWidget(),
                                                                           );
                                                                         },
                                                                       );
@@ -921,7 +927,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                     fit: BoxFit.scaleDown,
                                                                                   ),
                                                                                 ),
-                                                                            ].divide(SizedBox(width: 3.0)),
+                                                                            ].divide(const SizedBox(width: 3.0)),
                                                                           ),
                                                                         if (sanidadesItem.idRebanho !=
                                                                                 null &&
@@ -942,7 +948,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                         fontWeight: FontWeight.w600,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF474747),
+                                                                                      color: const Color(0xFF474747),
                                                                                       fontSize: 16.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.w600,
@@ -956,7 +962,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                         fontWeight: FontWeight.normal,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF5F5F5F),
+                                                                                      color: const Color(0xFF5F5F5F),
                                                                                       fontSize: 14.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.normal,
@@ -973,7 +979,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                         fontWeight: FontWeight.w600,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF474747),
+                                                                                      color: const Color(0xFF474747),
                                                                                       fontSize: 16.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.w600,
@@ -987,7 +993,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                         fontWeight: FontWeight.normal,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF5F5F5F),
+                                                                                      color: const Color(0xFF5F5F5F),
                                                                                       fontSize: 14.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.normal,
@@ -1008,14 +1014,14 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                         fontWeight: FontWeight.w600,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF474747),
+                                                                                      color: const Color(0xFF474747),
                                                                                       fontSize: 16.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.w600,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                     ),
                                                                               ),
-                                                                            ].divide(SizedBox(width: 3.0)),
+                                                                            ].divide(const SizedBox(width: 3.0)),
                                                                           ),
                                                                         if (sanidadesItem.idRebanho !=
                                                                                 null &&
@@ -1043,7 +1049,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               fontWeight: FontWeight.normal,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                             ),
-                                                                                            color: Color(0xFF5F5F5F),
+                                                                                            color: const Color(0xFF5F5F5F),
                                                                                             fontSize: 14.0,
                                                                                             letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.normal,
@@ -1058,7 +1064,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               fontWeight: FontWeight.normal,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                             ),
-                                                                                            color: Color(0xFF474747),
+                                                                                            color: const Color(0xFF474747),
                                                                                             fontSize: 16.0,
                                                                                             letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.normal,
@@ -1084,22 +1090,22 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               fontWeight: FontWeight.normal,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                             ),
-                                                                                            color: Color(0xFF5F5F5F),
+                                                                                            color: const Color(0xFF5F5F5F),
                                                                                             fontSize: 14.0,
                                                                                             letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.normal,
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                           ),
                                                                                     ),
-                                                                                  ].divide(SizedBox(width: 4.0)),
+                                                                                  ].divide(const SizedBox(width: 4.0)),
                                                                                 ),
                                                                               ),
-                                                                              Icon(
+                                                                              const Icon(
                                                                                 Icons.chevron_right,
                                                                                 color: Color(0xFF5F5F5F),
                                                                                 size: 24.0,
                                                                               ),
-                                                                            ].divide(SizedBox(width: 8.0)),
+                                                                            ].divide(const SizedBox(width: 8.0)),
                                                                           ),
                                                                         if (sanidadesItem.idRebanho !=
                                                                                 null &&
@@ -1129,14 +1135,14 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                         fontWeight: FontWeight.normal,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF5F5F5F),
+                                                                                      color: const Color(0xFF5F5F5F),
                                                                                       fontSize: 14.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.normal,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                     ),
                                                                               ),
-                                                                            ].divide(SizedBox(width: 3.0)),
+                                                                            ].divide(const SizedBox(width: 3.0)),
                                                                           ),
                                                                         if (sanidadesItem.idLote !=
                                                                                 null &&
@@ -1172,7 +1178,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               fontWeight: FontWeight.normal,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                             ),
-                                                                                            color: Color(0xFF5F5F5F),
+                                                                                            color: const Color(0xFF5F5F5F),
                                                                                             fontSize: 14.0,
                                                                                             letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.normal,
@@ -1182,12 +1188,12 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                   ],
                                                                                 ),
                                                                               ),
-                                                                              Icon(
+                                                                              const Icon(
                                                                                 Icons.chevron_right,
                                                                                 color: Color(0xFF5F5F5F),
                                                                                 size: 24.0,
                                                                               ),
-                                                                            ].divide(SizedBox(width: 3.0)),
+                                                                            ].divide(const SizedBox(width: 3.0)),
                                                                           ),
                                                                         if ((sanidadesItem.vacinacao !=
                                                                                 'null') &&
@@ -1208,7 +1214,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -1226,17 +1232,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                         children: List.generate(vacinas.length, (vacinasIndex) {
                                                                                           final vacinasItem = vacinas[vacinasIndex];
                                                                                           return Align(
-                                                                                            alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                             child: Container(
                                                                                               height: 23.0,
                                                                                               decoration: BoxDecoration(
-                                                                                                color: Color(0xFFB1CC29),
+                                                                                                color: const Color(0xFFB1CC29),
                                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                                               ),
                                                                                               child: Align(
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Padding(
-                                                                                                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                                   child: Text(
                                                                                                     vacinasItem,
                                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -1251,12 +1257,12 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               ),
                                                                                             ),
                                                                                           );
-                                                                                        }).divide(SizedBox(width: 8.0)),
+                                                                                        }).divide(const SizedBox(width: 8.0)),
                                                                                       ),
                                                                                     );
                                                                                   },
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
                                                                         if ((sanidadesItem.antiparasitario !=
@@ -1278,7 +1284,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -1296,17 +1302,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                         children: List.generate(antiparasitario.length, (antiparasitarioIndex) {
                                                                                           final antiparasitarioItem = antiparasitario[antiparasitarioIndex];
                                                                                           return Align(
-                                                                                            alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                             child: Container(
                                                                                               height: 23.0,
                                                                                               decoration: BoxDecoration(
-                                                                                                color: Color(0xFFB1CC29),
+                                                                                                color: const Color(0xFFB1CC29),
                                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                                               ),
                                                                                               child: Align(
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Padding(
-                                                                                                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                   child: Text(
                                                                                                     antiparasitarioItem,
                                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -1321,12 +1327,12 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               ),
                                                                                             ),
                                                                                           );
-                                                                                        }).divide(SizedBox(width: 8.0)),
+                                                                                        }).divide(const SizedBox(width: 8.0)),
                                                                                       ),
                                                                                     );
                                                                                   },
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
                                                                         if ((sanidadesItem.tratamento !=
@@ -1348,7 +1354,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -1366,17 +1372,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                         children: List.generate(tratamenteSanidade.length, (tratamenteSanidadeIndex) {
                                                                                           final tratamenteSanidadeItem = tratamenteSanidade[tratamenteSanidadeIndex];
                                                                                           return Align(
-                                                                                            alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                             child: Container(
                                                                                               height: 23.0,
                                                                                               decoration: BoxDecoration(
-                                                                                                color: Color(0xFFB1CC29),
+                                                                                                color: const Color(0xFFB1CC29),
                                                                                                 borderRadius: BorderRadius.circular(4.0),
                                                                                               ),
                                                                                               child: Align(
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Padding(
-                                                                                                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                   child: Text(
                                                                                                     tratamenteSanidadeItem,
                                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -1391,12 +1397,12 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               ),
                                                                                             ),
                                                                                           );
-                                                                                        }).divide(SizedBox(width: 8.0)),
+                                                                                        }).divide(const SizedBox(width: 8.0)),
                                                                                       ),
                                                                                     );
                                                                                   },
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
                                                                         if ((sanidadesItem.protocoloReprodutivo !=
@@ -1418,7 +1424,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -1431,17 +1437,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                     mainAxisSize: MainAxisSize.max,
                                                                                     children: [
                                                                                       Align(
-                                                                                        alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                        alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                         child: Container(
                                                                                           height: 23.0,
                                                                                           decoration: BoxDecoration(
-                                                                                            color: Color(0xFFB1CC29),
+                                                                                            color: const Color(0xFFB1CC29),
                                                                                             borderRadius: BorderRadius.circular(4.0),
                                                                                           ),
                                                                                           child: Align(
-                                                                                            alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                             child: Padding(
-                                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                               child: Text(
                                                                                                 valueOrDefault<String>(
                                                                                                   sanidadesItem.protocoloReprodutivo,
@@ -1459,10 +1465,10 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           ),
                                                                                         ),
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 8.0)),
+                                                                                    ].divide(const SizedBox(width: 8.0)),
                                                                                   ),
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
                                                                         if ((sanidadesItem.protocoloD0 !=
@@ -1484,7 +1490,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -1497,17 +1503,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                     mainAxisSize: MainAxisSize.max,
                                                                                     children: [
                                                                                       Align(
-                                                                                        alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                        alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                         child: Container(
                                                                                           height: 23.0,
                                                                                           decoration: BoxDecoration(
-                                                                                            color: Color(0xFFB1CC29),
+                                                                                            color: const Color(0xFFB1CC29),
                                                                                             borderRadius: BorderRadius.circular(4.0),
                                                                                           ),
                                                                                           child: Align(
-                                                                                            alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                             child: Padding(
-                                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                               child: Text(
                                                                                                 valueOrDefault<String>(
                                                                                                   sanidadesItem.protocoloD0,
@@ -1525,10 +1531,10 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           ),
                                                                                         ),
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 8.0)),
+                                                                                    ].divide(const SizedBox(width: 8.0)),
                                                                                   ),
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
                                                                         if ((sanidadesItem.protocoloRetirada !=
@@ -1550,7 +1556,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -1563,17 +1569,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                     mainAxisSize: MainAxisSize.max,
                                                                                     children: [
                                                                                       Align(
-                                                                                        alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                        alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                         child: Container(
                                                                                           height: 23.0,
                                                                                           decoration: BoxDecoration(
-                                                                                            color: Color(0xFFB1CC29),
+                                                                                            color: const Color(0xFFB1CC29),
                                                                                             borderRadius: BorderRadius.circular(4.0),
                                                                                           ),
                                                                                           child: Align(
-                                                                                            alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                             child: Padding(
-                                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                               child: Text(
                                                                                                 valueOrDefault<String>(
                                                                                                   sanidadesItem.protocoloRetirada,
@@ -1591,10 +1597,10 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           ),
                                                                                         ),
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 8.0)),
+                                                                                    ].divide(const SizedBox(width: 8.0)),
                                                                                   ),
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
                                                                         if (((sanidadesItem.protocoloIatf != 'null') &&
@@ -1621,7 +1627,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -1634,17 +1640,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                     mainAxisSize: MainAxisSize.max,
                                                                                     children: [
                                                                                       Align(
-                                                                                        alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                        alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                         child: Container(
                                                                                           height: 23.0,
                                                                                           decoration: BoxDecoration(
-                                                                                            color: Color(0xFFB1CC29),
+                                                                                            color: const Color(0xFFB1CC29),
                                                                                             borderRadius: BorderRadius.circular(4.0),
                                                                                           ),
                                                                                           child: Align(
-                                                                                            alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                             child: Padding(
-                                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                               child: Text(
                                                                                                 valueOrDefault<String>(
                                                                                                   sanidadesItem.protocoloIatf,
@@ -1662,13 +1668,13 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           ),
                                                                                         ),
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 8.0)),
+                                                                                    ].divide(const SizedBox(width: 8.0)),
                                                                                   ),
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
-                                                                      ].divide(SizedBox(
+                                                                      ].divide(const SizedBox(
                                                                               height: 8.0)),
                                                                     ),
                                                                   ),
@@ -1743,7 +1749,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                         snapshot.data!;
 
                                     return Container(
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -1755,10 +1761,10 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                         .toList();
                                                 if (sanidades.isEmpty) {
                                                   return Center(
-                                                    child: Container(
+                                                    child: SizedBox(
                                                       height: 200.0,
                                                       child:
-                                                          EmptySanidadeWidget(),
+                                                          const EmptySanidadeWidget(),
                                                     ),
                                                   );
                                                 }
@@ -1808,7 +1814,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
 
                                                         return Container(
                                                           decoration:
-                                                              BoxDecoration(),
+                                                              const BoxDecoration(),
                                                           child: FutureBuilder<
                                                               List<
                                                                   BuscarRebanhoRow>>(
@@ -1864,7 +1870,8 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                       builder:
                                                                           (context) =>
                                                                               Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                        padding: const EdgeInsetsDirectional
+                                                                            .fromSTEB(
                                                                             24.0,
                                                                             24.0,
                                                                             24.0,
@@ -1918,8 +1925,8 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                   elevation: 0,
                                                                                   insetPadding: EdgeInsets.zero,
                                                                                   backgroundColor: Colors.transparent,
-                                                                                  alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
-                                                                                  child: EditSanidadeAnimalWidget(),
+                                                                                  alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                  child: const EditSanidadeAnimalWidget(),
                                                                                 );
                                                                               },
                                                                             );
@@ -1965,7 +1972,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           fit: BoxFit.scaleDown,
                                                                                         ),
                                                                                       ),
-                                                                                  ].divide(SizedBox(width: 3.0)),
+                                                                                  ].divide(const SizedBox(width: 3.0)),
                                                                                 ),
                                                                               if (sanidadesItem.idRebanho != null && sanidadesItem.idRebanho != '')
                                                                                 Row(
@@ -1981,7 +1988,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               fontWeight: FontWeight.w600,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                             ),
-                                                                                            color: Color(0xFF474747),
+                                                                                            color: const Color(0xFF474747),
                                                                                             fontSize: 16.0,
                                                                                             letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.w600,
@@ -1995,7 +2002,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               fontWeight: FontWeight.normal,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                             ),
-                                                                                            color: Color(0xFF5F5F5F),
+                                                                                            color: const Color(0xFF5F5F5F),
                                                                                             fontSize: 14.0,
                                                                                             letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.normal,
@@ -2012,7 +2019,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               fontWeight: FontWeight.w600,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                             ),
-                                                                                            color: Color(0xFF474747),
+                                                                                            color: const Color(0xFF474747),
                                                                                             fontSize: 16.0,
                                                                                             letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.w600,
@@ -2026,7 +2033,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               fontWeight: FontWeight.normal,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                             ),
-                                                                                            color: Color(0xFF5F5F5F),
+                                                                                            color: const Color(0xFF5F5F5F),
                                                                                             fontSize: 14.0,
                                                                                             letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.normal,
@@ -2047,14 +2054,14 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               fontWeight: FontWeight.w600,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                             ),
-                                                                                            color: Color(0xFF474747),
+                                                                                            color: const Color(0xFF474747),
                                                                                             fontSize: 16.0,
                                                                                             letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.w600,
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                           ),
                                                                                     ),
-                                                                                  ].divide(SizedBox(width: 3.0)),
+                                                                                  ].divide(const SizedBox(width: 3.0)),
                                                                                 ),
                                                                               if (sanidadesItem.idRebanho != null && sanidadesItem.idRebanho != '')
                                                                                 Row(
@@ -2076,7 +2083,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                     fontWeight: FontWeight.normal,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                   ),
-                                                                                                  color: Color(0xFF5F5F5F),
+                                                                                                  color: const Color(0xFF5F5F5F),
                                                                                                   fontSize: 14.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FontWeight.normal,
@@ -2091,7 +2098,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                     fontWeight: FontWeight.normal,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                   ),
-                                                                                                  color: Color(0xFF474747),
+                                                                                                  color: const Color(0xFF474747),
                                                                                                   fontSize: 16.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FontWeight.normal,
@@ -2114,22 +2121,22 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                     fontWeight: FontWeight.normal,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                   ),
-                                                                                                  color: Color(0xFF5F5F5F),
+                                                                                                  color: const Color(0xFF5F5F5F),
                                                                                                   fontSize: 14.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FontWeight.normal,
                                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                 ),
                                                                                           ),
-                                                                                        ].divide(SizedBox(width: 4.0)),
+                                                                                        ].divide(const SizedBox(width: 4.0)),
                                                                                       ),
                                                                                     ),
-                                                                                    Icon(
+                                                                                    const Icon(
                                                                                       Icons.chevron_right,
                                                                                       color: Color(0xFF5F5F5F),
                                                                                       size: 24.0,
                                                                                     ),
-                                                                                  ].divide(SizedBox(width: 8.0)),
+                                                                                  ].divide(const SizedBox(width: 8.0)),
                                                                                 ),
                                                                               if (sanidadesItem.idRebanho != null && sanidadesItem.idRebanho != '')
                                                                                 Row(
@@ -2154,14 +2161,14 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               fontWeight: FontWeight.normal,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                             ),
-                                                                                            color: Color(0xFF5F5F5F),
+                                                                                            color: const Color(0xFF5F5F5F),
                                                                                             fontSize: 14.0,
                                                                                             letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.normal,
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                           ),
                                                                                     ),
-                                                                                  ].divide(SizedBox(width: 3.0)),
+                                                                                  ].divide(const SizedBox(width: 3.0)),
                                                                                 ),
                                                                               if (sanidadesItem.idLote != null && sanidadesItem.idLote != '')
                                                                                 Row(
@@ -2191,7 +2198,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                     fontWeight: FontWeight.normal,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                   ),
-                                                                                                  color: Color(0xFF5F5F5F),
+                                                                                                  color: const Color(0xFF5F5F5F),
                                                                                                   fontSize: 14.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FontWeight.normal,
@@ -2201,12 +2208,12 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                         ],
                                                                                       ),
                                                                                     ),
-                                                                                    Icon(
+                                                                                    const Icon(
                                                                                       Icons.chevron_right,
                                                                                       color: Color(0xFF5F5F5F),
                                                                                       size: 24.0,
                                                                                     ),
-                                                                                  ].divide(SizedBox(width: 3.0)),
+                                                                                  ].divide(const SizedBox(width: 3.0)),
                                                                                 ),
                                                                               if ((sanidadesItem.vacinacao != 'null') && (sanidadesItem.vacinacao != null && sanidadesItem.vacinacao != ''))
                                                                                 SingleChildScrollView(
@@ -2222,7 +2229,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                 fontWeight: FontWeight.normal,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                               ),
-                                                                                              color: Color(0xFF474747),
+                                                                                              color: const Color(0xFF474747),
                                                                                               fontSize: 14.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FontWeight.normal,
@@ -2240,17 +2247,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               children: List.generate(vacinas.length, (vacinasIndex) {
                                                                                                 final vacinasItem = vacinas[vacinasIndex];
                                                                                                 return Align(
-                                                                                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                                  alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                                   child: Container(
                                                                                                     height: 23.0,
                                                                                                     decoration: BoxDecoration(
-                                                                                                      color: Color(0xFFB1CC29),
+                                                                                                      color: const Color(0xFFB1CC29),
                                                                                                       borderRadius: BorderRadius.circular(4.0),
                                                                                                     ),
                                                                                                     child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Padding(
-                                                                                                        padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                                        padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                                         child: Text(
                                                                                                           vacinasItem,
                                                                                                           style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -2265,12 +2272,12 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                     ),
                                                                                                   ),
                                                                                                 );
-                                                                                              }).divide(SizedBox(width: 8.0)),
+                                                                                              }).divide(const SizedBox(width: 8.0)),
                                                                                             ),
                                                                                           );
                                                                                         },
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 3.0)),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
                                                                                   ),
                                                                                 ),
                                                                               if ((sanidadesItem.antiparasitario != 'null') && (sanidadesItem.antiparasitario != null && sanidadesItem.antiparasitario != ''))
@@ -2287,7 +2294,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                 fontWeight: FontWeight.normal,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                               ),
-                                                                                              color: Color(0xFF474747),
+                                                                                              color: const Color(0xFF474747),
                                                                                               fontSize: 14.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FontWeight.normal,
@@ -2305,17 +2312,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               children: List.generate(antiparasitario.length, (antiparasitarioIndex) {
                                                                                                 final antiparasitarioItem = antiparasitario[antiparasitarioIndex];
                                                                                                 return Align(
-                                                                                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                                  alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                                   child: Container(
                                                                                                     height: 23.0,
                                                                                                     decoration: BoxDecoration(
-                                                                                                      color: Color(0xFFB1CC29),
+                                                                                                      color: const Color(0xFFB1CC29),
                                                                                                       borderRadius: BorderRadius.circular(4.0),
                                                                                                     ),
                                                                                                     child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Padding(
-                                                                                                        padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                        padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                         child: Text(
                                                                                                           antiparasitarioItem,
                                                                                                           style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -2330,12 +2337,12 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                     ),
                                                                                                   ),
                                                                                                 );
-                                                                                              }).divide(SizedBox(width: 8.0)),
+                                                                                              }).divide(const SizedBox(width: 8.0)),
                                                                                             ),
                                                                                           );
                                                                                         },
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 3.0)),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
                                                                                   ),
                                                                                 ),
                                                                               if ((sanidadesItem.tratamento != 'null') && (sanidadesItem.tratamento != null && sanidadesItem.tratamento != ''))
@@ -2352,7 +2359,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                 fontWeight: FontWeight.normal,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                               ),
-                                                                                              color: Color(0xFF474747),
+                                                                                              color: const Color(0xFF474747),
                                                                                               fontSize: 14.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FontWeight.normal,
@@ -2370,17 +2377,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                               children: List.generate(tratamenteSanidade.length, (tratamenteSanidadeIndex) {
                                                                                                 final tratamenteSanidadeItem = tratamenteSanidade[tratamenteSanidadeIndex];
                                                                                                 return Align(
-                                                                                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                                  alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                                   child: Container(
                                                                                                     height: 23.0,
                                                                                                     decoration: BoxDecoration(
-                                                                                                      color: Color(0xFFB1CC29),
+                                                                                                      color: const Color(0xFFB1CC29),
                                                                                                       borderRadius: BorderRadius.circular(4.0),
                                                                                                     ),
                                                                                                     child: Align(
-                                                                                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                      alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                       child: Padding(
-                                                                                                        padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                        padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                         child: Text(
                                                                                                           tratamenteSanidadeItem,
                                                                                                           style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -2395,12 +2402,12 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                     ),
                                                                                                   ),
                                                                                                 );
-                                                                                              }).divide(SizedBox(width: 8.0)),
+                                                                                              }).divide(const SizedBox(width: 8.0)),
                                                                                             ),
                                                                                           );
                                                                                         },
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 3.0)),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
                                                                                   ),
                                                                                 ),
                                                                               if ((sanidadesItem.protocoloReprodutivo != 'null') && (sanidadesItem.protocoloReprodutivo != null && sanidadesItem.protocoloReprodutivo != ''))
@@ -2417,7 +2424,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                 fontWeight: FontWeight.normal,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                               ),
-                                                                                              color: Color(0xFF474747),
+                                                                                              color: const Color(0xFF474747),
                                                                                               fontSize: 14.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FontWeight.normal,
@@ -2430,17 +2437,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           mainAxisSize: MainAxisSize.max,
                                                                                           children: [
                                                                                             Align(
-                                                                                              alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                               child: Container(
                                                                                                 height: 23.0,
                                                                                                 decoration: BoxDecoration(
-                                                                                                  color: Color(0xFFB1CC29),
+                                                                                                  color: const Color(0xFFB1CC29),
                                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                                 ),
                                                                                                 child: Align(
-                                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                   child: Padding(
-                                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                     child: Text(
                                                                                                       valueOrDefault<String>(
                                                                                                         sanidadesItem.protocoloReprodutivo,
@@ -2458,10 +2465,10 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                 ),
                                                                                               ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 8.0)),
+                                                                                          ].divide(const SizedBox(width: 8.0)),
                                                                                         ),
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 3.0)),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
                                                                                   ),
                                                                                 ),
                                                                               if ((sanidadesItem.protocoloD0 != 'null') && (sanidadesItem.protocoloD0 != null && sanidadesItem.protocoloD0 != ''))
@@ -2478,7 +2485,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                 fontWeight: FontWeight.normal,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                               ),
-                                                                                              color: Color(0xFF474747),
+                                                                                              color: const Color(0xFF474747),
                                                                                               fontSize: 14.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FontWeight.normal,
@@ -2491,17 +2498,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           mainAxisSize: MainAxisSize.max,
                                                                                           children: [
                                                                                             Align(
-                                                                                              alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                               child: Container(
                                                                                                 height: 23.0,
                                                                                                 decoration: BoxDecoration(
-                                                                                                  color: Color(0xFFB1CC29),
+                                                                                                  color: const Color(0xFFB1CC29),
                                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                                 ),
                                                                                                 child: Align(
-                                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                   child: Padding(
-                                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                     child: Text(
                                                                                                       valueOrDefault<String>(
                                                                                                         sanidadesItem.protocoloD0,
@@ -2519,10 +2526,10 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                 ),
                                                                                               ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 8.0)),
+                                                                                          ].divide(const SizedBox(width: 8.0)),
                                                                                         ),
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 3.0)),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
                                                                                   ),
                                                                                 ),
                                                                               if ((sanidadesItem.protocoloRetirada != 'null') && (sanidadesItem.protocoloRetirada != null && sanidadesItem.protocoloRetirada != ''))
@@ -2539,7 +2546,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                 fontWeight: FontWeight.normal,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                               ),
-                                                                                              color: Color(0xFF474747),
+                                                                                              color: const Color(0xFF474747),
                                                                                               fontSize: 14.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FontWeight.normal,
@@ -2552,17 +2559,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           mainAxisSize: MainAxisSize.max,
                                                                                           children: [
                                                                                             Align(
-                                                                                              alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                               child: Container(
                                                                                                 height: 23.0,
                                                                                                 decoration: BoxDecoration(
-                                                                                                  color: Color(0xFFB1CC29),
+                                                                                                  color: const Color(0xFFB1CC29),
                                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                                 ),
                                                                                                 child: Align(
-                                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                   child: Padding(
-                                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                     child: Text(
                                                                                                       valueOrDefault<String>(
                                                                                                         sanidadesItem.protocoloRetirada,
@@ -2580,10 +2587,10 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                 ),
                                                                                               ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 8.0)),
+                                                                                          ].divide(const SizedBox(width: 8.0)),
                                                                                         ),
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 3.0)),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
                                                                                   ),
                                                                                 ),
                                                                               if (((sanidadesItem.protocoloIatf != 'null') && (sanidadesItem.protocoloIatf == null || sanidadesItem.protocoloIatf == '')) &&
@@ -2607,7 +2614,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                 fontWeight: FontWeight.normal,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                               ),
-                                                                                              color: Color(0xFF474747),
+                                                                                              color: const Color(0xFF474747),
                                                                                               fontSize: 14.0,
                                                                                               letterSpacing: 0.0,
                                                                                               fontWeight: FontWeight.normal,
@@ -2620,17 +2627,17 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           mainAxisSize: MainAxisSize.max,
                                                                                           children: [
                                                                                             Align(
-                                                                                              alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                               child: Container(
                                                                                                 height: 23.0,
                                                                                                 decoration: BoxDecoration(
-                                                                                                  color: Color(0xFFB1CC29),
+                                                                                                  color: const Color(0xFFB1CC29),
                                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                                 ),
                                                                                                 child: Align(
-                                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                   child: Padding(
-                                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                     child: Text(
                                                                                                       valueOrDefault<String>(
                                                                                                         sanidadesItem.protocoloIatf,
@@ -2648,13 +2655,13 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                                 ),
                                                                                               ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 8.0)),
+                                                                                          ].divide(const SizedBox(width: 8.0)),
                                                                                         ),
                                                                                       ),
-                                                                                    ].divide(SizedBox(width: 3.0)),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
                                                                                   ),
                                                                                 ),
-                                                                            ].divide(SizedBox(height: 8.0)),
+                                                                            ].divide(const SizedBox(height: 8.0)),
                                                                           ),
                                                                         ),
                                                                       ),
@@ -2680,9 +2687,8 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                             ),
                                           ),
                                           Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 0.0, 16.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 16.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -2776,7 +2782,8 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                               .toString(),
                                                           '1',
                                                         ),
-                                                        style: TextStyle(),
+                                                        style:
+                                                            const TextStyle(),
                                                       )
                                                     ],
                                                     style: FlutterFlowTheme.of(
@@ -2827,7 +2834,8 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                           safeSetState(() {});
                                                         },
                                                 ),
-                                              ].divide(SizedBox(width: 8.0)),
+                                              ].divide(
+                                                  const SizedBox(width: 8.0)),
                                             ),
                                           ),
                                         ],

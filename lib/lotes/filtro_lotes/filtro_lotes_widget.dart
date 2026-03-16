@@ -46,7 +46,7 @@ class _FiltroLotesWidgetState extends State<FiltroLotesWidget> {
     return Material(
       color: Colors.transparent,
       elevation: 5.0,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(0.0),
           bottomRight: Radius.circular(0.0),
@@ -56,10 +56,10 @@ class _FiltroLotesWidgetState extends State<FiltroLotesWidget> {
       ),
       child: Container(
         height: 350.0,
-        constraints: BoxConstraints(
+        constraints: const BoxConstraints(
           maxHeight: 399.0,
         ),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(0.0),
@@ -72,7 +72,8 @@ class _FiltroLotesWidgetState extends State<FiltroLotesWidget> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(25.0, 25.0, 25.0, 25.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(25.0, 25.0, 25.0, 25.0),
               child: InkWell(
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,
@@ -112,7 +113,7 @@ class _FiltroLotesWidgetState extends State<FiltroLotesWidget> {
                                       .headlineSmall
                                       .fontStyle,
                                 ),
-                                color: Color(0xFF2F2F2F),
+                                color: const Color(0xFF2F2F2F),
                                 fontSize: 24.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w500,
@@ -150,9 +151,9 @@ class _FiltroLotesWidgetState extends State<FiltroLotesWidget> {
                                                 .filtroAplicadosLotes
                                                 .firstOrNull ==
                                             ''
-                                    ? Color(0xFFBEBEBE)
-                                    : Color(0xFF060606),
-                                Color(0xFFBEBEBE),
+                                    ? const Color(0xFFBEBEBE)
+                                    : const Color(0xFF060606),
+                                const Color(0xFFBEBEBE),
                               ),
                               fontSize: 14.0,
                               letterSpacing: 0.0,
@@ -167,19 +168,21 @@ class _FiltroLotesWidgetState extends State<FiltroLotesWidget> {
                 ),
               ),
             ),
-            Divider(
+            const Divider(
               thickness: 1.0,
               color: Color(0xFFBEBEBE),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 24.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 24.0),
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: FlutterFlowTheme.of(context).secondaryBackground,
                 ),
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      24.0, 0.0, 24.0, 0.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,7 +192,7 @@ class _FiltroLotesWidgetState extends State<FiltroLotesWidget> {
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).bodyMediumFamily,
-                              color: Color(0xFF2F2F2F),
+                              color: const Color(0xFF2F2F2F),
                               fontSize: 18.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w500,
@@ -238,12 +241,12 @@ class _FiltroLotesWidgetState extends State<FiltroLotesWidget> {
                                     FFAppState().filtroAtivoLotes == 'Ativo'
                                         ? '#1E7A4C'
                                         : '#EDEDED',
-                                    defaultColor: Color(0xFFEDEDED),
+                                    defaultColor: const Color(0xFFEDEDED),
                                   ),
                                 ),
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     16.0, 8.0, 16.0, 8.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -279,7 +282,7 @@ class _FiltroLotesWidgetState extends State<FiltroLotesWidget> {
                                             .primary,
                                         size: 16.0,
                                       ),
-                                  ].divide(SizedBox(width: 8.0)),
+                                  ].divide(const SizedBox(width: 8.0)),
                                 ),
                               ),
                             ),
@@ -322,12 +325,12 @@ class _FiltroLotesWidgetState extends State<FiltroLotesWidget> {
                                     FFAppState().filtroAtivoLotes == 'Inativo'
                                         ? '#1E7A4C'
                                         : '#EDEDED',
-                                    defaultColor: Color(0xFFEDEDED),
+                                    defaultColor: const Color(0xFFEDEDED),
                                   ),
                                 ),
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     16.0, 8.0, 16.0, 8.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -363,24 +366,25 @@ class _FiltroLotesWidgetState extends State<FiltroLotesWidget> {
                                             .primary,
                                         size: 16.0,
                                       ),
-                                  ].divide(SizedBox(width: 8.0)),
+                                  ].divide(const SizedBox(width: 8.0)),
                                 ),
                               ),
                             ),
                           ),
-                        ].divide(SizedBox(width: 8.0)),
+                        ].divide(const SizedBox(width: 8.0)),
                       ),
-                    ].divide(SizedBox(height: 8.0)),
+                    ].divide(const SizedBox(height: 8.0)),
                   ),
                 ),
               ),
             ),
-            Divider(
+            const Divider(
               thickness: 1.0,
               color: Color(0xFFBEBEBE),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
               child: FFButtonWidget(
                 onPressed: () async {
                   Navigator.pop(context);
@@ -389,10 +393,11 @@ class _FiltroLotesWidgetState extends State<FiltroLotesWidget> {
                 options: FFButtonOptions(
                   width: double.infinity,
                   height: 47.0,
-                  padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      24.0, 0.0, 24.0, 0.0),
                   iconPadding:
-                      EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                  color: Color(0xFF28A365),
+                      const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                  color: const Color(0xFF28A365),
                   textStyle: FlutterFlowTheme.of(context).titleSmall.override(
                         fontFamily:
                             FlutterFlowTheme.of(context).titleSmallFamily,
@@ -402,7 +407,7 @@ class _FiltroLotesWidgetState extends State<FiltroLotesWidget> {
                             !FlutterFlowTheme.of(context).titleSmallIsCustom,
                       ),
                   elevation: 0.0,
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: Colors.transparent,
                     width: 0.0,
                   ),

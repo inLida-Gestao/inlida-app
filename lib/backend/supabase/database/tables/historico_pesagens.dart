@@ -10,7 +10,7 @@ class HistoricoPesagensTable extends SupabaseTable<HistoricoPesagensRow> {
 }
 
 class HistoricoPesagensRow extends SupabaseDataRow {
-  HistoricoPesagensRow(Map<String, dynamic> data) : super(data);
+  HistoricoPesagensRow(super.data);
 
   @override
   SupabaseTable get table => HistoricoPesagensTable();

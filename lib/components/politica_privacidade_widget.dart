@@ -56,7 +56,7 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
       height: double.infinity,
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(0.0),
           bottomRight: Radius.circular(0.0),
           topLeft: Radius.circular(12.0),
@@ -67,7 +67,8 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
         mainAxisSize: MainAxisSize.max,
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
+            padding:
+                const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -146,7 +147,7 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                   ),
                   textAlign: TextAlign.center,
                 ),
-              ].divide(SizedBox(height: 8.0)),
+              ].divide(const SizedBox(height: 8.0)),
             ),
           ),
           Divider(
@@ -157,7 +158,7 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
             child: Column(
               children: [
                 Align(
-                  alignment: Alignment(0.0, 0),
+                  alignment: const Alignment(0.0, 0),
                   child: TabBar(
                     isScrollable: true,
                     labelColor: FlutterFlowTheme.of(context).secondary,
@@ -183,7 +184,7 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                               !FlutterFlowTheme.of(context).titleMediumIsCustom,
                         ),
                     indicatorColor: FlutterFlowTheme.of(context).primary,
-                    tabs: [
+                    tabs: const [
                       Tab(
                         text: '1. Introdução',
                       ),
@@ -228,18 +229,19 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 24.0, 24.0, 0.0),
                             child: Container(
                               width: double.infinity,
-                              decoration: BoxDecoration(),
+                              decoration: const BoxDecoration(),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        8.0, 0.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            8.0, 0.0, 0.0, 0.0),
                                     child: Text(
                                       '1. Introdução',
                                       style: FlutterFlowTheme.of(context)
@@ -276,7 +278,7 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                                ].divide(SizedBox(height: 16.0)),
+                                ].divide(const SizedBox(height: 16.0)),
                               ),
                             ),
                           ),
@@ -286,18 +288,19 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 24.0, 24.0, 0.0),
                             child: Container(
                               width: double.infinity,
-                              decoration: BoxDecoration(),
+                              decoration: const BoxDecoration(),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        8.0, 0.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            8.0, 0.0, 0.0, 0.0),
                                     child: Text(
                                       '1. Informações gerais',
                                       style: FlutterFlowTheme.of(context)
@@ -334,7 +337,7 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                                ].divide(SizedBox(height: 16.0)),
+                                ].divide(const SizedBox(height: 16.0)),
                               ),
                             ),
                           ),
@@ -345,18 +348,19 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 24.0, 24.0, 0.0),
                               child: Container(
                                 width: double.infinity,
-                                decoration: BoxDecoration(),
+                                decoration: const BoxDecoration(),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          8.0, 0.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              8.0, 0.0, 0.0, 0.0),
                                       child: Text(
                                         '3. Sobre a aplicação inLida',
                                         style: FlutterFlowTheme.of(context)
@@ -394,7 +398,7 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                  ].divide(SizedBox(height: 16.0)),
+                                  ].divide(const SizedBox(height: 16.0)),
                                 ),
                               ),
                             ),
@@ -406,18 +410,19 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 24.0, 24.0, 0.0),
                               child: Container(
                                 width: double.infinity,
-                                decoration: BoxDecoration(),
+                                decoration: const BoxDecoration(),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          8.0, 0.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              8.0, 0.0, 0.0, 0.0),
                                       child: Text(
                                         '4. Coleta e uso de dados',
                                         style: FlutterFlowTheme.of(context)
@@ -455,7 +460,7 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                  ].divide(SizedBox(height: 16.0)),
+                                  ].divide(const SizedBox(height: 16.0)),
                                 ),
                               ),
                             ),
@@ -466,18 +471,19 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 24.0, 24.0, 0.0),
                             child: Container(
                               width: double.infinity,
-                              decoration: BoxDecoration(),
+                              decoration: const BoxDecoration(),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        8.0, 0.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            8.0, 0.0, 0.0, 0.0),
                                     child: Text(
                                       '5. Retenção e exclusão de dados',
                                       style: FlutterFlowTheme.of(context)
@@ -514,7 +520,7 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                                ].divide(SizedBox(height: 16.0)),
+                                ].divide(const SizedBox(height: 16.0)),
                               ),
                             ),
                           ),
@@ -524,18 +530,19 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 24.0, 24.0, 0.0),
                             child: Container(
                               width: double.infinity,
-                              decoration: BoxDecoration(),
+                              decoration: const BoxDecoration(),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        8.0, 0.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            8.0, 0.0, 0.0, 0.0),
                                     child: Text(
                                       '6. Das alterações',
                                       style: FlutterFlowTheme.of(context)
@@ -572,7 +579,7 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                                ].divide(SizedBox(height: 16.0)),
+                                ].divide(const SizedBox(height: 16.0)),
                               ),
                             ),
                           ),
@@ -582,18 +589,19 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 24.0, 24.0, 0.0),
                             child: Container(
                               width: double.infinity,
-                              decoration: BoxDecoration(),
+                              decoration: const BoxDecoration(),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        8.0, 0.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            8.0, 0.0, 0.0, 0.0),
                                     child: Text(
                                       '7. Do Direito aplicável e do foro',
                                       style: FlutterFlowTheme.of(context)
@@ -630,7 +638,7 @@ class _PoliticaPrivacidadeWidgetState extends State<PoliticaPrivacidadeWidget>
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                                ].divide(SizedBox(height: 16.0)),
+                                ].divide(const SizedBox(height: 16.0)),
                               ),
                             ),
                           ),

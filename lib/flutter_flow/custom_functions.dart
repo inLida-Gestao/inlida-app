@@ -26,12 +26,12 @@ String? converterListaParaJSON(List<String>? lista) {
 
 String imgPathToString(String icone) {
   // gere uma funcao que converta um tipo string para imagePath
-  return '$icone'; // Assuming images are stored in assets/images directory
+  return icone; // Assuming images are stored in assets/images directory
 }
 
 String stringToImgPath(String icone) {
   // gere uma funcao que converta um tipo string para imagePath
-  return '$icone'; // Assuming images are stored in assets/images and have a .png extension
+  return icone; // Assuming images are stored in assets/images and have a .png extension
 }
 
 DateTime converterTimestamp(String data) {
@@ -55,7 +55,11 @@ List<String> converterJSONparaLista(String json) {
     if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
       final inner = trimmed.substring(1, trimmed.length - 1).trim();
       if (inner.isEmpty) return [];
-      return inner.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+      return inner
+          .split(',')
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
     }
     // Último recurso: retorna o valor como item único se não estiver vazio
     if (trimmed.isNotEmpty) return [trimmed];
@@ -69,11 +73,11 @@ String addRegistroToJsonString(
 ) {
   // Se vazio ou [], cria novo array com o registro
   if (jsonString == '' || jsonString == '[]') {
-    return '["' + registro + '"]';
+    return '["$registro"]';
   }
 
   // Verifica se já existe
-  if (jsonString.contains('"' + registro + '"')) {
+  if (jsonString.contains('"$registro"')) {
     return jsonString; // Retorna sem modificar
   }
 
@@ -82,16 +86,16 @@ String addRegistroToJsonString(
 
   // Se tem só [, adiciona sem vírgula
   if (semFinal == '[') {
-    return '["' + registro + '"]';
+    return '["$registro"]';
   }
 
   // Adiciona vírgula e o novo registro
-  return semFinal + ',"' + registro + '"]';
+  return '$semFinal,"$registro"]';
 }
 
 DateTime remover3hs(DateTime date) {
   // gere uma funcao  que recebe um variavel datetime e remova 3 horas desta variavel datetime
-  return date.subtract(Duration(hours: 3));
+  return date.subtract(const Duration(hours: 3));
 }
 
 DateTime? converterParaData(String? data) {
@@ -120,40 +124,40 @@ double pesoMedio(List<double> listaPesos) {
 }
 
 DateTime hojeMenos30() {
-  return DateTime.now().subtract(Duration(days: 30));
+  return DateTime.now().subtract(const Duration(days: 30));
 }
 
 DateTime hojeMais30() {
   // ajuste essa função para somar 30 dias return DateTime.now().subtract(Duration(days: 30));
-  return DateTime.now().add(Duration(days: 30));
+  return DateTime.now().add(const Duration(days: 30));
 }
 
 DateTime hojeMenos60() {
-  return DateTime.now().subtract(Duration(days: 60));
+  return DateTime.now().subtract(const Duration(days: 60));
 }
 
 DateTime hojeMais60() {
-  return DateTime.now().add(Duration(days: 60));
+  return DateTime.now().add(const Duration(days: 60));
 }
 
 DateTime hojeMenos90() {
-  return DateTime.now().subtract(Duration(days: 90));
+  return DateTime.now().subtract(const Duration(days: 90));
 }
 
 DateTime hojeMais90() {
-  return DateTime.now().add(Duration(days: 90));
+  return DateTime.now().add(const Duration(days: 90));
 }
 
 DateTime dataMais295(DateTime data) {
   // ajuste a function a seguir para que possa ser passado uma data e adicionar 295 dias  return DateTime.now().add(Duration(days: 295));
-  return data.add(Duration(days: 295));
+  return data.add(const Duration(days: 295));
 }
 
 bool? ultimos30Dias(DateTime? data) {
   // crie uma funcão que recebe uma data e verifica se esta data esta contida dentro dos ultimos 30 dias até o dia atual e retorna verdadeiro ou falso
   if (data == null) return null;
   DateTime now = DateTime.now();
-  DateTime thirtyDaysAgo = now.subtract(Duration(days: 30));
+  DateTime thirtyDaysAgo = now.subtract(const Duration(days: 30));
   return data.isAfter(thirtyDaysAgo) && data.isBefore(now);
 }
 

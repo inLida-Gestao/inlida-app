@@ -10,7 +10,7 @@ class DeathsPreDesmamaTable extends SupabaseTable<DeathsPreDesmamaRow> {
 }
 
 class DeathsPreDesmamaRow extends SupabaseDataRow {
-  DeathsPreDesmamaRow(Map<String, dynamic> data) : super(data);
+  DeathsPreDesmamaRow(super.data);
 
   @override
   SupabaseTable get table => DeathsPreDesmamaTable();

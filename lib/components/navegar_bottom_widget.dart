@@ -46,7 +46,7 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
     return Material(
       color: Colors.transparent,
       elevation: 5.0,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(0.0),
           bottomRight: Radius.circular(0.0),
@@ -57,7 +57,7 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
       child: Container(
         width: double.infinity,
         height: 350.0,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(0.0),
@@ -70,7 +70,8 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 0.0),
               child: InkWell(
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,
@@ -93,7 +94,7 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                       .headlineSmall
                                       .fontStyle,
                                 ),
-                                color: Color(0xFF14181B),
+                                color: const Color(0xFF14181B),
                                 fontSize: 24.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w500,
@@ -122,8 +123,8 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          16.0, 12.0, 16.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -139,15 +140,15 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                           width: double.infinity,
                           height: 80.0,
                           decoration: BoxDecoration(
-                            color: Color(0xFFF8F8F8),
+                            color: const Color(0xFFF8F8F8),
                             borderRadius: BorderRadius.circular(8.0),
                             border: Border.all(
-                              color: Color(0x00E0E3E7),
+                              color: const Color(0x00E0E3E7),
                               width: 2.0,
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 12.0, 8.0, 12.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -174,7 +175,7 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                                   .bodyLarge
                                                   .fontStyle,
                                         ),
-                                        color: Color(0xFF14181B),
+                                        color: const Color(0xFF14181B),
                                         fontSize: 24.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -183,15 +184,15 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                             .fontStyle,
                                       ),
                                 ),
-                              ].divide(SizedBox(width: 10.0)),
+                              ].divide(const SizedBox(width: 10.0)),
                             ),
                           ),
                         ),
                       ),
                     ),
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          16.0, 12.0, 16.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -207,15 +208,15 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                           width: double.infinity,
                           height: 80.0,
                           decoration: BoxDecoration(
-                            color: Color(0xFFF8F8F8),
+                            color: const Color(0xFFF8F8F8),
                             borderRadius: BorderRadius.circular(8.0),
                             border: Border.all(
-                              color: Color(0x00E0E3E7),
+                              color: const Color(0x00E0E3E7),
                               width: 2.0,
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 12.0, 8.0, 12.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -242,7 +243,7 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                                   .bodyLarge
                                                   .fontStyle,
                                         ),
-                                        color: Color(0xFF14181B),
+                                        color: const Color(0xFF14181B),
                                         fontSize: 24.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -251,15 +252,15 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                             .fontStyle,
                                       ),
                                 ),
-                              ].divide(SizedBox(width: 10.0)),
+                              ].divide(const SizedBox(width: 10.0)),
                             ),
                           ),
                         ),
                       ),
                     ),
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          16.0, 12.0, 16.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -275,15 +276,15 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                           width: double.infinity,
                           height: 80.0,
                           decoration: BoxDecoration(
-                            color: Color(0xFFF8F8F8),
+                            color: const Color(0xFFF8F8F8),
                             borderRadius: BorderRadius.circular(8.0),
                             border: Border.all(
-                              color: Color(0x00E0E3E7),
+                              color: const Color(0x00E0E3E7),
                               width: 2.0,
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 12.0, 8.0, 12.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -310,7 +311,7 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                                   .bodyLarge
                                                   .fontStyle,
                                         ),
-                                        color: Color(0xFF14181B),
+                                        color: const Color(0xFF14181B),
                                         fontSize: 24.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -319,15 +320,15 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                             .fontStyle,
                                       ),
                                 ),
-                              ].divide(SizedBox(width: 10.0)),
+                              ].divide(const SizedBox(width: 10.0)),
                             ),
                           ),
                         ),
                       ),
                     ),
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          16.0, 12.0, 16.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -343,15 +344,15 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                           width: double.infinity,
                           height: 80.0,
                           decoration: BoxDecoration(
-                            color: Color(0xFFF8F8F8),
+                            color: const Color(0xFFF8F8F8),
                             borderRadius: BorderRadius.circular(8.0),
                             border: Border.all(
-                              color: Color(0x00E0E3E7),
+                              color: const Color(0x00E0E3E7),
                               width: 2.0,
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 12.0, 8.0, 12.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -378,7 +379,7 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                                   .bodyLarge
                                                   .fontStyle,
                                         ),
-                                        color: Color(0xFF14181B),
+                                        color: const Color(0xFF14181B),
                                         fontSize: 24.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -387,15 +388,15 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                             .fontStyle,
                                       ),
                                 ),
-                              ].divide(SizedBox(width: 10.0)),
+                              ].divide(const SizedBox(width: 10.0)),
                             ),
                           ),
                         ),
                       ),
                     ),
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          16.0, 12.0, 16.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -411,15 +412,15 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                           width: double.infinity,
                           height: 80.0,
                           decoration: BoxDecoration(
-                            color: Color(0xFFF8F8F8),
+                            color: const Color(0xFFF8F8F8),
                             borderRadius: BorderRadius.circular(8.0),
                             border: Border.all(
-                              color: Color(0x00E0E3E7),
+                              color: const Color(0x00E0E3E7),
                               width: 2.0,
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 12.0, 8.0, 12.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -446,7 +447,7 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                                   .bodyLarge
                                                   .fontStyle,
                                         ),
-                                        color: Color(0xFF14181B),
+                                        color: const Color(0xFF14181B),
                                         fontSize: 24.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -455,7 +456,7 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                             .fontStyle,
                                       ),
                                 ),
-                              ].divide(SizedBox(width: 10.0)),
+                              ].divide(const SizedBox(width: 10.0)),
                             ),
                           ),
                         ),
@@ -469,21 +470,21 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                       desktop: false,
                     ))
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             16.0, 12.0, 16.0, 0.0),
                         child: Container(
                           width: double.infinity,
                           height: 80.0,
                           decoration: BoxDecoration(
-                            color: Color(0xFFF8F8F8),
+                            color: const Color(0xFFF8F8F8),
                             borderRadius: BorderRadius.circular(8.0),
                             border: Border.all(
-                              color: Color(0x00E0E3E7),
+                              color: const Color(0x00E0E3E7),
                               width: 2.0,
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 12.0, 8.0, 12.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -510,7 +511,7 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                                   .bodyLarge
                                                   .fontStyle,
                                         ),
-                                        color: Color(0xFF14181B),
+                                        color: const Color(0xFF14181B),
                                         fontSize: 24.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -519,7 +520,7 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                             .fontStyle,
                                       ),
                                 ),
-                              ].divide(SizedBox(width: 10.0)),
+                              ].divide(const SizedBox(width: 10.0)),
                             ),
                           ),
                         ),
@@ -532,21 +533,21 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                       desktop: false,
                     ))
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             16.0, 12.0, 16.0, 12.0),
                         child: Container(
                           width: double.infinity,
                           height: 80.0,
                           decoration: BoxDecoration(
-                            color: Color(0xFFF8F8F8),
+                            color: const Color(0xFFF8F8F8),
                             borderRadius: BorderRadius.circular(8.0),
                             border: Border.all(
-                              color: Color(0x00E0E3E7),
+                              color: const Color(0x00E0E3E7),
                               width: 2.0,
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 12.0, 8.0, 12.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -573,7 +574,7 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                                   .bodyLarge
                                                   .fontStyle,
                                         ),
-                                        color: Color(0xFF14181B),
+                                        color: const Color(0xFF14181B),
                                         fontSize: 24.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -582,7 +583,7 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                                             .fontStyle,
                                       ),
                                 ),
-                              ].divide(SizedBox(width: 10.0)),
+                              ].divide(const SizedBox(width: 10.0)),
                             ),
                           ),
                         ),

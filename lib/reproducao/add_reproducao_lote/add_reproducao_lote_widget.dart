@@ -47,7 +47,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimer = InstantTimer.periodic(
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         callback: (timer) async {
           if (FFAppState().rebuild == true) {
             safeSetState(() {});
@@ -107,7 +107,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                   .toList();
 
               return Container(
-                decoration: BoxDecoration(),
+                decoration: const BoxDecoration(),
                 child: Container(
                   width: double.infinity,
                   height: double.infinity,
@@ -115,15 +115,15 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                     color: FlutterFlowTheme.of(context).secondaryBackground,
                   ),
                   child: Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        0.0, 24.0, 0.0, 0.0),
                     child: SingleChildScrollView(
                       primary: false,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
                             child: InkWell(
                               splashColor: Colors.transparent,
@@ -175,16 +175,16 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                                ].divide(SizedBox(width: 16.0)),
+                                ].divide(const SizedBox(width: 16.0)),
                               ),
                             ),
                           ),
-                          Divider(
+                          const Divider(
                             thickness: 2.0,
                             color: Color(0xFFEDEDED),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
                             child: Container(
                               width: double.infinity,
@@ -217,7 +217,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
                             child: Container(
                               width: double.infinity,
@@ -230,7 +230,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Align(
-                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    alignment:
+                                        const AlignmentDirectional(-1.0, 0.0),
                                     child: Text(
                                       'Tipo de reprodução',
                                       style: FlutterFlowTheme.of(context)
@@ -239,7 +240,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF474747),
+                                            color: const Color(0xFF474747),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -262,8 +263,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       width: double.infinity,
                                       height: 74.0,
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFF1F1F1),
-                                        borderRadius: BorderRadius.only(
+                                        color: const Color(0xFFF1F1F1),
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(6.0),
                                           bottomRight: Radius.circular(6.0),
                                           topLeft: Radius.circular(6.0),
@@ -274,12 +275,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                   'Inseminação'
                                               ? FlutterFlowTheme.of(context)
                                                   .secondary
-                                              : Color(0x00000000),
+                                              : const Color(0x00000000),
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            24.0, 0.0, 24.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
@@ -317,7 +318,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 20.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w500,
@@ -327,7 +329,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                             .bodyMediumIsCustom,
                                                   ),
                                             ),
-                                          ].divide(SizedBox(width: 10.0)),
+                                          ].divide(const SizedBox(width: 10.0)),
                                         ),
                                       ),
                                     ),
@@ -345,8 +347,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       width: double.infinity,
                                       height: 74.0,
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFF1F1F1),
-                                        borderRadius: BorderRadius.only(
+                                        color: const Color(0xFFF1F1F1),
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(6.0),
                                           bottomRight: Radius.circular(6.0),
                                           topLeft: Radius.circular(6.0),
@@ -357,12 +359,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                   'Monta Natural'
                                               ? FlutterFlowTheme.of(context)
                                                   .secondary
-                                              : Color(0x00000000),
+                                              : const Color(0x00000000),
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            24.0, 0.0, 24.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
@@ -400,7 +402,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 20.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w500,
@@ -410,12 +413,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                             .bodyMediumIsCustom,
                                                   ),
                                             ),
-                                          ].divide(SizedBox(width: 10.0)),
+                                          ].divide(const SizedBox(width: 10.0)),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ].divide(SizedBox(height: 8.0)),
+                                ].divide(const SizedBox(height: 8.0)),
                               ),
                             ),
                           ),
@@ -426,13 +429,14 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Align(
-                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    alignment:
+                                        const AlignmentDirectional(-1.0, 0.0),
                                     child: Text(
                                       'Lote*',
                                       style: FlutterFlowTheme.of(context)
@@ -441,7 +445,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF474747),
+                                            color: const Color(0xFF474747),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -455,15 +459,15 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                     Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFF1F1F1),
-                                        borderRadius: BorderRadius.only(
+                                        color: const Color(0xFFF1F1F1),
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(6.0),
                                           bottomRight: Radius.circular(6.0),
                                           topLeft: Radius.circular(6.0),
                                           topRight: Radius.circular(6.0),
                                         ),
                                         border: Border.all(
-                                          color: Color(0x001E7A4C),
+                                          color: const Color(0x001E7A4C),
                                         ),
                                       ),
                                       child: Row(
@@ -554,13 +558,16 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                         .secondaryText,
                                                 size: 24.0,
                                               ),
-                                              fillColor: Color(0xFFF1F1F1),
+                                              fillColor:
+                                                  const Color(0xFFF1F1F1),
                                               elevation: 0.0,
-                                              borderColor: Color(0x00E0E3E7),
+                                              borderColor:
+                                                  const Color(0x00E0E3E7),
                                               borderWidth: 2.0,
                                               borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              margin:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       8.0, 4.0, 16.0, 4.0),
                                               hidesUnderline: true,
                                               isOverButton: true,
@@ -568,13 +575,13 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               isMultiSelect: false,
                                             ),
                                           ),
-                                        ].divide(SizedBox(width: 10.0)),
+                                        ].divide(const SizedBox(width: 10.0)),
                                       ),
                                     ),
                                   if (!(containerListarLotesRowList.isNotEmpty))
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Não foi possível encontrar nenhum lote.',
                                         style: FlutterFlowTheme.of(context)
@@ -590,7 +597,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                             ),
                                       ),
                                     ),
-                                ].divide(SizedBox(height: 8.0)),
+                                ].divide(const SizedBox(height: 8.0)),
                               ),
                             ),
                           ),
@@ -601,13 +608,14 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Align(
-                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    alignment:
+                                        const AlignmentDirectional(-1.0, 0.0),
                                     child: Text(
                                       'Reprodutor*',
                                       style: FlutterFlowTheme.of(context)
@@ -616,7 +624,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF474747),
+                                            color: const Color(0xFF474747),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -635,7 +643,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                   ))
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Não foi possível encontrar nenhum reprodutor.',
                                         style: FlutterFlowTheme.of(context)
@@ -663,18 +671,20 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                           context: context,
                                           isGlobal: false,
                                           avoidOverflow: true,
-                                          targetAnchor: AlignmentDirectional(
-                                                  0.0, 1.0)
-                                              .resolve(
-                                                  Directionality.of(context)),
-                                          followerAnchor: AlignmentDirectional(
-                                                  0.0, -1.0)
-                                              .resolve(
-                                                  Directionality.of(context)),
+                                          targetAnchor:
+                                              const AlignmentDirectional(
+                                                      0.0, 1.0)
+                                                  .resolve(Directionality.of(
+                                                      context)),
+                                          followerAnchor:
+                                              const AlignmentDirectional(
+                                                      0.0, -1.0)
+                                                  .resolve(Directionality.of(
+                                                      context)),
                                           builder: (dialogContext) {
                                             return Material(
                                               color: Colors.transparent,
-                                              child: Container(
+                                              child: SizedBox(
                                                 height: 450.0,
                                                 width: double.infinity,
                                                 child: PopupRebanhosWidget(
@@ -698,9 +708,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  16.0, 0.0, 16.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 0.0, 16.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
@@ -780,7 +789,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       ),
                                     ),
                                   ),
-                                ].divide(SizedBox(height: 8.0)),
+                                ].divide(const SizedBox(height: 8.0)),
                               ),
                             ),
                           ),
@@ -792,14 +801,14 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Data da inseminação*',
                                         style: FlutterFlowTheme.of(context)
@@ -808,7 +817,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF474747),
+                                              color: const Color(0xFF474747),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -824,7 +833,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
-                                        final _datePicked1Date =
+                                        final datePicked1Date =
                                             await showDatePicker(
                                           context: context,
                                           initialDate: getCurrentTimestamp,
@@ -877,12 +886,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                           },
                                         );
 
-                                        if (_datePicked1Date != null) {
+                                        if (datePicked1Date != null) {
                                           safeSetState(() {
                                             _model.datePicked1 = DateTime(
-                                              _datePicked1Date.year,
-                                              _datePicked1Date.month,
-                                              _datePicked1Date.day,
+                                              datePicked1Date.year,
+                                              datePicked1Date.month,
+                                              datePicked1Date.day,
                                             );
                                           });
                                         } else if (_model.datePicked1 != null) {
@@ -896,21 +905,20 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         width: double.infinity,
                                         height: 56.0,
                                         decoration: BoxDecoration(
-                                          color: Color(0xFFF1F1F1),
-                                          borderRadius: BorderRadius.only(
+                                          color: const Color(0xFFF1F1F1),
+                                          borderRadius: const BorderRadius.only(
                                             bottomLeft: Radius.circular(6.0),
                                             bottomRight: Radius.circular(6.0),
                                             topLeft: Radius.circular(6.0),
                                             topRight: Radius.circular(6.0),
                                           ),
                                           border: Border.all(
-                                            color: Color(0x001E7A4C),
+                                            color: const Color(0x001E7A4C),
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  8.0, 0.0, 8.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
@@ -939,9 +947,11 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                           valueOrDefault<Color>(
                                                         _model.datePicked1 !=
                                                                 null
-                                                            ? Color(0xFF333333)
-                                                            : Color(0xFFBEBEBE),
-                                                        Color(0xFFBEBEBE),
+                                                            ? const Color(
+                                                                0xFF333333)
+                                                            : const Color(
+                                                                0xFFBEBEBE),
+                                                        const Color(0xFFBEBEBE),
                                                       ),
                                                       fontSize: 16.0,
                                                       letterSpacing: 0.0,
@@ -953,7 +963,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                               .bodyMediumIsCustom,
                                                     ),
                                               ),
-                                              Icon(
+                                              const Icon(
                                                 Icons.calendar_month_rounded,
                                                 color: Color(0xFF181818),
                                                 size: 24.0,
@@ -963,18 +973,19 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                  alignment:
+                                      const AlignmentDirectional(-1.0, 0.0),
                                   child: Text(
                                     'Ressinc',
                                     style: FlutterFlowTheme.of(context)
@@ -983,7 +994,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF474747),
+                                          color: const Color(0xFF474747),
                                           fontSize: 16.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -1003,7 +1014,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         controller: _model
                                                 .dropdownRessincValueController ??=
                                             FormFieldController<String>(null),
-                                        options: [
+                                        options: const [
                                           'Tradicional',
                                           'Precoce',
                                           'Superprecoce'
@@ -1040,8 +1051,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         borderColor: Colors.transparent,
                                         borderWidth: 0.0,
                                         borderRadius: 8.0,
-                                        margin: EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
+                                        margin: const EdgeInsetsDirectional
+                                            .fromSTEB(12.0, 0.0, 12.0, 0.0),
                                         hidesUnderline: true,
                                         isOverButton: false,
                                         isSearchable: false,
@@ -1070,19 +1081,20 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                           });
                                         },
                                       ),
-                                  ].divide(SizedBox(width: 8.0)),
+                                  ].divide(const SizedBox(width: 8.0)),
                                 ),
-                              ].divide(SizedBox(height: 8.0)),
+                              ].divide(const SizedBox(height: 8.0)),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                  alignment:
+                                      const AlignmentDirectional(-1.0, 0.0),
                                   child: Text(
                                     'GnRH',
                                     style: FlutterFlowTheme.of(context)
@@ -1091,7 +1103,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF474747),
+                                          color: const Color(0xFF474747),
                                           fontSize: 16.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -1105,7 +1117,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                   controller:
                                       _model.dropdownGnrhValueController ??=
                                           FormFieldController<String>(null),
-                                  options: ['Sim', 'Não'],
+                                  options: const ['Sim', 'Não'],
                                   onChanged: (val) => safeSetState(
                                       () => _model.dropdownGnrhValue = val),
                                   width: double.infinity,
@@ -1137,24 +1149,25 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                   borderColor: Colors.transparent,
                                   borderWidth: 0.0,
                                   borderRadius: 8.0,
-                                  margin: EdgeInsetsDirectional.fromSTEB(
+                                  margin: const EdgeInsetsDirectional.fromSTEB(
                                       12.0, 0.0, 12.0, 0.0),
                                   hidesUnderline: true,
                                   isOverButton: false,
                                   isSearchable: false,
                                   isMultiSelect: false,
                                 ),
-                              ].divide(SizedBox(height: 8.0)),
+                              ].divide(const SizedBox(height: 8.0)),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(-1.0, 0.0),
+                                  alignment:
+                                      const AlignmentDirectional(-1.0, 0.0),
                                   child: Text(
                                     'Cio',
                                     style: FlutterFlowTheme.of(context)
@@ -1163,7 +1176,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF474747),
+                                          color: const Color(0xFF474747),
                                           fontSize: 16.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -1177,7 +1190,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                   controller:
                                       _model.dropdownCioValueController ??=
                                           FormFieldController<String>(null),
-                                  options: ['Sim', 'Não'],
+                                  options: const ['Sim', 'Não'],
                                   onChanged: (val) => safeSetState(
                                       () => _model.dropdownCioValue = val),
                                   width: double.infinity,
@@ -1209,14 +1222,14 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                   borderColor: Colors.transparent,
                                   borderWidth: 0.0,
                                   borderRadius: 8.0,
-                                  margin: EdgeInsetsDirectional.fromSTEB(
+                                  margin: const EdgeInsetsDirectional.fromSTEB(
                                       12.0, 0.0, 12.0, 0.0),
                                   hidesUnderline: true,
                                   isOverButton: false,
                                   isSearchable: false,
                                   isMultiSelect: false,
                                 ),
-                              ].divide(SizedBox(height: 8.0)),
+                              ].divide(const SizedBox(height: 8.0)),
                             ),
                           ),
                           if (_model.tipoReproducao == 'Inseminação')
@@ -1227,14 +1240,14 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Data de partida do sêmen',
                                         style: FlutterFlowTheme.of(context)
@@ -1243,7 +1256,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF474747),
+                                              color: const Color(0xFF474747),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1259,7 +1272,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
-                                        final _datePicked2Date =
+                                        final datePicked2Date =
                                             await showDatePicker(
                                           context: context,
                                           initialDate: getCurrentTimestamp,
@@ -1312,12 +1325,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                           },
                                         );
 
-                                        if (_datePicked2Date != null) {
+                                        if (datePicked2Date != null) {
                                           safeSetState(() {
                                             _model.datePicked2 = DateTime(
-                                              _datePicked2Date.year,
-                                              _datePicked2Date.month,
-                                              _datePicked2Date.day,
+                                              datePicked2Date.year,
+                                              datePicked2Date.month,
+                                              datePicked2Date.day,
                                             );
                                           });
                                         } else if (_model.datePicked2 != null) {
@@ -1331,21 +1344,20 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         width: double.infinity,
                                         height: 56.0,
                                         decoration: BoxDecoration(
-                                          color: Color(0xFFF1F1F1),
-                                          borderRadius: BorderRadius.only(
+                                          color: const Color(0xFFF1F1F1),
+                                          borderRadius: const BorderRadius.only(
                                             bottomLeft: Radius.circular(6.0),
                                             bottomRight: Radius.circular(6.0),
                                             topLeft: Radius.circular(6.0),
                                             topRight: Radius.circular(6.0),
                                           ),
                                           border: Border.all(
-                                            color: Color(0x001E7A4C),
+                                            color: const Color(0x001E7A4C),
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  8.0, 0.0, 8.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
@@ -1374,9 +1386,11 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                           valueOrDefault<Color>(
                                                         _model.datePicked2 !=
                                                                 null
-                                                            ? Color(0xFF333333)
-                                                            : Color(0xFFBEBEBE),
-                                                        Color(0xFFBEBEBE),
+                                                            ? const Color(
+                                                                0xFF333333)
+                                                            : const Color(
+                                                                0xFFBEBEBE),
+                                                        const Color(0xFFBEBEBE),
                                                       ),
                                                       fontSize: 16.0,
                                                       letterSpacing: 0.0,
@@ -1388,7 +1402,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                               .bodyMediumIsCustom,
                                                     ),
                                               ),
-                                              Icon(
+                                              const Icon(
                                                 Icons.calendar_month_rounded,
                                                 color: Color(0xFF181818),
                                                 size: 24.0,
@@ -1398,13 +1412,13 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             ),
                           if (_model.tipoReproducao == 'Inseminação')
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Container(
                                 width: double.infinity,
@@ -1417,7 +1431,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                   children: [
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Partida do sêmen',
                                         style: FlutterFlowTheme.of(context)
@@ -1426,7 +1440,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF474747),
+                                              color: const Color(0xFF474747),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1440,20 +1454,20 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       width: double.infinity,
                                       height: 60.0,
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFF1F1F1),
-                                        borderRadius: BorderRadius.only(
+                                        color: const Color(0xFFF1F1F1),
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(6.0),
                                           bottomRight: Radius.circular(6.0),
                                           topLeft: Radius.circular(6.0),
                                           topRight: Radius.circular(6.0),
                                         ),
                                         border: Border.all(
-                                          color: Color(0x001E7A4C),
+                                          color: const Color(0x001E7A4C),
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            8.0, 0.0, 8.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
@@ -1461,7 +1475,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                           children: [
                                             Container(
                                               width: 48.0,
-                                              decoration: BoxDecoration(),
+                                              decoration: const BoxDecoration(),
                                               child: Visibility(
                                                 visible:
                                                     _model.partidaSemen > 1,
@@ -1494,7 +1508,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                     ),
                                                     child: Align(
                                                       alignment:
-                                                          AlignmentDirectional(
+                                                          const AlignmentDirectional(
                                                               0.0, 0.0),
                                                       child: FaIcon(
                                                         FontAwesomeIcons.minus,
@@ -1533,7 +1547,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                             ),
                                             Container(
                                               width: 48.0,
-                                              decoration: BoxDecoration(),
+                                              decoration: const BoxDecoration(),
                                               child: Visibility(
                                                 visible:
                                                     _model.partidaSemen < 5,
@@ -1575,11 +1589,11 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(width: 10.0)),
+                                          ].divide(const SizedBox(width: 10.0)),
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             ),
@@ -1591,14 +1605,14 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Data inicial*',
                                         style: FlutterFlowTheme.of(context)
@@ -1607,7 +1621,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF474747),
+                                              color: const Color(0xFF474747),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1623,7 +1637,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
-                                        final _datePicked3Date =
+                                        final datePicked3Date =
                                             await showDatePicker(
                                           context: context,
                                           initialDate: getCurrentTimestamp,
@@ -1676,12 +1690,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                           },
                                         );
 
-                                        if (_datePicked3Date != null) {
+                                        if (datePicked3Date != null) {
                                           safeSetState(() {
                                             _model.datePicked3 = DateTime(
-                                              _datePicked3Date.year,
-                                              _datePicked3Date.month,
-                                              _datePicked3Date.day,
+                                              datePicked3Date.year,
+                                              datePicked3Date.month,
+                                              datePicked3Date.day,
                                             );
                                           });
                                         } else if (_model.datePicked3 != null) {
@@ -1695,21 +1709,20 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         width: double.infinity,
                                         height: 56.0,
                                         decoration: BoxDecoration(
-                                          color: Color(0xFFF1F1F1),
-                                          borderRadius: BorderRadius.only(
+                                          color: const Color(0xFFF1F1F1),
+                                          borderRadius: const BorderRadius.only(
                                             bottomLeft: Radius.circular(6.0),
                                             bottomRight: Radius.circular(6.0),
                                             topLeft: Radius.circular(6.0),
                                             topRight: Radius.circular(6.0),
                                           ),
                                           border: Border.all(
-                                            color: Color(0x001E7A4C),
+                                            color: const Color(0x001E7A4C),
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  8.0, 0.0, 8.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
@@ -1738,9 +1751,11 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                           valueOrDefault<Color>(
                                                         _model.datePicked3 !=
                                                                 null
-                                                            ? Color(0xFF333333)
-                                                            : Color(0xFFBEBEBE),
-                                                        Color(0xFFBEBEBE),
+                                                            ? const Color(
+                                                                0xFF333333)
+                                                            : const Color(
+                                                                0xFFBEBEBE),
+                                                        const Color(0xFFBEBEBE),
                                                       ),
                                                       fontSize: 16.0,
                                                       letterSpacing: 0.0,
@@ -1752,7 +1767,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                               .bodyMediumIsCustom,
                                                     ),
                                               ),
-                                              Icon(
+                                              const Icon(
                                                 Icons.calendar_month_rounded,
                                                 color: Color(0xFF181818),
                                                 size: 24.0,
@@ -1762,7 +1777,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             ),
@@ -1774,14 +1789,14 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Data final*',
                                         style: FlutterFlowTheme.of(context)
@@ -1790,7 +1805,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF474747),
+                                              color: const Color(0xFF474747),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1806,7 +1821,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       hoverColor: Colors.transparent,
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
-                                        final _datePicked4Date =
+                                        final datePicked4Date =
                                             await showDatePicker(
                                           context: context,
                                           initialDate: getCurrentTimestamp,
@@ -1859,12 +1874,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                           },
                                         );
 
-                                        if (_datePicked4Date != null) {
+                                        if (datePicked4Date != null) {
                                           safeSetState(() {
                                             _model.datePicked4 = DateTime(
-                                              _datePicked4Date.year,
-                                              _datePicked4Date.month,
-                                              _datePicked4Date.day,
+                                              datePicked4Date.year,
+                                              datePicked4Date.month,
+                                              datePicked4Date.day,
                                             );
                                           });
                                         } else if (_model.datePicked4 != null) {
@@ -1878,21 +1893,20 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         width: double.infinity,
                                         height: 56.0,
                                         decoration: BoxDecoration(
-                                          color: Color(0xFFF1F1F1),
-                                          borderRadius: BorderRadius.only(
+                                          color: const Color(0xFFF1F1F1),
+                                          borderRadius: const BorderRadius.only(
                                             bottomLeft: Radius.circular(6.0),
                                             bottomRight: Radius.circular(6.0),
                                             topLeft: Radius.circular(6.0),
                                             topRight: Radius.circular(6.0),
                                           ),
                                           border: Border.all(
-                                            color: Color(0x001E7A4C),
+                                            color: const Color(0x001E7A4C),
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  8.0, 0.0, 8.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
@@ -1921,9 +1935,11 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                           valueOrDefault<Color>(
                                                         _model.datePicked4 !=
                                                                 null
-                                                            ? Color(0xFF333333)
-                                                            : Color(0xFFBEBEBE),
-                                                        Color(0xFFBEBEBE),
+                                                            ? const Color(
+                                                                0xFF333333)
+                                                            : const Color(
+                                                                0xFFBEBEBE),
+                                                        const Color(0xFFBEBEBE),
                                                       ),
                                                       fontSize: 16.0,
                                                       letterSpacing: 0.0,
@@ -1935,7 +1951,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                               .bodyMediumIsCustom,
                                                     ),
                                               ),
-                                              Icon(
+                                              const Icon(
                                                 Icons.calendar_month_rounded,
                                                 color: Color(0xFF181818),
                                                 size: 24.0,
@@ -1945,7 +1961,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             ),
@@ -1957,14 +1973,14 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Align(
                                       alignment:
-                                          AlignmentDirectional(-1.0, 0.0),
+                                          const AlignmentDirectional(-1.0, 0.0),
                                       child: Text(
                                         'Inseminador',
                                         style: FlutterFlowTheme.of(context)
@@ -1973,7 +1989,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF474747),
+                                              color: const Color(0xFF474747),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -2015,23 +2031,24 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                           width: double.infinity,
                                           height: 56.0,
                                           decoration: BoxDecoration(
-                                            color: Color(0xFFF1F1F1),
-                                            borderRadius: BorderRadius.only(
+                                            color: const Color(0xFFF1F1F1),
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
                                               bottomRight: Radius.circular(6.0),
                                               topLeft: Radius.circular(6.0),
                                               topRight: Radius.circular(6.0),
                                             ),
                                             border: Border.all(
-                                              color: Color(0x001E7A4C),
+                                              color: const Color(0x001E7A4C),
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    8.0, 0.0, 8.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                             child: Autocomplete<String>(
-                                              initialValue: TextEditingValue(),
+                                              initialValue:
+                                                  const TextEditingValue(),
                                               optionsBuilder:
                                                   (textEditingValue) {
                                                 if (textEditingValue.text ==
@@ -2077,7 +2094,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                                     .bodyMediumIsCustom,
                                                           ),
                                                   textHighlightStyle:
-                                                      TextStyle(),
+                                                      const TextStyle(),
                                                   elevation: 4.0,
                                                   optionBackgroundColor:
                                                       FlutterFlowTheme.of(
@@ -2128,8 +2145,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              Color(0xFFBEBEBE),
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -2141,7 +2158,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                         ),
                                                     enabledBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x00E0E3E7),
                                                         width: 2.0,
@@ -2152,7 +2170,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                     ),
                                                     focusedBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0x004B39EF),
                                                         width: 2.0,
@@ -2188,22 +2207,23 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                               8.0),
                                                     ),
                                                   ),
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF333333),
-                                                        letterSpacing: 0.0,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF333333),
+                                                            letterSpacing: 0.0,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                   validator: _model
                                                       .textFieldInseminadorTextControllerValidator
                                                       .asValidator(context),
@@ -2214,7 +2234,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         );
                                       },
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             ),
@@ -2226,7 +2246,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                             desktop: false,
                           ))
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
@@ -2259,7 +2279,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               width: 2,
                                               color:
                                                   FlutterFlowTheme.of(context)
-                                                      .alternate!,
+                                                      .alternate,
                                             )
                                           : null,
                                       activeColor:
@@ -2284,7 +2304,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                                ].divide(SizedBox(width: 8.0)),
+                                ].divide(const SizedBox(width: 8.0)),
                               ),
                             ),
                           Container(
@@ -2294,7 +2314,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -2307,7 +2327,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         children: [
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(-1.0, 0.0),
+                                                const AlignmentDirectional(
+                                                    -1.0, 0.0),
                                             child: Text(
                                               'Diagnóstico*',
                                               style: FlutterFlowTheme.of(
@@ -2318,7 +2339,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: Color(0xFF474747),
+                                                    color:
+                                                        const Color(0xFF474747),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -2334,7 +2356,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                     .dropdownStatusValueController ??=
                                                 FormFieldController<String>(
                                                     null),
-                                            options: [
+                                            options: const [
                                               'Não diagnosticado',
                                               'Absorção',
                                               'Aborto',
@@ -2380,15 +2402,14 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                             borderColor: Colors.transparent,
                                             borderWidth: 0.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    8.0, 0.0, 8.0, 0.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                             hidesUnderline: true,
                                             isOverButton: false,
                                             isSearchable: false,
                                             isMultiSelect: false,
                                           ),
-                                        ].divide(SizedBox(height: 8.0)),
+                                        ].divide(const SizedBox(height: 8.0)),
                                       ),
                                       if (_model.dropdownStatusValue != null &&
                                           _model.dropdownStatusValue != '')
@@ -2426,7 +2447,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               highlightColor:
                                                   Colors.transparent,
                                               onTap: () async {
-                                                final _datePicked5Date =
+                                                final datePicked5Date =
                                                     await showDatePicker(
                                                   context: context,
                                                   initialDate:
@@ -2489,13 +2510,13 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                   },
                                                 );
 
-                                                if (_datePicked5Date != null) {
+                                                if (datePicked5Date != null) {
                                                   safeSetState(() {
                                                     _model.datePicked5 =
                                                         DateTime(
-                                                      _datePicked5Date.year,
-                                                      _datePicked5Date.month,
-                                                      _datePicked5Date.day,
+                                                      datePicked5Date.year,
+                                                      datePicked5Date.month,
+                                                      datePicked5Date.day,
                                                     );
                                                   });
                                                 } else if (_model.datePicked5 !=
@@ -2510,9 +2531,10 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                 width: double.infinity,
                                                 height: 56.0,
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xFFF1F1F1),
+                                                  color:
+                                                      const Color(0xFFF1F1F1),
                                                   borderRadius:
-                                                      BorderRadius.only(
+                                                      const BorderRadius.only(
                                                     bottomLeft:
                                                         Radius.circular(6.0),
                                                     bottomRight:
@@ -2523,12 +2545,14 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                         Radius.circular(6.0),
                                                   ),
                                                   border: Border.all(
-                                                    color: Color(0x001E7A4C),
+                                                    color:
+                                                        const Color(0x001E7A4C),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           8.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -2561,11 +2585,11 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                                       Color>(
                                                                 _model.datePicked5 !=
                                                                         null
-                                                                    ? Color(
+                                                                    ? const Color(
                                                                         0xFF333333)
-                                                                    : Color(
+                                                                    : const Color(
                                                                         0xFFBEBEBE),
-                                                                Color(
+                                                                const Color(
                                                                     0xFFBEBEBE),
                                                               ),
                                                               fontSize: 16.0,
@@ -2580,7 +2604,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                                       .bodyMediumIsCustom,
                                                             ),
                                                       ),
-                                                      Icon(
+                                                      const Icon(
                                                         Icons
                                                             .calendar_month_rounded,
                                                         color:
@@ -2592,7 +2616,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(height: 8.0)),
+                                          ].divide(const SizedBox(height: 8.0)),
                                         ),
                                       if (_model.tipoReproducao ==
                                           'Monta Natural')
@@ -2606,29 +2630,31 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, 0.0),
                                                 child: Text(
                                                   'Previsão do parto',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                               ),
                                               InkWell(
@@ -2638,7 +2664,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                 highlightColor:
                                                     Colors.transparent,
                                                 onTap: () async {
-                                                  final _datePicked6Date =
+                                                  final datePicked6Date =
                                                       await showDatePicker(
                                                     context: context,
                                                     initialDate:
@@ -2702,14 +2728,13 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                     },
                                                   );
 
-                                                  if (_datePicked6Date !=
-                                                      null) {
+                                                  if (datePicked6Date != null) {
                                                     safeSetState(() {
                                                       _model.datePicked6 =
                                                           DateTime(
-                                                        _datePicked6Date.year,
-                                                        _datePicked6Date.month,
-                                                        _datePicked6Date.day,
+                                                        datePicked6Date.year,
+                                                        datePicked6Date.month,
+                                                        datePicked6Date.day,
                                                       );
                                                     });
                                                   } else if (_model
@@ -2725,9 +2750,10 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                   width: double.infinity,
                                                   height: 56.0,
                                                   decoration: BoxDecoration(
-                                                    color: Color(0xFFF1F1F1),
+                                                    color:
+                                                        const Color(0xFFF1F1F1),
                                                     borderRadius:
-                                                        BorderRadius.only(
+                                                        const BorderRadius.only(
                                                       bottomLeft:
                                                           Radius.circular(6.0),
                                                       bottomRight:
@@ -2738,14 +2764,15 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                           Radius.circular(6.0),
                                                     ),
                                                     border: Border.all(
-                                                      color: Color(0x001E7A4C),
+                                                      color: const Color(
+                                                          0x001E7A4C),
                                                     ),
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(8.0, 0.0,
-                                                                8.0, 0.0),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            8.0, 0.0, 8.0, 0.0),
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -2781,9 +2808,9 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                                       ? FlutterFlowTheme.of(
                                                                               context)
                                                                           .secondaryText
-                                                                      : Color(
+                                                                      : const Color(
                                                                           0xFFBEBEBE),
-                                                                  Color(
+                                                                  const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                                 fontSize: 16.0,
@@ -2798,7 +2825,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                                         .bodyMediumIsCustom,
                                                               ),
                                                         ),
-                                                        Icon(
+                                                        const Icon(
                                                           Icons
                                                               .calendar_month_rounded,
                                                           color:
@@ -2810,7 +2837,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                       if ((_model.tipoReproducao ==
@@ -2826,38 +2854,41 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, 0.0),
                                                 child: Text(
                                                   'Previsão do parto',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
                                               ),
                                               Container(
                                                 width: double.infinity,
                                                 height: 56.0,
                                                 decoration: BoxDecoration(
-                                                  color: Color(0xFFF1F1F1),
+                                                  color:
+                                                      const Color(0xFFF1F1F1),
                                                   borderRadius:
-                                                      BorderRadius.only(
+                                                      const BorderRadius.only(
                                                     bottomLeft:
                                                         Radius.circular(6.0),
                                                     bottomRight:
@@ -2868,12 +2899,14 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                         Radius.circular(6.0),
                                                   ),
                                                   border: Border.all(
-                                                    color: Color(0x001E7A4C),
+                                                    color:
+                                                        const Color(0x001E7A4C),
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           8.0, 0.0, 8.0, 0.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -2908,11 +2941,11 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                                       Color>(
                                                                 _model.datePicked1 !=
                                                                         null
-                                                                    ? Color(
+                                                                    ? const Color(
                                                                         0xFF333333)
-                                                                    : Color(
+                                                                    : const Color(
                                                                         0xFFBEBEBE),
-                                                                Color(
+                                                                const Color(
                                                                     0xFFBEBEBE),
                                                               ),
                                                               fontSize: 16.0,
@@ -2940,17 +2973,18 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                   ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
-                                    ].divide(SizedBox(height: 24.0)),
+                                    ].divide(const SizedBox(height: 24.0)),
                                   ),
-                                ].divide(SizedBox(height: 8.0)),
+                                ].divide(const SizedBox(height: 8.0)),
                               ),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -2981,7 +3015,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         ? BorderSide(
                                             width: 2,
                                             color: FlutterFlowTheme.of(context)
-                                                .accent4!,
+                                                .accent4,
                                           )
                                         : null,
                                     activeColor:
@@ -3005,12 +3039,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                 .bodyMediumIsCustom,
                                       ),
                                 ),
-                              ].divide(SizedBox(width: 8.0)),
+                              ].divide(const SizedBox(width: 8.0)),
                             ),
                           ),
                           if (_model.checkboxParidaValue != null)
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -3040,7 +3074,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                     hoverColor: Colors.transparent,
                                     highlightColor: Colors.transparent,
                                     onTap: () async {
-                                      final _datePicked7Date =
+                                      final datePicked7Date =
                                           await showDatePicker(
                                         context: context,
                                         initialDate: getCurrentTimestamp,
@@ -3092,12 +3126,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         },
                                       );
 
-                                      if (_datePicked7Date != null) {
+                                      if (datePicked7Date != null) {
                                         safeSetState(() {
                                           _model.datePicked7 = DateTime(
-                                            _datePicked7Date.year,
-                                            _datePicked7Date.month,
-                                            _datePicked7Date.day,
+                                            datePicked7Date.year,
+                                            datePicked7Date.month,
+                                            datePicked7Date.day,
                                           );
                                         });
                                       } else if (_model.datePicked7 != null) {
@@ -3111,20 +3145,20 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       width: double.infinity,
                                       height: 56.0,
                                       decoration: BoxDecoration(
-                                        color: Color(0xFFF1F1F1),
-                                        borderRadius: BorderRadius.only(
+                                        color: const Color(0xFFF1F1F1),
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(6.0),
                                           bottomRight: Radius.circular(6.0),
                                           topLeft: Radius.circular(6.0),
                                           topRight: Radius.circular(6.0),
                                         ),
                                         border: Border.all(
-                                          color: Color(0x001E7A4C),
+                                          color: const Color(0x001E7A4C),
                                         ),
                                       ),
                                       child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            8.0, 0.0, 8.0, 0.0),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
@@ -3155,8 +3189,9 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                           ? FlutterFlowTheme.of(
                                                                   context)
                                                               .secondaryText
-                                                          : Color(0xFFBEBEBE),
-                                                      Color(0xFFBEBEBE),
+                                                          : const Color(
+                                                              0xFFBEBEBE),
+                                                      const Color(0xFFBEBEBE),
                                                     ),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
@@ -3167,7 +3202,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                             .bodyMediumIsCustom,
                                                   ),
                                             ),
-                                            Icon(
+                                            const Icon(
                                               Icons.calendar_month_rounded,
                                               color: Color(0xFF181818),
                                               size: 24.0,
@@ -3177,7 +3212,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       ),
                                     ),
                                   ),
-                                ].divide(SizedBox(height: 8.0)),
+                                ].divide(const SizedBox(height: 8.0)),
                               ),
                             ),
                           Container(
@@ -3187,13 +3222,14 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Align(
-                                    alignment: AlignmentDirectional(-1.0, 0.0),
+                                    alignment:
+                                        const AlignmentDirectional(-1.0, 0.0),
                                     child: Text(
                                       'Anotações',
                                       style: FlutterFlowTheme.of(context)
@@ -3202,7 +3238,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF474747),
+                                            color: const Color(0xFF474747),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -3216,20 +3252,21 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                     width: double.infinity,
                                     height: 104.0,
                                     decoration: BoxDecoration(
-                                      color: Color(0xFFF1F1F1),
-                                      borderRadius: BorderRadius.only(
+                                      color: const Color(0xFFF1F1F1),
+                                      borderRadius: const BorderRadius.only(
                                         bottomLeft: Radius.circular(6.0),
                                         bottomRight: Radius.circular(6.0),
                                         topLeft: Radius.circular(6.0),
                                         topRight: Radius.circular(6.0),
                                       ),
                                       border: Border.all(
-                                        color: Color(0x001E7A4C),
+                                        color: const Color(0x001E7A4C),
                                       ),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          8.0, 0.0, 8.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              8.0, 0.0, 8.0, 0.0),
                                       child: TextFormField(
                                         controller: _model
                                             .textFieldAnotacoesTextController,
@@ -3265,7 +3302,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                         .labelMediumIsCustom,
                                               ),
                                           enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0x00E0E3E7),
                                               width: 2.0,
                                             ),
@@ -3273,7 +3310,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                 BorderRadius.circular(8.0),
                                           ),
                                           focusedBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(
+                                            borderSide: const BorderSide(
                                               color: Color(0x0028A365),
                                               width: 2.0,
                                             ),
@@ -3319,12 +3356,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       ),
                                     ),
                                   ),
-                                ].divide(SizedBox(height: 8.0)),
+                                ].divide(const SizedBox(height: 8.0)),
                               ),
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 24.0),
                             child: Container(
                               width: double.infinity,
@@ -3334,7 +3371,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -3368,13 +3405,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         options: FFButtonOptions(
                                           width: 156.0,
                                           height: 56.0,
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           iconPadding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 0.0, 0.0, 0.0),
-                                          color: Color(0x004B39EF),
+                                              const EdgeInsetsDirectional
+                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                          color: const Color(0x004B39EF),
                                           textStyle: FlutterFlowTheme.of(
                                                   context)
                                               .titleSmall
@@ -3382,7 +3418,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .titleSmallFamily,
-                                                color: Color(0xFF1E7A4C),
+                                                color: const Color(0xFF1E7A4C),
                                                 fontSize: 18.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -3392,7 +3428,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                         .titleSmallIsCustom,
                                               ),
                                           elevation: 0.0,
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFF1E7A4C),
                                             width: 2.0,
                                           ),
@@ -3408,13 +3444,9 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                     _model.dropDownLoteValue ==
                                                         '') ||
                                                 (FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .numAnimal ==
-                                                        null ||
-                                                    FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .numAnimal ==
-                                                        ''))
+                                                        .reprodutorSelecionado
+                                                        .numAnimal ==
+                                                    ''))
                                             ? null
                                             : () async {
                                                 _model.lote =
@@ -3424,13 +3456,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                       _model.dropDownLoteValue,
                                                 );
                                                 if (functions
-                                                        .converterJSONparaLista(
-                                                            _model
-                                                                .lote!
-                                                                .firstOrNull!
-                                                                .idAnimais!)
-                                                        .length >
-                                                    0) {
+                                                    .converterJSONparaLista(
+                                                        _model
+                                                            .lote!
+                                                            .firstOrNull!
+                                                            .idAnimais!)
+                                                    .isNotEmpty) {
                                                   if (!(FFAppState()
                                                           .dataDadosNaoSyncRepro !=
                                                       null)) {
@@ -3831,7 +3862,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                               .secondaryBackground,
                                                         ),
                                                       ),
-                                                      duration: Duration(
+                                                      duration: const Duration(
                                                           milliseconds: 4000),
                                                       backgroundColor:
                                                           FlutterFlowTheme.of(
@@ -3845,14 +3876,15 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                     builder:
                                                         (alertDialogContext) {
                                                       return AlertDialog(
-                                                        content: Text(
+                                                        content: const Text(
                                                             'Este lote não possui nenhum animal'),
                                                         actions: [
                                                           TextButton(
                                                             onPressed: () =>
                                                                 Navigator.pop(
                                                                     alertDialogContext),
-                                                            child: Text('Ok'),
+                                                            child: const Text(
+                                                                'Ok'),
                                                           ),
                                                         ],
                                                       );
@@ -3865,13 +3897,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         text: 'Salvar',
                                         options: FFButtonOptions(
                                           height: 56.0,
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           iconPadding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 0.0, 0.0, 0.0),
-                                          color: Color(0xFF28A365),
+                                              const EdgeInsetsDirectional
+                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                          color: const Color(0xFF28A365),
                                           textStyle: FlutterFlowTheme.of(
                                                   context)
                                               .titleSmall
@@ -3889,7 +3920,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                         .titleSmallIsCustom,
                                               ),
                                           elevation: 0.0,
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Colors.transparent,
                                             width: 1.0,
                                           ),
@@ -3901,12 +3932,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(width: 16.0)),
+                                  ].divide(const SizedBox(width: 16.0)),
                                 ),
                               ),
                             ),
                           ),
-                        ].divide(SizedBox(height: 24.0)),
+                        ].divide(const SizedBox(height: 24.0)),
                       ),
                     ),
                   ),

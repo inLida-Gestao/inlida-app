@@ -9,7 +9,7 @@ class PatrociniosTable extends SupabaseTable<PatrociniosRow> {
 }
 
 class PatrociniosRow extends SupabaseDataRow {
-  PatrociniosRow(Map<String, dynamic> data) : super(data);
+  PatrociniosRow(super.data);
 
   @override
   SupabaseTable get table => PatrociniosTable();

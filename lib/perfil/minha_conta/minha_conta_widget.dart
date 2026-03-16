@@ -83,7 +83,7 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
             color: FlutterFlowTheme.of(context).secondaryBackground,
           ),
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -97,7 +97,7 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Align(
-                        alignment: AlignmentDirectional(-1.0, -1.0),
+                        alignment: const AlignmentDirectional(-1.0, -1.0),
                         child: Text(
                           valueOrDefault<String>(
                             FFAppState().userLogado.nome,
@@ -121,7 +121,7 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, -1.0),
+                        alignment: const AlignmentDirectional(-1.0, -1.0),
                         child: Text(
                           valueOrDefault<String>(
                             FFAppState().userLogado.email,
@@ -135,7 +135,7 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                           .bodyMedium
                                           .fontStyle,
                                     ),
-                                    color: Color(0xFF8E8E8E),
+                                    color: const Color(0xFF8E8E8E),
                                     fontSize: 16.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
@@ -145,11 +145,12 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                   ),
                         ),
                       ),
-                    ].divide(SizedBox(height: 2.0)),
+                    ].divide(const SizedBox(height: 2.0)),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 40.0, 0.0, 0.0),
+                  padding:
+                      const EdgeInsetsDirectional.fromSTEB(0.0, 40.0, 0.0, 0.0),
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -190,7 +191,7 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                         insetPadding: EdgeInsets.zero,
                                         backgroundColor: Colors.transparent,
                                         alignment:
-                                            AlignmentDirectional(0.0, 0.0)
+                                            const AlignmentDirectional(0.0, 0.0)
                                                 .resolve(
                                                     Directionality.of(context)),
                                         child: EditarPerfilWidget(
@@ -227,8 +228,9 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                               ),
                                             ),
                                             Align(
-                                              alignment: AlignmentDirectional(
-                                                  0.0, 0.0),
+                                              alignment:
+                                                  const AlignmentDirectional(
+                                                      0.0, 0.0),
                                               child: Text(
                                                 'Editar perfil',
                                                 style: FlutterFlowTheme.of(
@@ -256,7 +258,7 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                                     ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(width: 12.0)),
+                                          ].divide(const SizedBox(width: 12.0)),
                                         ),
                                       ),
                                     ),
@@ -266,7 +268,7 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                           .secondaryText,
                                       size: 24.0,
                                     ),
-                                  ].divide(SizedBox(width: 8.0)),
+                                  ].divide(const SizedBox(width: 8.0)),
                                 ),
                               ),
                             ),
@@ -294,9 +296,10 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                       elevation: 0,
                                       insetPadding: EdgeInsets.zero,
                                       backgroundColor: Colors.transparent,
-                                      alignment: AlignmentDirectional(0.0, 0.0)
+                                      alignment: const AlignmentDirectional(
+                                              0.0, 0.0)
                                           .resolve(Directionality.of(context)),
-                                      child: EditSenhaWidget(),
+                                      child: const EditSenhaWidget(),
                                     );
                                   },
                                 );
@@ -329,7 +332,8 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                           ),
                                           Align(
                                             alignment:
-                                                AlignmentDirectional(0.0, 0.0),
+                                                const AlignmentDirectional(
+                                                    0.0, 0.0),
                                             child: Text(
                                               'Alterar senha',
                                               style: FlutterFlowTheme.of(
@@ -356,7 +360,7 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                                   ),
                                             ),
                                           ),
-                                        ].divide(SizedBox(width: 12.0)),
+                                        ].divide(const SizedBox(width: 12.0)),
                                       ),
                                     ),
                                   ),
@@ -366,7 +370,7 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                         .secondaryText,
                                     size: 24.0,
                                   ),
-                                ].divide(SizedBox(width: 8.0)),
+                                ].divide(const SizedBox(width: 8.0)),
                               ),
                             ),
                           ),
@@ -386,9 +390,10 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                     elevation: 0,
                                     insetPadding: EdgeInsets.zero,
                                     backgroundColor: Colors.transparent,
-                                    alignment: AlignmentDirectional(0.0, 0.0)
+                                    alignment: const AlignmentDirectional(
+                                            0.0, 0.0)
                                         .resolve(Directionality.of(context)),
-                                    child: PoliticaPrivacidadeWidget(),
+                                    child: const PoliticaPrivacidadeWidget(),
                                   );
                                 },
                               );
@@ -413,11 +418,12 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                           elevation: 0,
                                           insetPadding: EdgeInsets.zero,
                                           backgroundColor: Colors.transparent,
-                                          alignment: AlignmentDirectional(
+                                          alignment: const AlignmentDirectional(
                                                   0.0, 0.0)
                                               .resolve(
                                                   Directionality.of(context)),
-                                          child: PoliticaPrivacidadeWidget(),
+                                          child:
+                                              const PoliticaPrivacidadeWidget(),
                                         );
                                       },
                                     );
@@ -450,8 +456,9 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                                 ),
                                               ),
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    0.0, 0.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        0.0, 0.0),
                                                 child: Text(
                                                   'Política de Privacidade e \nTermos de Uso',
                                                   style: FlutterFlowTheme.of(
@@ -480,7 +487,8 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                                       ),
                                                 ),
                                               ),
-                                            ].divide(SizedBox(width: 12.0)),
+                                            ].divide(
+                                                const SizedBox(width: 12.0)),
                                           ),
                                         ),
                                       ),
@@ -490,7 +498,7 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                             .secondaryText,
                                         size: 24.0,
                                       ),
-                                    ].divide(SizedBox(width: 8.0)),
+                                    ].divide(const SizedBox(width: 8.0)),
                                   ),
                                 ),
                               ),
@@ -550,8 +558,8 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                           ),
                                         ),
                                         Align(
-                                          alignment:
-                                              AlignmentDirectional(0.0, 0.0),
+                                          alignment: const AlignmentDirectional(
+                                              0.0, 0.0),
                                           child: Text(
                                             'Excluir conta',
                                             style: FlutterFlowTheme.of(context)
@@ -576,7 +584,7 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                                 ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(width: 12.0)),
+                                      ].divide(const SizedBox(width: 12.0)),
                                     ),
                                   ),
                                 ),
@@ -586,11 +594,11 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                                       .secondaryText,
                                   size: 24.0,
                                 ),
-                              ].divide(SizedBox(width: 8.0)),
+                              ].divide(const SizedBox(width: 8.0)),
                             ),
                           ),
                         ),
-                      ].divide(SizedBox(height: 32.0)),
+                      ].divide(const SizedBox(height: 32.0)),
                     ),
                   ),
                 ),

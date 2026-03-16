@@ -1,6 +1,9 @@
+import '/backend/sqlite/sqlite_manager.dart';
+import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/form_field_controller.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -29,6 +32,10 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
     super.initState();
     _model = createModel(context, () => FiltrosRebanhoModel());
 
+    _model.dropDownLoteValue = FFAppState().filtroLoteRebanho.isNotEmpty
+        ? FFAppState().filtroLoteRebanho
+        : null;
+
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
@@ -46,7 +53,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
     return Material(
       color: Colors.transparent,
       elevation: 5.0,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(0.0),
           bottomRight: Radius.circular(0.0),
@@ -57,7 +64,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
       child: Container(
         width: double.infinity,
         height: 680.0,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(0.0),
@@ -70,7 +77,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(25.0, 25.0, 25.0, 25.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(25.0, 25.0, 25.0, 25.0),
               child: InkWell(
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,
@@ -110,7 +118,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                       .headlineSmall
                                       .fontStyle,
                                 ),
-                                color: Color(0xFF2F2F2F),
+                                color: const Color(0xFF2F2F2F),
                                 fontSize: 24.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w500,
@@ -131,7 +139,13 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                         FFAppState().filtroRaca = '';
                         FFAppState().filtroStatusRebanho = '';
                         FFAppState().filtroSexoRebanho = '';
+                        FFAppState().filtroLoteRebanho = '';
+                        FFAppState().filtroLoteRebanhoNome = '';
                         FFAppState().filtroStatusRebanhoList = [];
+                        safeSetState(() {
+                          _model.dropDownLoteValue = null;
+                          _model.dropDownLoteValueController?.value = null;
+                        });
                         safeSetState(() {});
                         Navigator.pop(context);
                       },
@@ -145,7 +159,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                         .headlineSmall
                                         .fontStyle,
                                   ),
-                                  color: Color(0xFFBEBEBE),
+                                  color: const Color(0xFFBEBEBE),
                                   fontSize: 14.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.w600,
@@ -159,7 +173,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                 ),
               ),
             ),
-            Divider(
+            const Divider(
               thickness: 1.0,
               color: Color(0xFFBEBEBE),
             ),
@@ -178,7 +192,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -191,7 +205,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                   .override(
                                     fontFamily: FlutterFlowTheme.of(context)
                                         .bodyMediumFamily,
-                                    color: Color(0xFF2F2F2F),
+                                    color: const Color(0xFF2F2F2F),
                                     fontSize: 18.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
@@ -234,7 +248,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                       }
                                     },
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                         bottomLeft: Radius.circular(100.0),
                                         bottomRight: Radius.circular(100.0),
                                         topLeft: Radius.circular(100.0),
@@ -248,7 +262,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                   ? FlutterFlowTheme.of(context)
                                                       .customColor7
                                                   : Colors.white,
-                                          borderRadius: BorderRadius.only(
+                                          borderRadius: const BorderRadius.only(
                                             bottomLeft: Radius.circular(100.0),
                                             bottomRight: Radius.circular(100.0),
                                             topLeft: Radius.circular(100.0),
@@ -265,9 +279,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  8.0, 4.0, 8.0, 4.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(8.0, 4.0, 8.0, 4.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
@@ -307,7 +320,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                       .secondary,
                                                   size: 16.0,
                                                 ),
-                                            ].divide(SizedBox(width: 8.0)),
+                                            ].divide(
+                                                const SizedBox(width: 8.0)),
                                           ),
                                         ),
                                       ),
@@ -342,7 +356,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                       }
                                     },
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.only(
+                                      borderRadius: const BorderRadius.only(
                                         bottomLeft: Radius.circular(100.0),
                                         bottomRight: Radius.circular(100.0),
                                         topLeft: Radius.circular(100.0),
@@ -356,7 +370,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                   ? FlutterFlowTheme.of(context)
                                                       .customColor7
                                                   : Colors.white,
-                                          borderRadius: BorderRadius.only(
+                                          borderRadius: const BorderRadius.only(
                                             bottomLeft: Radius.circular(100.0),
                                             bottomRight: Radius.circular(100.0),
                                             topLeft: Radius.circular(100.0),
@@ -373,9 +387,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  8.0, 4.0, 8.0, 4.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(8.0, 4.0, 8.0, 4.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
@@ -415,13 +428,14 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                       .secondary,
                                                   size: 16.0,
                                                 ),
-                                            ].divide(SizedBox(width: 8.0)),
+                                            ].divide(
+                                                const SizedBox(width: 8.0)),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ].divide(SizedBox(width: 8.0)),
+                                ].divide(const SizedBox(width: 8.0)),
                               ),
                             ),
                           ],
@@ -436,8 +450,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                       desktop: false,
                     ))
                       Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 24.0, 0.0, 0.0),
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -445,7 +459,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                 .secondaryBackground,
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -458,7 +472,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF2F2F2F),
+                                        color: const Color(0xFF2F2F2F),
                                         fontSize: 18.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
@@ -525,7 +539,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                               }
                                             },
                                             child: ClipRRect(
-                                              borderRadius: BorderRadius.only(
+                                              borderRadius:
+                                                  const BorderRadius.only(
                                                 bottomLeft:
                                                     Radius.circular(100.0),
                                                 bottomRight:
@@ -544,7 +559,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                           .customColor7
                                                       : Colors.white,
                                                   borderRadius:
-                                                      BorderRadius.only(
+                                                      const BorderRadius.only(
                                                     bottomLeft:
                                                         Radius.circular(100.0),
                                                     bottomRight:
@@ -568,8 +583,9 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           8.0, 4.0, 8.0, 4.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -613,14 +629,14 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                               .secondary,
                                                           size: 16.0,
                                                         ),
-                                                    ].divide(
-                                                        SizedBox(width: 8.0)),
+                                                    ].divide(const SizedBox(
+                                                        width: 8.0)),
                                                   ),
                                                 ),
                                               ),
                                             ),
                                           );
-                                        }).divide(SizedBox(width: 8.0)),
+                                        }).divide(const SizedBox(width: 8.0)),
                                       ),
                                     );
                                   },
@@ -631,8 +647,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                         ),
                       ),
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 24.0, 0.0, 0.0),
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
@@ -640,7 +656,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                               FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 0.0, 24.0, 0.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -653,7 +669,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF2F2F2F),
+                                      color: const Color(0xFF2F2F2F),
                                       fontSize: 18.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w500,
@@ -681,34 +697,36 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             if (FFAppState()
-                                                    .filtroStatusRebanho ==
-                                                statusItem) {
+                                                .filtroStatusRebanhoList
+                                                .contains(statusItem)) {
                                               FFAppState()
                                                   .removeFromFiltrosAplicadosRebanho(
-                                                      FFAppState()
-                                                          .filtroStatusRebanho);
-                                              safeSetState(() {});
-                                              FFAppState().filtroStatusRebanho =
-                                                  '';
-                                              safeSetState(() {});
+                                                      statusItem);
+                                              FFAppState()
+                                                  .removeFromFiltroStatusRebanhoList(
+                                                      statusItem);
                                             } else {
                                               FFAppState()
-                                                  .removeFromFiltrosAplicadosRebanho(
-                                                      FFAppState()
-                                                          .filtroStatusRebanho);
-                                              safeSetState(() {});
-                                              FFAppState().filtroStatusRebanho =
-                                                  statusItem;
-                                              safeSetState(() {});
-                                              FFAppState()
                                                   .addToFiltrosAplicadosRebanho(
-                                                      FFAppState()
-                                                          .filtroStatusRebanho);
-                                              safeSetState(() {});
+                                                      statusItem);
+                                              FFAppState()
+                                                  .addToFiltroStatusRebanhoList(
+                                                      statusItem);
                                             }
+
+                                            FFAppState().filtroStatusRebanho =
+                                                FFAppState()
+                                                        .filtroStatusRebanhoList
+                                                        .isEmpty
+                                                    ? ''
+                                                    : FFAppState()
+                                                        .filtroStatusRebanhoList
+                                                        .join('|');
+                                            safeSetState(() {});
                                           },
                                           child: ClipRRect(
-                                            borderRadius: BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               bottomLeft:
                                                   Radius.circular(100.0),
                                               bottomRight:
@@ -719,13 +737,14 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                             child: Container(
                                               decoration: BoxDecoration(
                                                 color: FFAppState()
-                                                            .filtroStatusRebanho ==
-                                                        statusItem
+                                                        .filtroStatusRebanhoList
+                                                        .contains(statusItem)
                                                     ? FlutterFlowTheme.of(
                                                             context)
                                                         .customColor7
                                                     : Colors.white,
-                                                borderRadius: BorderRadius.only(
+                                                borderRadius:
+                                                    const BorderRadius.only(
                                                   bottomLeft:
                                                       Radius.circular(100.0),
                                                   bottomRight:
@@ -737,8 +756,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                 ),
                                                 border: Border.all(
                                                   color: FFAppState()
-                                                              .filtroStatusRebanho ==
-                                                          statusItem
+                                                          .filtroStatusRebanhoList
+                                                          .contains(statusItem)
                                                       ? FlutterFlowTheme.of(
                                                               context)
                                                           .secondary
@@ -748,8 +767,9 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         8.0, 4.0, 8.0, 4.0),
                                                 child: Row(
                                                   mainAxisSize:
@@ -766,8 +786,9 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                                         context)
                                                                     .bodyMediumFamily,
                                                             color: FFAppState()
-                                                                        .filtroStatusRebanho ==
-                                                                    statusItem
+                                                                    .filtroStatusRebanhoList
+                                                                    .contains(
+                                                                        statusItem)
                                                                 ? FlutterFlowTheme.of(
                                                                         context)
                                                                     .secondary
@@ -782,8 +803,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                           ),
                                                     ),
                                                     if (FFAppState()
-                                                            .filtroStatusRebanho ==
-                                                        statusItem)
+                                                        .filtroStatusRebanhoList
+                                                        .contains(statusItem))
                                                       Icon(
                                                         Icons.close,
                                                         color:
@@ -792,14 +813,14 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                                 .secondary,
                                                         size: 16.0,
                                                       ),
-                                                  ].divide(
-                                                      SizedBox(width: 8.0)),
+                                                  ].divide(const SizedBox(
+                                                      width: 8.0)),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         );
-                                      }).divide(SizedBox(width: 8.0)),
+                                      }).divide(const SizedBox(width: 8.0)),
                                     ),
                                   );
                                 },
@@ -810,8 +831,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                       ),
                     ),
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 24.0, 0.0, 0.0),
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
@@ -819,7 +840,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                               FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 0.0, 24.0, 0.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -832,7 +853,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF2F2F2F),
+                                      color: const Color(0xFF2F2F2F),
                                       fontSize: 18.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w500,
@@ -861,11 +882,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             if (FFAppState()
-                                                        .filtroCategoriasRebanho !=
-                                                    null &&
-                                                FFAppState()
-                                                        .filtroCategoriasRebanho !=
-                                                    '') {
+                                                    .filtroCategoriasRebanho !=
+                                                '') {
                                               if (FFAppState()
                                                       .filtroCategoriasRebanho ==
                                                   categoriaItem) {
@@ -902,7 +920,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                             }
                                           },
                                           child: ClipRRect(
-                                            borderRadius: BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               bottomLeft:
                                                   Radius.circular(100.0),
                                               bottomRight:
@@ -919,7 +938,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                             context)
                                                         .customColor7
                                                     : Colors.white,
-                                                borderRadius: BorderRadius.only(
+                                                borderRadius:
+                                                    const BorderRadius.only(
                                                   bottomLeft:
                                                       Radius.circular(100.0),
                                                   bottomRight:
@@ -942,8 +962,9 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         8.0, 4.0, 8.0, 4.0),
                                                 child: Row(
                                                   mainAxisSize:
@@ -962,7 +983,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                             color: FFAppState()
                                                                         .filtroCategoriasRebanho ==
                                                                     categoriaItem
-                                                                ? Color(
+                                                                ? const Color(
                                                                     0xFF1E7A4C)
                                                                 : FlutterFlowTheme.of(
                                                                         context)
@@ -985,14 +1006,14 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                                 .secondary,
                                                         size: 16.0,
                                                       ),
-                                                  ].divide(
-                                                      SizedBox(width: 8.0)),
+                                                  ].divide(const SizedBox(
+                                                      width: 8.0)),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         );
-                                      }).divide(SizedBox(width: 8.0)),
+                                      }).divide(const SizedBox(width: 8.0)),
                                     ),
                                   );
                                 },
@@ -1010,8 +1031,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                       desktop: false,
                     ))
                       Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 24.0, 0.0, 0.0),
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -1019,7 +1040,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                 .secondaryBackground,
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -1032,7 +1053,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF2F2F2F),
+                                        color: const Color(0xFF2F2F2F),
                                         fontSize: 18.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
@@ -1047,7 +1068,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       ClipRRect(
-                                        borderRadius: BorderRadius.only(
+                                        borderRadius: const BorderRadius.only(
                                           bottomLeft: Radius.circular(100.0),
                                           bottomRight: Radius.circular(100.0),
                                           topLeft: Radius.circular(100.0),
@@ -1056,7 +1077,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                         child: Container(
                                           decoration: BoxDecoration(
                                             color: Colors.white,
-                                            borderRadius: BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               bottomLeft:
                                                   Radius.circular(100.0),
                                               bottomRight:
@@ -1065,13 +1087,12 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                               topRight: Radius.circular(100.0),
                                             ),
                                             border: Border.all(
-                                              color: Color(0xFFEDEDED),
+                                              color: const Color(0xFFEDEDED),
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    8.0, 4.0, 8.0, 4.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(8.0, 4.0, 8.0, 4.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
@@ -1103,12 +1124,13 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                       .secondary,
                                                   size: 16.0,
                                                 ),
-                                              ].divide(SizedBox(width: 8.0)),
+                                              ].divide(
+                                                  const SizedBox(width: 8.0)),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(width: 8.0)),
+                                    ].divide(const SizedBox(width: 8.0)),
                                   ),
                                 ),
                               ],
@@ -1117,8 +1139,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                         ),
                       ),
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 24.0, 0.0, 0.0),
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
@@ -1126,7 +1148,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                               FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 0.0, 24.0, 0.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -1139,7 +1161,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF2F2F2F),
+                                      color: const Color(0xFF2F2F2F),
                                       fontSize: 18.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w500,
@@ -1165,9 +1187,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                           hoverColor: Colors.transparent,
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
-                                            if (FFAppState().filtroRaca !=
-                                                    null &&
-                                                FFAppState().filtroRaca != '') {
+                                            if (FFAppState().filtroRaca != '') {
                                               if (FFAppState().filtroRaca ==
                                                   racaItem) {
                                                 FFAppState()
@@ -1200,7 +1220,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                             }
                                           },
                                           child: ClipRRect(
-                                            borderRadius: BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               bottomLeft:
                                                   Radius.circular(100.0),
                                               bottomRight:
@@ -1217,7 +1238,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                                 context)
                                                             .customColor7
                                                         : Colors.white,
-                                                borderRadius: BorderRadius.only(
+                                                borderRadius:
+                                                    const BorderRadius.only(
                                                   bottomLeft:
                                                       Radius.circular(100.0),
                                                   bottomRight:
@@ -1240,8 +1262,9 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         8.0, 4.0, 8.0, 4.0),
                                                 child: Row(
                                                   mainAxisSize:
@@ -1283,14 +1306,14 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                                 .secondary,
                                                         size: 16.0,
                                                       ),
-                                                  ].divide(
-                                                      SizedBox(width: 8.0)),
+                                                  ].divide(const SizedBox(
+                                                      width: 8.0)),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         );
-                                      }).divide(SizedBox(width: 8.0)),
+                                      }).divide(const SizedBox(width: 8.0)),
                                     ),
                                   );
                                 },
@@ -1301,8 +1324,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                       ),
                     ),
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 24.0, 0.0, 0.0),
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
@@ -1310,7 +1333,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                               FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 0.0, 24.0, 0.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -1323,7 +1346,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF2F2F2F),
+                                      color: const Color(0xFF2F2F2F),
                                       fontSize: 18.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w500,
@@ -1388,7 +1411,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                             }
                                           },
                                           child: ClipRRect(
-                                            borderRadius: BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               bottomLeft:
                                                   Radius.circular(100.0),
                                               bottomRight:
@@ -1405,7 +1429,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                             context)
                                                         .customColor7
                                                     : Colors.white,
-                                                borderRadius: BorderRadius.only(
+                                                borderRadius:
+                                                    const BorderRadius.only(
                                                   bottomLeft:
                                                       Radius.circular(100.0),
                                                   bottomRight:
@@ -1428,8 +1453,9 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         8.0, 4.0, 8.0, 4.0),
                                                 child: Row(
                                                   mainAxisSize:
@@ -1472,14 +1498,14 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                                                 .secondary,
                                                         size: 16.0,
                                                       ),
-                                                  ].divide(
-                                                      SizedBox(width: 8.0)),
+                                                  ].divide(const SizedBox(
+                                                      width: 8.0)),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         );
-                                      }).divide(SizedBox(width: 8.0)),
+                                      }).divide(const SizedBox(width: 8.0)),
                                     ),
                                   );
                                 },
@@ -1489,16 +1515,226 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 24.0, 0.0, 0.0),
+                      child: FutureBuilder<List<ListarLotesRow>>(
+                        future: SQLiteManager.instance.listarLotes(
+                          idPropriedade:
+                              FFAppState().propriedadeSelecionada.idPropriedade,
+                        ),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return Center(
+                              child: SizedBox(
+                                width: 50.0,
+                                height: 50.0,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    FlutterFlowTheme.of(context).primary,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          final lotesDisponiveis = snapshot.data!
+                              .where((e) => e.idLote != null)
+                              .toList();
+
+                          return Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  24.0, 0.0, 24.0, 0.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Lote',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMediumFamily,
+                                          color: const Color(0xFF2F2F2F),
+                                          fontSize: 18.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w500,
+                                          useGoogleFonts:
+                                              !FlutterFlowTheme.of(context)
+                                                  .bodyMediumIsCustom,
+                                        ),
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Expanded(
+                                        child: FlutterFlowDropDown<String>(
+                                          controller: _model
+                                                  .dropDownLoteValueController ??=
+                                              FormFieldController<String>(
+                                            _model.dropDownLoteValue,
+                                          ),
+                                          options: lotesDisponiveis
+                                              .map((e) => e.idLote!)
+                                              .toList(),
+                                          optionLabels: lotesDisponiveis
+                                              .map(
+                                                  (e) => valueOrDefault<String>(
+                                                        e.nome,
+                                                        'Sem nome',
+                                                      ))
+                                              .toList(),
+                                          onChanged: (value) async {
+                                            final loteSelecionado =
+                                                lotesDisponiveis
+                                                    .where((e) =>
+                                                        e.idLote == value)
+                                                    .toList()
+                                                    .firstOrNull;
+                                            final nomeLoteSelecionado =
+                                                loteSelecionado?.nome ?? '';
+
+                                            if (FFAppState()
+                                                .filtroLoteRebanhoNome
+                                                .isNotEmpty) {
+                                              FFAppState()
+                                                  .removeFromFiltrosAplicadosRebanho(
+                                                      FFAppState()
+                                                          .filtroLoteRebanhoNome);
+                                            }
+
+                                            safeSetState(() {
+                                              _model.dropDownLoteValue = value;
+                                            });
+
+                                            FFAppState().filtroLoteRebanho =
+                                                value ?? '';
+                                            FFAppState().filtroLoteRebanhoNome =
+                                                nomeLoteSelecionado;
+
+                                            if (nomeLoteSelecionado
+                                                .isNotEmpty) {
+                                              FFAppState()
+                                                  .addToFiltrosAplicadosRebanho(
+                                                      nomeLoteSelecionado);
+                                            }
+
+                                            safeSetState(() {});
+                                          },
+                                          width: double.infinity,
+                                          height: 50.0,
+                                          maxHeight: 300.0,
+                                          searchHintText: 'Pesquisar',
+                                          searchTextStyle: FlutterFlowTheme.of(
+                                                  context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                letterSpacing: 0.0,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMediumIsCustom,
+                                              ),
+                                          textStyle: FlutterFlowTheme.of(
+                                                  context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
+                                                fontSize: 16.0,
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w600,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMediumIsCustom,
+                                              ),
+                                          hintText: 'Selecionar',
+                                          icon: Icon(
+                                            Icons.keyboard_arrow_down_rounded,
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
+                                            size: 24.0,
+                                          ),
+                                          fillColor: const Color(0xFFF1F1F1),
+                                          elevation: 0.0,
+                                          borderColor: const Color(0x00E0E3E7),
+                                          borderWidth: 0.0,
+                                          borderRadius: 8.0,
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(16.0, 4.0, 16.0, 4.0),
+                                          hidesUnderline: true,
+                                          isOverButton: true,
+                                          isSearchable: true,
+                                          isMultiSelect: false,
+                                        ),
+                                      ),
+                                      if (_model.dropDownLoteValue != null &&
+                                          _model.dropDownLoteValue != '')
+                                        InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () async {
+                                            if (FFAppState()
+                                                .filtroLoteRebanhoNome
+                                                .isNotEmpty) {
+                                              FFAppState()
+                                                  .removeFromFiltrosAplicadosRebanho(
+                                                      FFAppState()
+                                                          .filtroLoteRebanhoNome);
+                                            }
+                                            FFAppState().filtroLoteRebanho = '';
+                                            FFAppState().filtroLoteRebanhoNome =
+                                                '';
+                                            safeSetState(() {
+                                              _model.dropDownLoteValue = null;
+                                              _model.dropDownLoteValueController
+                                                  ?.value = null;
+                                            });
+                                          },
+                                          child: Icon(
+                                            Icons.close,
+                                            color: FlutterFlowTheme.of(context)
+                                                .primaryText,
+                                            size: 24.0,
+                                          ),
+                                        ),
+                                    ].divide(const SizedBox(width: 12.0)),
+                                  ),
+                                ].divide(const SizedBox(height: 8.0)),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-            Divider(
+            const Divider(
               thickness: 1.0,
               color: Color(0xFFBEBEBE),
             ),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 16.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 16.0),
               child: FFButtonWidget(
                 onPressed: () async {
                   Navigator.pop(context);
@@ -1507,10 +1743,11 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                 options: FFButtonOptions(
                   width: double.infinity,
                   height: 47.0,
-                  padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      24.0, 0.0, 24.0, 0.0),
                   iconPadding:
-                      EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                  color: Color(0xFF28A365),
+                      const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                  color: const Color(0xFF28A365),
                   textStyle: FlutterFlowTheme.of(context).titleSmall.override(
                         fontFamily:
                             FlutterFlowTheme.of(context).titleSmallFamily,
@@ -1520,7 +1757,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                             !FlutterFlowTheme.of(context).titleSmallIsCustom,
                       ),
                   elevation: 0.0,
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: Colors.transparent,
                     width: 0.0,
                   ),

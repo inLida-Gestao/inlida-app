@@ -9,7 +9,7 @@ class ReproducaoTable extends SupabaseTable<ReproducaoRow> {
 }
 
 class ReproducaoRow extends SupabaseDataRow {
-  ReproducaoRow(Map<String, dynamic> data) : super(data);
+  ReproducaoRow(super.data);
 
   @override
   SupabaseTable get table => ReproducaoTable();

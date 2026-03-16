@@ -43,7 +43,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.reproducao = await SQLiteManager.instance.buscarReproducao(
-        idReproducao: widget!.idReproducao,
+        idReproducao: widget.idReproducao,
       );
       _model.tipoReproducao =
           _model.reproducao?.firstOrNull?.tipoReproducao ?? 'Inseminação';
@@ -75,15 +75,16 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
               color: FlutterFlowTheme.of(context).secondaryBackground,
             ),
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
               child: SingleChildScrollView(
                 primary: false,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          24.0, 0.0, 24.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -115,17 +116,17 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                             .bodyMediumIsCustom,
                                   ),
                             ),
-                          ].divide(SizedBox(width: 16.0)),
+                          ].divide(const SizedBox(width: 16.0)),
                         ),
                       ),
                     ),
-                    Divider(
+                    const Divider(
                       thickness: 2.0,
                       color: Color(0xFFEDEDED),
                     ),
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          24.0, 0.0, 24.0, 0.0),
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
@@ -177,8 +178,8 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                       ),
                     ),
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          24.0, 0.0, 24.0, 0.0),
                       child: Container(
                         width: double.infinity,
                         height: 189.0,
@@ -190,7 +191,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Align(
-                              alignment: AlignmentDirectional(-1.0, 0.0),
+                              alignment: const AlignmentDirectional(-1.0, 0.0),
                               child: Text(
                                 'Tipo de reprodução',
                                 style: FlutterFlowTheme.of(context)
@@ -198,7 +199,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF474747),
+                                      color: const Color(0xFF474747),
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w600,
@@ -212,8 +213,8 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                               width: double.infinity,
                               height: 74.0,
                               decoration: BoxDecoration(
-                                color: Color(0xFFF1F1F1),
-                                borderRadius: BorderRadius.only(
+                                color: const Color(0xFFF1F1F1),
+                                borderRadius: const BorderRadius.only(
                                   bottomLeft: Radius.circular(6.0),
                                   bottomRight: Radius.circular(6.0),
                                   topLeft: Radius.circular(6.0),
@@ -222,11 +223,11 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                 border: Border.all(
                                   color: _model.tipoReproducao == 'Inseminação'
                                       ? FlutterFlowTheme.of(context).secondary
-                                      : Color(0x00000000),
+                                      : const Color(0x00000000),
                                 ),
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -261,7 +262,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF474747),
+                                            color: const Color(0xFF474747),
                                             fontSize: 20.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w500,
@@ -270,7 +271,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                  ].divide(SizedBox(width: 10.0)),
+                                  ].divide(const SizedBox(width: 10.0)),
                                 ),
                               ),
                             ),
@@ -278,8 +279,8 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                               width: double.infinity,
                               height: 74.0,
                               decoration: BoxDecoration(
-                                color: Color(0xFFF1F1F1),
-                                borderRadius: BorderRadius.only(
+                                color: const Color(0xFFF1F1F1),
+                                borderRadius: const BorderRadius.only(
                                   bottomLeft: Radius.circular(6.0),
                                   bottomRight: Radius.circular(6.0),
                                   topLeft: Radius.circular(6.0),
@@ -289,11 +290,11 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                   color: _model.tipoReproducao ==
                                           'Monta Natural'
                                       ? FlutterFlowTheme.of(context).secondary
-                                      : Color(0x00000000),
+                                      : const Color(0x00000000),
                                 ),
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -330,7 +331,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF474747),
+                                            color: const Color(0xFF474747),
                                             fontSize: 20.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w500,
@@ -339,11 +340,11 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                  ].divide(SizedBox(width: 10.0)),
+                                  ].divide(const SizedBox(width: 10.0)),
                                 ),
                               ),
                             ),
-                          ].divide(SizedBox(height: 8.0)),
+                          ].divide(const SizedBox(height: 8.0)),
                         ),
                       ),
                     ),
@@ -353,13 +354,13 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Align(
-                              alignment: AlignmentDirectional(-1.0, 0.0),
+                              alignment: const AlignmentDirectional(-1.0, 0.0),
                               child: Text(
                                 'Lote*',
                                 style: FlutterFlowTheme.of(context)
@@ -367,7 +368,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF474747),
+                                      color: const Color(0xFF474747),
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w600,
@@ -387,19 +388,19 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                 width: double.infinity,
                                 height: 56.0,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFF1F1F1),
-                                  borderRadius: BorderRadius.only(
+                                  color: const Color(0xFFF1F1F1),
+                                  borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(6.0),
                                     bottomRight: Radius.circular(6.0),
                                     topLeft: Radius.circular(6.0),
                                     topRight: Radius.circular(6.0),
                                   ),
                                   border: Border.all(
-                                    color: Color(0x001E7A4C),
+                                    color: const Color(0x001E7A4C),
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       8.0, 0.0, 0.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -427,11 +428,11 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                       ),
-                                    ].divide(SizedBox(width: 10.0)),
+                                    ].divide(const SizedBox(width: 10.0)),
                                   ),
                                 ),
                               ),
-                          ].divide(SizedBox(height: 8.0)),
+                          ].divide(const SizedBox(height: 8.0)),
                         ),
                       ),
                     ),
@@ -441,13 +442,13 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Align(
-                              alignment: AlignmentDirectional(-1.0, 0.0),
+                              alignment: const AlignmentDirectional(-1.0, 0.0),
                               child: Text(
                                 'Reprodutor*',
                                 style: FlutterFlowTheme.of(context)
@@ -455,7 +456,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF474747),
+                                      color: const Color(0xFF474747),
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w600,
@@ -475,19 +476,19 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                 width: double.infinity,
                                 height: 56.0,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFF1F1F1),
-                                  borderRadius: BorderRadius.only(
+                                  color: const Color(0xFFF1F1F1),
+                                  borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(6.0),
                                     bottomRight: Radius.circular(6.0),
                                     topLeft: Radius.circular(6.0),
                                     topRight: Radius.circular(6.0),
                                   ),
                                   border: Border.all(
-                                    color: Color(0x001E7A4C),
+                                    color: const Color(0x001E7A4C),
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       8.0, 0.0, 0.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -519,7 +520,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                       ),
-                                    ].divide(SizedBox(width: 10.0)),
+                                    ].divide(const SizedBox(width: 10.0)),
                                   ),
                                 ),
                               ),
@@ -530,7 +531,8 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                         ?.idRebanhoReprodutor ==
                                     '')
                               Align(
-                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                alignment:
+                                    const AlignmentDirectional(-1.0, 0.0),
                                 child: Text(
                                   'Nenhum reprodutor foi adicionado.',
                                   style: FlutterFlowTheme.of(context)
@@ -545,7 +547,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                       ),
                                 ),
                               ),
-                          ].divide(SizedBox(height: 8.0)),
+                          ].divide(const SizedBox(height: 8.0)),
                         ),
                       ),
                     ),
@@ -557,13 +559,14 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                               FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 0.0, 24.0, 0.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Align(
-                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                alignment:
+                                    const AlignmentDirectional(-1.0, 0.0),
                                 child: Text(
                                   'Data da inseminação*',
                                   style: FlutterFlowTheme.of(context)
@@ -571,7 +574,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF474747),
+                                        color: const Color(0xFF474747),
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -585,19 +588,19 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                 width: double.infinity,
                                 height: 56.0,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFF1F1F1),
-                                  borderRadius: BorderRadius.only(
+                                  color: const Color(0xFFF1F1F1),
+                                  borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(6.0),
                                     bottomRight: Radius.circular(6.0),
                                     topLeft: Radius.circular(6.0),
                                     topRight: Radius.circular(6.0),
                                   ),
                                   border: Border.all(
-                                    color: Color(0x001E7A4C),
+                                    color: const Color(0x001E7A4C),
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       8.0, 0.0, 8.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -631,7 +634,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                       ),
-                                      Icon(
+                                      const Icon(
                                         Icons.calendar_month_rounded,
                                         color: Color(0xFF181818),
                                         size: 24.0,
@@ -640,7 +643,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                       ),
@@ -652,13 +655,14 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                               FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 0.0, 24.0, 0.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Align(
-                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                alignment:
+                                    const AlignmentDirectional(-1.0, 0.0),
                                 child: Text(
                                   'Data de partida do sêmen',
                                   style: FlutterFlowTheme.of(context)
@@ -666,7 +670,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF474747),
+                                        color: const Color(0xFF474747),
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -680,19 +684,19 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                 width: double.infinity,
                                 height: 56.0,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFF1F1F1),
-                                  borderRadius: BorderRadius.only(
+                                  color: const Color(0xFFF1F1F1),
+                                  borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(6.0),
                                     bottomRight: Radius.circular(6.0),
                                     topLeft: Radius.circular(6.0),
                                     topRight: Radius.circular(6.0),
                                   ),
                                   border: Border.all(
-                                    color: Color(0x001E7A4C),
+                                    color: const Color(0x001E7A4C),
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       8.0, 0.0, 8.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -726,7 +730,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                       ),
-                                      Icon(
+                                      const Icon(
                                         Icons.calendar_month_rounded,
                                         color: Color(0xFF181818),
                                         size: 24.0,
@@ -735,13 +739,13 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                       ),
                     if (_model.tipoReproducao == 'Inseminação')
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
                         child: Container(
                           width: double.infinity,
@@ -753,7 +757,8 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Align(
-                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                alignment:
+                                    const AlignmentDirectional(-1.0, 0.0),
                                 child: Text(
                                   'Partida do sêmen',
                                   style: FlutterFlowTheme.of(context)
@@ -761,7 +766,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF474747),
+                                        color: const Color(0xFF474747),
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -775,19 +780,19 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                 width: double.infinity,
                                 height: 60.0,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFF1F1F1),
-                                  borderRadius: BorderRadius.only(
+                                  color: const Color(0xFFF1F1F1),
+                                  borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(6.0),
                                     bottomRight: Radius.circular(6.0),
                                     topLeft: Radius.circular(6.0),
                                     topRight: Radius.circular(6.0),
                                   ),
                                   border: Border.all(
-                                    color: Color(0x001E7A4C),
+                                    color: const Color(0x001E7A4C),
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       8.0, 0.0, 8.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -796,7 +801,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                     children: [
                                       Container(
                                         width: 48.0,
-                                        decoration: BoxDecoration(),
+                                        decoration: const BoxDecoration(),
                                         child: Visibility(
                                           visible: _model.score > 1.0,
                                           child: Container(
@@ -810,8 +815,9 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                   BorderRadius.circular(100.0),
                                             ),
                                             child: Align(
-                                              alignment: AlignmentDirectional(
-                                                  0.0, 0.0),
+                                              alignment:
+                                                  const AlignmentDirectional(
+                                                      0.0, 0.0),
                                               child: FaIcon(
                                                 FontAwesomeIcons.minus,
                                                 color:
@@ -844,7 +850,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                       ),
                                       Container(
                                         width: 48.0,
-                                        decoration: BoxDecoration(),
+                                        decoration: const BoxDecoration(),
                                         child: Visibility(
                                           visible: _model.score < 5.0,
                                           child: Container(
@@ -867,11 +873,11 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(width: 10.0)),
+                                    ].divide(const SizedBox(width: 10.0)),
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                       ),
@@ -881,13 +887,13 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Align(
-                              alignment: AlignmentDirectional(-1.0, 0.0),
+                              alignment: const AlignmentDirectional(-1.0, 0.0),
                               child: Text(
                                 'Previsão do parto',
                                 style: FlutterFlowTheme.of(context)
@@ -895,7 +901,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF474747),
+                                      color: const Color(0xFF474747),
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w600,
@@ -909,19 +915,19 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                               width: double.infinity,
                               height: 56.0,
                               decoration: BoxDecoration(
-                                color: Color(0xFFF1F1F1),
-                                borderRadius: BorderRadius.only(
+                                color: const Color(0xFFF1F1F1),
+                                borderRadius: const BorderRadius.only(
                                   bottomLeft: Radius.circular(6.0),
                                   bottomRight: Radius.circular(6.0),
                                   topLeft: Radius.circular(6.0),
                                   topRight: Radius.circular(6.0),
                                 ),
                                 border: Border.all(
-                                  color: Color(0x001E7A4C),
+                                  color: const Color(0x001E7A4C),
                                 ),
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     8.0, 0.0, 8.0, 0.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -967,7 +973,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                 ),
                               ),
                             ),
-                          ].divide(SizedBox(height: 8.0)),
+                          ].divide(const SizedBox(height: 8.0)),
                         ),
                       ),
                     ),
@@ -979,13 +985,14 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                               FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 0.0, 24.0, 0.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Align(
-                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                alignment:
+                                    const AlignmentDirectional(-1.0, 0.0),
                                 child: Text(
                                   'Data inicial*',
                                   style: FlutterFlowTheme.of(context)
@@ -993,7 +1000,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF474747),
+                                        color: const Color(0xFF474747),
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -1007,19 +1014,19 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                 width: double.infinity,
                                 height: 56.0,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFF1F1F1),
-                                  borderRadius: BorderRadius.only(
+                                  color: const Color(0xFFF1F1F1),
+                                  borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(6.0),
                                     bottomRight: Radius.circular(6.0),
                                     topLeft: Radius.circular(6.0),
                                     topRight: Radius.circular(6.0),
                                   ),
                                   border: Border.all(
-                                    color: Color(0x001E7A4C),
+                                    color: const Color(0x001E7A4C),
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       8.0, 0.0, 8.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -1053,7 +1060,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                       ),
-                                      Icon(
+                                      const Icon(
                                         Icons.calendar_month_rounded,
                                         color: Color(0xFF181818),
                                         size: 24.0,
@@ -1062,7 +1069,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                       ),
@@ -1074,13 +1081,14 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                               FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 0.0, 24.0, 0.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Align(
-                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                alignment:
+                                    const AlignmentDirectional(-1.0, 0.0),
                                 child: Text(
                                   'Data final*',
                                   style: FlutterFlowTheme.of(context)
@@ -1088,7 +1096,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF474747),
+                                        color: const Color(0xFF474747),
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -1102,19 +1110,19 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                 width: double.infinity,
                                 height: 56.0,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFF1F1F1),
-                                  borderRadius: BorderRadius.only(
+                                  color: const Color(0xFFF1F1F1),
+                                  borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(6.0),
                                     bottomRight: Radius.circular(6.0),
                                     topLeft: Radius.circular(6.0),
                                     topRight: Radius.circular(6.0),
                                   ),
                                   border: Border.all(
-                                    color: Color(0x001E7A4C),
+                                    color: const Color(0x001E7A4C),
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       8.0, 0.0, 8.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -1148,7 +1156,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                       ),
-                                      Icon(
+                                      const Icon(
                                         Icons.calendar_month_rounded,
                                         color: Color(0xFF181818),
                                         size: 24.0,
@@ -1157,7 +1165,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                       ),
@@ -1169,13 +1177,14 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                               FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 0.0, 24.0, 0.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Align(
-                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                alignment:
+                                    const AlignmentDirectional(-1.0, 0.0),
                                 child: Text(
                                   'Inseminador',
                                   style: FlutterFlowTheme.of(context)
@@ -1183,7 +1192,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF474747),
+                                        color: const Color(0xFF474747),
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -1197,26 +1206,26 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                 width: double.infinity,
                                 height: 56.0,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFF1F1F1),
-                                  borderRadius: BorderRadius.only(
+                                  color: const Color(0xFFF1F1F1),
+                                  borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(6.0),
                                     bottomRight: Radius.circular(6.0),
                                     topLeft: Radius.circular(6.0),
                                     topRight: Radius.circular(6.0),
                                   ),
                                   border: Border.all(
-                                    color: Color(0x001E7A4C),
+                                    color: const Color(0x001E7A4C),
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       8.0, 0.0, 8.0, 0.0),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Align(
-                                        alignment:
-                                            AlignmentDirectional(-1.0, 0.0),
+                                        alignment: const AlignmentDirectional(
+                                            -1.0, 0.0),
                                         child: Text(
                                           valueOrDefault<String>(
                                             _model.reproducao?.firstOrNull
@@ -1229,7 +1238,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1244,13 +1253,13 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                       ),
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          24.0, 0.0, 24.0, 0.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
@@ -1288,7 +1297,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                       .bodyMediumIsCustom,
                                 ),
                           ),
-                        ].divide(SizedBox(width: 8.0)),
+                        ].divide(const SizedBox(width: 8.0)),
                       ),
                     ),
                     Container(
@@ -1297,7 +1306,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
@@ -1309,17 +1318,17 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     if (valueOrDefault<String>(
-                                          _model
-                                              .reproducao?.firstOrNull?.parida,
-                                          'N/A',
-                                        ) ==
-                                        'SIM' ||
+                                              _model.reproducao?.firstOrNull
+                                                  ?.parida,
+                                              'N/A',
+                                            ) ==
+                                            'SIM' ||
                                         valueOrDefault<String>(
-                                          _model
-                                              .reproducao?.firstOrNull?.parida,
-                                          'N/A',
-                                        ) ==
-                                        'Sim')
+                                              _model.reproducao?.firstOrNull
+                                                  ?.parida,
+                                              'N/A',
+                                            ) ==
+                                            'Sim')
                                       Icon(
                                         Icons.check_box_rounded,
                                         color: FlutterFlowTheme.of(context)
@@ -1327,17 +1336,17 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                         size: 24.0,
                                       ),
                                     if (valueOrDefault<String>(
-                                          _model
-                                              .reproducao?.firstOrNull?.parida,
-                                          'N/A',
-                                        ) ==
-                                        'NAO' ||
+                                              _model.reproducao?.firstOrNull
+                                                  ?.parida,
+                                              'N/A',
+                                            ) ==
+                                            'NAO' ||
                                         valueOrDefault<String>(
-                                          _model
-                                              .reproducao?.firstOrNull?.parida,
-                                          'N/A',
-                                        ) ==
-                                        'Não')
+                                              _model.reproducao?.firstOrNull
+                                                  ?.parida,
+                                              'N/A',
+                                            ) ==
+                                            'Não')
                                       Icon(
                                         Icons.check_box_outline_blank,
                                         color: FlutterFlowTheme.of(context)
@@ -1360,18 +1369,20 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                  ].divide(SizedBox(width: 8.0)),
+                                  ].divide(const SizedBox(width: 8.0)),
                                 ),
                                 if (valueOrDefault<String>(
-                                      _model.reproducao?.firstOrNull?.parida,
-                                      'N/A',
-                                    ) ==
-                                    'SIM' ||
+                                          _model
+                                              .reproducao?.firstOrNull?.parida,
+                                          'N/A',
+                                        ) ==
+                                        'SIM' ||
                                     valueOrDefault<String>(
-                                      _model.reproducao?.firstOrNull?.parida,
-                                      'N/A',
-                                    ) ==
-                                    'Sim')
+                                          _model
+                                              .reproducao?.firstOrNull?.parida,
+                                          'N/A',
+                                        ) ==
+                                        'Sim')
                                   Expanded(
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
@@ -1402,21 +1413,21 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                           width: double.infinity,
                                           height: 56.0,
                                           decoration: BoxDecoration(
-                                            color: Color(0xFFF1F1F1),
-                                            borderRadius: BorderRadius.only(
+                                            color: const Color(0xFFF1F1F1),
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
                                               bottomRight: Radius.circular(6.0),
                                               topLeft: Radius.circular(6.0),
                                               topRight: Radius.circular(6.0),
                                             ),
                                             border: Border.all(
-                                              color: Color(0x001E7A4C),
+                                              color: const Color(0x001E7A4C),
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    8.0, 0.0, 8.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -1460,7 +1471,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                                 .bodyMediumIsCustom,
                                                       ),
                                                 ),
-                                                Icon(
+                                                const Icon(
                                                   Icons.calendar_month_rounded,
                                                   color: Color(0xFF181818),
                                                   size: 24.0,
@@ -1469,7 +1480,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
                                 Expanded(
@@ -1477,8 +1488,8 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       Align(
-                                        alignment:
-                                            AlignmentDirectional(-1.0, 0.0),
+                                        alignment: const AlignmentDirectional(
+                                            -1.0, 0.0),
                                         child: Text(
                                           'Status*',
                                           style: FlutterFlowTheme.of(context)
@@ -1487,7 +1498,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF474747),
+                                                color: const Color(0xFF474747),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -1507,14 +1518,13 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                   'Prenhez'
                                               ? FlutterFlowTheme.of(context)
                                                   .customColor7
-                                              : Color(0xFFF5D7D4),
+                                              : const Color(0xFFF5D7D4),
                                           borderRadius:
                                               BorderRadius.circular(8.0),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  8.0, 0.0, 8.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
@@ -1540,7 +1550,8 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                           ? FlutterFlowTheme.of(
                                                                   context)
                                                               .secondary
-                                                          : Color(0xFFCC3729),
+                                                          : const Color(
+                                                              0xFFCC3729),
                                                       letterSpacing: 0.0,
                                                       useGoogleFonts:
                                                           !FlutterFlowTheme.of(
@@ -1552,7 +1563,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                           ),
                                         ),
                                       ),
-                                    ].divide(SizedBox(height: 8.0)),
+                                    ].divide(const SizedBox(height: 8.0)),
                                   ),
                                 ),
                                 if (_model.reproducao?.firstOrNull
@@ -1591,21 +1602,21 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                           width: double.infinity,
                                           height: 56.0,
                                           decoration: BoxDecoration(
-                                            color: Color(0xFFF1F1F1),
-                                            borderRadius: BorderRadius.only(
+                                            color: const Color(0xFFF1F1F1),
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
                                               bottomRight: Radius.circular(6.0),
                                               topLeft: Radius.circular(6.0),
                                               topRight: Radius.circular(6.0),
                                             ),
                                             border: Border.all(
-                                              color: Color(0x001E7A4C),
+                                              color: const Color(0x001E7A4C),
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    8.0, 0.0, 8.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               mainAxisAlignment:
@@ -1646,7 +1657,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                                 .bodyMediumIsCustom,
                                                       ),
                                                 ),
-                                                Icon(
+                                                const Icon(
                                                   Icons.calendar_month_rounded,
                                                   color: Color(0xFF181818),
                                                   size: 24.0,
@@ -1655,12 +1666,12 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 8.0)),
+                                      ].divide(const SizedBox(height: 8.0)),
                                     ),
                                   ),
-                              ].divide(SizedBox(height: 24.0)),
+                              ].divide(const SizedBox(height: 24.0)),
                             ),
-                          ].divide(SizedBox(height: 8.0)),
+                          ].divide(const SizedBox(height: 8.0)),
                         ),
                       ),
                     ),
@@ -1670,13 +1681,13 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                       ),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                             24.0, 0.0, 24.0, 0.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Align(
-                              alignment: AlignmentDirectional(-1.0, 0.0),
+                              alignment: const AlignmentDirectional(-1.0, 0.0),
                               child: Text(
                                 'Anotações',
                                 style: FlutterFlowTheme.of(context)
@@ -1684,7 +1695,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF474747),
+                                      color: const Color(0xFF474747),
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w600,
@@ -1698,19 +1709,19 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                               width: double.infinity,
                               height: 104.0,
                               decoration: BoxDecoration(
-                                color: Color(0xFFF1F1F1),
-                                borderRadius: BorderRadius.only(
+                                color: const Color(0xFFF1F1F1),
+                                borderRadius: const BorderRadius.only(
                                   bottomLeft: Radius.circular(6.0),
                                   bottomRight: Radius.circular(6.0),
                                   topLeft: Radius.circular(6.0),
                                   topRight: Radius.circular(6.0),
                                 ),
                                 border: Border.all(
-                                  color: Color(0x001E7A4C),
+                                  color: const Color(0x001E7A4C),
                                 ),
                               ),
                               child: Padding(
-                                padding: EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(8.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1727,7 +1738,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF474747),
+                                            color: const Color(0xFF474747),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1740,13 +1751,13 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                 ),
                               ),
                             ),
-                          ].divide(SizedBox(height: 8.0)),
+                          ].divide(const SizedBox(height: 8.0)),
                         ),
                       ),
                     ),
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 24.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 0.0, 0.0, 24.0),
                       child: Container(
                         width: double.infinity,
                         height: 56.0,
@@ -1755,7 +1766,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                               FlutterFlowTheme.of(context).secondaryBackground,
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 0.0, 24.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -1770,18 +1781,20 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                   options: FFButtonOptions(
                                     width: 156.0,
                                     height: 56.0,
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        24.0, 0.0, 24.0, 0.0),
-                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 0.0, 0.0, 0.0),
-                                    color: Color(0x004B39EF),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            24.0, 0.0, 24.0, 0.0),
+                                    iconPadding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 0.0, 0.0, 0.0),
+                                    color: const Color(0x004B39EF),
                                     textStyle: FlutterFlowTheme.of(context)
                                         .titleSmall
                                         .override(
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .titleSmallFamily,
-                                          color: Color(0xFF1E7A4C),
+                                          color: const Color(0xFF1E7A4C),
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -1790,7 +1803,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                   .titleSmallIsCustom,
                                         ),
                                     elevation: 0.0,
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0xFF1E7A4C),
                                       width: 2.0,
                                     ),
@@ -1823,31 +1836,32 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                               backgroundColor:
                                                   Colors.transparent,
                                               alignment:
-                                                  AlignmentDirectional(0.0, 0.0)
+                                                  const AlignmentDirectional(
+                                                          0.0, 0.0)
                                                       .resolve(
                                                           Directionality.of(
-                                                              navigator.context)),
+                                                              navigator
+                                                                  .context)),
                                               child: EditReproducaoLoteWidget(
                                                 idReproducao:
-                                                    widget!.idReproducao!,
+                                                    widget.idReproducao!,
                                               ),
                                             );
                                           },
                                         );
                                       },
                                       text: 'Editar',
-                                      icon: Icon(
+                                      icon: const Icon(
                                         Icons.edit,
                                         size: 24.0,
                                       ),
                                       options: FFButtonOptions(
                                         height: 56.0,
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            24.0, 0.0, 24.0, 0.0),
-                                        iconPadding:
-                                            EdgeInsetsDirectional.fromSTEB(
-                                                0.0, 0.0, 0.0, 0.0),
-                                        color: Color(0xFF28A365),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(24.0, 0.0, 24.0, 0.0),
+                                        iconPadding: const EdgeInsetsDirectional
+                                            .fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                        color: const Color(0xFF28A365),
                                         textStyle: FlutterFlowTheme.of(context)
                                             .titleSmall
                                             .override(
@@ -1863,7 +1877,7 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                                       .titleSmallIsCustom,
                                             ),
                                         elevation: 0.0,
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Colors.transparent,
                                           width: 1.0,
                                         ),
@@ -1873,12 +1887,12 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                     ),
                                   ),
                                 ),
-                            ].divide(SizedBox(width: 16.0)),
+                            ].divide(const SizedBox(width: 16.0)),
                           ),
                         ),
                       ),
                     ),
-                  ].divide(SizedBox(height: 24.0)),
+                  ].divide(const SizedBox(height: 24.0)),
                 ),
               ),
             ),

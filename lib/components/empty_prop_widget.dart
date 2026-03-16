@@ -43,12 +43,12 @@ class _EmptyPropWidgetState extends State<EmptyPropWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+      padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
           color: FlutterFlowTheme.of(context).secondaryBackground,
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               blurRadius: 4.0,
               color: Color(0x41000040),
@@ -61,7 +61,7 @@ class _EmptyPropWidgetState extends State<EmptyPropWidget> {
           borderRadius: BorderRadius.circular(6.0),
         ),
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(32.0, 32.0, 32.0, 32.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(32.0, 32.0, 32.0, 32.0),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -99,7 +99,7 @@ class _EmptyPropWidgetState extends State<EmptyPropWidget> {
                 ),
                 textAlign: TextAlign.center,
               ),
-            ].divide(SizedBox(height: 24.0)),
+            ].divide(const SizedBox(height: 24.0)),
           ),
         ),
       ),

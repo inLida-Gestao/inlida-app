@@ -117,7 +117,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
         mainAxisSize: MainAxisSize.max,
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
             child: InkWell(
               splashColor: Colors.transparent,
               focusColor: Colors.transparent,
@@ -136,14 +136,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                   ),
                   if (_model.tabBarCurrentIndex == 0)
                     Expanded(
-                      child: Container(
+                      child: SizedBox(
                         width: double.infinity,
                         child: TextFormField(
                           controller: _model.pesquisarRebTextController,
                           focusNode: _model.pesquisarRebFocusNode,
                           onChanged: (_) => EasyDebounce.debounce(
                             '_model.pesquisarRebTextController',
-                            Duration(milliseconds: 2000),
+                            const Duration(milliseconds: 2000),
                             () => safeSetState(() {}),
                           ),
                           autofocus: false,
@@ -242,14 +242,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                     ),
                   if (_model.tabBarCurrentIndex == 1)
                     Expanded(
-                      child: Container(
+                      child: SizedBox(
                         width: double.infinity,
                         child: TextFormField(
                           controller: _model.pesquisarPropTextController,
                           focusNode: _model.pesquisarPropFocusNode,
                           onChanged: (_) => EasyDebounce.debounce(
                             '_model.pesquisarPropTextController',
-                            Duration(milliseconds: 2000),
+                            const Duration(milliseconds: 2000),
                             () => safeSetState(() {}),
                           ),
                           autofocus: false,
@@ -348,14 +348,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                     ),
                   if (_model.tabBarCurrentIndex == 2)
                     Expanded(
-                      child: Container(
+                      child: SizedBox(
                         width: double.infinity,
                         child: TextFormField(
                           controller: _model.pesquisarLoteTextController,
                           focusNode: _model.pesquisarLoteFocusNode,
                           onChanged: (_) => EasyDebounce.debounce(
                             '_model.pesquisarLoteTextController',
-                            Duration(milliseconds: 2000),
+                            const Duration(milliseconds: 2000),
                             () => safeSetState(() {}),
                           ),
                           autofocus: false,
@@ -454,14 +454,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                     ),
                   if (_model.tabBarCurrentIndex == 3)
                     Expanded(
-                      child: Container(
+                      child: SizedBox(
                         width: double.infinity,
                         child: TextFormField(
                           controller: _model.pesquisarRepTextController,
                           focusNode: _model.pesquisarRepFocusNode,
                           onChanged: (_) => EasyDebounce.debounce(
                             '_model.pesquisarRepTextController',
-                            Duration(milliseconds: 2000),
+                            const Duration(milliseconds: 2000),
                             () => safeSetState(() {}),
                           ),
                           autofocus: false,
@@ -560,14 +560,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                     ),
                   if (_model.tabBarCurrentIndex == 4)
                     Expanded(
-                      child: Container(
+                      child: SizedBox(
                         width: double.infinity,
                         child: TextFormField(
                           controller: _model.pesquisarTextController,
                           focusNode: _model.pesquisarFocusNode,
                           onChanged: (_) => EasyDebounce.debounce(
                             '_model.pesquisarTextController',
-                            Duration(milliseconds: 2000),
+                            const Duration(milliseconds: 2000),
                             () => safeSetState(() {}),
                           ),
                           autofocus: false,
@@ -663,25 +663,27 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                         ),
                       ),
                     ),
-                ].divide(SizedBox(width: 24.0)),
+                ].divide(const SizedBox(width: 24.0)),
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
+            padding:
+                const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
             child: wrapWithModel(
               model: _model.selecionarPropriedadeModel,
               updateCallback: () => safeSetState(() {}),
-              child: SelecionarPropriedadeWidget(),
+              child: const SelecionarPropriedadeWidget(),
             ),
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
               child: Column(
                 children: [
                   Align(
-                    alignment: Alignment(-1.0, 0),
+                    alignment: const Alignment(-1.0, 0),
                     child: TabBar(
                       isScrollable: true,
                       labelColor: FlutterFlowTheme.of(context).primary,
@@ -710,7 +712,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                 .titleMediumIsCustom,
                           ),
                       indicatorColor: FlutterFlowTheme.of(context).primary,
-                      tabs: [
+                      tabs: const [
                         Tab(
                           text: 'Rebanho',
                         ),
@@ -747,7 +749,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 8.0, 24.0, 16.0),
                               child: Container(
                                 width: double.infinity,
@@ -756,7 +758,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                       .secondaryBackground,
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 4.0, 0.0, 0.0),
                                   child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
@@ -782,7 +784,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                   padding:
                                                       MediaQuery.viewInsetsOf(
                                                           context),
-                                                  child: FiltrosRebanhoWidget(),
+                                                  child:
+                                                      const FiltrosRebanhoWidget(),
                                                 );
                                               },
                                             ).then(
@@ -797,12 +800,13 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                   BorderRadius.circular(24.0),
                                               shape: BoxShape.rectangle,
                                               border: Border.all(
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                               ),
                                             ),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 8.0, 16.0, 8.0),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.max,
@@ -835,7 +839,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                       fit: BoxFit.cover,
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(width: 8.0)),
+                                                ].divide(
+                                                    const SizedBox(width: 8.0)),
                                               ),
                                             ),
                                           ),
@@ -848,9 +853,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
 
                                             return Row(
                                               mainAxisSize: MainAxisSize.max,
-                                              children:
-                                                  List.generate(rebanho.length,
-                                                      (rebanhoIndex) {
+                                              children: List.generate(
+                                                  rebanho.length,
+                                                  (rebanhoIndex) {
                                                 final rebanhoItem =
                                                     rebanho[rebanhoIndex];
                                                 return Container(
@@ -863,14 +868,15 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             24.0),
                                                     shape: BoxShape.rectangle,
                                                     border: Border.all(
-                                                      color: Color(0xFFBEBEBE),
+                                                      color: const Color(
+                                                          0xFFBEBEBE),
                                                     ),
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(16.0, 8.0,
-                                                                16.0, 8.0),
+                                                            16.0, 8.0),
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -892,16 +898,17 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                         .bodyMediumIsCustom,
                                                               ),
                                                         ),
-                                                      ].divide(
-                                                          SizedBox(width: 8.0)),
+                                                      ].divide(const SizedBox(
+                                                          width: 8.0)),
                                                     ),
                                                   ),
                                                 );
-                                              }).divide(SizedBox(width: 8.0)),
+                                              }).divide(
+                                                  const SizedBox(width: 8.0)),
                                             );
                                           },
                                         ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                   ),
                                 ),
@@ -910,7 +917,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                           ],
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
@@ -943,16 +950,15 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                         snapshot.data!;
 
                                     return Container(
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
                                           Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    24.0, 0.0, 24.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                             child: Container(
                                               width: double.infinity,
                                               decoration: BoxDecoration(
@@ -1014,7 +1020,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                   .viewInsetsOf(
                                                                       context),
                                                               child:
-                                                                  FiltroPropriedadesWidget(),
+                                                                  const FiltroPropriedadesWidget(),
                                                             );
                                                           },
                                                         ).then((value) =>
@@ -1034,18 +1040,18 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                           shape: BoxShape
                                                               .rectangle,
                                                           border: Border.all(
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFFBEBEBE),
                                                           ),
                                                         ),
                                                         child: Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
-                                                                      16.0,
-                                                                      8.0,
-                                                                      16.0,
-                                                                      8.0),
+                                                                  16.0,
+                                                                  8.0,
+                                                                  16.0,
+                                                                  8.0),
                                                           child: Row(
                                                             mainAxisSize:
                                                                 MainAxisSize
@@ -1081,8 +1087,10 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                       .cover,
                                                                 ),
                                                               ),
-                                                            ].divide(SizedBox(
-                                                                width: 8.0)),
+                                                            ].divide(
+                                                                const SizedBox(
+                                                                    width:
+                                                                        8.0)),
                                                           ),
                                                         ),
                                                       ),
@@ -1103,18 +1111,18 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                           shape: BoxShape
                                                               .rectangle,
                                                           border: Border.all(
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFFBEBEBE),
                                                           ),
                                                         ),
                                                         child: Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(
-                                                                      16.0,
-                                                                      8.0,
-                                                                      16.0,
-                                                                      8.0),
+                                                                  16.0,
+                                                                  8.0,
+                                                                  16.0,
+                                                                  8.0),
                                                           child: Row(
                                                             mainAxisSize:
                                                                 MainAxisSize
@@ -1141,8 +1149,10 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                               .bodyMediumIsCustom,
                                                                     ),
                                                               ),
-                                                            ].divide(SizedBox(
-                                                                width: 8.0)),
+                                                            ].divide(
+                                                                const SizedBox(
+                                                                    width:
+                                                                        8.0)),
                                                           ),
                                                         ),
                                                       ),
@@ -1155,8 +1165,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                         return Row(
                                                           mainAxisSize:
                                                               MainAxisSize.max,
-                                                          children:
-                                                              List.generate(
+                                                          children: List
+                                                              .generate(
                                                                   nomes.length,
                                                                   (nomesIndex) {
                                                             final nomesItem =
@@ -1176,13 +1186,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                     .rectangle,
                                                                 border:
                                                                     Border.all(
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
                                                               ),
                                                               child: Padding(
-                                                                padding: EdgeInsetsDirectional
-                                                                    .fromSTEB(
+                                                                padding:
+                                                                    const EdgeInsetsDirectional
+                                                                        .fromSTEB(
                                                                         16.0,
                                                                         8.0,
                                                                         16.0,
@@ -1206,24 +1217,26 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                 !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                           ),
                                                                     ),
-                                                                  ].divide(SizedBox(
-                                                                      width:
-                                                                          8.0)),
+                                                                  ].divide(
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8.0)),
                                                                 ),
                                                               ),
                                                             );
-                                                          }).divide(SizedBox(
+                                                          }).divide(
+                                                              const SizedBox(
                                                                   width: 8.0)),
                                                         );
                                                       },
                                                     ),
-                                                  ].divide(
-                                                      SizedBox(width: 8.0)),
+                                                  ].divide(const SizedBox(
+                                                      width: 8.0)),
                                                 ),
                                               ),
                                             ),
                                           ),
-                                          Divider(
+                                          const Divider(
                                             thickness: 1.0,
                                             color: Color(0xFFEDEDED),
                                           ),
@@ -1253,7 +1266,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                           .viewInsetsOf(
                                                               context),
                                                       child:
-                                                          OrdernarPropriedadesWidget(),
+                                                          const OrdernarPropriedadesWidget(),
                                                     );
                                                   },
                                                 ).then((value) =>
@@ -1276,8 +1289,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                   ),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           12.0, 8.0, 12.0, 8.0),
                                                   child: Row(
                                                     mainAxisSize:
@@ -1287,11 +1301,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             .center,
                                                     children: [
                                                       if (FFAppState()
-                                                                  .filtroTipoOrdenacao !=
-                                                              null &&
-                                                          FFAppState()
-                                                                  .filtroTipoOrdenacao !=
-                                                              '')
+                                                              .filtroTipoOrdenacao !=
+                                                          '')
                                                         Container(
                                                           decoration:
                                                               BoxDecoration(
@@ -1350,16 +1361,15 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                               .bodyMediumIsCustom,
                                                                     ),
                                                               ),
-                                                            ].divide(SizedBox(
-                                                                width: 8.0)),
+                                                            ].divide(
+                                                                const SizedBox(
+                                                                    width:
+                                                                        8.0)),
                                                           ),
                                                         ),
                                                       if (FFAppState()
-                                                                  .filtroTipoOrdenacao !=
-                                                              null &&
-                                                          FFAppState()
-                                                                  .filtroTipoOrdenacao !=
-                                                              '')
+                                                              .filtroTipoOrdenacao !=
+                                                          '')
                                                         SizedBox(
                                                           height: 100.0,
                                                           child:
@@ -1396,9 +1406,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                         FlutterFlowTheme.of(context)
                                                                             .bodyMediumFamily,
                                                                     color: FFAppState().filtroTipoOrdenacao !=
-                                                                                null &&
-                                                                            FFAppState().filtroTipoOrdenacao !=
-                                                                                ''
+                                                                            ''
                                                                         ? FlutterFlowTheme.of(context)
                                                                             .secondary
                                                                         : FlutterFlowTheme.of(context)
@@ -1419,11 +1427,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                               Icons
                                                                   .keyboard_arrow_down,
                                                               color: FFAppState()
-                                                                              .filtroTipoOrdenacao !=
-                                                                          null &&
-                                                                      FFAppState()
-                                                                              .filtroTipoOrdenacao !=
-                                                                          ''
+                                                                          .filtroTipoOrdenacao !=
+                                                                      ''
                                                                   ? FlutterFlowTheme.of(
                                                                           context)
                                                                       .secondary
@@ -1432,8 +1437,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                       .accent3,
                                                               size: 20.0,
                                                             ),
-                                                          ].divide(SizedBox(
-                                                              width: 8.0)),
+                                                          ].divide(
+                                                              const SizedBox(
+                                                                  width: 8.0)),
                                                         ),
                                                       ),
                                                     ],
@@ -1442,12 +1448,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                               ),
                                             ),
                                           if (containerBodyOfflineListarPropriedadesRowList
-                                                  .length ==
-                                              0)
+                                              .isEmpty)
                                             Builder(
                                               builder: (context) => Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         24.0, 0.0, 24.0, 0.0),
                                                 child: InkWell(
                                                   splashColor:
@@ -1473,13 +1479,13 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                           backgroundColor:
                                                               Colors
                                                                   .transparent,
-                                                          alignment: AlignmentDirectional(
+                                                          alignment: const AlignmentDirectional(
                                                                   0.0, 0.0)
                                                               .resolve(
                                                                   Directionality.of(
                                                                       context)),
                                                           child:
-                                                              AddPropriedadeWidget(),
+                                                              const AddPropriedadeWidget(),
                                                         );
                                                       },
                                                     );
@@ -1490,7 +1496,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                       color: FlutterFlowTheme
                                                               .of(context)
                                                           .secondaryBackground,
-                                                      boxShadow: [
+                                                      boxShadow: const [
                                                         BoxShadow(
                                                           blurRadius: 4.0,
                                                           color:
@@ -1507,12 +1513,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  32.0,
-                                                                  32.0,
-                                                                  32.0,
-                                                                  32.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(32.0,
+                                                              32.0, 32.0, 32.0),
                                                       child: Column(
                                                         mainAxisSize:
                                                             MainAxisSize.max,
@@ -1552,7 +1555,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                             !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                       ),
                                                                 ),
-                                                                TextSpan(
+                                                                const TextSpan(
                                                                   text:
                                                                       '\nClique aqui para adicionar',
                                                                   style:
@@ -1582,7 +1585,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             textAlign: TextAlign
                                                                 .center,
                                                           ),
-                                                        ].divide(SizedBox(
+                                                        ].divide(const SizedBox(
                                                             height: 24.0)),
                                                       ),
                                                     ),
@@ -1591,8 +1594,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                               ),
                                             ),
                                           if (containerBodyOfflineListarPropriedadesRowList
-                                                  .length >
-                                              0)
+                                              .isNotEmpty)
                                             Flexible(
                                               child: Container(
                                                 width: double.infinity,
@@ -1606,46 +1608,46 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                     final propriedade =
                                                         containerBodyOfflineListarPropriedadesRowList
                                                             .where((e) =>
-                                                                ((FFAppState().filtroPropAtividades == null || FFAppState().filtroPropAtividades == '') &&
-                                                                    (FFAppState().filtroPropEstados == null ||
-                                                                        FFAppState().filtroPropEstados ==
-                                                                            '') &&
+                                                                ((FFAppState().filtroPropAtividades == '') &&
+                                                                    (FFAppState().filtroPropEstados ==
+                                                                        '') &&
                                                                     (FFAppState().filtroPropCidades ==
-                                                                            null ||
-                                                                        FFAppState().filtroPropCidades ==
-                                                                            '') &&
-                                                                    (FFAppState()
-                                                                            .filtroNumeroAnimais ==
+                                                                        '') &&
+                                                                    (FFAppState().filtroNumeroAnimais ==
                                                                         0.0) &&
                                                                     (_model.pesquisarPropTextController.text ==
-                                                                            null ||
-                                                                        _model.pesquisarPropTextController.text ==
-                                                                            '')) ||
+                                                                        '')) ||
                                                                 (((e.atividades!).contains(
                                                                         FFAppState()
                                                                             .filtroPropAtividades)) &&
                                                                     ((e.cidade == FFAppState().filtroPropCidades) ||
-                                                                        (FFAppState().filtroPropCidades == null ||
-                                                                            FFAppState().filtroPropCidades ==
-                                                                                '')) &&
-                                                                    ((e.estado ==
-                                                                            FFAppState()
-                                                                                .filtroPropEstados) ||
+                                                                        (FFAppState().filtroPropCidades ==
+                                                                            '')) &&
+                                                                    ((e.estado == FFAppState().filtroPropEstados) ||
                                                                         (FFAppState().filtroPropEstados ==
-                                                                                null ||
-                                                                            FFAppState().filtroPropEstados ==
-                                                                                '')) &&
-                                                                    ((functions.convertIntToDouble(valueOrDefault<int>(
+                                                                            '')) &&
+                                                                    ((functions.convertIntToDouble(valueOrDefault<
+                                                                                int>(
                                                                               (String qtdAnimais) {
                                                                                 return qtdAnimais == '[]' ? 0 : qtdAnimais.split(',').length;
                                                                               }(e.rebanhosID!),
                                                                               0,
                                                                             )) ==
-                                                                            FFAppState().filtroNumeroAnimais) ||
-                                                                        (FFAppState().filtroNumeroAnimais == 0.0)) &&
-                                                                    ((e.nome!).toLowerCase().contains(_model.pesquisarPropTextController.text.toLowerCase()))))
+                                                                            FFAppState()
+                                                                                .filtroNumeroAnimais) ||
+                                                                        (FFAppState().filtroNumeroAnimais ==
+                                                                            0.0)) &&
+                                                                    ((e.nome!)
+                                                                        .toLowerCase()
+                                                                        .contains(_model
+                                                                            .pesquisarPropTextController
+                                                                            .text
+                                                                            .toLowerCase()))))
                                                             .toList()
-                                                            .sortedList(keyOf: (e) => e.createdAt!, desc: true)
+                                                            .sortedList(
+                                                                keyOf: (e) =>
+                                                                    e.createdAt!,
+                                                                desc: true)
                                                             .toList();
 
                                                     return SingleChildScrollView(
@@ -1676,12 +1678,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                   builder:
                                                                       (context) =>
                                                                           Padding(
-                                                                    padding: EdgeInsetsDirectional
+                                                                    padding: const EdgeInsetsDirectional
                                                                         .fromSTEB(
-                                                                            0.0,
-                                                                            9.0,
-                                                                            0.0,
-                                                                            8.0),
+                                                                        0.0,
+                                                                        9.0,
+                                                                        0.0,
+                                                                        8.0),
                                                                     child:
                                                                         InkWell(
                                                                       splashColor:
@@ -1715,7 +1717,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                               elevation: 0,
                                                                               insetPadding: EdgeInsets.zero,
                                                                               backgroundColor: Colors.transparent,
-                                                                              alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                              alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                               child: ViewPropriedadesWidget(
                                                                                 idPropriedade: propriedadeItem.idPropriedade!,
                                                                               ),
@@ -1736,7 +1738,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: [
                                                                                 Padding(
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
+                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 8.0),
                                                                                   child: ClipRRect(
                                                                                     borderRadius: BorderRadius.circular(8.0),
                                                                                     child: Image.network(
@@ -1754,7 +1756,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                   ),
                                                                                 ),
                                                                                 Padding(
-                                                                                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 2.0),
+                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 2.0),
                                                                                   child: Text(
                                                                                     valueOrDefault<String>(
                                                                                       propriedadeItem.nome,
@@ -1762,7 +1764,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                     ),
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                           fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                          color: Color(0xFF474747),
+                                                                                          color: const Color(0xFF474747),
                                                                                           fontSize: 16.0,
                                                                                           letterSpacing: 0.0,
                                                                                           fontWeight: FontWeight.w500,
@@ -1780,7 +1782,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                   )}',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                         fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                        color: Color(0xFF474747),
+                                                                                        color: const Color(0xFF474747),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -1797,12 +1799,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                             size:
                                                                                 16.0,
                                                                           ),
-                                                                        ].addToStart(SizedBox(width: 24.0)).addToEnd(SizedBox(width: 24.0)),
+                                                                        ].addToStart(const SizedBox(width: 24.0)).addToEnd(const SizedBox(width: 24.0)),
                                                                       ),
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                Divider(
+                                                                const Divider(
                                                                   thickness:
                                                                       1.0,
                                                                   color: Color(
@@ -1818,7 +1820,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                 ),
                                               ),
                                             ),
-                                        ].divide(SizedBox(height: 16.0)),
+                                        ].divide(const SizedBox(height: 16.0)),
                                       ),
                                     );
                                   },
@@ -1828,13 +1830,13 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 0.0, 0.0, 16.0),
                                 child: Container(
                                   width: double.infinity,
@@ -1843,8 +1845,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                         .secondaryBackground,
                                   ),
                                   child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        24.0, 0.0, 24.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            24.0, 0.0, 24.0, 0.0),
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       child: Row(
@@ -1869,7 +1872,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                     padding:
                                                         MediaQuery.viewInsetsOf(
                                                             context),
-                                                    child: FiltroLotesWidget(),
+                                                    child:
+                                                        const FiltroLotesWidget(),
                                                   );
                                                 },
                                               ).then((value) =>
@@ -1884,12 +1888,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                     BorderRadius.circular(24.0),
                                                 shape: BoxShape.rectangle,
                                                 border: Border.all(
-                                                  color: Color(0xFFBEBEBE),
+                                                  color:
+                                                      const Color(0xFFBEBEBE),
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 8.0, 16.0, 8.0),
                                                 child: Row(
                                                   mainAxisSize:
@@ -1905,7 +1911,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF5F5F5F),
                                                             letterSpacing: 0.0,
                                                             fontWeight:
@@ -1927,8 +1933,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                         fit: BoxFit.cover,
                                                       ),
                                                     ),
-                                                  ].divide(
-                                                      SizedBox(width: 8.0)),
+                                                  ].divide(const SizedBox(
+                                                      width: 8.0)),
                                                 ),
                                               ),
                                             ),
@@ -1957,18 +1963,15 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                               24.0),
                                                       shape: BoxShape.rectangle,
                                                       border: Border.all(
-                                                        color:
-                                                            Color(0xFFBEBEBE),
+                                                        color: const Color(
+                                                            0xFFBEBEBE),
                                                       ),
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  16.0,
-                                                                  8.0,
-                                                                  16.0,
-                                                                  8.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(16.0,
+                                                              8.0, 16.0, 8.0),
                                                       child: Text(
                                                         filtroLotesItem,
                                                         style:
@@ -1986,7 +1989,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                         .bodyMedium
                                                                         .fontStyle,
                                                                   ),
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF5F5F5F),
                                                                   letterSpacing:
                                                                       0.0,
@@ -2001,28 +2004,25 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                       ),
                                                     ),
                                                   );
-                                                }).divide(SizedBox(width: 8.0)),
+                                                }).divide(
+                                                    const SizedBox(width: 8.0)),
                                               );
                                             },
                                           ),
-                                        ].divide(SizedBox(width: 8.0)),
+                                        ].divide(const SizedBox(width: 8.0)),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                              Divider(
+                              const Divider(
                                 thickness: 1.0,
                                 color: Color(0xFFEDEDED),
                               ),
                               if (FFAppState()
-                                          .propriedadeSelecionada
-                                          .idPropriedade !=
-                                      null &&
-                                  FFAppState()
-                                          .propriedadeSelecionada
-                                          .idPropriedade !=
-                                      '')
+                                      .propriedadeSelecionada
+                                      .idPropriedade !=
+                                  '')
                                 Flexible(
                                   child: FutureBuilder<List<ListarLotesRow>>(
                                     future: SQLiteManager.instance.listarLotes(
@@ -2051,14 +2051,15 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                           snapshot.data!;
 
                                       return Container(
-                                        decoration: BoxDecoration(),
+                                        decoration: const BoxDecoration(),
                                         child: Column(
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
                                             Expanded(
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         0.0, 14.0, 0.0, 0.0),
                                                 child: Container(
                                                   width: double.infinity,
@@ -2072,15 +2073,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                     builder: (context) {
                                                       final lote = containerListarLotesRowList
                                                           .where((e) =>
-                                                              ((FFAppState().filtroAtivoLotes == null ||
-                                                                      FFAppState().filtroAtivoLotes ==
-                                                                          '') &&
+                                                              ((FFAppState().filtroAtivoLotes == '') &&
                                                                   (e.deletado ==
                                                                       'NAO') &&
-                                                                  (_model.pesquisarLoteTextController.text == null ||
-                                                                      _model.pesquisarLoteTextController.text ==
-                                                                          '')) ||
-                                                              (((e.ativo == FFAppState().filtroAtivoLotes) || (FFAppState().filtroAtivoLotes == null || FFAppState().filtroAtivoLotes == '')) &&
+                                                                  (_model.pesquisarLoteTextController.text ==
+                                                                      '')) ||
+                                                              (((e.ativo == FFAppState().filtroAtivoLotes) ||
+                                                                      (FFAppState().filtroAtivoLotes ==
+                                                                          '')) &&
                                                                   (e.deletado ==
                                                                       'NAO') &&
                                                                   ((e.nome!).toLowerCase().contains(_model
@@ -2089,17 +2089,18 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                       .toLowerCase()))))
                                                           .toList()
                                                           .sortedList(
-                                                              keyOf: (e) => e.createdAt!,
+                                                              keyOf: (e) =>
+                                                                  e.createdAt!,
                                                               desc: true)
                                                           .toList();
                                                       if (lote.isEmpty) {
                                                         return Center(
-                                                          child: Container(
+                                                          child: SizedBox(
                                                             width:
                                                                 double.infinity,
                                                             height: 230.0,
                                                             child:
-                                                                EmptyLoteWidget(),
+                                                                const EmptyLoteWidget(),
                                                           ),
                                                         );
                                                       }
@@ -2125,12 +2126,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             ),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
-                                                                          0.0,
-                                                                          0.0,
-                                                                          0.0,
-                                                                          24.0),
+                                                                      0.0,
+                                                                      0.0,
+                                                                      0.0,
+                                                                      24.0),
                                                               child: Column(
                                                                 mainAxisSize:
                                                                     MainAxisSize
@@ -2140,7 +2141,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                     builder:
                                                                         (context) =>
                                                                             Padding(
-                                                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                                                      padding: const EdgeInsetsDirectional
+                                                                          .fromSTEB(
                                                                           24.0,
                                                                           0.0,
                                                                           24.0,
@@ -2176,7 +2178,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                 elevation: 0,
                                                                                 insetPadding: EdgeInsets.zero,
                                                                                 backgroundColor: Colors.transparent,
-                                                                                alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                                 child: ViewLoteWidget(
                                                                                   idLote: loteItem.idLote!,
                                                                                 ),
@@ -2204,7 +2206,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                     ),
                                                                                   ),
                                                                                   Padding(
-                                                                                    padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 10.0, 0.0),
+                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 10.0, 0.0),
                                                                                     child: Row(
                                                                                       mainAxisSize: MainAxisSize.max,
                                                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -2216,7 +2218,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                           ),
                                                                                           style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                 fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                                color: Color(0xFF474747),
+                                                                                                color: const Color(0xFF474747),
                                                                                                 fontSize: 16.0,
                                                                                                 letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w500,
@@ -2226,15 +2228,15 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                         Container(
                                                                                           decoration: BoxDecoration(
                                                                                             color: valueOrDefault<Color>(
-                                                                                              loteItem.ativo == 'Ativo' ? Color(0xFFD6F5E5) : Color(0xFFF5D7D4),
-                                                                                              Color(0xFFD6F5E5),
+                                                                                              loteItem.ativo == 'Ativo' ? const Color(0xFFD6F5E5) : const Color(0xFFF5D7D4),
+                                                                                              const Color(0xFFD6F5E5),
                                                                                             ),
                                                                                             borderRadius: BorderRadius.circular(100.0),
                                                                                           ),
                                                                                           child: Align(
-                                                                                            alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                            alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                             child: Padding(
-                                                                                              padding: EdgeInsetsDirectional.fromSTEB(8.0, 2.0, 8.0, 2.0),
+                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 2.0, 8.0, 2.0),
                                                                                               child: Text(
                                                                                                 valueOrDefault<String>(
                                                                                                   valueOrDefault<String>(
@@ -2250,8 +2252,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                                       fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                                                       color: valueOrDefault<Color>(
-                                                                                                        loteItem.ativo == 'Ativo' ? FlutterFlowTheme.of(context).secondary : Color(0xFFCC3729),
-                                                                                                        Color(0xFF1E7A4C),
+                                                                                                        loteItem.ativo == 'Ativo' ? FlutterFlowTheme.of(context).secondary : const Color(0xFFCC3729),
+                                                                                                        const Color(0xFF1E7A4C),
                                                                                                       ),
                                                                                                       letterSpacing: 0.0,
                                                                                                       useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
@@ -2270,7 +2272,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                     )} animais',
                                                                                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                           fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                          color: Color(0xFF5F5F5F),
+                                                                                          color: const Color(0xFF5F5F5F),
                                                                                           letterSpacing: 0.0,
                                                                                           fontWeight: FontWeight.normal,
                                                                                           useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
@@ -2295,16 +2297,16 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                               context: context,
                                                                                               builder: (alertDialogContext) {
                                                                                                 return AlertDialog(
-                                                                                                  title: Text('Apagar lote'),
-                                                                                                  content: Text('Tem certeza que deseja apagar este lote ?'),
+                                                                                                  title: const Text('Apagar lote'),
+                                                                                                  content: const Text('Tem certeza que deseja apagar este lote ?'),
                                                                                                   actions: [
                                                                                                     TextButton(
                                                                                                       onPressed: () => Navigator.pop(alertDialogContext, false),
-                                                                                                      child: Text('Não'),
+                                                                                                      child: const Text('Não'),
                                                                                                     ),
                                                                                                     TextButton(
                                                                                                       onPressed: () => Navigator.pop(alertDialogContext, true),
-                                                                                                      child: Text('Sim'),
+                                                                                                      child: const Text('Sim'),
                                                                                                     ),
                                                                                                   ],
                                                                                                 );
@@ -2318,7 +2320,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                         }
                                                                                       },
                                                                                     ),
-                                                                                ].divide(SizedBox(height: 2.0)),
+                                                                                ].divide(const SizedBox(height: 2.0)),
                                                                               ),
                                                                             ),
                                                                             ClipRRect(
@@ -2360,24 +2362,20 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                   ),
                                 ),
                               if (FFAppState()
-                                          .propriedadeSelecionada
-                                          .idPropriedade ==
-                                      null ||
-                                  FFAppState()
-                                          .propriedadeSelecionada
-                                          .idPropriedade ==
-                                      '')
+                                      .propriedadeSelecionada
+                                      .idPropriedade ==
+                                  '')
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 24.0, 0.0, 0.0),
                                   child: wrapWithModel(
                                     model: _model.emptyPropModel,
                                     updateCallback: () => safeSetState(() {}),
-                                    child: EmptyPropWidget(),
+                                    child: const EmptyPropWidget(),
                                   ),
                                 ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 40.0, 0.0, 0.0),
                                 child: Container(
                                   width: double.infinity,
@@ -2391,13 +2389,13 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Container(
                                   width: double.infinity,
@@ -2431,7 +2429,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                       MediaQuery.viewInsetsOf(
                                                           context),
                                                   child:
-                                                      FiltrosReproducaoWidget(),
+                                                      const FiltrosReproducaoWidget(),
                                                 );
                                               },
                                             ).then(
@@ -2448,12 +2446,13 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                   BorderRadius.circular(24.0),
                                               shape: BoxShape.rectangle,
                                               border: Border.all(
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                               ),
                                             ),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 8.0, 16.0, 8.0),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.max,
@@ -2486,17 +2485,15 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                       fit: BoxFit.cover,
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(width: 8.0)),
+                                                ].divide(
+                                                    const SizedBox(width: 8.0)),
                                               ),
                                             ),
                                           ),
                                         ),
                                         if (FFAppState()
-                                                    .filtroPrevisaoPartoTxt !=
-                                                null &&
-                                            FFAppState()
-                                                    .filtroPrevisaoPartoTxt !=
-                                                '')
+                                                .filtroPrevisaoPartoTxt !=
+                                            '')
                                           Container(
                                             decoration: BoxDecoration(
                                               color:
@@ -2506,12 +2503,13 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                   BorderRadius.circular(24.0),
                                               shape: BoxShape.rectangle,
                                               border: Border.all(
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                               ),
                                             ),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 8.0, 16.0, 8.0),
                                               child: Text(
                                                 FFAppState()
@@ -2529,7 +2527,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                 .bodyMedium
                                                                 .fontStyle,
                                                       ),
-                                                      color: Color(0xFF5F5F5F),
+                                                      color: const Color(
+                                                          0xFF5F5F5F),
                                                       letterSpacing: 0.0,
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -2543,11 +2542,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                             ),
                                           ),
                                         if (FFAppState()
-                                                    .filtroDataReproducaoTxt !=
-                                                null &&
-                                            FFAppState()
-                                                    .filtroDataReproducaoTxt !=
-                                                '')
+                                                .filtroDataReproducaoTxt !=
+                                            '')
                                           Container(
                                             decoration: BoxDecoration(
                                               color:
@@ -2557,12 +2553,13 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                   BorderRadius.circular(24.0),
                                               shape: BoxShape.rectangle,
                                               border: Border.all(
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                               ),
                                             ),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 8.0, 16.0, 8.0),
                                               child: Text(
                                                 FFAppState()
@@ -2580,7 +2577,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                 .bodyMedium
                                                                 .fontStyle,
                                                       ),
-                                                      color: Color(0xFF5F5F5F),
+                                                      color: const Color(
+                                                          0xFF5F5F5F),
                                                       letterSpacing: 0.0,
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -2617,14 +2615,15 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             24.0),
                                                     shape: BoxShape.rectangle,
                                                     border: Border.all(
-                                                      color: Color(0xFFBEBEBE),
+                                                      color: const Color(
+                                                          0xFFBEBEBE),
                                                     ),
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(16.0, 8.0,
-                                                                16.0, 8.0),
+                                                            16.0, 8.0),
                                                     child: Text(
                                                       filtroReproItem,
                                                       style: FlutterFlowTheme
@@ -2642,7 +2641,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                       .bodyMedium
                                                                       .fontStyle,
                                                             ),
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF5F5F5F),
                                                             letterSpacing: 0.0,
                                                             fontWeight:
@@ -2656,11 +2655,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                     ),
                                                   ),
                                                 );
-                                              }).divide(SizedBox(width: 8.0)),
+                                              }).divide(
+                                                  const SizedBox(width: 8.0)),
                                             );
                                           },
                                         ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                   ),
                                 ),
@@ -2695,15 +2695,16 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                         snapshot.data!;
 
                                     return Container(
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           if (!(containerListarReproducoesRowList
                                               .isNotEmpty))
                                             Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 48.0, 24.0, 0.0),
                                               child: Container(
                                                 width: double.infinity,
@@ -2711,7 +2712,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                   color: FlutterFlowTheme.of(
                                                           context)
                                                       .secondaryBackground,
-                                                  boxShadow: [
+                                                  boxShadow: const [
                                                     BoxShadow(
                                                       blurRadius: 4.0,
                                                       color: Color(0x41000040),
@@ -2726,8 +2727,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                           6.0),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(32.0, 32.0,
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(32.0, 32.0,
                                                           32.0, 32.0),
                                                   child: Column(
                                                     mainAxisSize:
@@ -2786,8 +2788,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                         textAlign:
                                                             TextAlign.center,
                                                       ),
-                                                    ].divide(
-                                                        SizedBox(height: 24.0)),
+                                                    ].divide(const SizedBox(
+                                                        height: 24.0)),
                                                   ),
                                                 ),
                                               ),
@@ -2804,12 +2806,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             .isNotEmpty,
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  0.0,
-                                                                  14.0,
-                                                                  0.0,
-                                                                  0.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(0.0,
+                                                              14.0, 0.0, 0.0),
                                                       child: Container(
                                                         width: double.infinity,
                                                         height: 100.0,
@@ -2823,33 +2822,35 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                           builder: (context) {
                                                             final reproducao = containerListarReproducoesRowList
                                                                 .where((e) =>
-                                                                    ((FFAppState().filtroReproducao == null || FFAppState().filtroReproducao == '') &&
-                                                                        (FFAppState().filtroInseminador == null ||
-                                                                            FFAppState().filtroInseminador ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroMatrizReproducao == null ||
-                                                                            FFAppState().filtroMatrizReproducao ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroReprodutorReproducao == null ||
-                                                                            FFAppState().filtroReprodutorReproducao ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroLoteReproducao == null ||
-                                                                            FFAppState().filtroLoteReproducao ==
-                                                                                '') &&
+                                                                    ((FFAppState().filtroReproducao == '') &&
+                                                                        (FFAppState().filtroInseminador ==
+                                                                            '') &&
+                                                                        (FFAppState().filtroMatrizReproducao ==
+                                                                            '') &&
+                                                                        (FFAppState().filtroReprodutorReproducao ==
+                                                                            '') &&
+                                                                        (FFAppState()
+                                                                                .filtroLoteReproducao ==
+                                                                            '') &&
                                                                         (e.deletado ==
                                                                             'NAO') &&
-                                                                        (FFAppState().filtroDataReproducao ==
+                                                                        (FFAppState()
+                                                                                .filtroDataReproducao ==
                                                                             null) &&
-                                                                        (_model.pesquisarRepTextController.text == null ||
-                                                                            _model.pesquisarRepTextController.text ==
-                                                                                '')) ||
-                                                                    (((FFAppState().filtroReproducao == e.tipoReproducao) || (FFAppState().filtroReproducao == null || FFAppState().filtroReproducao == '')) &&
+                                                                        (_model.pesquisarRepTextController
+                                                                                .text ==
+                                                                            '')) ||
+                                                                    (((FFAppState().filtroReproducao == e.tipoReproducao) ||
+                                                                            (FFAppState().filtroReproducao ==
+                                                                                '')) &&
                                                                         ((e.inseminador == FFAppState().filtroInseminador) ||
-                                                                            (FFAppState().filtroInseminador == null ||
-                                                                                FFAppState().filtroInseminador == '')) &&
-                                                                        ((FFAppState().filtroMatrizReproducao == null || FFAppState().filtroMatrizReproducao == '') || ((e.nomeMatriz!).contains(FFAppState().filtroMatrizReproducao))) &&
-                                                                        ((FFAppState().filtroReprodutorReproducao == null || FFAppState().filtroReprodutorReproducao == '') || ((e.nomeReprodutor!).contains(FFAppState().filtroReprodutorReproducao))) &&
-                                                                        ((FFAppState().filtroLoteReproducao == null || FFAppState().filtroLoteReproducao == '') || ((e.loteNome!).contains(FFAppState().filtroLoteReproducao))) &&
+                                                                            (FFAppState().filtroInseminador ==
+                                                                                '')) &&
+                                                                        ((FFAppState().filtroMatrizReproducao ==
+                                                                                '') ||
+                                                                            ((e.nomeMatriz!).contains(FFAppState().filtroMatrizReproducao))) &&
+                                                                        ((FFAppState().filtroReprodutorReproducao == '') || ((e.nomeReprodutor!).contains(FFAppState().filtroReprodutorReproducao))) &&
+                                                                        ((FFAppState().filtroLoteReproducao == '') || ((e.loteNome!).contains(FFAppState().filtroLoteReproducao))) &&
                                                                         (e.deletado == 'NAO') &&
                                                                         (((functions.converterParaData(e.createdAt)! >= FFAppState().filtroDataReproducao!) && (functions.converterParaData(e.createdAt)! <= getCurrentTimestamp)) || (FFAppState().filtroDataReproducao == null)) &&
                                                                         ((e.dataInseminacao!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()) || (e.dataInicial!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()) || (e.dataFinal!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()))))
@@ -2859,11 +2860,10 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             if (reproducao
                                                                 .isEmpty) {
                                                               return Center(
-                                                                child:
-                                                                    Container(
+                                                                child: SizedBox(
                                                                   height: 200.0,
                                                                   child:
-                                                                      EmptyReproducaoWidget(),
+                                                                      const EmptyReproducaoWidget(),
                                                                 ),
                                                               );
                                                             }
@@ -2907,7 +2907,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                         builder:
                                                                             (context) =>
                                                                                 Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          padding: const EdgeInsetsDirectional
+                                                                              .fromSTEB(
                                                                               24.0,
                                                                               8.0,
                                                                               24.0,
@@ -2934,7 +2935,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                       elevation: 0,
                                                                                       insetPadding: EdgeInsets.zero,
                                                                                       backgroundColor: Colors.transparent,
-                                                                                      alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                      alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                                       child: ViewReproducaoRebanhoWidget(
                                                                                         idReproducao: reproducaoItem.idReproducao!,
                                                                                       ),
@@ -2951,7 +2952,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                       elevation: 0,
                                                                                       insetPadding: EdgeInsets.zero,
                                                                                       backgroundColor: Colors.transparent,
-                                                                                      alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                      alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                                       child: ViewReproducaoLoteWidget(
                                                                                         idReproducao: reproducaoItem.idReproducao!,
                                                                                       ),
@@ -2983,7 +2984,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                             ),
                                                                                           ),
                                                                                           ClipRRect(
-                                                                                            borderRadius: BorderRadius.only(
+                                                                                            borderRadius: const BorderRadius.only(
                                                                                               bottomLeft: Radius.circular(100.0),
                                                                                               bottomRight: Radius.circular(100.0),
                                                                                               topLeft: Radius.circular(100.0),
@@ -2991,7 +2992,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                             ),
                                                                                             child: Container(
                                                                                               height: 23.0,
-                                                                                              decoration: BoxDecoration(
+                                                                                              decoration: const BoxDecoration(
                                                                                                 color: Color(0xFFF1F1F1),
                                                                                                 borderRadius: BorderRadius.only(
                                                                                                   bottomLeft: Radius.circular(100.0),
@@ -3000,9 +3001,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                   topRight: Radius.circular(100.0),
                                                                                                 ),
                                                                                               ),
-                                                                                              alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                              alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                               child: Padding(
-                                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                                 child: Text(
                                                                                                   '${valueOrDefault<String>(
                                                                                                     reproducaoItem.tipoReproducao,
@@ -3022,7 +3023,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.w600,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF5F5F5F),
+                                                                                                        color: const Color(0xFF5F5F5F),
                                                                                                         fontSize: 10.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.w600,
@@ -3032,7 +3033,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                               ),
                                                                                             ),
                                                                                           ),
-                                                                                        ].divide(SizedBox(width: 8.0)),
+                                                                                        ].divide(const SizedBox(width: 8.0)),
                                                                                       ),
                                                                                       if (reproducaoItem.categoria == 'rebanho')
                                                                                         Row(
@@ -3050,7 +3051,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                               ),
                                                                                             ),
                                                                                             Padding(
-                                                                                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 7.0, 0.0),
+                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 7.0, 0.0),
                                                                                               child: Text(
                                                                                                 'Matriz:',
                                                                                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
@@ -3058,7 +3059,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                         fontWeight: FontWeight.w600,
                                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                       ),
-                                                                                                      color: Color(0xFF474747),
+                                                                                                      color: const Color(0xFF474747),
                                                                                                       fontSize: 16.0,
                                                                                                       letterSpacing: 0.0,
                                                                                                       fontWeight: FontWeight.w600,
@@ -3068,7 +3069,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                             ),
                                                                                             Flexible(
                                                                                               child: Align(
-                                                                                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                                alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                                 child: Text(
                                                                                                   valueOrDefault<String>(
                                                                                                     '${valueOrDefault<String>(
@@ -3089,7 +3090,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.normal,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF474747),
+                                                                                                        color: const Color(0xFF474747),
                                                                                                         fontSize: 14.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.normal,
@@ -3098,7 +3099,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 ),
                                                                                               ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 3.0)),
+                                                                                          ].divide(const SizedBox(width: 3.0)),
                                                                                         ),
                                                                                       if (reproducaoItem.categoria == 'lote')
                                                                                         Row(
@@ -3121,7 +3122,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                       fontWeight: FontWeight.normal,
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                     ),
-                                                                                                    color: Color(0xFF5F5F5F),
+                                                                                                    color: const Color(0xFF5F5F5F),
                                                                                                     fontSize: 14.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FontWeight.normal,
@@ -3139,7 +3140,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                         fontWeight: FontWeight.normal,
                                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                       ),
-                                                                                                      color: Color(0xFF5F5F5F),
+                                                                                                      color: const Color(0xFF5F5F5F),
                                                                                                       fontSize: 14.0,
                                                                                                       letterSpacing: 0.0,
                                                                                                       fontWeight: FontWeight.normal,
@@ -3147,14 +3148,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                     ),
                                                                                               ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 3.0)),
+                                                                                          ].divide(const SizedBox(width: 3.0)),
                                                                                         ),
                                                                                       if (reproducaoItem.tipoReproducao == 'Inseminação')
                                                                                         Row(
                                                                                           mainAxisSize: MainAxisSize.max,
                                                                                           children: [
                                                                                             ClipRRect(
-                                                                                              borderRadius: BorderRadius.only(
+                                                                                              borderRadius: const BorderRadius.only(
                                                                                                 bottomLeft: Radius.circular(100.0),
                                                                                                 bottomRight: Radius.circular(100.0),
                                                                                                 topLeft: Radius.circular(100.0),
@@ -3165,18 +3166,18 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 decoration: BoxDecoration(
                                                                                                   color: colorFromCssString(
                                                                                                     reproducaoItem.statusReproducao == 'Prenhez' ? '#EFF5D4' : '#f5d7d4',
-                                                                                                    defaultColor: Color(0xFFF5D7D4),
+                                                                                                    defaultColor: const Color(0xFFF5D7D4),
                                                                                                   ),
-                                                                                                  borderRadius: BorderRadius.only(
+                                                                                                  borderRadius: const BorderRadius.only(
                                                                                                     bottomLeft: Radius.circular(100.0),
                                                                                                     bottomRight: Radius.circular(100.0),
                                                                                                     topLeft: Radius.circular(100.0),
                                                                                                     topRight: Radius.circular(100.0),
                                                                                                   ),
                                                                                                 ),
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Padding(
-                                                                                                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                                   child: Text(
                                                                                                     valueOrDefault<String>(
                                                                                                       '${reproducaoItem.statusReproducao} (${dateTimeFormat(
@@ -3194,7 +3195,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           ),
                                                                                                           color: colorFromCssString(
                                                                                                             reproducaoItem.statusReproducao == 'Prenhez' ? '#1e7a4c' : '#cc3729',
-                                                                                                            defaultColor: Color(0xFFCC3729),
+                                                                                                            defaultColor: const Color(0xFFCC3729),
                                                                                                           ),
                                                                                                           fontSize: 10.0,
                                                                                                           letterSpacing: 0.0,
@@ -3205,7 +3206,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 ),
                                                                                               ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 8.0)),
+                                                                                          ].divide(const SizedBox(width: 8.0)),
                                                                                         ),
                                                                                       Row(
                                                                                         mainAxisSize: MainAxisSize.max,
@@ -3227,7 +3228,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                     fontWeight: FontWeight.w600,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                   ),
-                                                                                                  color: Color(0xFF474747),
+                                                                                                  color: const Color(0xFF474747),
                                                                                                   fontSize: 16.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FontWeight.w600,
@@ -3245,7 +3246,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                       fontWeight: FontWeight.normal,
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                     ),
-                                                                                                    color: Color(0xFF474747),
+                                                                                                    color: const Color(0xFF474747),
                                                                                                     fontSize: 14.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FontWeight.normal,
@@ -3253,7 +3254,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                   ),
                                                                                             ),
                                                                                           ),
-                                                                                        ].divide(SizedBox(width: 3.0)),
+                                                                                        ].divide(const SizedBox(width: 3.0)),
                                                                                       ),
                                                                                       if (reproducaoItem.tipoReproducao == 'Inseminação')
                                                                                         Row(
@@ -3270,14 +3271,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.w600,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF474747),
+                                                                                                        color: const Color(0xFF474747),
                                                                                                         fontSize: 14.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.w600,
                                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                       ),
                                                                                                 ),
-                                                                                              ].divide(SizedBox(width: 5.0)),
+                                                                                              ].divide(const SizedBox(width: 5.0)),
                                                                                             ),
                                                                                             Text(
                                                                                               dateTimeFormat(
@@ -3290,16 +3291,16 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                       fontWeight: FontWeight.normal,
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                     ),
-                                                                                                    color: Color(0xFF474747),
+                                                                                                    color: const Color(0xFF474747),
                                                                                                     fontSize: 14.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FontWeight.normal,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                   ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 3.0)),
+                                                                                          ].divide(const SizedBox(width: 3.0)),
                                                                                         ),
-                                                                                    ].divide(SizedBox(height: 4.0)),
+                                                                                    ].divide(const SizedBox(height: 4.0)),
                                                                                   ),
                                                                                 ),
                                                                                 Icon(
@@ -3331,12 +3332,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             .isNotEmpty,
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  0.0,
-                                                                  14.0,
-                                                                  0.0,
-                                                                  0.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(0.0,
+                                                              14.0, 0.0, 0.0),
                                                       child: Container(
                                                         width: double.infinity,
                                                         height: 100.0,
@@ -3350,33 +3348,35 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                           builder: (context) {
                                                             final reproducao = containerListarReproducoesRowList
                                                                 .where((e) =>
-                                                                    ((FFAppState().filtroReproducao == null || FFAppState().filtroReproducao == '') &&
-                                                                        (FFAppState().filtroInseminador == null ||
-                                                                            FFAppState().filtroInseminador ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroMatrizReproducao == null ||
-                                                                            FFAppState().filtroMatrizReproducao ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroReprodutorReproducao == null ||
-                                                                            FFAppState().filtroReprodutorReproducao ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroLoteReproducao == null ||
-                                                                            FFAppState().filtroLoteReproducao ==
-                                                                                '') &&
+                                                                    ((FFAppState().filtroReproducao == '') &&
+                                                                        (FFAppState().filtroInseminador ==
+                                                                            '') &&
+                                                                        (FFAppState().filtroMatrizReproducao ==
+                                                                            '') &&
+                                                                        (FFAppState().filtroReprodutorReproducao ==
+                                                                            '') &&
+                                                                        (FFAppState()
+                                                                                .filtroLoteReproducao ==
+                                                                            '') &&
                                                                         (e.deletado ==
                                                                             'NAO') &&
-                                                                        (FFAppState().filtroDataParto ==
+                                                                        (FFAppState()
+                                                                                .filtroDataParto ==
                                                                             null) &&
-                                                                        (_model.pesquisarRepTextController.text == null ||
-                                                                            _model.pesquisarRepTextController.text ==
-                                                                                '')) ||
-                                                                    (((FFAppState().filtroReproducao == e.tipoReproducao) || (FFAppState().filtroReproducao == null || FFAppState().filtroReproducao == '')) &&
+                                                                        (_model.pesquisarRepTextController
+                                                                                .text ==
+                                                                            '')) ||
+                                                                    (((FFAppState().filtroReproducao == e.tipoReproducao) ||
+                                                                            (FFAppState().filtroReproducao ==
+                                                                                '')) &&
                                                                         ((e.inseminador == FFAppState().filtroInseminador) ||
-                                                                            (FFAppState().filtroInseminador == null ||
-                                                                                FFAppState().filtroInseminador == '')) &&
-                                                                        ((FFAppState().filtroMatrizReproducao == null || FFAppState().filtroMatrizReproducao == '') || ((e.nomeMatriz!).contains(FFAppState().filtroMatrizReproducao))) &&
-                                                                        ((FFAppState().filtroReprodutorReproducao == null || FFAppState().filtroReprodutorReproducao == '') || ((e.nomeReprodutor!).contains(FFAppState().filtroReprodutorReproducao))) &&
-                                                                        ((FFAppState().filtroLoteReproducao == null || FFAppState().filtroLoteReproducao == '') || ((e.loteNome!).contains(FFAppState().filtroLoteReproducao))) &&
+                                                                            (FFAppState().filtroInseminador ==
+                                                                                '')) &&
+                                                                        ((FFAppState().filtroMatrizReproducao ==
+                                                                                '') ||
+                                                                            ((e.nomeMatriz!).contains(FFAppState().filtroMatrizReproducao))) &&
+                                                                        ((FFAppState().filtroReprodutorReproducao == '') || ((e.nomeReprodutor!).contains(FFAppState().filtroReprodutorReproducao))) &&
+                                                                        ((FFAppState().filtroLoteReproducao == '') || ((e.loteNome!).contains(FFAppState().filtroLoteReproducao))) &&
                                                                         (e.deletado == 'NAO') &&
                                                                         (((functions.converterParaData(e.previsaoParto)! >= getCurrentTimestamp) && (functions.converterParaData(e.previsaoParto)! <= FFAppState().filtroDataParto!)) || (FFAppState().filtroDataParto == null)) &&
                                                                         ((e.dataInseminacao!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()) || (e.dataInicial!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()) || (e.dataFinal!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()))))
@@ -3386,11 +3386,10 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             if (reproducao
                                                                 .isEmpty) {
                                                               return Center(
-                                                                child:
-                                                                    Container(
+                                                                child: SizedBox(
                                                                   height: 200.0,
                                                                   child:
-                                                                      EmptyReproducaoWidget(),
+                                                                      const EmptyReproducaoWidget(),
                                                                 ),
                                                               );
                                                             }
@@ -3434,7 +3433,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                         builder:
                                                                             (context) =>
                                                                                 Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          padding: const EdgeInsetsDirectional
+                                                                              .fromSTEB(
                                                                               24.0,
                                                                               8.0,
                                                                               24.0,
@@ -3461,7 +3461,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                       elevation: 0,
                                                                                       insetPadding: EdgeInsets.zero,
                                                                                       backgroundColor: Colors.transparent,
-                                                                                      alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                      alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                                       child: ViewReproducaoRebanhoWidget(
                                                                                         idReproducao: reproducaoItem.idReproducao!,
                                                                                       ),
@@ -3478,7 +3478,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                       elevation: 0,
                                                                                       insetPadding: EdgeInsets.zero,
                                                                                       backgroundColor: Colors.transparent,
-                                                                                      alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                      alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                                       child: ViewReproducaoLoteWidget(
                                                                                         idReproducao: reproducaoItem.idReproducao!,
                                                                                       ),
@@ -3510,7 +3510,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                             ),
                                                                                           ),
                                                                                           ClipRRect(
-                                                                                            borderRadius: BorderRadius.only(
+                                                                                            borderRadius: const BorderRadius.only(
                                                                                               bottomLeft: Radius.circular(100.0),
                                                                                               bottomRight: Radius.circular(100.0),
                                                                                               topLeft: Radius.circular(100.0),
@@ -3518,7 +3518,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                             ),
                                                                                             child: Container(
                                                                                               height: 23.0,
-                                                                                              decoration: BoxDecoration(
+                                                                                              decoration: const BoxDecoration(
                                                                                                 color: Color(0xFFF1F1F1),
                                                                                                 borderRadius: BorderRadius.only(
                                                                                                   bottomLeft: Radius.circular(100.0),
@@ -3527,9 +3527,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                   topRight: Radius.circular(100.0),
                                                                                                 ),
                                                                                               ),
-                                                                                              alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                              alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                               child: Padding(
-                                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                                 child: Text(
                                                                                                   '${valueOrDefault<String>(
                                                                                                     reproducaoItem.tipoReproducao,
@@ -3549,7 +3549,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.w600,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF5F5F5F),
+                                                                                                        color: const Color(0xFF5F5F5F),
                                                                                                         fontSize: 10.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.w600,
@@ -3559,7 +3559,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                               ),
                                                                                             ),
                                                                                           ),
-                                                                                        ].divide(SizedBox(width: 8.0)),
+                                                                                        ].divide(const SizedBox(width: 8.0)),
                                                                                       ),
                                                                                       if (reproducaoItem.categoria == 'rebanho')
                                                                                         Row(
@@ -3577,7 +3577,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                               ),
                                                                                             ),
                                                                                             Padding(
-                                                                                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 7.0, 0.0),
+                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 7.0, 0.0),
                                                                                               child: Text(
                                                                                                 'Matriz:',
                                                                                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
@@ -3585,7 +3585,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                         fontWeight: FontWeight.w600,
                                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                       ),
-                                                                                                      color: Color(0xFF474747),
+                                                                                                      color: const Color(0xFF474747),
                                                                                                       fontSize: 16.0,
                                                                                                       letterSpacing: 0.0,
                                                                                                       fontWeight: FontWeight.w600,
@@ -3595,7 +3595,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                             ),
                                                                                             Flexible(
                                                                                               child: Align(
-                                                                                                alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                                alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                                 child: Text(
                                                                                                   valueOrDefault<String>(
                                                                                                     '${valueOrDefault<String>(
@@ -3616,7 +3616,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.normal,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF474747),
+                                                                                                        color: const Color(0xFF474747),
                                                                                                         fontSize: 14.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.normal,
@@ -3625,7 +3625,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 ),
                                                                                               ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 3.0)),
+                                                                                          ].divide(const SizedBox(width: 3.0)),
                                                                                         ),
                                                                                       if (reproducaoItem.categoria == 'lote')
                                                                                         Row(
@@ -3648,7 +3648,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                       fontWeight: FontWeight.normal,
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                     ),
-                                                                                                    color: Color(0xFF5F5F5F),
+                                                                                                    color: const Color(0xFF5F5F5F),
                                                                                                     fontSize: 14.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FontWeight.normal,
@@ -3666,7 +3666,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                         fontWeight: FontWeight.normal,
                                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                       ),
-                                                                                                      color: Color(0xFF5F5F5F),
+                                                                                                      color: const Color(0xFF5F5F5F),
                                                                                                       fontSize: 14.0,
                                                                                                       letterSpacing: 0.0,
                                                                                                       fontWeight: FontWeight.normal,
@@ -3674,14 +3674,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                     ),
                                                                                               ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 3.0)),
+                                                                                          ].divide(const SizedBox(width: 3.0)),
                                                                                         ),
                                                                                       if (reproducaoItem.tipoReproducao == 'Inseminação')
                                                                                         Row(
                                                                                           mainAxisSize: MainAxisSize.max,
                                                                                           children: [
                                                                                             ClipRRect(
-                                                                                              borderRadius: BorderRadius.only(
+                                                                                              borderRadius: const BorderRadius.only(
                                                                                                 bottomLeft: Radius.circular(100.0),
                                                                                                 bottomRight: Radius.circular(100.0),
                                                                                                 topLeft: Radius.circular(100.0),
@@ -3692,18 +3692,18 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 decoration: BoxDecoration(
                                                                                                   color: colorFromCssString(
                                                                                                     reproducaoItem.statusReproducao == 'Prenhez' ? '#EFF5D4' : '#f5d7d4',
-                                                                                                    defaultColor: Color(0xFFF5D7D4),
+                                                                                                    defaultColor: const Color(0xFFF5D7D4),
                                                                                                   ),
-                                                                                                  borderRadius: BorderRadius.only(
+                                                                                                  borderRadius: const BorderRadius.only(
                                                                                                     bottomLeft: Radius.circular(100.0),
                                                                                                     bottomRight: Radius.circular(100.0),
                                                                                                     topLeft: Radius.circular(100.0),
                                                                                                     topRight: Radius.circular(100.0),
                                                                                                   ),
                                                                                                 ),
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Padding(
-                                                                                                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                                   child: Text(
                                                                                                     valueOrDefault<String>(
                                                                                                       '${reproducaoItem.statusReproducao} (${dateTimeFormat(
@@ -3721,7 +3721,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           ),
                                                                                                           color: colorFromCssString(
                                                                                                             reproducaoItem.statusReproducao == 'Prenhez' ? '#1e7a4c' : '#cc3729',
-                                                                                                            defaultColor: Color(0xFFCC3729),
+                                                                                                            defaultColor: const Color(0xFFCC3729),
                                                                                                           ),
                                                                                                           fontSize: 10.0,
                                                                                                           letterSpacing: 0.0,
@@ -3732,7 +3732,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 ),
                                                                                               ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 8.0)),
+                                                                                          ].divide(const SizedBox(width: 8.0)),
                                                                                         ),
                                                                                       Row(
                                                                                         mainAxisSize: MainAxisSize.max,
@@ -3754,7 +3754,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                     fontWeight: FontWeight.w600,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                   ),
-                                                                                                  color: Color(0xFF474747),
+                                                                                                  color: const Color(0xFF474747),
                                                                                                   fontSize: 16.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FontWeight.w600,
@@ -3772,7 +3772,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                       fontWeight: FontWeight.normal,
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                     ),
-                                                                                                    color: Color(0xFF474747),
+                                                                                                    color: const Color(0xFF474747),
                                                                                                     fontSize: 14.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FontWeight.normal,
@@ -3780,7 +3780,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                   ),
                                                                                             ),
                                                                                           ),
-                                                                                        ].divide(SizedBox(width: 3.0)),
+                                                                                        ].divide(const SizedBox(width: 3.0)),
                                                                                       ),
                                                                                       if (reproducaoItem.tipoReproducao == 'Inseminação')
                                                                                         Row(
@@ -3797,14 +3797,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.w600,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF474747),
+                                                                                                        color: const Color(0xFF474747),
                                                                                                         fontSize: 14.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.w600,
                                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                       ),
                                                                                                 ),
-                                                                                              ].divide(SizedBox(width: 5.0)),
+                                                                                              ].divide(const SizedBox(width: 5.0)),
                                                                                             ),
                                                                                             Text(
                                                                                               dateTimeFormat(
@@ -3817,16 +3817,16 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                       fontWeight: FontWeight.normal,
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                     ),
-                                                                                                    color: Color(0xFF474747),
+                                                                                                    color: const Color(0xFF474747),
                                                                                                     fontSize: 14.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FontWeight.normal,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                   ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 3.0)),
+                                                                                          ].divide(const SizedBox(width: 3.0)),
                                                                                         ),
-                                                                                    ].divide(SizedBox(height: 4.0)),
+                                                                                    ].divide(const SizedBox(height: 4.0)),
                                                                                   ),
                                                                                 ),
                                                                                 Icon(
@@ -3856,12 +3856,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             .isNotEmpty,
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  0.0,
-                                                                  14.0,
-                                                                  0.0,
-                                                                  0.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(0.0,
+                                                              14.0, 0.0, 0.0),
                                                       child: Container(
                                                         width: double.infinity,
                                                         height: 100.0,
@@ -3875,32 +3872,33 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                           builder: (context) {
                                                             final reproducao = containerListarReproducoesRowList
                                                                 .where((e) =>
-                                                                    ((FFAppState().filtroReproducao == null || FFAppState().filtroReproducao == '') &&
-                                                                        (FFAppState().filtroInseminador == null ||
-                                                                            FFAppState().filtroInseminador ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroMatrizReproducao == null ||
-                                                                            FFAppState().filtroMatrizReproducao ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroReprodutorReproducao == null ||
-                                                                            FFAppState().filtroReprodutorReproducao ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroLoteReproducao == null ||
-                                                                            FFAppState().filtroLoteReproducao ==
-                                                                                '') &&
+                                                                    ((FFAppState().filtroReproducao == '') &&
+                                                                        (FFAppState().filtroInseminador ==
+                                                                            '') &&
+                                                                        (FFAppState().filtroMatrizReproducao ==
+                                                                            '') &&
+                                                                        (FFAppState()
+                                                                                .filtroReprodutorReproducao ==
+                                                                            '') &&
+                                                                        (FFAppState()
+                                                                                .filtroLoteReproducao ==
+                                                                            '') &&
                                                                         (e.deletado ==
                                                                             'NAO') &&
-                                                                        (_model.pesquisarRepTextController.text ==
-                                                                                null ||
-                                                                            _model.pesquisarRepTextController.text ==
-                                                                                '')) ||
-                                                                    (((FFAppState().filtroReproducao == e.tipoReproducao) || (FFAppState().filtroReproducao == null || FFAppState().filtroReproducao == '')) &&
+                                                                        (_model.pesquisarRepTextController
+                                                                                .text ==
+                                                                            '')) ||
+                                                                    (((FFAppState().filtroReproducao == e.tipoReproducao) ||
+                                                                            (FFAppState().filtroReproducao ==
+                                                                                '')) &&
                                                                         ((e.inseminador == FFAppState().filtroInseminador) ||
-                                                                            (FFAppState().filtroInseminador == null ||
-                                                                                FFAppState().filtroInseminador == '')) &&
-                                                                        ((FFAppState().filtroMatrizReproducao == null || FFAppState().filtroMatrizReproducao == '') || ((e.nomeMatriz!).contains(FFAppState().filtroMatrizReproducao))) &&
-                                                                        ((FFAppState().filtroReprodutorReproducao == null || FFAppState().filtroReprodutorReproducao == '') || ((e.nomeReprodutor!).contains(FFAppState().filtroReprodutorReproducao))) &&
-                                                                        ((FFAppState().filtroLoteReproducao == null || FFAppState().filtroLoteReproducao == '') || ((e.loteNome!).contains(FFAppState().filtroLoteReproducao))) &&
+                                                                            (FFAppState().filtroInseminador ==
+                                                                                '')) &&
+                                                                        ((FFAppState().filtroMatrizReproducao ==
+                                                                                '') ||
+                                                                            ((e.nomeMatriz!).contains(FFAppState().filtroMatrizReproducao))) &&
+                                                                        ((FFAppState().filtroReprodutorReproducao == '') || ((e.nomeReprodutor!).contains(FFAppState().filtroReprodutorReproducao))) &&
+                                                                        ((FFAppState().filtroLoteReproducao == '') || ((e.loteNome!).contains(FFAppState().filtroLoteReproducao))) &&
                                                                         (e.deletado == 'NAO') &&
                                                                         ((e.dataInseminacao!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()) || (e.dataInicial!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()) || (e.dataFinal!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()))))
                                                                 .toList()
@@ -3909,11 +3907,10 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             if (reproducao
                                                                 .isEmpty) {
                                                               return Center(
-                                                                child:
-                                                                    Container(
+                                                                child: SizedBox(
                                                                   height: 200.0,
                                                                   child:
-                                                                      EmptyReproducaoWidget(),
+                                                                      const EmptyReproducaoWidget(),
                                                                 ),
                                                               );
                                                             }
@@ -3957,7 +3954,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                         builder:
                                                                             (context) =>
                                                                                 Padding(
-                                                                          padding: EdgeInsetsDirectional.fromSTEB(
+                                                                          padding: const EdgeInsetsDirectional
+                                                                              .fromSTEB(
                                                                               24.0,
                                                                               8.0,
                                                                               24.0,
@@ -3984,7 +3982,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                       elevation: 0,
                                                                                       insetPadding: EdgeInsets.zero,
                                                                                       backgroundColor: Colors.transparent,
-                                                                                      alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                      alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                                       child: ViewReproducaoRebanhoWidget(
                                                                                         idReproducao: reproducaoItem.idReproducao!,
                                                                                       ),
@@ -4001,7 +3999,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                       elevation: 0,
                                                                                       insetPadding: EdgeInsets.zero,
                                                                                       backgroundColor: Colors.transparent,
-                                                                                      alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                      alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                                       child: ViewReproducaoLoteWidget(
                                                                                         idReproducao: reproducaoItem.idReproducao!,
                                                                                       ),
@@ -4033,7 +4031,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                             ),
                                                                                           ),
                                                                                           ClipRRect(
-                                                                                            borderRadius: BorderRadius.only(
+                                                                                            borderRadius: const BorderRadius.only(
                                                                                               bottomLeft: Radius.circular(100.0),
                                                                                               bottomRight: Radius.circular(100.0),
                                                                                               topLeft: Radius.circular(100.0),
@@ -4041,7 +4039,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                             ),
                                                                                             child: Container(
                                                                                               height: 23.0,
-                                                                                              decoration: BoxDecoration(
+                                                                                              decoration: const BoxDecoration(
                                                                                                 color: Color(0xFFF1F1F1),
                                                                                                 borderRadius: BorderRadius.only(
                                                                                                   bottomLeft: Radius.circular(100.0),
@@ -4050,9 +4048,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                   topRight: Radius.circular(100.0),
                                                                                                 ),
                                                                                               ),
-                                                                                              alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                              alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                               child: Padding(
-                                                                                                padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                                padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                                 child: Text(
                                                                                                   '${valueOrDefault<String>(
                                                                                                     reproducaoItem.tipoReproducao,
@@ -4072,7 +4070,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.w600,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF5F5F5F),
+                                                                                                        color: const Color(0xFF5F5F5F),
                                                                                                         fontSize: 10.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.w600,
@@ -4082,11 +4080,11 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                               ),
                                                                                             ),
                                                                                           ),
-                                                                                        ].divide(SizedBox(width: 8.0)),
+                                                                                        ].divide(const SizedBox(width: 8.0)),
                                                                                       ),
                                                                                       if (reproducaoItem.categoria == 'rebanho')
                                                                                         Container(
-                                                                                          decoration: BoxDecoration(),
+                                                                                          decoration: const BoxDecoration(),
                                                                                           child: Row(
                                                                                             mainAxisSize: MainAxisSize.max,
                                                                                             mainAxisAlignment: MainAxisAlignment.start,
@@ -4102,7 +4100,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 ),
                                                                                               ),
                                                                                               Padding(
-                                                                                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 7.0, 0.0),
+                                                                                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 7.0, 0.0),
                                                                                                 child: Text(
                                                                                                   'Matriz:',
                                                                                                   style: FlutterFlowTheme.of(context).bodyLarge.override(
@@ -4110,7 +4108,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.w600,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF474747),
+                                                                                                        color: const Color(0xFF474747),
                                                                                                         fontSize: 16.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.w600,
@@ -4139,7 +4137,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.normal,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF474747),
+                                                                                                        color: const Color(0xFF474747),
                                                                                                         fontSize: 14.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.normal,
@@ -4147,7 +4145,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                       ),
                                                                                                 ),
                                                                                               ),
-                                                                                            ].divide(SizedBox(width: 3.0)),
+                                                                                            ].divide(const SizedBox(width: 3.0)),
                                                                                           ),
                                                                                         ),
                                                                                       if (reproducaoItem.categoria == 'lote')
@@ -4171,7 +4169,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                       fontWeight: FontWeight.normal,
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                     ),
-                                                                                                    color: Color(0xFF5F5F5F),
+                                                                                                    color: const Color(0xFF5F5F5F),
                                                                                                     fontSize: 14.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FontWeight.normal,
@@ -4189,7 +4187,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                         fontWeight: FontWeight.normal,
                                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                       ),
-                                                                                                      color: Color(0xFF5F5F5F),
+                                                                                                      color: const Color(0xFF5F5F5F),
                                                                                                       fontSize: 14.0,
                                                                                                       letterSpacing: 0.0,
                                                                                                       fontWeight: FontWeight.normal,
@@ -4197,14 +4195,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                     ),
                                                                                               ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 3.0)),
+                                                                                          ].divide(const SizedBox(width: 3.0)),
                                                                                         ),
                                                                                       if (reproducaoItem.tipoReproducao == 'Inseminação')
                                                                                         Row(
                                                                                           mainAxisSize: MainAxisSize.max,
                                                                                           children: [
                                                                                             ClipRRect(
-                                                                                              borderRadius: BorderRadius.only(
+                                                                                              borderRadius: const BorderRadius.only(
                                                                                                 bottomLeft: Radius.circular(100.0),
                                                                                                 bottomRight: Radius.circular(100.0),
                                                                                                 topLeft: Radius.circular(100.0),
@@ -4215,18 +4213,18 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 decoration: BoxDecoration(
                                                                                                   color: colorFromCssString(
                                                                                                     reproducaoItem.statusReproducao == 'Prenhez' ? '#EFF5D4' : '#f5d7d4',
-                                                                                                    defaultColor: Color(0xFFF5D7D4),
+                                                                                                    defaultColor: const Color(0xFFF5D7D4),
                                                                                                   ),
-                                                                                                  borderRadius: BorderRadius.only(
+                                                                                                  borderRadius: const BorderRadius.only(
                                                                                                     bottomLeft: Radius.circular(100.0),
                                                                                                     bottomRight: Radius.circular(100.0),
                                                                                                     topLeft: Radius.circular(100.0),
                                                                                                     topRight: Radius.circular(100.0),
                                                                                                   ),
                                                                                                 ),
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                 child: Padding(
-                                                                                                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                                   child: Row(
                                                                                                     mainAxisSize: MainAxisSize.max,
                                                                                                     children: [
@@ -4243,7 +4241,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                               ),
                                                                                                               color: colorFromCssString(
                                                                                                                 reproducaoItem.statusReproducao == 'Prenhez' ? '#1e7a4c' : '#cc3729',
-                                                                                                                defaultColor: Color(0xFFCC3729),
+                                                                                                                defaultColor: const Color(0xFFCC3729),
                                                                                                               ),
                                                                                                               fontSize: 10.0,
                                                                                                               letterSpacing: 0.0,
@@ -4269,7 +4267,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 ),
                                                                                                                 color: colorFromCssString(
                                                                                                                   reproducaoItem.statusReproducao == 'Prenhez' ? '#1e7a4c' : '#cc3729',
-                                                                                                                  defaultColor: Color(0xFFCC3729),
+                                                                                                                  defaultColor: const Color(0xFFCC3729),
                                                                                                                 ),
                                                                                                                 fontSize: 10.0,
                                                                                                                 letterSpacing: 0.0,
@@ -4282,7 +4280,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 ),
                                                                                               ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 8.0)),
+                                                                                          ].divide(const SizedBox(width: 8.0)),
                                                                                         ),
                                                                                       Row(
                                                                                         mainAxisSize: MainAxisSize.max,
@@ -4304,7 +4302,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                     fontWeight: FontWeight.w600,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                   ),
-                                                                                                  color: Color(0xFF474747),
+                                                                                                  color: const Color(0xFF474747),
                                                                                                   fontSize: 16.0,
                                                                                                   letterSpacing: 0.0,
                                                                                                   fontWeight: FontWeight.w600,
@@ -4322,7 +4320,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                       fontWeight: FontWeight.normal,
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                     ),
-                                                                                                    color: Color(0xFF474747),
+                                                                                                    color: const Color(0xFF474747),
                                                                                                     fontSize: 14.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FontWeight.normal,
@@ -4330,7 +4328,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                   ),
                                                                                             ),
                                                                                           ),
-                                                                                        ].divide(SizedBox(width: 3.0)),
+                                                                                        ].divide(const SizedBox(width: 3.0)),
                                                                                       ),
                                                                                       if (reproducaoItem.tipoReproducao == 'Inseminação')
                                                                                         Row(
@@ -4347,14 +4345,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.w600,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF474747),
+                                                                                                        color: const Color(0xFF474747),
                                                                                                         fontSize: 14.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.w600,
                                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                       ),
                                                                                                 ),
-                                                                                              ].divide(SizedBox(width: 5.0)),
+                                                                                              ].divide(const SizedBox(width: 5.0)),
                                                                                             ),
                                                                                             Text(
                                                                                               dateTimeFormat(
@@ -4367,16 +4365,16 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                       fontWeight: FontWeight.normal,
                                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                     ),
-                                                                                                    color: Color(0xFF474747),
+                                                                                                    color: const Color(0xFF474747),
                                                                                                     fontSize: 14.0,
                                                                                                     letterSpacing: 0.0,
                                                                                                     fontWeight: FontWeight.normal,
                                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                   ),
                                                                                             ),
-                                                                                          ].divide(SizedBox(width: 3.0)),
+                                                                                          ].divide(const SizedBox(width: 3.0)),
                                                                                         ),
-                                                                                    ].divide(SizedBox(height: 4.0)),
+                                                                                    ].divide(const SizedBox(height: 4.0)),
                                                                                   ),
                                                                                 ),
                                                                                 Icon(
@@ -4413,13 +4411,13 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 16.0),
                                 child: Container(
                                   width: double.infinity,
@@ -4452,7 +4450,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                       MediaQuery.viewInsetsOf(
                                                           context),
                                                   child:
-                                                      FiltroSanidadesWidget(),
+                                                      const FiltroSanidadesWidget(),
                                                 );
                                               },
                                             ).then(
@@ -4467,12 +4465,13 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                   BorderRadius.circular(24.0),
                                               shape: BoxShape.rectangle,
                                               border: Border.all(
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                               ),
                                             ),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 8.0, 16.0, 8.0),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.max,
@@ -4505,17 +4504,15 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                       fit: BoxFit.cover,
                                                     ),
                                                   ),
-                                                ].divide(SizedBox(width: 8.0)),
+                                                ].divide(
+                                                    const SizedBox(width: 8.0)),
                                               ),
                                             ),
                                           ),
                                         ),
                                         if (FFAppState()
-                                                    .filtroDataSanidadeTxt !=
-                                                null &&
-                                            FFAppState()
-                                                    .filtroDataSanidadeTxt !=
-                                                '')
+                                                .filtroDataSanidadeTxt !=
+                                            '')
                                           Container(
                                             decoration: BoxDecoration(
                                               color:
@@ -4525,12 +4522,13 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                   BorderRadius.circular(24.0),
                                               shape: BoxShape.rectangle,
                                               border: Border.all(
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                               ),
                                             ),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 8.0, 16.0, 8.0),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.max,
@@ -4553,7 +4551,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                   .bodyMediumIsCustom,
                                                         ),
                                                   ),
-                                                ].divide(SizedBox(width: 8.0)),
+                                                ].divide(
+                                                    const SizedBox(width: 8.0)),
                                               ),
                                             ),
                                           ),
@@ -4565,9 +4564,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
 
                                             return Row(
                                               mainAxisSize: MainAxisSize.max,
-                                              children:
-                                                  List.generate(sanidade.length,
-                                                      (sanidadeIndex) {
+                                              children: List.generate(
+                                                  sanidade.length,
+                                                  (sanidadeIndex) {
                                                 final sanidadeItem =
                                                     sanidade[sanidadeIndex];
                                                 return Container(
@@ -4580,14 +4579,15 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             24.0),
                                                     shape: BoxShape.rectangle,
                                                     border: Border.all(
-                                                      color: Color(0xFFBEBEBE),
+                                                      color: const Color(
+                                                          0xFFBEBEBE),
                                                     ),
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(16.0, 8.0,
-                                                                16.0, 8.0),
+                                                            16.0, 8.0),
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -4609,21 +4609,22 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                         .bodyMediumIsCustom,
                                                               ),
                                                         ),
-                                                      ].divide(
-                                                          SizedBox(width: 8.0)),
+                                                      ].divide(const SizedBox(
+                                                          width: 8.0)),
                                                     ),
                                                   ),
                                                 );
-                                              }).divide(SizedBox(width: 8.0)),
+                                              }).divide(
+                                                  const SizedBox(width: 8.0)),
                                             );
                                           },
                                         ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                   ),
                                 ),
                               ),
-                              Divider(
+                              const Divider(
                                 thickness: 1.0,
                                 color: Color(0xFFEDEDED),
                               ),
@@ -4656,15 +4657,16 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                         snapshot.data!;
 
                                     return Container(
-                                      decoration: BoxDecoration(),
+                                      decoration: const BoxDecoration(),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           if (!(containerListarSanidadesRowList
                                               .isNotEmpty))
                                             Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 24.0, 24.0, 0.0),
                                               child: Container(
                                                 width: double.infinity,
@@ -4672,7 +4674,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                   color: FlutterFlowTheme.of(
                                                           context)
                                                       .secondaryBackground,
-                                                  boxShadow: [
+                                                  boxShadow: const [
                                                     BoxShadow(
                                                       blurRadius: 4.0,
                                                       color: Color(0x41000040),
@@ -4687,8 +4689,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                           6.0),
                                                 ),
                                                 child: Padding(
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(32.0, 32.0,
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(32.0, 32.0,
                                                           32.0, 32.0),
                                                   child: Column(
                                                     mainAxisSize:
@@ -4747,8 +4750,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                         textAlign:
                                                             TextAlign.center,
                                                       ),
-                                                    ].divide(
-                                                        SizedBox(height: 24.0)),
+                                                    ].divide(const SizedBox(
+                                                        height: 24.0)),
                                                   ),
                                                 ),
                                               ),
@@ -4757,8 +4760,9 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                               .isNotEmpty)
                                             Expanded(
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         0.0, 14.0, 0.0, 0.0),
                                                 child: Container(
                                                   width: double.infinity,
@@ -4776,34 +4780,34 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                           builder: (context) {
                                                             final sanidades = containerListarSanidadesRowList
                                                                 .where((e) =>
-                                                                    ((FFAppState().filtroVacinacao == null || FFAppState().filtroVacinacao == '') &&
-                                                                        (FFAppState().filtroAntiparasitario == null ||
-                                                                            FFAppState().filtroAntiparasitario ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroTratamento == null ||
-                                                                            FFAppState().filtroTratamento ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroProtocoloReprodutivo == null ||
-                                                                            FFAppState().filtroProtocoloReprodutivo ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroLoteSanidade == null ||
-                                                                            FFAppState().filtroLoteSanidade ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroSanidadeAnimal == null ||
-                                                                            FFAppState().filtroSanidadeAnimal ==
-                                                                                '') &&
+                                                                    ((FFAppState().filtroVacinacao == '') &&
+                                                                        (FFAppState().filtroAntiparasitario ==
+                                                                            '') &&
+                                                                        (FFAppState().filtroTratamento ==
+                                                                            '') &&
+                                                                        (FFAppState().filtroProtocoloReprodutivo ==
+                                                                            '') &&
+                                                                        (FFAppState().filtroLoteSanidade ==
+                                                                            '') &&
+                                                                        (FFAppState().filtroSanidadeAnimal ==
+                                                                            '') &&
                                                                         (e.deletado ==
                                                                             'NAO') &&
-                                                                        (_model.pesquisarTextController.text == null ||
-                                                                            _model.pesquisarTextController.text ==
-                                                                                '')) ||
-                                                                    (((FFAppState().filtroVacinacao == null || FFAppState().filtroVacinacao == '') || (e.vacinacao?.contains(FFAppState().filtroVacinacao) ?? false)) &&
-                                                                        ((FFAppState().filtroAntiparasitario == null || FFAppState().filtroAntiparasitario == '') ||
-                                                                            (e.antiparasitario?.contains(FFAppState().filtroAntiparasitario) ?? false)) &&
-                                                                        ((FFAppState().filtroTratamento == null || FFAppState().filtroTratamento == '') || (e.tratamento?.contains(FFAppState().filtroTratamento) ?? false)) &&
-                                                                        ((e.protocoloReprodutivo?.contains(FFAppState().filtroProtocoloReprodutivo) ?? false) || (FFAppState().filtroProtocoloReprodutivo == null || FFAppState().filtroProtocoloReprodutivo == '')) &&
-                                                                        ((e.idLote == FFAppState().filtroLoteSanidade) || (FFAppState().filtroLoteSanidade == null || FFAppState().filtroLoteSanidade == '')) &&
-                                                                        ((e.idRebanho == FFAppState().filtroSanidadeAnimal) || (FFAppState().filtroSanidadeAnimal == null || FFAppState().filtroSanidadeAnimal == '')) &&
+                                                                        (_model.pesquisarTextController.text ==
+                                                                            '')) ||
+                                                                    (((FFAppState().filtroVacinacao == '') || (e.vacinacao?.contains(FFAppState().filtroVacinacao) ?? false)) &&
+                                                                        ((FFAppState().filtroAntiparasitario == '') ||
+                                                                            (e.antiparasitario?.contains(FFAppState().filtroAntiparasitario) ??
+                                                                                false)) &&
+                                                                        ((FFAppState().filtroTratamento == '') ||
+                                                                            (e.tratamento?.contains(FFAppState().filtroTratamento) ??
+                                                                                false)) &&
+                                                                        ((e.protocoloReprodutivo?.contains(FFAppState().filtroProtocoloReprodutivo) ?? false) ||
+                                                                            (FFAppState().filtroProtocoloReprodutivo ==
+                                                                                '')) &&
+                                                                        ((e.idLote == FFAppState().filtroLoteSanidade) ||
+                                                                            (FFAppState().filtroLoteSanidade == '')) &&
+                                                                        ((e.idRebanho == FFAppState().filtroSanidadeAnimal) || (FFAppState().filtroSanidadeAnimal == '')) &&
                                                                         (e.deletado == 'NAO') &&
                                                                         ((e.vacinacao!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) || (e.antiparasitario!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) || (e.tratamento!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) || (e.protocoloReprodutivo!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()))))
                                                                 .toList()
@@ -4812,11 +4816,10 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             if (sanidades
                                                                 .isEmpty) {
                                                               return Center(
-                                                                child:
-                                                                    Container(
+                                                                child: SizedBox(
                                                                   height: 200.0,
                                                                   child:
-                                                                      EmptySanidadeWidget(),
+                                                                      const EmptySanidadeWidget(),
                                                                 ),
                                                               );
                                                             }
@@ -4874,7 +4877,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
 
                                                                     return Container(
                                                                       decoration:
-                                                                          BoxDecoration(),
+                                                                          const BoxDecoration(),
                                                                       child: FutureBuilder<
                                                                           List<
                                                                               BuscarRebanhoRow>>(
@@ -4918,7 +4921,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                               children: [
                                                                                 Builder(
                                                                                   builder: (context) => Padding(
-                                                                                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
                                                                                     child: InkWell(
                                                                                       splashColor: Colors.transparent,
                                                                                       focusColor: Colors.transparent,
@@ -4959,8 +4962,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 elevation: 0,
                                                                                                 insetPadding: EdgeInsets.zero,
                                                                                                 backgroundColor: Colors.transparent,
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
-                                                                                                child: EditSanidadeAnimalWidget(),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                                child: const EditSanidadeAnimalWidget(),
                                                                                               );
                                                                                             },
                                                                                           );
@@ -4998,8 +5001,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 elevation: 0,
                                                                                                 insetPadding: EdgeInsets.zero,
                                                                                                 backgroundColor: Colors.transparent,
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
-                                                                                                child: EditSanidadeLoteWidget(),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                                child: const EditSanidadeLoteWidget(),
                                                                                               );
                                                                                             },
                                                                                           );
@@ -5042,7 +5045,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                       fit: BoxFit.scaleDown,
                                                                                                     ),
                                                                                                   ),
-                                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                                             ),
                                                                                           if (sanidadesItem.idRebanho != null && sanidadesItem.idRebanho != '')
                                                                                             Row(
@@ -5058,7 +5061,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.w600,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF474747),
+                                                                                                        color: const Color(0xFF474747),
                                                                                                         fontSize: 16.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.w600,
@@ -5072,7 +5075,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.normal,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF5F5F5F),
+                                                                                                        color: const Color(0xFF5F5F5F),
                                                                                                         fontSize: 14.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.normal,
@@ -5089,7 +5092,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.w600,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF474747),
+                                                                                                        color: const Color(0xFF474747),
                                                                                                         fontSize: 16.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.w600,
@@ -5103,7 +5106,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.normal,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF5F5F5F),
+                                                                                                        color: const Color(0xFF5F5F5F),
                                                                                                         fontSize: 14.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.normal,
@@ -5124,14 +5127,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.w600,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF474747),
+                                                                                                        color: const Color(0xFF474747),
                                                                                                         fontSize: 16.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.w600,
                                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                       ),
                                                                                                 ),
-                                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                                             ),
                                                                                           if (sanidadesItem.idRebanho != null && sanidadesItem.idRebanho != '')
                                                                                             Row(
@@ -5153,7 +5156,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 fontWeight: FontWeight.normal,
                                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                               ),
-                                                                                                              color: Color(0xFF5F5F5F),
+                                                                                                              color: const Color(0xFF5F5F5F),
                                                                                                               fontSize: 14.0,
                                                                                                               letterSpacing: 0.0,
                                                                                                               fontWeight: FontWeight.normal,
@@ -5168,7 +5171,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 fontWeight: FontWeight.normal,
                                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                               ),
-                                                                                                              color: Color(0xFF474747),
+                                                                                                              color: const Color(0xFF474747),
                                                                                                               fontSize: 16.0,
                                                                                                               letterSpacing: 0.0,
                                                                                                               fontWeight: FontWeight.normal,
@@ -5194,22 +5197,22 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 fontWeight: FontWeight.normal,
                                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                               ),
-                                                                                                              color: Color(0xFF5F5F5F),
+                                                                                                              color: const Color(0xFF5F5F5F),
                                                                                                               fontSize: 14.0,
                                                                                                               letterSpacing: 0.0,
                                                                                                               fontWeight: FontWeight.normal,
                                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                             ),
                                                                                                       ),
-                                                                                                    ].divide(SizedBox(width: 4.0)),
+                                                                                                    ].divide(const SizedBox(width: 4.0)),
                                                                                                   ),
                                                                                                 ),
-                                                                                                Icon(
+                                                                                                const Icon(
                                                                                                   Icons.chevron_right,
                                                                                                   color: Color(0xFF5F5F5F),
                                                                                                   size: 24.0,
                                                                                                 ),
-                                                                                              ].divide(SizedBox(width: 8.0)),
+                                                                                              ].divide(const SizedBox(width: 8.0)),
                                                                                             ),
                                                                                           if (sanidadesItem.idRebanho != null && sanidadesItem.idRebanho != '')
                                                                                             Row(
@@ -5234,14 +5237,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.normal,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF5F5F5F),
+                                                                                                        color: const Color(0xFF5F5F5F),
                                                                                                         fontSize: 14.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.normal,
                                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                       ),
                                                                                                 ),
-                                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                                             ),
                                                                                           if (sanidadesItem.idLote != null && sanidadesItem.idLote != '')
                                                                                             Row(
@@ -5271,7 +5274,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 fontWeight: FontWeight.normal,
                                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                               ),
-                                                                                                              color: Color(0xFF5F5F5F),
+                                                                                                              color: const Color(0xFF5F5F5F),
                                                                                                               fontSize: 14.0,
                                                                                                               letterSpacing: 0.0,
                                                                                                               fontWeight: FontWeight.normal,
@@ -5281,12 +5284,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                     ],
                                                                                                   ),
                                                                                                 ),
-                                                                                                Icon(
+                                                                                                const Icon(
                                                                                                   Icons.chevron_right,
                                                                                                   color: Color(0xFF5F5F5F),
                                                                                                   size: 24.0,
                                                                                                 ),
-                                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                                             ),
                                                                                           if (sanidadesItem.vacinacao != 'null')
                                                                                             SingleChildScrollView(
@@ -5302,7 +5305,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                             fontWeight: FontWeight.normal,
                                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                           ),
-                                                                                                          color: Color(0xFF474747),
+                                                                                                          color: const Color(0xFF474747),
                                                                                                           fontSize: 14.0,
                                                                                                           letterSpacing: 0.0,
                                                                                                           fontWeight: FontWeight.normal,
@@ -5320,17 +5323,17 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           children: List.generate(vacinas.length, (vacinasIndex) {
                                                                                                             final vacinasItem = vacinas[vacinasIndex];
                                                                                                             return Align(
-                                                                                                              alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                                               child: Container(
                                                                                                                 height: 23.0,
                                                                                                                 decoration: BoxDecoration(
-                                                                                                                  color: Color(0xFFB1CC29),
+                                                                                                                  color: const Color(0xFFB1CC29),
                                                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                                                 ),
                                                                                                                 child: Align(
-                                                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                                   child: Padding(
-                                                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                                                     child: Text(
                                                                                                                       vacinasItem,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -5345,12 +5348,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 ),
                                                                                                               ),
                                                                                                             );
-                                                                                                          }).divide(SizedBox(width: 8.0)),
+                                                                                                          }).divide(const SizedBox(width: 8.0)),
                                                                                                         ),
                                                                                                       );
                                                                                                     },
                                                                                                   ),
-                                                                                                ].divide(SizedBox(width: 3.0)),
+                                                                                                ].divide(const SizedBox(width: 3.0)),
                                                                                               ),
                                                                                             ),
                                                                                           if (sanidadesItem.antiparasitario != 'null')
@@ -5367,7 +5370,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                             fontWeight: FontWeight.normal,
                                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                           ),
-                                                                                                          color: Color(0xFF474747),
+                                                                                                          color: const Color(0xFF474747),
                                                                                                           fontSize: 14.0,
                                                                                                           letterSpacing: 0.0,
                                                                                                           fontWeight: FontWeight.normal,
@@ -5385,17 +5388,17 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           children: List.generate(antiparasitario.length, (antiparasitarioIndex) {
                                                                                                             final antiparasitarioItem = antiparasitario[antiparasitarioIndex];
                                                                                                             return Align(
-                                                                                                              alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                                               child: Container(
                                                                                                                 height: 23.0,
                                                                                                                 decoration: BoxDecoration(
-                                                                                                                  color: Color(0xFFB1CC29),
+                                                                                                                  color: const Color(0xFFB1CC29),
                                                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                                                 ),
                                                                                                                 child: Align(
-                                                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                                   child: Padding(
-                                                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                                     child: Text(
                                                                                                                       antiparasitarioItem,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -5410,12 +5413,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 ),
                                                                                                               ),
                                                                                                             );
-                                                                                                          }).divide(SizedBox(width: 8.0)),
+                                                                                                          }).divide(const SizedBox(width: 8.0)),
                                                                                                         ),
                                                                                                       );
                                                                                                     },
                                                                                                   ),
-                                                                                                ].divide(SizedBox(width: 3.0)),
+                                                                                                ].divide(const SizedBox(width: 3.0)),
                                                                                               ),
                                                                                             ),
                                                                                           if (sanidadesItem.protocoloReprodutivo != 'null')
@@ -5432,7 +5435,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                             fontWeight: FontWeight.normal,
                                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                           ),
-                                                                                                          color: Color(0xFF474747),
+                                                                                                          color: const Color(0xFF474747),
                                                                                                           fontSize: 14.0,
                                                                                                           letterSpacing: 0.0,
                                                                                                           fontWeight: FontWeight.normal,
@@ -5450,17 +5453,17 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           children: List.generate(protocolo.length, (protocoloIndex) {
                                                                                                             final protocoloItem = protocolo[protocoloIndex];
                                                                                                             return Align(
-                                                                                                              alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                                               child: Container(
                                                                                                                 height: 23.0,
                                                                                                                 decoration: BoxDecoration(
-                                                                                                                  color: Color(0xFFB1CC29),
+                                                                                                                  color: const Color(0xFFB1CC29),
                                                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                                                 ),
                                                                                                                 child: Align(
-                                                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                                   child: Padding(
-                                                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                                     child: Text(
                                                                                                                       protocoloItem,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -5475,12 +5478,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 ),
                                                                                                               ),
                                                                                                             );
-                                                                                                          }).divide(SizedBox(width: 8.0)),
+                                                                                                          }).divide(const SizedBox(width: 8.0)),
                                                                                                         ),
                                                                                                       );
                                                                                                     },
                                                                                                   ),
-                                                                                                ].divide(SizedBox(width: 3.0)),
+                                                                                                ].divide(const SizedBox(width: 3.0)),
                                                                                               ),
                                                                                             ),
                                                                                           if (sanidadesItem.tratamento != 'null')
@@ -5497,7 +5500,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                             fontWeight: FontWeight.normal,
                                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                           ),
-                                                                                                          color: Color(0xFF474747),
+                                                                                                          color: const Color(0xFF474747),
                                                                                                           fontSize: 14.0,
                                                                                                           letterSpacing: 0.0,
                                                                                                           fontWeight: FontWeight.normal,
@@ -5515,17 +5518,17 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           children: List.generate(tratamenteSanidade.length, (tratamenteSanidadeIndex) {
                                                                                                             final tratamenteSanidadeItem = tratamenteSanidade[tratamenteSanidadeIndex];
                                                                                                             return Align(
-                                                                                                              alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                                               child: Container(
                                                                                                                 height: 23.0,
                                                                                                                 decoration: BoxDecoration(
-                                                                                                                  color: Color(0xFFB1CC29),
+                                                                                                                  color: const Color(0xFFB1CC29),
                                                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                                                 ),
                                                                                                                 child: Align(
-                                                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                                   child: Padding(
-                                                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                                     child: Text(
                                                                                                                       tratamenteSanidadeItem,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -5540,15 +5543,15 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 ),
                                                                                                               ),
                                                                                                             );
-                                                                                                          }).divide(SizedBox(width: 8.0)),
+                                                                                                          }).divide(const SizedBox(width: 8.0)),
                                                                                                         ),
                                                                                                       );
                                                                                                     },
                                                                                                   ),
-                                                                                                ].divide(SizedBox(width: 3.0)),
+                                                                                                ].divide(const SizedBox(width: 3.0)),
                                                                                               ),
                                                                                             ),
-                                                                                        ].divide(SizedBox(height: 8.0)),
+                                                                                        ].divide(const SizedBox(height: 8.0)),
                                                                                       ),
                                                                                     ),
                                                                                   ),
@@ -5574,35 +5577,37 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                           builder: (context) {
                                                             final sanidades = containerListarSanidadesRowList
                                                                 .where((e) =>
-                                                                    ((FFAppState().filtroVacinacao == null || FFAppState().filtroVacinacao == '') &&
-                                                                        (FFAppState().filtroAntiparasitario == null ||
-                                                                            FFAppState().filtroAntiparasitario ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroTratamento == null ||
-                                                                            FFAppState().filtroTratamento ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroProtocoloReprodutivo == null ||
-                                                                            FFAppState().filtroProtocoloReprodutivo ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroLoteSanidade == null ||
-                                                                            FFAppState().filtroLoteSanidade ==
-                                                                                '') &&
-                                                                        (FFAppState().filtroSanidadeAnimal == null ||
-                                                                            FFAppState().filtroSanidadeAnimal ==
-                                                                                '') &&
+                                                                    ((FFAppState().filtroVacinacao == '') &&
+                                                                        (FFAppState().filtroAntiparasitario ==
+                                                                            '') &&
+                                                                        (FFAppState().filtroTratamento ==
+                                                                            '') &&
+                                                                        (FFAppState().filtroProtocoloReprodutivo ==
+                                                                            '') &&
+                                                                        (FFAppState().filtroLoteSanidade ==
+                                                                            '') &&
+                                                                        (FFAppState().filtroSanidadeAnimal ==
+                                                                            '') &&
                                                                         (e.deletado ==
                                                                             'NAO') &&
                                                                         (FFAppState().filtroDataSanidade ==
                                                                             null) &&
-                                                                        (_model.pesquisarTextController.text == null ||
-                                                                            _model.pesquisarTextController.text ==
-                                                                                '')) ||
-                                                                    (((FFAppState().filtroVacinacao == null || FFAppState().filtroVacinacao == '') || (e.vacinacao?.contains(FFAppState().filtroVacinacao) ?? false)) &&
-                                                                        ((FFAppState().filtroAntiparasitario == null || FFAppState().filtroAntiparasitario == '') || (e.antiparasitario?.contains(FFAppState().filtroAntiparasitario) ?? false)) &&
-                                                                        ((FFAppState().filtroTratamento == null || FFAppState().filtroTratamento == '') || (e.tratamento?.contains(FFAppState().filtroTratamento) ?? false)) &&
-                                                                        ((e.protocoloReprodutivo?.contains(FFAppState().filtroProtocoloReprodutivo) ?? false) || (FFAppState().filtroProtocoloReprodutivo == null || FFAppState().filtroProtocoloReprodutivo == '')) &&
-                                                                        ((e.idLote == FFAppState().filtroLoteSanidade) || (FFAppState().filtroLoteSanidade == null || FFAppState().filtroLoteSanidade == '') || (e.protocoloReprodutivo == 'null')) &&
-                                                                        ((e.idRebanho == FFAppState().filtroSanidadeAnimal) || (FFAppState().filtroSanidadeAnimal == null || FFAppState().filtroSanidadeAnimal == '')) &&
+                                                                        (_model.pesquisarTextController.text ==
+                                                                            '')) ||
+                                                                    (((FFAppState().filtroVacinacao == '') || (e.vacinacao?.contains(FFAppState().filtroVacinacao) ?? false)) &&
+                                                                        ((FFAppState().filtroAntiparasitario == '') ||
+                                                                            (e.antiparasitario?.contains(FFAppState().filtroAntiparasitario) ??
+                                                                                false)) &&
+                                                                        ((FFAppState().filtroTratamento == '') ||
+                                                                            (e.tratamento?.contains(FFAppState().filtroTratamento) ??
+                                                                                false)) &&
+                                                                        ((e.protocoloReprodutivo?.contains(FFAppState().filtroProtocoloReprodutivo) ?? false) ||
+                                                                            (FFAppState().filtroProtocoloReprodutivo ==
+                                                                                '')) &&
+                                                                        ((e.idLote == FFAppState().filtroLoteSanidade) ||
+                                                                            (FFAppState().filtroLoteSanidade == '') ||
+                                                                            (e.protocoloReprodutivo == 'null')) &&
+                                                                        ((e.idRebanho == FFAppState().filtroSanidadeAnimal) || (FFAppState().filtroSanidadeAnimal == '')) &&
                                                                         (e.deletado == 'NAO') &&
                                                                         (((functions.converterParaData(e.dataSanidade)! >= FFAppState().filtroDataSanidade!) && (functions.converterParaData(e.dataSanidade)! <= getCurrentTimestamp)) || (FFAppState().filtroDataSanidade == null)) &&
                                                                         ((e.vacinacao!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) || (e.antiparasitario!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) || (e.tratamento!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) || (e.protocoloReprodutivo!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()))))
@@ -5612,11 +5617,10 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             if (sanidades
                                                                 .isEmpty) {
                                                               return Center(
-                                                                child:
-                                                                    Container(
+                                                                child: SizedBox(
                                                                   height: 200.0,
                                                                   child:
-                                                                      EmptySanidadeWidget(),
+                                                                      const EmptySanidadeWidget(),
                                                                 ),
                                                               );
                                                             }
@@ -5674,7 +5678,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
 
                                                                     return Container(
                                                                       decoration:
-                                                                          BoxDecoration(),
+                                                                          const BoxDecoration(),
                                                                       child: FutureBuilder<
                                                                           List<
                                                                               BuscarRebanhoRow>>(
@@ -5718,7 +5722,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                               children: [
                                                                                 Builder(
                                                                                   builder: (context) => Padding(
-                                                                                    padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
                                                                                     child: InkWell(
                                                                                       splashColor: Colors.transparent,
                                                                                       focusColor: Colors.transparent,
@@ -5759,8 +5763,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 elevation: 0,
                                                                                                 insetPadding: EdgeInsets.zero,
                                                                                                 backgroundColor: Colors.transparent,
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
-                                                                                                child: EditSanidadeAnimalWidget(),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                                child: const EditSanidadeAnimalWidget(),
                                                                                               );
                                                                                             },
                                                                                           );
@@ -5798,8 +5802,8 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                 elevation: 0,
                                                                                                 insetPadding: EdgeInsets.zero,
                                                                                                 backgroundColor: Colors.transparent,
-                                                                                                alignment: AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
-                                                                                                child: EditSanidadeLoteWidget(),
+                                                                                                alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                                child: const EditSanidadeLoteWidget(),
                                                                                               );
                                                                                             },
                                                                                           );
@@ -5842,7 +5846,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                       fit: BoxFit.scaleDown,
                                                                                                     ),
                                                                                                   ),
-                                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                                             ),
                                                                                           if (sanidadesItem.idRebanho != null && sanidadesItem.idRebanho != '')
                                                                                             Row(
@@ -5858,7 +5862,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.w600,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF474747),
+                                                                                                        color: const Color(0xFF474747),
                                                                                                         fontSize: 16.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.w600,
@@ -5872,7 +5876,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.normal,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF5F5F5F),
+                                                                                                        color: const Color(0xFF5F5F5F),
                                                                                                         fontSize: 14.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.normal,
@@ -5889,7 +5893,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.w600,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF474747),
+                                                                                                        color: const Color(0xFF474747),
                                                                                                         fontSize: 16.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.w600,
@@ -5903,7 +5907,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.normal,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF5F5F5F),
+                                                                                                        color: const Color(0xFF5F5F5F),
                                                                                                         fontSize: 14.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.normal,
@@ -5924,14 +5928,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.w600,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF474747),
+                                                                                                        color: const Color(0xFF474747),
                                                                                                         fontSize: 16.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.w600,
                                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                       ),
                                                                                                 ),
-                                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                                             ),
                                                                                           if (sanidadesItem.idRebanho != null && sanidadesItem.idRebanho != '')
                                                                                             Row(
@@ -5953,7 +5957,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 fontWeight: FontWeight.normal,
                                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                               ),
-                                                                                                              color: Color(0xFF5F5F5F),
+                                                                                                              color: const Color(0xFF5F5F5F),
                                                                                                               fontSize: 14.0,
                                                                                                               letterSpacing: 0.0,
                                                                                                               fontWeight: FontWeight.normal,
@@ -5968,7 +5972,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 fontWeight: FontWeight.normal,
                                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                               ),
-                                                                                                              color: Color(0xFF474747),
+                                                                                                              color: const Color(0xFF474747),
                                                                                                               fontSize: 16.0,
                                                                                                               letterSpacing: 0.0,
                                                                                                               fontWeight: FontWeight.normal,
@@ -5991,22 +5995,22 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 fontWeight: FontWeight.normal,
                                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                               ),
-                                                                                                              color: Color(0xFF5F5F5F),
+                                                                                                              color: const Color(0xFF5F5F5F),
                                                                                                               fontSize: 14.0,
                                                                                                               letterSpacing: 0.0,
                                                                                                               fontWeight: FontWeight.normal,
                                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                             ),
                                                                                                       ),
-                                                                                                    ].divide(SizedBox(width: 4.0)),
+                                                                                                    ].divide(const SizedBox(width: 4.0)),
                                                                                                   ),
                                                                                                 ),
-                                                                                                Icon(
+                                                                                                const Icon(
                                                                                                   Icons.chevron_right,
                                                                                                   color: Color(0xFF5F5F5F),
                                                                                                   size: 24.0,
                                                                                                 ),
-                                                                                              ].divide(SizedBox(width: 8.0)),
+                                                                                              ].divide(const SizedBox(width: 8.0)),
                                                                                             ),
                                                                                           if (sanidadesItem.idRebanho != null && sanidadesItem.idRebanho != '')
                                                                                             Row(
@@ -6031,14 +6035,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           fontWeight: FontWeight.normal,
                                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                         ),
-                                                                                                        color: Color(0xFF5F5F5F),
+                                                                                                        color: const Color(0xFF5F5F5F),
                                                                                                         fontSize: 14.0,
                                                                                                         letterSpacing: 0.0,
                                                                                                         fontWeight: FontWeight.normal,
                                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                       ),
                                                                                                 ),
-                                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                                             ),
                                                                                           if (sanidadesItem.idLote != null && sanidadesItem.idLote != '')
                                                                                             Row(
@@ -6068,7 +6072,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 fontWeight: FontWeight.normal,
                                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                               ),
-                                                                                                              color: Color(0xFF5F5F5F),
+                                                                                                              color: const Color(0xFF5F5F5F),
                                                                                                               fontSize: 14.0,
                                                                                                               letterSpacing: 0.0,
                                                                                                               fontWeight: FontWeight.normal,
@@ -6078,12 +6082,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                     ],
                                                                                                   ),
                                                                                                 ),
-                                                                                                Icon(
+                                                                                                const Icon(
                                                                                                   Icons.chevron_right,
                                                                                                   color: Color(0xFF5F5F5F),
                                                                                                   size: 24.0,
                                                                                                 ),
-                                                                                              ].divide(SizedBox(width: 3.0)),
+                                                                                              ].divide(const SizedBox(width: 3.0)),
                                                                                             ),
                                                                                           if (sanidadesItem.vacinacao != 'null')
                                                                                             SingleChildScrollView(
@@ -6099,7 +6103,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                             fontWeight: FontWeight.normal,
                                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                           ),
-                                                                                                          color: Color(0xFF474747),
+                                                                                                          color: const Color(0xFF474747),
                                                                                                           fontSize: 14.0,
                                                                                                           letterSpacing: 0.0,
                                                                                                           fontWeight: FontWeight.normal,
@@ -6117,17 +6121,17 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           children: List.generate(vacinas.length, (vacinasIndex) {
                                                                                                             final vacinasItem = vacinas[vacinasIndex];
                                                                                                             return Align(
-                                                                                                              alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                                               child: Container(
                                                                                                                 height: 23.0,
                                                                                                                 decoration: BoxDecoration(
-                                                                                                                  color: Color(0xFFB1CC29),
+                                                                                                                  color: const Color(0xFFB1CC29),
                                                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                                                 ),
                                                                                                                 child: Align(
-                                                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                                   child: Padding(
-                                                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                                                     child: Text(
                                                                                                                       vacinasItem,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -6142,12 +6146,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 ),
                                                                                                               ),
                                                                                                             );
-                                                                                                          }).divide(SizedBox(width: 8.0)),
+                                                                                                          }).divide(const SizedBox(width: 8.0)),
                                                                                                         ),
                                                                                                       );
                                                                                                     },
                                                                                                   ),
-                                                                                                ].divide(SizedBox(width: 3.0)),
+                                                                                                ].divide(const SizedBox(width: 3.0)),
                                                                                               ),
                                                                                             ),
                                                                                           if (sanidadesItem.antiparasitario != 'null')
@@ -6164,7 +6168,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                             fontWeight: FontWeight.normal,
                                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                           ),
-                                                                                                          color: Color(0xFF474747),
+                                                                                                          color: const Color(0xFF474747),
                                                                                                           fontSize: 14.0,
                                                                                                           letterSpacing: 0.0,
                                                                                                           fontWeight: FontWeight.normal,
@@ -6182,17 +6186,17 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           children: List.generate(antiparasitario.length, (antiparasitarioIndex) {
                                                                                                             final antiparasitarioItem = antiparasitario[antiparasitarioIndex];
                                                                                                             return Align(
-                                                                                                              alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                                               child: Container(
                                                                                                                 height: 23.0,
                                                                                                                 decoration: BoxDecoration(
-                                                                                                                  color: Color(0xFFB1CC29),
+                                                                                                                  color: const Color(0xFFB1CC29),
                                                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                                                 ),
                                                                                                                 child: Align(
-                                                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                                   child: Padding(
-                                                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                                     child: Text(
                                                                                                                       antiparasitarioItem,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -6207,12 +6211,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 ),
                                                                                                               ),
                                                                                                             );
-                                                                                                          }).divide(SizedBox(width: 8.0)),
+                                                                                                          }).divide(const SizedBox(width: 8.0)),
                                                                                                         ),
                                                                                                       );
                                                                                                     },
                                                                                                   ),
-                                                                                                ].divide(SizedBox(width: 3.0)),
+                                                                                                ].divide(const SizedBox(width: 3.0)),
                                                                                               ),
                                                                                             ),
                                                                                           if (sanidadesItem.protocoloReprodutivo != 'null')
@@ -6229,7 +6233,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                             fontWeight: FontWeight.normal,
                                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                           ),
-                                                                                                          color: Color(0xFF474747),
+                                                                                                          color: const Color(0xFF474747),
                                                                                                           fontSize: 14.0,
                                                                                                           letterSpacing: 0.0,
                                                                                                           fontWeight: FontWeight.normal,
@@ -6247,17 +6251,17 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           children: List.generate(protocolo.length, (protocoloIndex) {
                                                                                                             final protocoloItem = protocolo[protocoloIndex];
                                                                                                             return Align(
-                                                                                                              alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                                               child: Container(
                                                                                                                 height: 23.0,
                                                                                                                 decoration: BoxDecoration(
-                                                                                                                  color: Color(0xFFB1CC29),
+                                                                                                                  color: const Color(0xFFB1CC29),
                                                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                                                 ),
                                                                                                                 child: Align(
-                                                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                                   child: Padding(
-                                                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                                     child: Text(
                                                                                                                       protocoloItem,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -6272,12 +6276,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 ),
                                                                                                               ),
                                                                                                             );
-                                                                                                          }).divide(SizedBox(width: 8.0)),
+                                                                                                          }).divide(const SizedBox(width: 8.0)),
                                                                                                         ),
                                                                                                       );
                                                                                                     },
                                                                                                   ),
-                                                                                                ].divide(SizedBox(width: 3.0)),
+                                                                                                ].divide(const SizedBox(width: 3.0)),
                                                                                               ),
                                                                                             ),
                                                                                           if (sanidadesItem.tratamento != 'null')
@@ -6294,7 +6298,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                             fontWeight: FontWeight.normal,
                                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                                           ),
-                                                                                                          color: Color(0xFF474747),
+                                                                                                          color: const Color(0xFF474747),
                                                                                                           fontSize: 14.0,
                                                                                                           letterSpacing: 0.0,
                                                                                                           fontWeight: FontWeight.normal,
@@ -6312,17 +6316,17 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                           children: List.generate(tratamenteSanidade.length, (tratamenteSanidadeIndex) {
                                                                                                             final tratamenteSanidadeItem = tratamenteSanidade[tratamenteSanidadeIndex];
                                                                                                             return Align(
-                                                                                                              alignment: AlignmentDirectional(-1.0, 0.0),
+                                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
                                                                                                               child: Container(
                                                                                                                 height: 23.0,
                                                                                                                 decoration: BoxDecoration(
-                                                                                                                  color: Color(0xFFB1CC29),
+                                                                                                                  color: const Color(0xFFB1CC29),
                                                                                                                   borderRadius: BorderRadius.circular(4.0),
                                                                                                                 ),
                                                                                                                 child: Align(
-                                                                                                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
                                                                                                                   child: Padding(
-                                                                                                                    padding: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
                                                                                                                     child: Text(
                                                                                                                       tratamenteSanidadeItem,
                                                                                                                       style: FlutterFlowTheme.of(context).bodyMedium.override(
@@ -6337,15 +6341,15 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                                 ),
                                                                                                               ),
                                                                                                             );
-                                                                                                          }).divide(SizedBox(width: 8.0)),
+                                                                                                          }).divide(const SizedBox(width: 8.0)),
                                                                                                         ),
                                                                                                       );
                                                                                                     },
                                                                                                   ),
-                                                                                                ].divide(SizedBox(width: 3.0)),
+                                                                                                ].divide(const SizedBox(width: 3.0)),
                                                                                               ),
                                                                                             ),
-                                                                                        ].divide(SizedBox(height: 8.0)),
+                                                                                        ].divide(const SizedBox(height: 8.0)),
                                                                                       ),
                                                                                     ),
                                                                                   ),

@@ -9,7 +9,7 @@ class OcorrenciasTable extends SupabaseTable<OcorrenciasRow> {
 }
 
 class OcorrenciasRow extends SupabaseDataRow {
-  OcorrenciasRow(Map<String, dynamic> data) : super(data);
+  OcorrenciasRow(super.data);
 
   @override
   SupabaseTable get table => OcorrenciasTable();

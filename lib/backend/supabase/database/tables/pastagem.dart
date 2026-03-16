@@ -9,7 +9,7 @@ class PastagemTable extends SupabaseTable<PastagemRow> {
 }
 
 class PastagemRow extends SupabaseDataRow {
-  PastagemRow(Map<String, dynamic> data) : super(data);
+  PastagemRow(super.data);
 
   @override
   SupabaseTable get table => PastagemTable();

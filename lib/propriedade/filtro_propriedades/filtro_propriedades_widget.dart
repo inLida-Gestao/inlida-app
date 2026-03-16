@@ -50,7 +50,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
     return Material(
       color: Colors.transparent,
       elevation: 5.0,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(0.0),
           bottomRight: Radius.circular(0.0),
@@ -61,7 +61,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
       child: Container(
         width: double.infinity,
         height: 609.0,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(0.0),
@@ -71,15 +71,15 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
           ),
         ),
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 20.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 20.0),
           child: SingleChildScrollView(
             primary: false,
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding:
-                      EdgeInsetsDirectional.fromSTEB(25.0, 25.0, 25.0, 25.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      25.0, 25.0, 25.0, 25.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,7 +87,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                       FlutterFlowIconButton(
                         borderRadius: 8.0,
                         buttonSize: 40.0,
-                        fillColor: Color(0x0028A365),
+                        fillColor: const Color(0x0028A365),
                         icon: Icon(
                           Icons.keyboard_arrow_down,
                           color: FlutterFlowTheme.of(context).primaryText,
@@ -107,7 +107,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                         .headlineSmall
                                         .fontStyle,
                                   ),
-                                  color: Color(0xFF2F2F2F),
+                                  color: const Color(0xFF2F2F2F),
                                   fontSize: 24.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.w500,
@@ -117,7 +117,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                 ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(0.0, 0.0),
+                        alignment: const AlignmentDirectional(0.0, 0.0),
                         child: InkWell(
                           splashColor: Colors.transparent,
                           focusColor: Colors.transparent,
@@ -144,7 +144,8 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                  alignment:
+                                      const AlignmentDirectional(0.0, 0.0),
                                   child: Text(
                                     'Limpar',
                                     style: FlutterFlowTheme.of(context)
@@ -159,21 +160,14 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                           ),
                                           color: valueOrDefault<Color>(
                                             (FFAppState()
-                                                                .filtroPropAtividades !=
-                                                            null &&
-                                                        FFAppState()
-                                                                .filtroPropAtividades !=
-                                                            '') ||
-                                                    (FFAppState().filtroPropCidades !=
-                                                            null &&
-                                                        FFAppState()
-                                                                .filtroPropCidades !=
-                                                            '') ||
-                                                    (FFAppState().filtroPropEstados !=
-                                                            null &&
-                                                        FFAppState()
-                                                                .filtroPropEstados !=
-                                                            '') ||
+                                                            .filtroPropAtividades !=
+                                                        '') ||
+                                                    (FFAppState()
+                                                            .filtroPropCidades !=
+                                                        '') ||
+                                                    (FFAppState()
+                                                            .filtroPropEstados !=
+                                                        '') ||
                                                     (FFAppState()
                                                             .filtroNumeroAnimais >
                                                         0.0)
@@ -181,7 +175,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                                     .secondaryText
                                                 : FlutterFlowTheme.of(context)
                                                     .accent4,
-                                            Color(0xFFBEBEBE),
+                                            const Color(0xFFBEBEBE),
                                           ),
                                           fontSize: 14.0,
                                           letterSpacing: 0.0,
@@ -201,7 +195,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                     ],
                   ),
                 ),
-                Divider(
+                const Divider(
                   thickness: 1.0,
                   color: Color(0xFFBEBEBE),
                 ),
@@ -211,13 +205,13 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                     color: FlutterFlowTheme.of(context).secondaryBackground,
                   ),
                   child: Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 0.0, 24.0, 0.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Container(
                             width: double.infinity,
@@ -236,7 +230,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF2F2F2F),
+                                        color: const Color(0xFF2F2F2F),
                                         fontSize: 18.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
@@ -246,7 +240,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                       ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 8.0, 0.0, 0.0),
                                   child: Container(
                                     width: double.infinity,
@@ -294,11 +288,8 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                                       Colors.transparent,
                                                   onTap: () async {
                                                     if (FFAppState()
-                                                                .filtroPropAtividades !=
-                                                            null &&
-                                                        FFAppState()
-                                                                .filtroPropAtividades !=
-                                                            '') {
+                                                            .filtroPropAtividades !=
+                                                        '') {
                                                       if (FFAppState()
                                                               .filtroPropAtividades ==
                                                           varAtividadesFiltroItem) {
@@ -365,12 +356,9 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                                     ),
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  16.0,
-                                                                  8.0,
-                                                                  16.0,
-                                                                  8.0),
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(16.0,
+                                                              8.0, 16.0, 8.0),
                                                       child: Row(
                                                         mainAxisSize:
                                                             MainAxisSize.min,
@@ -423,7 +411,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                                                   .secondary,
                                                               size: 18.0,
                                                             ),
-                                                        ].divide(SizedBox(
+                                                        ].divide(const SizedBox(
                                                             width: 8.0)),
                                                       ),
                                                     ),
@@ -442,7 +430,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Container(
                             width: double.infinity,
@@ -461,7 +449,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF2F2F2F),
+                                        color: const Color(0xFF2F2F2F),
                                         fontSize: 18.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
@@ -498,11 +486,8 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                           highlightColor: Colors.transparent,
                                           onTap: () async {
                                             if (FFAppState()
-                                                        .filtroPropEstados !=
-                                                    null &&
-                                                FFAppState()
-                                                        .filtroPropEstados !=
-                                                    '') {
+                                                    .filtroPropEstados !=
+                                                '') {
                                               if (FFAppState()
                                                       .filtroPropEstados ==
                                                   varEstadosFiltroItem) {
@@ -561,8 +546,9 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                               ),
                                             ),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 8.0, 16.0, 8.0),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.min,
@@ -619,7 +605,8 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                                               .secondary,
                                                       size: 18.0,
                                                     ),
-                                                ].divide(SizedBox(width: 8.0)),
+                                                ].divide(
+                                                    const SizedBox(width: 8.0)),
                                               ),
                                             ),
                                           ),
@@ -633,7 +620,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 8.0, 0.0, 0.0),
                           child: Container(
                             width: double.infinity,
@@ -652,7 +639,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF2F2F2F),
+                                        color: const Color(0xFF2F2F2F),
                                         fontSize: 18.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
@@ -662,7 +649,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                       ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 8.0, 0.0, 0.0),
                                   child: Builder(
                                     builder: (context) {
@@ -693,11 +680,8 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                             highlightColor: Colors.transparent,
                                             onTap: () async {
                                               if (FFAppState()
-                                                          .filtroPropCidades !=
-                                                      null &&
-                                                  FFAppState()
-                                                          .filtroPropCidades !=
-                                                      '') {
+                                                      .filtroPropCidades !=
+                                                  '') {
                                                 if (FFAppState()
                                                         .filtroPropCidades ==
                                                     varCidadesFiltroItem) {
@@ -757,8 +741,9 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         16.0, 8.0, 16.0, 8.0),
                                                 child: Row(
                                                   mainAxisSize:
@@ -814,8 +799,8 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                                                 .secondary,
                                                         size: 18.0,
                                                       ),
-                                                  ].divide(
-                                                      SizedBox(width: 8.0)),
+                                                  ].divide(const SizedBox(
+                                                      width: 8.0)),
                                                 ),
                                               ),
                                             ),
@@ -830,7 +815,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Container(
                             width: double.infinity,
@@ -839,7 +824,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -853,7 +838,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF2F2F2F),
+                                          color: const Color(0xFF2F2F2F),
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w500,
@@ -863,7 +848,8 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                         ),
                                   ),
                                   Align(
-                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                    alignment:
+                                        const AlignmentDirectional(0.0, 0.0),
                                     child: Text(
                                       valueOrDefault<String>(
                                         FFAppState()
@@ -897,12 +883,12 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                     ),
                                   ),
                                   SliderTheme(
-                                    data: SliderThemeData(
+                                    data: const SliderThemeData(
                                       showValueIndicator:
-                                          ShowValueIndicator.always,
+                                          ShowValueIndicator.onDrag,
                                     ),
                                     child: Slider.adaptive(
-                                      activeColor: Color(0xFF28A365),
+                                      activeColor: const Color(0xFF28A365),
                                       inactiveColor:
                                           FlutterFlowTheme.of(context)
                                               .alternate,
@@ -936,7 +922,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                           desktop: false,
                         ))
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 24.0, 0.0, 0.0),
                             child: Container(
                               width: double.infinity,
@@ -946,7 +932,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                     .secondaryBackground,
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -960,7 +946,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF2F2F2F),
+                                            color: const Color(0xFF2F2F2F),
                                             fontSize: 18.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w500,
@@ -976,7 +962,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                         _model.dropDownValue ??=
                                             'Últimos 30 dias',
                                       ),
-                                      options: [
+                                      options: const [
                                         'Últimos 30 dias',
                                         'Últimos 60 dias',
                                         'Últimos 90 dias'
@@ -991,7 +977,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF474747),
+                                            color: const Color(0xFF474747),
                                             fontSize: 14.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1006,13 +992,14 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                             .secondaryText,
                                         size: 24.0,
                                       ),
-                                      fillColor: Color(0xFFF1F1F1),
+                                      fillColor: const Color(0xFFF1F1F1),
                                       elevation: 2.0,
-                                      borderColor: Color(0x00E0E3E7),
+                                      borderColor: const Color(0x00E0E3E7),
                                       borderWidth: 2.0,
                                       borderRadius: 8.0,
-                                      margin: EdgeInsetsDirectional.fromSTEB(
-                                          16.0, 4.0, 16.0, 4.0),
+                                      margin:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              16.0, 4.0, 16.0, 4.0),
                                       hidesUnderline: true,
                                       isOverButton: true,
                                       isSearchable: false,
@@ -1027,13 +1014,13 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                     ),
                   ),
                 ),
-                Divider(
+                const Divider(
                   thickness: 1.0,
                   color: Color(0xFFBEBEBE),
                 ),
                 Padding(
-                  padding:
-                      EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      24.0, 24.0, 24.0, 0.0),
                   child: FFButtonWidget(
                     onPressed: () async {
                       Navigator.pop(context);
@@ -1042,11 +1029,11 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                     options: FFButtonOptions(
                       width: double.infinity,
                       height: 47.0,
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                      iconPadding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                      color: Color(0xFF28A365),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          24.0, 0.0, 24.0, 0.0),
+                      iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 0.0, 0.0, 0.0),
+                      color: const Color(0xFF28A365),
                       textStyle: FlutterFlowTheme.of(context)
                           .titleSmall
                           .override(
@@ -1058,7 +1045,7 @@ class _FiltroPropriedadesWidgetState extends State<FiltroPropriedadesWidget> {
                                 .titleSmallIsCustom,
                           ),
                       elevation: 0.0,
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Colors.transparent,
                         width: 0.0,
                       ),

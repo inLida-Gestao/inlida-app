@@ -25,9 +25,9 @@ Future performInsertPropriedade(
   final query = '''
 INSERT INTO local_propriedades (userID, usersID, rebanhosID, anotacoes, areaAgricultura, areaBenfeitoria, areaPastagem, areaReserva, 
 areaTotal, cidade, estado, icone, idPropriedade, atividades, nome, updated_at, created_at, deletado) 
-VALUES ('${userID}', '${usersID}', '${rebanhosID}', '${anotacoes}', ${areaAgricultura}, ${areaBenfeitoria}, ${areaPastagem}, 
-${areaReserva}, ${areaTotal},'${cidade}', '${estado}', '${icone}', '${idPropriedade}', '${atividades}', '${nome}', 
-'${updatedat}', '${createdat}', '${deletado}')
+VALUES ('$userID', '$usersID', '$rebanhosID', '$anotacoes', $areaAgricultura, $areaBenfeitoria, $areaPastagem, 
+$areaReserva, $areaTotal,'$cidade', '$estado', '$icone', '$idPropriedade', '$atividades', '$nome', 
+'$updatedat', '$createdat', '$deletado')
 ''';
   return database.rawQuery(query);
 }
@@ -38,7 +38,7 @@ ${areaReserva}, ${areaTotal},'${cidade}', '${estado}', '${icone}', '${idPropried
 Future performDeletarTodasPropriedades(
   Database database,
 ) {
-  final query = '''
+  const query = '''
 Delete from local_propriedades;
 ''';
   return database.rawQuery(query);
@@ -53,7 +53,7 @@ Future performDeleteProp(
 }) {
   final query = '''
 delete from local_propriedades
-where idPropriedade = '${idPropriedade}'
+where idPropriedade = '$idPropriedade'
 ''';
   return database.rawQuery(query);
 }
@@ -80,11 +80,11 @@ Future performUpdatePropriedade(
 }) {
   final query = '''
 UPDATE local_propriedades
-SET nome = '${nome}', estado = '${estado}', cidade = '${cidade}', areaAgricultura = ${areaAgricultura}, 
-areaBenfeitoria = ${areaBenfeitoria}, areaPastagem = ${areaPastagem}, areaReserva = ${areaReserva}, 
-areaTotal = ${areaTotal}, icone = '${icone}', atividades = '${atividades}', anotacoes = '${anotacoes}', 
-usersID = '${usersID}', updated_at = '${updatedat}'
-WHERE idPropriedade = '${idPropriedade}'
+SET nome = '$nome', estado = '$estado', cidade = '$cidade', areaAgricultura = $areaAgricultura, 
+areaBenfeitoria = $areaBenfeitoria, areaPastagem = $areaPastagem, areaReserva = $areaReserva, 
+areaTotal = $areaTotal, icone = '$icone', atividades = '$atividades', anotacoes = '$anotacoes', 
+usersID = '$usersID', updated_at = '$updatedat'
+WHERE idPropriedade = '$idPropriedade'
 ''';
   return database.rawQuery(query);
 }
@@ -100,8 +100,8 @@ Future performAddUserNaPropriedade(
 }) {
   final query = '''
 UPDATE local_propriedades
-SET usersID = '${usersID}', updated_at = '${updatedat}'
-WHERE idPropriedade = '${idPropriedade}'
+SET usersID = '$usersID', updated_at = '$updatedat'
+WHERE idPropriedade = '$idPropriedade'
 ''';
   return database.rawQuery(query);
 }
@@ -121,7 +121,7 @@ Future performInserirUserNaPropriedade(
 }) {
   final query = '''
 INSERT INTO local_usuarios_propriedade (user_id, nome, email, foto, permissao, idPropriedade, deletado)
-VALUES ('${userID}', '${nome}', '${email}', '${foto}', '${permissao}', '${idPropriedade}', '${deletado}')
+VALUES ('$userID', '$nome', '$email', '$foto', '$permissao', '$idPropriedade', '$deletado')
 ''';
   return database.rawQuery(query);
 }
@@ -136,8 +136,8 @@ Future performUPDTFuncaoUserLocal(
 }) {
   final query = '''
 UPDATE local_users_propriedades
-SET permissao = '${permissao}'
-where user_id = '${userID}'
+SET permissao = '$permissao'
+where user_id = '$userID'
 ''';
   return database.rawQuery(query);
 }
@@ -243,52 +243,52 @@ INSERT INTO local_rebanho (
     rebanhoIdMatriz,
     rebanhoIdReprodutor
 ) VALUES (
-    '${idPropriedade}',
-    '${numeroAnimal}',
-    '${chip}',
-    '${codRegistro}',
-    '${nome}',
-    '${sexo}',
-    '${categoria}',
-    '${dataNascimento}',
-    ${pesoNascimento},
-    '${porte}',
-    '${raca}',
-    '${loteID}',
-    '${dataEntradaLote}',
-    '${dataDesmama}',
-    ${pesoDesmama},
-    ${pesoAtual},
-    '${statusRebanho}',
-    '${origem}',
-    '${anotacoes}',
-    '${idRebanho}',
-    '${deletado}',
-    '${createdat}',
-    '${updatedat}',
-    '${loteNome}',
-    '${tipo}',
-    '${dataAcao}',
-    ${valorCompra},
-    '${dataUltimaPesagem}',
-    '${nomeConcat}',
-    '${dataVenda}',
-    ${valorVenda},
-    '${movimentacaoentrada}',
-    '${numeroMatriz}',
-    '${nomeMatriz}',
-    '${dataNascMatriz}',
-    '${racaMatriz}',
-    '${numeroReprodutor}',
-    '${nomeReprodutor}',
-    '${dataNascReprodutor}',
-    '${racaReprodutor}',
-    '${movimentacaosaida}',
-    '${datamorte}',
-    '${motivomorte}',
-    '${categoriamatriz}',
-    '${rebanhoIdMatriz}',
-    '${rebanhoIdReprodutor}'
+    '$idPropriedade',
+    '$numeroAnimal',
+    '$chip',
+    '$codRegistro',
+    '$nome',
+    '$sexo',
+    '$categoria',
+    '$dataNascimento',
+    $pesoNascimento,
+    '$porte',
+    '$raca',
+    '$loteID',
+    '$dataEntradaLote',
+    '$dataDesmama',
+    $pesoDesmama,
+    $pesoAtual,
+    '$statusRebanho',
+    '$origem',
+    '$anotacoes',
+    '$idRebanho',
+    '$deletado',
+    '$createdat',
+    '$updatedat',
+    '$loteNome',
+    '$tipo',
+    '$dataAcao',
+    $valorCompra,
+    '$dataUltimaPesagem',
+    '$nomeConcat',
+    '$dataVenda',
+    $valorVenda,
+    '$movimentacaoentrada',
+    '$numeroMatriz',
+    '$nomeMatriz',
+    '$dataNascMatriz',
+    '$racaMatriz',
+    '$numeroReprodutor',
+    '$nomeReprodutor',
+    '$dataNascReprodutor',
+    '$racaReprodutor',
+    '$movimentacaosaida',
+    '$datamorte',
+    '$motivomorte',
+    '$categoriamatriz',
+    '$rebanhoIdMatriz',
+    '$rebanhoIdReprodutor'
 );
 ''';
   return database.rawQuery(query);
@@ -300,7 +300,7 @@ INSERT INTO local_rebanho (
 Future performDeletarTodosRebanhos(
   Database database,
 ) {
-  final query = '''
+  const query = '''
 delete from local_rebanho
 ''';
   return database.rawQuery(query);
@@ -317,8 +317,8 @@ Future performAddRebanhoNaPropriedade(
 }) {
   final query = '''
 UPDATE local_propriedades
-SET rebanhosID = '${rebanhosID}', updated_at = '${updatedat}'
-WHERE idPropriedade = '${idPropriedade}'
+SET rebanhosID = '$rebanhosID', updated_at = '$updatedat'
+WHERE idPropriedade = '$idPropriedade'
 ''';
   return database.rawQuery(query);
 }
@@ -407,44 +407,44 @@ INSERT INTO local_rebanho (
     rebanhoIdMatriz,
     rebanhoIdReprodutor
 ) VALUES (
-    '${idPropriedade}',
-    '${numeroAnimal}',
-    '${chip}',
-    '${codRegistro}',
-    '${nome}',
-    '${sexo}',
-    '${categoria}',
-    '${dataNascimento}',
-    ${pesoNascimento},
-    '${porte}',
-    '${raca}',
+    '$idPropriedade',
+    '$numeroAnimal',
+    '$chip',
+    '$codRegistro',
+    '$nome',
+    '$sexo',
+    '$categoria',
+    '$dataNascimento',
+    $pesoNascimento,
+    '$porte',
+    '$raca',
     'Nascimento',
-    '${dataEntradaLote}',
-    '${statusRebanho}',
-    '${anotacoes}',
-    '${idRebanho}',
-    '${deletado}',
-    '${createdat}',
-    '${updatedat}',
-    '${tipo}',
-    '${loteNome}',
-    '${loteID}',
-    '${dataVenda}',
-    ${valorVenda},
-    '${numeroMatriz}',
-    '${nomeMatriz}',
-    '${dataNascMatriz}',
-    '${racaMatriz}',
-    '${numeroReprodutor}',
-    '${nomeReprodutor}',
-    '${dataNascReprodutor}',
-    '${racaReprodutor}',
-    '${movimentacaosaida}',
-    '${datamorte}',
-    '${motivomorte}',
-    '${categoriamatriz}',
-    '${rebanhoIdMatriz}',
-    '${rebanhoIdReprodutor}'
+    '$dataEntradaLote',
+    '$statusRebanho',
+    '$anotacoes',
+    '$idRebanho',
+    '$deletado',
+    '$createdat',
+    '$updatedat',
+    '$tipo',
+    '$loteNome',
+    '$loteID',
+    '$dataVenda',
+    $valorVenda,
+    '$numeroMatriz',
+    '$nomeMatriz',
+    '$dataNascMatriz',
+    '$racaMatriz',
+    '$numeroReprodutor',
+    '$nomeReprodutor',
+    '$dataNascReprodutor',
+    '$racaReprodutor',
+    '$movimentacaosaida',
+    '$datamorte',
+    '$motivomorte',
+    '$categoriamatriz',
+    '$rebanhoIdMatriz',
+    '$rebanhoIdReprodutor'
 );
 ''';
   return database.rawQuery(query);
@@ -489,21 +489,21 @@ INSERT INTO local_rebanho (
     nomeConcat,
     statusRebanho
 ) VALUES (
-    '${idPropriedade}',
-    '${numeroAnimal}',
-    '${codRegistro}',
-    '${nome}',
-    '${raca}',
-    '${sexo}',
-    '${categoria}',
-    '${anotacoes}',
-    '${idRebanho}',
-    '${deletado}',
-    '${createdat}',
-    '${updatedat}',
-    '${tipo}',
-    '${nomeConcat}',
-    '${statusRebanho}'
+    '$idPropriedade',
+    '$numeroAnimal',
+    '$codRegistro',
+    '$nome',
+    '$raca',
+    '$sexo',
+    '$categoria',
+    '$anotacoes',
+    '$idRebanho',
+    '$deletado',
+    '$createdat',
+    '$updatedat',
+    '$tipo',
+    '$nomeConcat',
+    '$statusRebanho'
 );
 ''';
   return database.rawQuery(query);
@@ -523,7 +523,7 @@ Future performAddPesagem(
 }) {
   final query = '''
 INSERT INTO local_historico_pesagens (idRebanho, dataPesagem, tipo, peso, deletado, created_at)
-VALUES ('${idRebanho}', '${dataPesagem}', '${tipo}', ${peso}, '${deletado}', '${createdat}')
+VALUES ('$idRebanho', '$dataPesagem', '$tipo', $peso, '$deletado', '$createdat')
 ''';
   return database.rawQuery(query);
 }
@@ -539,8 +539,8 @@ Future performUPDTPesoRebanho(
 }) {
   final query = '''
 UPDATE local_rebanho
-SET pesoAtual = ${peso}, dataUltimaPesagem = '${data}'
-WHERE idRebanho = '${idRebanho}'
+SET pesoAtual = $peso, dataUltimaPesagem = '$data'
+WHERE idRebanho = '$idRebanho'
 ''';
   return database.rawQuery(query);
 }
@@ -593,22 +593,65 @@ Future performUPDTRebanho(
   String? rebanhoIdMatriz,
   String? rebanhoIdReprodutor,
 }) {
-  final query = '''
+  const query = '''
 UPDATE local_rebanho
-SET numeroAnimal = '${numeroAnimal}', chip = '${chip}', codRegistro = '${codRegistro}', nome = '${nome}', sexo = '${sexo}',
-categoria = '${categoria}', dataNascimento = '${dataNascimento}', pesoNascimento = ${pesoNascimento}, porte = '${porte}',
-raca = '${raca}', dataEntradaLote = '${dataEntradaLote}',
-dataDesmama = '${dataDesmama}', pesoDesmama = ${pesoDesmama}, pesoAtual = ${pesoAtual}, statusRebanho = '${statusRebanho}',
-origem = '${origem}', anotacoes = '${anotacoes}', dataAcao = '${dataAcao}', valorCompra = ${valorCompra}, 
-dataUltimaPesagem = '${dataUltimaPesagem}', nomeConcat = '${nomeConcat}', updated_at = '${updatedat}', 
-loteNome = '${loteNome}', loteID = '${loteID}', movimentacao_entrada = '${movimentacaoentrada}', dataVenda = '${dataVenda}',
-valorVenda = ${valorVenda}, numeroMatriz = '${numeroMatriz}', nomeMatriz = '${nomeMatriz}', dataNascMatriz = '${dataNascMatriz}',
-racaMatriz = '${racaMatriz}', numeroReprodutor = '${numeroReprodutor}', nomeReprodutor = '${nomeReprodutor}', dataNascReprodutor = '${dataNascReprodutor}',
-racaReprodutor = '${racaReprodutor}', movimentacao_saida = '${movimentacaosaida}', data_morte = '${datamorte}', motivo_morte = '${motivomorte}',
-categoria_matriz = '${categoriamatriz}', rebanhoIdMatriz = '${rebanhoIdMatriz}', rebanhoIdReprodutor = '${rebanhoIdReprodutor}'
-WHERE idRebanho = '${idRebanho}'
+SET numeroAnimal = ?, chip = ?, codRegistro = ?, nome = ?, sexo = ?,
+categoria = ?, dataNascimento = ?, pesoNascimento = ?, porte = ?,
+raca = ?, dataEntradaLote = ?,
+dataDesmama = ?, pesoDesmama = ?, pesoAtual = ?, statusRebanho = ?,
+origem = ?, anotacoes = ?, dataAcao = ?, valorCompra = ?, 
+dataUltimaPesagem = ?, nomeConcat = ?, updated_at = ?, 
+loteNome = ?, loteID = ?, movimentacao_entrada = ?, dataVenda = ?,
+valorVenda = ?, numeroMatriz = ?, nomeMatriz = ?, dataNascMatriz = ?,
+racaMatriz = ?, numeroReprodutor = ?, nomeReprodutor = ?, dataNascReprodutor = ?,
+racaReprodutor = ?, movimentacao_saida = ?, data_morte = ?, motivo_morte = ?,
+categoria_matriz = ?, rebanhoIdMatriz = ?, rebanhoIdReprodutor = ?
+WHERE idRebanho = ?
 ''';
-  return database.rawQuery(query);
+  return database.rawUpdate(query, [
+    numeroAnimal,
+    chip,
+    codRegistro,
+    nome,
+    sexo,
+    categoria,
+    dataNascimento,
+    pesoNascimento,
+    porte,
+    raca,
+    dataEntradaLote,
+    dataDesmama,
+    pesoDesmama,
+    pesoAtual,
+    statusRebanho,
+    origem,
+    anotacoes,
+    dataAcao,
+    valorCompra,
+    dataUltimaPesagem,
+    nomeConcat,
+    updatedat,
+    loteNome,
+    loteID,
+    movimentacaoentrada,
+    dataVenda,
+    valorVenda,
+    numeroMatriz,
+    nomeMatriz,
+    dataNascMatriz,
+    racaMatriz,
+    numeroReprodutor,
+    nomeReprodutor,
+    dataNascReprodutor,
+    racaReprodutor,
+    movimentacaosaida,
+    datamorte,
+    motivomorte,
+    categoriamatriz,
+    rebanhoIdMatriz,
+    rebanhoIdReprodutor,
+    idRebanho,
+  ]);
 }
 
 /// END UPDT REBANHO
@@ -622,8 +665,8 @@ Future performDeletePesagem(
   final query = '''
 UPDATE local_historico_pesagens
 SET deletado = 'SIM'
-WHERE idRebanho = '${idRebanho}'
-AND id = ${idPesagem}
+WHERE idRebanho = '$idRebanho'
+AND id = $idPesagem
 ''';
   return database.rawQuery(query);
 }
@@ -634,7 +677,7 @@ AND id = ${idPesagem}
 Future performDeletarTodasPesagens(
   Database database,
 ) {
-  final query = '''
+  const query = '''
 DELETE FROM local_historico_pesagens
 ''';
   return database.rawQuery(query);
@@ -650,8 +693,8 @@ Future performUPDTRebanhoCopy(
 }) {
   final query = '''
 UPDATE local_rebanho
-SET numeroAnimal = '${numeroAnimal}'
-WHERE = '${idRebanho}'
+SET numeroAnimal = '$numeroAnimal'
+WHERE = '$idRebanho'
 ''';
   return database.rawQuery(query);
 }
@@ -677,8 +720,8 @@ Future performInsertLote(
   final query = '''
 INSERT INTO local_lotes (id_propriedade, id_animais, nome, anotacoes, ativo,
 motivo, data_motivo, id_lote, deletado, created_at, updated_at, valorVenda)
-VALUES ('${idPropriedade}', '${idAnimais}', '${nome}', '${anotacoes}', '${ativo}', '${motivo}', '${dataMotivo}', 
-'${idLote}', '${deletado}', '${createdat}', '${updatedat}', ${valorVenda})
+VALUES ('$idPropriedade', '$idAnimais', '$nome', '$anotacoes', '$ativo', '$motivo', '$dataMotivo', 
+'$idLote', '$deletado', '$createdat', '$updatedat', $valorVenda)
 ''';
   return database.rawQuery(query);
 }
@@ -696,8 +739,8 @@ Future performUPDTRebanhoLote(
 }) {
   final query = '''
 UPDATE local_rebanho
-SET loteID = '${loteID}', loteNome = '${loteNome}', updated_at = '${updatedat}', dataEntradaLote = '${dataEntradaLote}'
-WHERE idRebanho = '${idRebanho}'
+SET loteID = '$loteID', loteNome = '$loteNome', updated_at = '$updatedat', dataEntradaLote = '$dataEntradaLote'
+WHERE idRebanho = '$idRebanho'
 ''';
   return database.rawQuery(query);
 }
@@ -708,7 +751,7 @@ WHERE idRebanho = '${idRebanho}'
 Future performDeleteAllLotes(
   Database database,
 ) {
-  final query = '''
+  const query = '''
 DELETE FROM local_lotes
 ''';
   return database.rawQuery(query);
@@ -731,9 +774,9 @@ Future performUPDTLote(
 }) {
   final query = '''
 UPDATE local_lotes
-SET id_animais = '${idAnimais}', nome = '${nome}', anotacoes = '${anotacoes}', ativo = '${ativo}', motivo = '${motivo}',
-data_motivo = '{dataMotivo}', updated_at = '${updatedat}', valorVenda = ${valorVenda}
-WHERE id_lote = '${idLote}'
+SET id_animais = '$idAnimais', nome = '$nome', anotacoes = '$anotacoes', ativo = '$ativo', motivo = '$motivo',
+data_motivo = '{dataMotivo}', updated_at = '$updatedat', valorVenda = $valorVenda
+WHERE id_lote = '$idLote'
 ''';
   return database.rawQuery(query);
 }
@@ -821,43 +864,43 @@ INSERT INTO local_reproducao (
     gnrh,
     cio
 ) VALUES (
-    '${idPropriedade}',
-    '${tipoReproducao}',
-    ${scoreCorporal},
-    '${dataInseminacao}',
-    '${dataPartidaSemen}',
-    ${partidaSemen},
-    '${previsaoParto}',
-    '${idLote}',
-    '${dataInicial}',
-    '${dataFinal}',
-    '${inseminador}',
-    '${anotacoes}',
-    '${idReproducao}',
-    '${deletado}',
-    '${createdAt}',
-    '${updatedAt}',
-    '${categoria}',
-    '${numMatriz}',
-    '${nomeMatriz}',
-    '${nascimentoMatriz}',
-    '${numReprodutor}',
-    '${nomeReprodutor}',
-    '${nascimentoReprodutor}',
-    '${loteNome}',
-    '${statusReproducao}',
-    '${dataStatus}',
-    '${racaMatriz}',
-    '${racaReprodutor}',
-    '${chipReprodutor}',
-    '${chipMatriz}',
-    '${ressinc}',
-    '${parida}',
-    '${dataParto}',
-    '${idrebanhomatriz}',
-    '${idrebanhoreprodutor}',
-    '${gnrh}',
-    '${cio}'
+    '$idPropriedade',
+    '$tipoReproducao',
+    $scoreCorporal,
+    '$dataInseminacao',
+    '$dataPartidaSemen',
+    $partidaSemen,
+    '$previsaoParto',
+    '$idLote',
+    '$dataInicial',
+    '$dataFinal',
+    '$inseminador',
+    '$anotacoes',
+    '$idReproducao',
+    '$deletado',
+    '$createdAt',
+    '$updatedAt',
+    '$categoria',
+    '$numMatriz',
+    '$nomeMatriz',
+    '$nascimentoMatriz',
+    '$numReprodutor',
+    '$nomeReprodutor',
+    '$nascimentoReprodutor',
+    '$loteNome',
+    '$statusReproducao',
+    '$dataStatus',
+    '$racaMatriz',
+    '$racaReprodutor',
+    '$chipReprodutor',
+    '$chipMatriz',
+    '$ressinc',
+    '$parida',
+    '$dataParto',
+    '$idrebanhomatriz',
+    '$idrebanhoreprodutor',
+    '$gnrh',
+    '$cio'
 )
 ''';
   return database.rawQuery(query);
@@ -873,8 +916,8 @@ Future performDeleteReproducaoReb(
 }) {
   final query = '''
 UPDATE local_reproducao
-SET deletado = 'SIM', updated_at = '${updatedat}'
-WHERE id_reproducao = '${idReproducao}'
+SET deletado = 'SIM', updated_at = '$updatedat'
+WHERE id_reproducao = '$idReproducao'
 ''';
   return database.rawQuery(query);
 }
@@ -921,40 +964,40 @@ Future performUPDTReproducao(
 }) {
   final query = '''
 UPDATE local_reproducao SET
-    tipo_reproducao = '${tipoReproducao}',
-    score_corporal = ${scoreCorporal},
-    data_inseminacao = '${dataInseminacao}',
-    data_partida_semen = '${dataPartidaSemen}',
-    partida_semen = ${partidaSemen},
-    previsao_parto = '${previsaoParto}',
-    id_lote = '${idLote}',
-    data_inicial = '${dataInicial}',
-    data_final = '${dataFinal}',
-    inseminador = '${inseminador}',
-    anotacoes = '${anotacoes}',
-    deletado = '${deletado}',
-    updated_at = '${updatedAt}',
-    numMatriz = '${numMatriz}',
-    nomeMatriz = '${nomeMatriz}',
-    nascimentoMatriz = '${nascimentoMatriz}',
-    numReprodutor = '${numReprodutor}',
-    nomeReprodutor = '${nomeReprodutor}',
-    nascimentoReprodutor = '${nascimentoReprodutor}',
-    loteNome = '${loteNome}',
-    status_reproducao = '${statusReproducao}',
-    data_status = '${dataStatus}',
-    racaMatriz = '${racaMatriz}',
-    racaReprodutor = '${racaReprodutor}',
-    chipReprodutor = '${chipReprodutor}',
-    chipMatriz = '${chipMatriz}',
-    ressinc = '${ressinc}',
-    parida = '${parida}',
-    data_parto = '${dataParto}',
-    id_rebanho_matriz = '${idrebanhomatriz}',
-    id_rebanho_reprodutor = '${idrebanhoreprodutor}',
-    gnrh = '${gnrh}',
-    cio = '${cio}'
-WHERE id_reproducao = '${idReproducao}'
+    tipo_reproducao = '$tipoReproducao',
+    score_corporal = $scoreCorporal,
+    data_inseminacao = '$dataInseminacao',
+    data_partida_semen = '$dataPartidaSemen',
+    partida_semen = $partidaSemen,
+    previsao_parto = '$previsaoParto',
+    id_lote = '$idLote',
+    data_inicial = '$dataInicial',
+    data_final = '$dataFinal',
+    inseminador = '$inseminador',
+    anotacoes = '$anotacoes',
+    deletado = '$deletado',
+    updated_at = '$updatedAt',
+    numMatriz = '$numMatriz',
+    nomeMatriz = '$nomeMatriz',
+    nascimentoMatriz = '$nascimentoMatriz',
+    numReprodutor = '$numReprodutor',
+    nomeReprodutor = '$nomeReprodutor',
+    nascimentoReprodutor = '$nascimentoReprodutor',
+    loteNome = '$loteNome',
+    status_reproducao = '$statusReproducao',
+    data_status = '$dataStatus',
+    racaMatriz = '$racaMatriz',
+    racaReprodutor = '$racaReprodutor',
+    chipReprodutor = '$chipReprodutor',
+    chipMatriz = '$chipMatriz',
+    ressinc = '$ressinc',
+    parida = '$parida',
+    data_parto = '$dataParto',
+    id_rebanho_matriz = '$idrebanhomatriz',
+    id_rebanho_reprodutor = '$idrebanhoreprodutor',
+    gnrh = '$gnrh',
+    cio = '$cio'
+WHERE id_reproducao = '$idReproducao'
 ''';
   return database.rawQuery(query);
 }
@@ -965,7 +1008,7 @@ WHERE id_reproducao = '${idReproducao}'
 Future performDeleteAllReproducao(
   Database database,
 ) {
-  final query = '''
+  const query = '''
 delete from local_reproducao
 ''';
   return database.rawQuery(query);
@@ -1024,28 +1067,28 @@ INSERT INTO local_sanidade (
     protocolo_retirada,
     protocolo_iatf
 ) VALUES (
-    '${idPropriedade}',
-    '${idRebanho}', 
-    '${dataSanidade}',
-    '${idSanidade}',
-    '${updatedat}', 
-    '${deletado}', 
-    '${vacinacao}',
-    '${vacinacaoOutros}',
-    '${vacinacaoObs}',
-    '${antiparasitario}',
-    '${antiparasitarioOutros}',
-    '${antiparasitarioObs}',
-    '${tratamento}',
-    '${tratamentoOutros}',
-    '${tratamentoObs}',
-    '${protocoloReprodutivo}',
-    '${protocoloreprodutivoOutros}',
-    '${protocoloreprodutivoObs}',
-    '${createdat}',
-    '${protocolod0}',
-    '${protocoloretirada}',
-    '${protocoloiatf}'
+    '$idPropriedade',
+    '$idRebanho', 
+    '$dataSanidade',
+    '$idSanidade',
+    '$updatedat', 
+    '$deletado', 
+    '$vacinacao',
+    '$vacinacaoOutros',
+    '$vacinacaoObs',
+    '$antiparasitario',
+    '$antiparasitarioOutros',
+    '$antiparasitarioObs',
+    '$tratamento',
+    '$tratamentoOutros',
+    '$tratamentoObs',
+    '$protocoloReprodutivo',
+    '$protocoloreprodutivoOutros',
+    '$protocoloreprodutivoObs',
+    '$createdat',
+    '$protocolod0',
+    '$protocoloretirada',
+    '$protocoloiatf'
 );
 ''';
   return database.rawQuery(query);
@@ -1061,8 +1104,8 @@ Future performDeleteSanidade(
 }) {
   final query = '''
 UPDATE local_sanidade
-SET deletado = 'SIM', updated_at = '${updatedat}'
-WHERE id_sanidade = '${idSanidade}'
+SET deletado = 'SIM', updated_at = '$updatedat'
+WHERE id_sanidade = '$idSanidade'
 ''';
   return database.rawQuery(query);
 }
@@ -1116,26 +1159,26 @@ INSERT INTO local_sanidade (
     protocolo_reprodutivo_obs,
     created_at
 ) VALUES (
-    '${idPropriedade}', 
-    '${dataSanidade}',
-    '${idLote}',
-    ${porcentagemLote},
-    '${idSanidade}',
-    '${updatedat}', 
-    '${deletado}', 
-    '${vacinacao}',
-    '${vacinacaoOutros}',
-    '${vacinacaoObs}',
-    '${antiparasitario}',
-    '${antiparasitarioOutros}',
-    '${antiparasitarioObs}',
-    '${tratamento}',
-    '${tratamentoOutros}',
-    '${tratamentoObs}',
-    '${protocoloReprodutivo}',
-    '${protocoloreprodutivoOutros}',
-    '${protocoloreprodutivoObs}',
-    '${createdat}'
+    '$idPropriedade', 
+    '$dataSanidade',
+    '$idLote',
+    $porcentagemLote,
+    '$idSanidade',
+    '$updatedat', 
+    '$deletado', 
+    '$vacinacao',
+    '$vacinacaoOutros',
+    '$vacinacaoObs',
+    '$antiparasitario',
+    '$antiparasitarioOutros',
+    '$antiparasitarioObs',
+    '$tratamento',
+    '$tratamentoOutros',
+    '$tratamentoObs',
+    '$protocoloReprodutivo',
+    '$protocoloreprodutivoOutros',
+    '$protocoloreprodutivoObs',
+    '$createdat'
 );
 ''';
   return database.rawQuery(query);
@@ -1167,24 +1210,24 @@ Future performUPDTSanidadeAnimal(
 }) {
   final query = '''
 UPDATE local_sanidade
- SET  data_sanidade = '${dataSanidade}',
-    updated_at = '${updatedat}',
-    vacinacao = '${vacinacao}',
-    vacinacao_outros = '${vacinacaoOutros}',
-    vacinacao_obs = '${vacinacaoObs}',
-    antiparasitario = '${antiparasitario}',
-    antiparasitario_outros = '${antiparasitarioOutros}',
-    antiparasitario_obs = '${antiparasitarioObs}',
-    tratamento = '${tratamento}',
-    tratamento_outros = '${tratamentoOutros}',
-    tratamento_obs = '${tratamentoObs}',
-    protocolo_reprodutivo = '${protocoloReprodutivo}',
-    protocolo_reprodutivo_outros = '${protocoloreprodutivoOutros}',
-    protocolo_reprodutivo_obs = '${protocoloreprodutivoObs}',
-    protocolo_d0 = '${protocolod0}',
-    protocolo_retirada = '${protocoloretirada}',
-    protocolo_iatf = '${protocoloiatf}'
- WHERE id_sanidade = '${idSanidade}'
+ SET  data_sanidade = '$dataSanidade',
+    updated_at = '$updatedat',
+    vacinacao = '$vacinacao',
+    vacinacao_outros = '$vacinacaoOutros',
+    vacinacao_obs = '$vacinacaoObs',
+    antiparasitario = '$antiparasitario',
+    antiparasitario_outros = '$antiparasitarioOutros',
+    antiparasitario_obs = '$antiparasitarioObs',
+    tratamento = '$tratamento',
+    tratamento_outros = '$tratamentoOutros',
+    tratamento_obs = '$tratamentoObs',
+    protocolo_reprodutivo = '$protocoloReprodutivo',
+    protocolo_reprodutivo_outros = '$protocoloreprodutivoOutros',
+    protocolo_reprodutivo_obs = '$protocoloreprodutivoObs',
+    protocolo_d0 = '$protocolod0',
+    protocolo_retirada = '$protocoloretirada',
+    protocolo_iatf = '$protocoloiatf'
+ WHERE id_sanidade = '$idSanidade'
 ''';
   return database.rawQuery(query);
 }
@@ -1195,7 +1238,7 @@ UPDATE local_sanidade
 Future performDeleteAllSanidades(
   Database database,
 ) {
-  final query = '''
+  const query = '''
 DELETE FROM local_sanidade
 ''';
   return database.rawQuery(query);
@@ -1225,22 +1268,22 @@ Future performUPDTSanidadeLote(
 }) {
   final query = '''
 UPDATE local_sanidade
- SET  data_sanidade = '${dataSanidade}',
- porcentagem_lote = ${porcentagemLote},
-    updated_at = '${updatedat}',
-    vacinacao = '${vacinacao}',
-    vacinacao_outros = '${vacinacaoOutros}',
-    vacinacao_obs = '${vacinacaoObs}',
-    antiparasitario = '${antiparasitario}',
-    antiparasitario_outros = '${antiparasitarioOutros}',
-    antiparasitario_obs = '${antiparasitarioObs}',
-    tratamento = '${tratamento}',
-    tratamento_outros = '${tratamentoOutros}',
-    tratamento_obs = '${tratamentoObs}',
-    protocolo_reprodutivo = '${protocoloReprodutivo}',
-    protocolo_reprodutivo_outros = '${protocoloreprodutivoOutros}',
-    protocolo_reprodutivo_obs = '${protocoloreprodutivoObs}'
- WHERE id_sanidade = '${idSanidade}'
+ SET  data_sanidade = '$dataSanidade',
+ porcentagem_lote = $porcentagemLote,
+    updated_at = '$updatedat',
+    vacinacao = '$vacinacao',
+    vacinacao_outros = '$vacinacaoOutros',
+    vacinacao_obs = '$vacinacaoObs',
+    antiparasitario = '$antiparasitario',
+    antiparasitario_outros = '$antiparasitarioOutros',
+    antiparasitario_obs = '$antiparasitarioObs',
+    tratamento = '$tratamento',
+    tratamento_outros = '$tratamentoOutros',
+    tratamento_obs = '$tratamentoObs',
+    protocolo_reprodutivo = '$protocoloReprodutivo',
+    protocolo_reprodutivo_outros = '$protocoloreprodutivoOutros',
+    protocolo_reprodutivo_obs = '$protocoloreprodutivoObs'
+ WHERE id_sanidade = '$idSanidade'
 ''';
   return database.rawQuery(query);
 }
@@ -1296,27 +1339,27 @@ INSERT INTO local_sanidade (
     protocolo_reprodutivo_obs,
     created_at
 ) VALUES (
-    '${idPropriedade}', 
-    '${idRebanho}',
-    '${dataSanidade}',
-    '${idLote}',
-    ${porcentagemLote},
-    '${idSanidade}',
-    '${updatedat}', 
-    '${deletado}', 
-    '${vacinacao}',
-    '${vacinacaoOutros}',
-    '${vacinacaoObs}',
-    '${antiparasitario}',
-    '${antiparasitarioOutros}',
-    '${antiparasitarioObs}',
-    '${tratamento}',
-    '${tratamentoOutros}',
-    '${tratamentoObs}',
-    '${protocoloReprodutivo}',
-    '${protocoloreprodutivoOutros}',
-    '${protocoloreprodutivoObs}',
-    '${createdat}'
+    '$idPropriedade', 
+    '$idRebanho',
+    '$dataSanidade',
+    '$idLote',
+    $porcentagemLote,
+    '$idSanidade',
+    '$updatedat', 
+    '$deletado', 
+    '$vacinacao',
+    '$vacinacaoOutros',
+    '$vacinacaoObs',
+    '$antiparasitario',
+    '$antiparasitarioOutros',
+    '$antiparasitarioObs',
+    '$tratamento',
+    '$tratamentoOutros',
+    '$tratamentoObs',
+    '$protocoloReprodutivo',
+    '$protocoloreprodutivoOutros',
+    '$protocoloreprodutivoObs',
+    '$createdat'
 );
 ''';
   return database.rawQuery(query);
@@ -1332,8 +1375,8 @@ Future performDeleteRebanho(
 }) {
   final query = '''
 UPDATE local_rebanho
-SET deletado = 'SIM', updated_at = '${updatedat}'
-where idRebanho = '${idRebanho}'
+SET deletado = 'SIM', updated_at = '$updatedat'
+where idRebanho = '$idRebanho'
 ''';
   return database.rawQuery(query);
 }
@@ -1349,8 +1392,8 @@ Future performUPDTLoteRebanho(
 }) {
   final query = '''
 UPDATE local_lotes
-SET id_animais = '${idAnimais}', updated_at = '${updatedat}'
-WHERE id_lote = '${idLote}'
+SET id_animais = '$idAnimais', updated_at = '$updatedat'
+WHERE id_lote = '$idLote'
 ''';
   return database.rawQuery(query);
 }
@@ -1364,7 +1407,7 @@ Future performDeletarLote(
 }) {
   final query = '''
 DELETE FROM local_lotes
-WHERE id_lote = '${idLote}'
+WHERE id_lote = '$idLote'
 ''';
   return database.rawQuery(query);
 }
@@ -1379,8 +1422,8 @@ Future performDeletePropriedade(
 }) {
   final query = '''
 UPDATE local_propriedades
-SET deletado = 'SIM', updated_at = '${updatedat}'
-where idPropriedade = '${idPropriedade}'
+SET deletado = 'SIM', updated_at = '$updatedat'
+where idPropriedade = '$idPropriedade'
 ''';
   return database.rawQuery(query);
 }
@@ -1395,8 +1438,8 @@ Future performDeleteLote(
 }) {
   final query = '''
 UPDATE local_lotes
-SET deletado = 'SIM', updated_at = '${updatedat}'
-WHERE id_lote = '${idLote}'
+SET deletado = 'SIM', updated_at = '$updatedat'
+WHERE id_lote = '$idLote'
 ''';
   return database.rawQuery(query);
 }
@@ -1410,7 +1453,7 @@ Future performApagarRebLocal(
 }) {
   final query = '''
 DELETE FROM local_rebanho
-WHERE idRebanho = '${idRebanho}'
+WHERE idRebanho = '$idRebanho'
 ''';
   return database.rawQuery(query);
 }
@@ -1424,7 +1467,7 @@ Future performApagarPesagemLocal(
 }) {
   final query = '''
 DELETE FROM local_historico_pesagens
-WHERE idRebanho = '${idRebanho}'
+WHERE idRebanho = '$idRebanho'
 ''';
   return database.rawQuery(query);
 }
@@ -1438,7 +1481,7 @@ Future performApagarReproLocal(
 }) {
   final query = '''
 DELETE FROM local_reproducao
-WHERE id_reproducao = '${idRepro}'
+WHERE id_reproducao = '$idRepro'
 ''';
   return database.rawQuery(query);
 }
@@ -1520,40 +1563,40 @@ INSERT INTO local_reproducao (
     gnrh,
     cio
 ) VALUES (
-    '${idPropriedade}',
-    '${tipoReproducao}',
-    ${scoreCorporal},
-    '${datainseminacao}',
-    '${previsaoParto}',
-    '${idLote}',
-    '${dataInicial}',
-    '${dataFinal}',
-    '${anotacoes}',
-    '${idReproducao}',
-    '${deletado}',
-    '${createdAt}',
-    '${updatedAt}',
-    '${categoria}',
-    '${numMatriz}',
-    '${nomeMatriz}',
-    '${nascimentoMatriz}',
-    '${numReprodutor}',
-    '${nomeReprodutor}',
-    '${nascimentoReprodutor}',
-    '${loteNome}',
-    '${statusReproducao}',
-    '${dataStatus}',
-    '${racaMatriz}',
-    '${racaReprodutor}',
-    '${chipReprodutor}',
-    '${chipMatriz}',
-    '${ressinc}',
-    '${parida}',
-    '${dataParto}',
-    '${idrebanhomatriz}',
-    '${idrebanhoreprodutor}',
-    '${gnrh}',
-    '${cio}'
+    '$idPropriedade',
+    '$tipoReproducao',
+    $scoreCorporal,
+    '$datainseminacao',
+    '$previsaoParto',
+    '$idLote',
+    '$dataInicial',
+    '$dataFinal',
+    '$anotacoes',
+    '$idReproducao',
+    '$deletado',
+    '$createdAt',
+    '$updatedAt',
+    '$categoria',
+    '$numMatriz',
+    '$nomeMatriz',
+    '$nascimentoMatriz',
+    '$numReprodutor',
+    '$nomeReprodutor',
+    '$nascimentoReprodutor',
+    '$loteNome',
+    '$statusReproducao',
+    '$dataStatus',
+    '$racaMatriz',
+    '$racaReprodutor',
+    '$chipReprodutor',
+    '$chipMatriz',
+    '$ressinc',
+    '$parida',
+    '$dataParto',
+    '$idrebanhomatriz',
+    '$idrebanhoreprodutor',
+    '$gnrh',
+    '$cio'
 )
 ''';
   return database.rawQuery(query);
@@ -1568,7 +1611,7 @@ Future performDeleteRepro(
 }) {
   final query = '''
 DELETE FROM local_reproducao
-where id_reproducao = '${id}'
+where id_reproducao = '$id'
 ''';
   return database.rawQuery(query);
 }
@@ -1588,9 +1631,9 @@ Future performUPDTRebanhoLoteVenda(
 }) {
   final query = '''
 UPDATE local_rebanho
-SET loteID = '${loteID}', loteNome = '${loteNome}', updated_at = '${updatedat}', dataEntradaLote = '${dataEntradaLote}',
-dataVenda = '${dataVenda}', valorVenda = ${valorVenda}, statusRebanho = 'Vendido'
-WHERE idRebanho = '${idRebanho}'
+SET loteID = '$loteID', loteNome = '$loteNome', updated_at = '$updatedat', dataEntradaLote = '$dataEntradaLote',
+dataVenda = '$dataVenda', valorVenda = $valorVenda, statusRebanho = 'Vendido'
+WHERE idRebanho = '$idRebanho'
 ''';
   return database.rawQuery(query);
 }
@@ -1635,38 +1678,38 @@ Future performUPDTReproducaoMonta(
 }) {
   final query = '''
 UPDATE local_reproducao SET
-    tipo_reproducao = '${tipoReproducao}',
-    score_corporal = ${scoreCorporal},
-    data_partida_semen = '${dataPartidaSemen}',
-    partida_semen = ${partidaSemen},
-    previsao_parto = '${previsaoParto}',
-    id_lote = '${idLote}',
-    data_inicial = '${dataInicial}',
-    data_final = '${dataFinal}',
-    anotacoes = '${anotacoes}',
-    deletado = '${deletado}',
-    updated_at = '${updatedAt}',
-    numMatriz = '${numMatriz}',
-    nomeMatriz = '${nomeMatriz}',
-    nascimentoMatriz = '${nascimentoMatriz}',
-    numReprodutor = '${numReprodutor}',
-    nomeReprodutor = '${nomeReprodutor}',
-    nascimentoReprodutor = '${nascimentoReprodutor}',
-    loteNome = '${loteNome}',
-    status_reproducao = '${statusReproducao}',
-    data_status = '${dataStatus}',
-    racaMatriz = '${racaMatriz}',
-    racaReprodutor = '${racaReprodutor}',
-    chipReprodutor = '${chipReprodutor}',
-    chipMatriz = '${chipMatriz}',
-    ressinc = '${ressinc}',
-    parida = '${parida}',
-    data_parto = '${dataParto}',
-    id_rebanho_matriz = '${idrebanhomatriz}',
-    id_rebanho_reprodutor = '${idrebanhoreprodutor}',
-    gnrh = '${gnrh}',
-    cio = '${cio}'
-WHERE id_reproducao = '${idReproducao}'
+    tipo_reproducao = '$tipoReproducao',
+    score_corporal = $scoreCorporal,
+    data_partida_semen = '$dataPartidaSemen',
+    partida_semen = $partidaSemen,
+    previsao_parto = '$previsaoParto',
+    id_lote = '$idLote',
+    data_inicial = '$dataInicial',
+    data_final = '$dataFinal',
+    anotacoes = '$anotacoes',
+    deletado = '$deletado',
+    updated_at = '$updatedAt',
+    numMatriz = '$numMatriz',
+    nomeMatriz = '$nomeMatriz',
+    nascimentoMatriz = '$nascimentoMatriz',
+    numReprodutor = '$numReprodutor',
+    nomeReprodutor = '$nomeReprodutor',
+    nascimentoReprodutor = '$nascimentoReprodutor',
+    loteNome = '$loteNome',
+    status_reproducao = '$statusReproducao',
+    data_status = '$dataStatus',
+    racaMatriz = '$racaMatriz',
+    racaReprodutor = '$racaReprodutor',
+    chipReprodutor = '$chipReprodutor',
+    chipMatriz = '$chipMatriz',
+    ressinc = '$ressinc',
+    parida = '$parida',
+    data_parto = '$dataParto',
+    id_rebanho_matriz = '$idrebanhomatriz',
+    id_rebanho_reprodutor = '$idrebanhoreprodutor',
+    gnrh = '$gnrh',
+    cio = '$cio'
+WHERE id_reproducao = '$idReproducao'
 ''';
   return database.rawQuery(query);
 }
@@ -1681,8 +1724,8 @@ Future performUpdateProp(
 }) {
   final query = '''
 UPDATE local_propriedades
-SET atividades = '${atividades}'
-WHERE idPropriedade = '${idPropriedade}'
+SET atividades = '$atividades'
+WHERE idPropriedade = '$idPropriedade'
 ''';
   return database.rawQuery(query);
 }
@@ -1696,7 +1739,7 @@ Future performDeleteAllReproducaoCopy(
 }) {
   final query = '''
 delete from local_reproducao
-where id_reproducao = '${id}'
+where id_reproducao = '$id'
 ''';
   return database.rawQuery(query);
 }

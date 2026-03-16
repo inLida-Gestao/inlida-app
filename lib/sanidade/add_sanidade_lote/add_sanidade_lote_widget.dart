@@ -47,7 +47,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimerrr = InstantTimer.periodic(
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         callback: (timer) async {
           if (FFAppState().rebuild == true) {
             safeSetState(() {});
@@ -133,7 +133,8 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
             color: FlutterFlowTheme.of(context).secondaryBackground,
           ),
           child: Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+            padding:
+                const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
             child: SingleChildScrollView(
               primary: false,
               child: Column(
@@ -208,7 +209,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     .bodyMediumIsCustom,
                               ),
                         ),
-                      ].divide(SizedBox(width: 16.0)),
+                      ].divide(const SizedBox(width: 16.0)),
                     ),
                   ),
                   SingleChildScrollView(
@@ -232,7 +233,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                               ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Container(
                             width: double.infinity,
@@ -251,7 +252,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF474747),
+                                        color: const Color(0xFF474747),
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -327,13 +328,14 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           .secondaryText,
                                       size: 24.0,
                                     ),
-                                    fillColor: Color(0xFFF1F1F1),
+                                    fillColor: const Color(0xFFF1F1F1),
                                     elevation: 0.0,
-                                    borderColor: Color(0x00E0E3E7),
+                                    borderColor: const Color(0x00E0E3E7),
                                     borderWidth: 0.0,
                                     borderRadius: 8.0,
-                                    margin: EdgeInsetsDirectional.fromSTEB(
-                                        16.0, 4.0, 16.0, 4.0),
+                                    margin:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16.0, 4.0, 16.0, 4.0),
                                     hidesUnderline: true,
                                     isOverButton: true,
                                     isSearchable: true,
@@ -372,7 +374,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Container(
                             width: double.infinity,
@@ -391,7 +393,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF474747),
+                                        color: const Color(0xFF474747),
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -401,7 +403,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                       ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 8.0, 0.0, 0.0),
                                   child: TextFormField(
                                     controller: _model
@@ -418,7 +420,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFFBEBEBE),
+                                            color: const Color(0xFFBEBEBE),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -427,7 +429,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                       enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0xFFF1F1F1),
                                           width: 0.0,
                                         ),
@@ -435,7 +437,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             BorderRadius.circular(8.0),
                                       ),
                                       focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0xFF28A365),
                                           width: 0.0,
                                         ),
@@ -461,7 +463,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             BorderRadius.circular(8.0),
                                       ),
                                       filled: true,
-                                      fillColor: Color(0xFFF1F1F1),
+                                      fillColor: const Color(0xFFF1F1F1),
                                     ),
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
@@ -469,7 +471,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF161616),
+                                          color: const Color(0xFF161616),
                                           fontSize: 16.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -490,7 +492,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Container(
                             width: double.infinity,
@@ -509,7 +511,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                       .override(
                                         fontFamily: FlutterFlowTheme.of(context)
                                             .bodyMediumFamily,
-                                        color: Color(0xFF474747),
+                                        color: const Color(0xFF474747),
                                         fontSize: 16.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
@@ -524,8 +526,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                   hoverColor: Colors.transparent,
                                   highlightColor: Colors.transparent,
                                   onTap: () async {
-                                    final _datePickedDate =
-                                        await showDatePicker(
+                                    final datePickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: getCurrentTimestamp,
                                       firstDate: DateTime(1900),
@@ -535,7 +536,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           context,
                                           child!,
                                           headerBackgroundColor:
-                                              Color(0xFF28A365),
+                                              const Color(0xFF28A365),
                                           headerForegroundColor:
                                               FlutterFlowTheme.of(context).info,
                                           headerTextStyle: FlutterFlowTheme.of(
@@ -560,7 +561,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               FlutterFlowTheme.of(context)
                                                   .primaryText,
                                           selectedDateTimeBackgroundColor:
-                                              Color(0xFF28A365),
+                                              const Color(0xFF28A365),
                                           selectedDateTimeForegroundColor:
                                               FlutterFlowTheme.of(context).info,
                                           actionButtonForegroundColor:
@@ -571,12 +572,12 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                       },
                                     );
 
-                                    if (_datePickedDate != null) {
+                                    if (datePickedDate != null) {
                                       safeSetState(() {
                                         _model.datePicked = DateTime(
-                                          _datePickedDate.year,
-                                          _datePickedDate.month,
-                                          _datePickedDate.day,
+                                          datePickedDate.year,
+                                          datePickedDate.month,
+                                          datePickedDate.day,
                                         );
                                       });
                                     } else if (_model.datePicked != null) {
@@ -588,7 +589,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                   child: Container(
                                     width: double.infinity,
                                     height: 56.0,
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       color: Color(0xFFF1F1F1),
                                       borderRadius: BorderRadius.only(
                                         bottomLeft: Radius.circular(6.0),
@@ -598,8 +599,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                       ),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          16.0, 0.0, 8.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              16.0, 0.0, 8.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -626,9 +628,11 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     color:
                                                         valueOrDefault<Color>(
                                                       _model.datePicked == null
-                                                          ? Color(0xFFBEBEBE)
-                                                          : Color(0xFF333333),
-                                                      Color(0xFFBEBEBE),
+                                                          ? const Color(
+                                                              0xFFBEBEBE)
+                                                          : const Color(
+                                                              0xFF333333),
+                                                      const Color(0xFFBEBEBE),
                                                     ),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
@@ -660,9 +664,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                           ),
                         ),
                         Align(
-                          alignment: AlignmentDirectional(0.0, 0.0),
+                          alignment: const AlignmentDirectional(0.0, 0.0),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 16.0, 0.0, 0.0),
                             child: FFButtonWidget(
                               onPressed: () async {
@@ -674,23 +678,23 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                   builder: (context) {
                                     return Padding(
                                       padding: MediaQuery.viewInsetsOf(context),
-                                      child: SelecionarSanidadeWidget(),
+                                      child: const SelecionarSanidadeWidget(),
                                     );
                                   },
                                 ).then((value) => safeSetState(() {}));
                               },
                               text: 'Adicionar sanidade',
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.keyboard_arrow_down_sharp,
                                 size: 15.0,
                               ),
                               options: FFButtonOptions(
                                 width: double.infinity,
                                 height: 56.0,
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
-                                iconPadding: EdgeInsets.all(0.0),
-                                color: Color(0xFF28A365),
+                                iconPadding: const EdgeInsets.all(0.0),
+                                color: const Color(0xFF28A365),
                                 textStyle: FlutterFlowTheme.of(context)
                                     .titleSmall
                                     .override(
@@ -703,7 +707,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               .titleSmallIsCustom,
                                     ),
                                 elevation: 0.0,
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Colors.transparent,
                                   width: 1.0,
                                 ),
@@ -721,7 +725,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 24.0, 0.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -735,7 +739,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF181818),
+                                          color: const Color(0xFF181818),
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -745,8 +749,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                         ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Text(
                                       'Vacinação',
                                       style: FlutterFlowTheme.of(context)
@@ -755,7 +760,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -766,8 +771,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -779,14 +785,14 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     .dropDownVacinaValueController ??=
                                                 FormListFieldController<String>(
                                                     null),
-                                            options: [
+                                            options: const [
                                               'Aftosa',
                                               'Antitetânica',
                                               'Botulismo',
                                               'Brucelose',
                                               'Clostridiose',
                                               'Diarréia (BVD)',
-                                              'Doença Respiratóa (DBR)',
+                                              'Doença Respiratória (DBR)',
                                               'Leptospirose',
                                               'Parainfluenza e herpes',
                                               'Raiva',
@@ -821,14 +827,14 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .secondaryText,
                                               size: 24.0,
                                             ),
-                                            fillColor: Color(0xFFF1F1F1),
+                                            fillColor: const Color(0xFFF1F1F1),
                                             elevation: 0.0,
-                                            borderColor: Color(0x00E0E3E7),
+                                            borderColor:
+                                                const Color(0x00E0E3E7),
                                             borderWidth: 0.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 4.0, 16.0, 4.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                             hidesUnderline: true,
                                             isOverButton: true,
                                             isSearchable: false,
@@ -845,7 +851,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           FlutterFlowIconButton(
                                             borderRadius: 8.0,
                                             buttonSize: 40.0,
-                                            fillColor: Color(0x0028A365),
+                                            fillColor: const Color(0x0028A365),
                                             icon: Icon(
                                               Icons.close,
                                               color:
@@ -863,12 +869,13 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               });
                                             },
                                           ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Text(
                                       'Vacinação (outros)',
                                       style: FlutterFlowTheme.of(context)
@@ -877,7 +884,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -888,8 +895,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: TextFormField(
                                       controller: _model
                                           .textFieldVacinaOutrosTextController,
@@ -905,7 +913,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFFBEBEBE),
+                                              color: const Color(0xFFBEBEBE),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -914,7 +922,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                         enabledBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFFF1F1F1),
                                             width: 0.0,
                                           ),
@@ -922,7 +930,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFF28A365),
                                             width: 0.0,
                                           ),
@@ -949,7 +957,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         filled: true,
-                                        fillColor: Color(0xFFF1F1F1),
+                                        fillColor: const Color(0xFFF1F1F1),
                                       ),
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -957,7 +965,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF161616),
+                                            color: const Color(0xFF161616),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -971,8 +979,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Text(
                                       'Observação',
                                       style: FlutterFlowTheme.of(context)
@@ -981,7 +990,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -992,8 +1001,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: TextFormField(
                                       controller: _model
                                           .textFieldVacinaObservacaoTextController,
@@ -1009,7 +1019,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFFBEBEBE),
+                                              color: const Color(0xFFBEBEBE),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1018,7 +1028,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                         enabledBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFFF1F1F1),
                                             width: 0.0,
                                           ),
@@ -1026,7 +1036,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFF28A365),
                                             width: 0.0,
                                           ),
@@ -1053,7 +1063,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         filled: true,
-                                        fillColor: Color(0xFFF1F1F1),
+                                        fillColor: const Color(0xFFF1F1F1),
                                       ),
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -1061,7 +1071,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF161616),
+                                            color: const Color(0xFF161616),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1087,7 +1097,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 24.0, 0.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -1101,7 +1111,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF181818),
+                                          color: const Color(0xFF181818),
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -1111,8 +1121,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                         ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Text(
                                       'Antiparasitário',
                                       style: FlutterFlowTheme.of(context)
@@ -1121,7 +1132,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1132,8 +1143,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -1145,7 +1157,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     .dropDownAntiparasitarioValueController ??=
                                                 FormListFieldController<String>(
                                                     null),
-                                            options: [
+                                            options: const [
                                               'Abamectina',
                                               'Albendazol',
                                               'Babesiose (Tristeza Bovina) & Tripanossoma',
@@ -1189,14 +1201,14 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .secondaryText,
                                               size: 24.0,
                                             ),
-                                            fillColor: Color(0xFFF1F1F1),
+                                            fillColor: const Color(0xFFF1F1F1),
                                             elevation: 0.0,
-                                            borderColor: Color(0x00E0E3E7),
+                                            borderColor:
+                                                const Color(0x00E0E3E7),
                                             borderWidth: 0.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 4.0, 16.0, 4.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                             hidesUnderline: true,
                                             isOverButton: true,
                                             isSearchable: false,
@@ -1214,7 +1226,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           FlutterFlowIconButton(
                                             borderRadius: 8.0,
                                             buttonSize: 40.0,
-                                            fillColor: Color(0x0028A365),
+                                            fillColor: const Color(0x0028A365),
                                             icon: Icon(
                                               Icons.close,
                                               color:
@@ -1232,12 +1244,13 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               });
                                             },
                                           ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Text(
                                       'Antiparasitário (outros)',
                                       style: FlutterFlowTheme.of(context)
@@ -1246,7 +1259,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1257,8 +1270,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: TextFormField(
                                       controller: _model
                                           .textFieldAntiparasitarioOutrosTextController,
@@ -1274,7 +1288,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFFBEBEBE),
+                                              color: const Color(0xFFBEBEBE),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1283,7 +1297,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                         enabledBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFFF1F1F1),
                                             width: 0.0,
                                           ),
@@ -1291,7 +1305,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFF28A365),
                                             width: 0.0,
                                           ),
@@ -1318,7 +1332,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         filled: true,
-                                        fillColor: Color(0xFFF1F1F1),
+                                        fillColor: const Color(0xFFF1F1F1),
                                       ),
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -1326,7 +1340,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF161616),
+                                            color: const Color(0xFF161616),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1340,8 +1354,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Text(
                                       'Observação',
                                       style: FlutterFlowTheme.of(context)
@@ -1350,7 +1365,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1361,8 +1376,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: TextFormField(
                                       controller: _model
                                           .textFieldAntiparasitarioObservacaoTextController,
@@ -1378,7 +1394,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFFBEBEBE),
+                                              color: const Color(0xFFBEBEBE),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1387,7 +1403,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                         enabledBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFFF1F1F1),
                                             width: 0.0,
                                           ),
@@ -1395,7 +1411,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFF28A365),
                                             width: 0.0,
                                           ),
@@ -1422,7 +1438,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         filled: true,
-                                        fillColor: Color(0xFFF1F1F1),
+                                        fillColor: const Color(0xFFF1F1F1),
                                       ),
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -1430,7 +1446,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF161616),
+                                            color: const Color(0xFF161616),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1456,7 +1472,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 24.0, 0.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -1470,7 +1486,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF181818),
+                                          color: const Color(0xFF181818),
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -1480,8 +1496,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                         ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Text(
                                       'Tratamento',
                                       style: FlutterFlowTheme.of(context)
@@ -1490,7 +1507,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1501,8 +1518,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -1514,7 +1532,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     .dropDownTratamentoValueController ??=
                                                 FormListFieldController<String>(
                                                     null),
-                                            options: [
+                                            options: const [
                                               'Anestésico, Sedativo & Similares',
                                               'Analgésico',
                                               'Anti-inflamatório',
@@ -1554,14 +1572,14 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .secondaryText,
                                               size: 24.0,
                                             ),
-                                            fillColor: Color(0xFFF1F1F1),
+                                            fillColor: const Color(0xFFF1F1F1),
                                             elevation: 0.0,
-                                            borderColor: Color(0x00E0E3E7),
+                                            borderColor:
+                                                const Color(0x00E0E3E7),
                                             borderWidth: 0.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 4.0, 16.0, 4.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                             hidesUnderline: true,
                                             isOverButton: true,
                                             isSearchable: false,
@@ -1579,7 +1597,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           FlutterFlowIconButton(
                                             borderRadius: 8.0,
                                             buttonSize: 40.0,
-                                            fillColor: Color(0x0028A365),
+                                            fillColor: const Color(0x0028A365),
                                             icon: Icon(
                                               Icons.close,
                                               color:
@@ -1597,12 +1615,13 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               });
                                             },
                                           ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Text(
                                       'Tratamento (outros)',
                                       style: FlutterFlowTheme.of(context)
@@ -1611,7 +1630,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1622,8 +1641,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: TextFormField(
                                       controller: _model
                                           .textFieldTratamentoOutrosTextController,
@@ -1639,7 +1659,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFFBEBEBE),
+                                              color: const Color(0xFFBEBEBE),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1648,7 +1668,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                         enabledBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFFF1F1F1),
                                             width: 0.0,
                                           ),
@@ -1656,7 +1676,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFF28A365),
                                             width: 0.0,
                                           ),
@@ -1683,7 +1703,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         filled: true,
-                                        fillColor: Color(0xFFF1F1F1),
+                                        fillColor: const Color(0xFFF1F1F1),
                                       ),
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -1691,7 +1711,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF161616),
+                                            color: const Color(0xFF161616),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1705,8 +1725,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Text(
                                       'Observação',
                                       style: FlutterFlowTheme.of(context)
@@ -1715,7 +1736,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1726,8 +1747,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: TextFormField(
                                       controller: _model
                                           .textFieldTratamentoObservacaoTextController,
@@ -1743,7 +1765,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFFBEBEBE),
+                                              color: const Color(0xFFBEBEBE),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -1752,7 +1774,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                         enabledBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFFF1F1F1),
                                             width: 0.0,
                                           ),
@@ -1760,7 +1782,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFF28A365),
                                             width: 0.0,
                                           ),
@@ -1787,7 +1809,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         filled: true,
-                                        fillColor: Color(0xFFF1F1F1),
+                                        fillColor: const Color(0xFFF1F1F1),
                                       ),
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -1795,7 +1817,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF161616),
+                                            color: const Color(0xFF161616),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1823,7 +1845,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                   .secondaryBackground,
                             ),
                             child: Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
                                   0.0, 24.0, 0.0, 0.0),
                               child: Column(
                                 mainAxisSize: MainAxisSize.max,
@@ -1837,7 +1859,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .bodyMediumFamily,
-                                          color: Color(0xFF181818),
+                                          color: const Color(0xFF181818),
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -1847,8 +1869,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                         ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Text(
                                       'Protocolo reprodutivo',
                                       style: FlutterFlowTheme.of(context)
@@ -1857,7 +1880,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1868,8 +1891,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -1881,7 +1905,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     .dropDownProtocoloValueController ??=
                                                 FormFieldController<String>(
                                                     null),
-                                            options: [
+                                            options: const [
                                               'D0-D7-D9',
                                               'D0-D8-D10',
                                               'D0-D9-D11',
@@ -1920,14 +1944,14 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .secondaryText,
                                               size: 24.0,
                                             ),
-                                            fillColor: Color(0xFFF1F1F1),
+                                            fillColor: const Color(0xFFF1F1F1),
                                             elevation: 0.0,
-                                            borderColor: Color(0x00E0E3E7),
+                                            borderColor:
+                                                const Color(0x00E0E3E7),
                                             borderWidth: 0.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 4.0, 16.0, 4.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                             hidesUnderline: true,
                                             isOverButton: true,
                                             isSearchable: false,
@@ -1940,7 +1964,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           FlutterFlowIconButton(
                                             borderRadius: 8.0,
                                             buttonSize: 40.0,
-                                            fillColor: Color(0x0028A365),
+                                            fillColor: const Color(0x0028A365),
                                             icon: Icon(
                                               Icons.close,
                                               color:
@@ -1958,12 +1982,13 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               });
                                             },
                                           ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Text(
                                       'D0',
                                       style: FlutterFlowTheme.of(context)
@@ -1972,7 +1997,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -1983,8 +2008,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -1996,7 +2022,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     .dropDownD0ValueController ??=
                                                 FormFieldController<String>(
                                                     null),
-                                            options: [
+                                            options: const [
                                               'BE  + Implante novo',
                                               'BE + Implante novo + PGF',
                                               'BE  + Implante reuso',
@@ -2034,14 +2060,14 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .secondaryText,
                                               size: 24.0,
                                             ),
-                                            fillColor: Color(0xFFF1F1F1),
+                                            fillColor: const Color(0xFFF1F1F1),
                                             elevation: 0.0,
-                                            borderColor: Color(0x00E0E3E7),
+                                            borderColor:
+                                                const Color(0x00E0E3E7),
                                             borderWidth: 0.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 4.0, 16.0, 4.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                             hidesUnderline: true,
                                             isOverButton: true,
                                             isSearchable: false,
@@ -2053,7 +2079,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           FlutterFlowIconButton(
                                             borderRadius: 8.0,
                                             buttonSize: 40.0,
-                                            fillColor: Color(0x0028A365),
+                                            fillColor: const Color(0x0028A365),
                                             icon: Icon(
                                               Icons.close,
                                               color:
@@ -2069,12 +2095,13 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               });
                                             },
                                           ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
@@ -2086,7 +2113,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMediumFamily,
-                                                color: Color(0xFF181818),
+                                                color: const Color(0xFF181818),
                                                 fontSize: 16.0,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
@@ -2110,19 +2137,19 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                 isGlobal: false,
                                                 avoidOverflow: true,
                                                 targetAnchor:
-                                                    AlignmentDirectional(
+                                                    const AlignmentDirectional(
                                                             1.0, 1.0)
                                                         .resolve(
                                                             Directionality.of(
                                                                 context)),
                                                 followerAnchor:
-                                                    AlignmentDirectional(
+                                                    const AlignmentDirectional(
                                                             -1.0, -1.0)
                                                         .resolve(
                                                             Directionality.of(
                                                                 context)),
                                                 builder: (dialogContext) {
-                                                  return Material(
+                                                  return const Material(
                                                     color: Colors.transparent,
                                                     child:
                                                         LegendaSanidadeWidget(),
@@ -2165,16 +2192,18 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .secondary,
                                                   size: 16.0,
                                                 ),
-                                              ].divide(SizedBox(width: 4.0)),
+                                              ].divide(
+                                                  const SizedBox(width: 4.0)),
                                             ),
                                           ),
                                         ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -2186,7 +2215,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     .dropDownRetiradaValueController ??=
                                                 FormFieldController<String>(
                                                     null),
-                                            options: [
+                                            options: const [
                                               'eCG + PGF + CE',
                                               'eCG + PGR + CE + BE'
                                             ],
@@ -2223,14 +2252,14 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .secondaryText,
                                               size: 24.0,
                                             ),
-                                            fillColor: Color(0xFFF1F1F1),
+                                            fillColor: const Color(0xFFF1F1F1),
                                             elevation: 0.0,
-                                            borderColor: Color(0x00E0E3E7),
+                                            borderColor:
+                                                const Color(0x00E0E3E7),
                                             borderWidth: 0.0,
                                             borderRadius: 8.0,
-                                            margin:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 4.0, 16.0, 4.0),
+                                            margin: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 4.0, 16.0, 4.0),
                                             hidesUnderline: true,
                                             isOverButton: true,
                                             isSearchable: false,
@@ -2243,7 +2272,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           FlutterFlowIconButton(
                                             borderRadius: 8.0,
                                             buttonSize: 40.0,
-                                            fillColor: Color(0x0028A365),
+                                            fillColor: const Color(0x0028A365),
                                             icon: Icon(
                                               Icons.close,
                                               color:
@@ -2261,7 +2290,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               });
                                             },
                                           ),
-                                      ].divide(SizedBox(width: 8.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
                                     ),
                                   ),
                                   if (responsiveVisibility(
@@ -2272,8 +2301,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     desktop: false,
                                   ))
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 24.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 24.0, 0.0, 0.0),
                                       child: Text(
                                         'IATF',
                                         style: FlutterFlowTheme.of(context)
@@ -2282,7 +2312,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFF181818),
+                                              color: const Color(0xFF181818),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -2300,8 +2330,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     desktop: false,
                                   ))
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0.0, 8.0, 0.0, 0.0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 8.0, 0.0, 0.0),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment:
@@ -2313,7 +2344,10 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .dropDownIATFValueController ??=
                                                   FormFieldController<String>(
                                                       null),
-                                              options: ['Com GnRH', 'Sem GnRH'],
+                                              options: const [
+                                                'Com GnRH',
+                                                'Sem GnRH'
+                                              ],
                                               onChanged: (val) => safeSetState(
                                                   () => _model
                                                       .dropDownIATFValue = val),
@@ -2347,13 +2381,16 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                         .secondaryText,
                                                 size: 24.0,
                                               ),
-                                              fillColor: Color(0xFFF1F1F1),
+                                              fillColor:
+                                                  const Color(0xFFF1F1F1),
                                               elevation: 0.0,
-                                              borderColor: Color(0x00E0E3E7),
+                                              borderColor:
+                                                  const Color(0x00E0E3E7),
                                               borderWidth: 0.0,
                                               borderRadius: 8.0,
-                                              margin: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              margin:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       16.0, 4.0, 16.0, 4.0),
                                               hidesUnderline: true,
                                               isOverButton: true,
@@ -2367,7 +2404,8 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             FlutterFlowIconButton(
                                               borderRadius: 8.0,
                                               buttonSize: 40.0,
-                                              fillColor: Color(0x0028A365),
+                                              fillColor:
+                                                  const Color(0x0028A365),
                                               icon: Icon(
                                                 Icons.close,
                                                 color:
@@ -2385,12 +2423,13 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                 });
                                               },
                                             ),
-                                        ].divide(SizedBox(width: 8.0)),
+                                        ].divide(const SizedBox(width: 8.0)),
                                       ),
                                     ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Text(
                                       'Protocolo reprodutivo (outros)',
                                       style: FlutterFlowTheme.of(context)
@@ -2399,7 +2438,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -2410,8 +2449,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: TextFormField(
                                       controller: _model
                                           .textFieldProtocoloOutrosTextController,
@@ -2427,7 +2467,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFFBEBEBE),
+                                              color: const Color(0xFFBEBEBE),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -2436,7 +2476,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                         enabledBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFFF1F1F1),
                                             width: 0.0,
                                           ),
@@ -2444,7 +2484,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFF28A365),
                                             width: 0.0,
                                           ),
@@ -2471,7 +2511,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         filled: true,
-                                        fillColor: Color(0xFFF1F1F1),
+                                        fillColor: const Color(0xFFF1F1F1),
                                       ),
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -2479,7 +2519,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF161616),
+                                            color: const Color(0xFF161616),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -2493,8 +2533,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 24.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 24.0, 0.0, 0.0),
                                     child: Text(
                                       'Observação',
                                       style: FlutterFlowTheme.of(context)
@@ -2503,7 +2544,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF181818),
+                                            color: const Color(0xFF181818),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -2514,8 +2555,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 8.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 8.0, 0.0, 0.0),
                                     child: TextFormField(
                                       controller: _model
                                           .textFieldProtocoloObservacaoTextController,
@@ -2531,7 +2573,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color: Color(0xFFBEBEBE),
+                                              color: const Color(0xFFBEBEBE),
                                               fontSize: 16.0,
                                               letterSpacing: 0.0,
                                               fontWeight: FontWeight.w600,
@@ -2540,7 +2582,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .bodyMediumIsCustom,
                                             ),
                                         enabledBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFFF1F1F1),
                                             width: 0.0,
                                           ),
@@ -2548,7 +2590,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
+                                          borderSide: const BorderSide(
                                             color: Color(0xFF28A365),
                                             width: 0.0,
                                           ),
@@ -2575,7 +2617,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               BorderRadius.circular(8.0),
                                         ),
                                         filled: true,
-                                        fillColor: Color(0xFFF1F1F1),
+                                        fillColor: const Color(0xFFF1F1F1),
                                       ),
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
@@ -2583,7 +2625,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF161616),
+                                            color: const Color(0xFF161616),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -2660,17 +2702,17 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                           text: 'Cancelar',
                           options: FFButtonOptions(
                             height: 56.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
-                            color: Color(0x004B39EF),
+                            color: const Color(0x004B39EF),
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
                                   fontFamily: FlutterFlowTheme.of(context)
                                       .titleSmallFamily,
-                                  color: Color(0xFF28A365),
+                                  color: const Color(0xFF28A365),
                                   fontSize: 18.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.w600,
@@ -2678,7 +2720,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                       .titleSmallIsCustom,
                                 ),
                             elevation: 0.0,
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color(0xFF28A365),
                               width: 2.0,
                             ),
@@ -2691,28 +2733,30 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                           onPressed: ((_model.dropDownLoteValue == null ||
                                       _model.dropDownLoteValue == '') ||
                                   (_model.datePicked == null) ||
-                              (FFAppState().sanidade.isEmpty) ||
-                              (FFAppState().sanidade.contains('Vacina') &&
-                                !(_model
-                                    .dropDownVacinaValue?.isNotEmpty ??
-                                  false)) ||
-                              (FFAppState().sanidade.contains(
-                                  'Antiraparasitário') &&
-                                !(_model.dropDownAntiparasitarioValue
-                                    ?.isNotEmpty ??
-                                  false)) ||
-                              (FFAppState()
-                                  .sanidade
-                                  .contains('Tratamento') &&
-                                !(_model.dropDownTratamentoValue
-                                    ?.isNotEmpty ??
-                                  false)) ||
-                              (FFAppState().sanidade.contains(
-                                  'Protocolo reprodutivo') &&
-                                ((_model.dropDownProtocoloValue ==
-                                    null) ||
-                                  (_model.dropDownProtocoloValue ==
-                                    ''))))
+                                  (FFAppState().sanidade.isEmpty) ||
+                                  (FFAppState().sanidade.contains('Vacina') &&
+                                      !(_model.dropDownVacinaValue
+                                              ?.isNotEmpty ??
+                                          false)) ||
+                                  (FFAppState()
+                                          .sanidade
+                                          .contains('Antiraparasitário') &&
+                                      !(_model.dropDownAntiparasitarioValue
+                                              ?.isNotEmpty ??
+                                          false)) ||
+                                  (FFAppState()
+                                          .sanidade
+                                          .contains('Tratamento') &&
+                                      !(_model.dropDownTratamentoValue
+                                              ?.isNotEmpty ??
+                                          false)) ||
+                                  (FFAppState()
+                                          .sanidade
+                                          .contains('Protocolo reprodutivo') &&
+                                      ((_model.dropDownProtocoloValue ==
+                                              null) ||
+                                          (_model.dropDownProtocoloValue ==
+                                              ''))))
                               ? null
                               : () async {
                                   if (!(FFAppState().dataDadosNaoSyncSanidade !=
@@ -2728,7 +2772,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                   );
                                   _model.index = 0;
                                   safeSetState(() {});
-                                  if (_model.loteSelecionado!.length > 0) {
+                                  if (_model.loteSelecionado!.isNotEmpty) {
                                     while (_model.index <
                                         _model.loteSelecionado!.length) {
                                       await SQLiteManager.instance
@@ -2911,7 +2955,8 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                               .secondaryBackground,
                                         ),
                                       ),
-                                      duration: Duration(milliseconds: 4000),
+                                      duration:
+                                          const Duration(milliseconds: 4000),
                                       backgroundColor:
                                           FlutterFlowTheme.of(context)
                                               .secondary,
@@ -2923,11 +2968,11 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                           text: 'Salvar',
                           options: FFButtonOptions(
                             height: 56.0,
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 24.0, 0.0, 24.0, 0.0),
-                            iconPadding: EdgeInsetsDirectional.fromSTEB(
+                            iconPadding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 0.0, 0.0),
-                            color: Color(0xFF28A365),
+                            color: const Color(0xFF28A365),
                             textStyle: FlutterFlowTheme.of(context)
                                 .titleSmall
                                 .override(
@@ -2942,18 +2987,18 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                       .titleSmallIsCustom,
                                 ),
                             elevation: 0.0,
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Colors.transparent,
                               width: 2.0,
                             ),
                             borderRadius: BorderRadius.circular(8.0),
-                            disabledColor: Color(0xFFAAAAAA),
+                            disabledColor: const Color(0xFFAAAAAA),
                           ),
                         ),
                       ),
-                    ].divide(SizedBox(width: 16.0)),
+                    ].divide(const SizedBox(width: 16.0)),
                   ),
-                ].divide(SizedBox(height: 24.0)),
+                ].divide(const SizedBox(height: 24.0)),
               ),
             ),
           ),

@@ -480,6 +480,7 @@ class SQLiteManager {
     String? categoria,
     String? raca,
     String? origem,
+    String? loteId,
     String? pesquisa,
     String? statusReb,
   }) =>
@@ -490,6 +491,7 @@ class SQLiteManager {
         categoria: categoria,
         raca: raca,
         origem: origem,
+        loteId: loteId,
         pesquisa: pesquisa,
         statusReb: statusReb,
       );
@@ -1183,7 +1185,7 @@ class SQLiteManager {
     final ultimaPesagem = await _database.rawQuery('''
 SELECT peso, dataPesagem
 FROM local_historico_pesagens
-WHERE idRebanho = '${idRebanho}'
+WHERE idRebanho = '$idRebanho'
 AND deletado = 'NAO'
 ORDER BY date(dataPesagem) DESC, datetime(created_at, 'localtime') DESC, id DESC
 LIMIT 1
@@ -1200,12 +1202,17 @@ LIMIT 1
     }
 
     final row = ultimaPesagem.first;
-    final peso = row['peso'] as num?;
+    final rawPeso = row['peso'];
+    final double? peso = rawPeso is num
+        ? rawPeso.toDouble()
+        : rawPeso is String
+            ? double.tryParse(rawPeso)
+            : null;
     final dataPesagem = row['dataPesagem'] as String?;
 
     await performUPDTPesoRebanho(
       _database,
-      peso: peso?.toDouble(),
+      peso: peso,
       data: dataPesagem,
       idRebanho: idRebanho,
     );

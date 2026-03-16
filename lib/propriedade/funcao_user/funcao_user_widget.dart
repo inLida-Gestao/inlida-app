@@ -58,9 +58,9 @@ class _FuncaoUserWidgetState extends State<FuncaoUserWidget> {
     return FlutterFlowDropDown<String>(
       controller: _model.dropdownAtividadesValueController ??=
           FormFieldController<String>(
-        _model.dropdownAtividadesValue ??= widget!.funcaoAtual,
+        _model.dropdownAtividadesValue ??= widget.funcaoAtual,
       ),
-      options: ['Admin', 'Visualizador'],
+      options: const ['Admin', 'Visualizador'],
       onChanged: (val) async {
         safeSetState(() => _model.dropdownAtividadesValue = val);
         _model.temNET = await actions.checkInternetConnection();
@@ -71,7 +71,7 @@ class _FuncaoUserWidgetState extends State<FuncaoUserWidget> {
             },
             matchingRows: (rows) => rows.eqOrNull(
               'user_id',
-              widget!.user,
+              widget.user,
             ),
           );
           ScaffoldMessenger.of(context).showSnackBar(
@@ -82,7 +82,7 @@ class _FuncaoUserWidgetState extends State<FuncaoUserWidget> {
                   color: FlutterFlowTheme.of(context).secondaryBackground,
                 ),
               ),
-              duration: Duration(milliseconds: 4000),
+              duration: const Duration(milliseconds: 4000),
               backgroundColor: FlutterFlowTheme.of(context).secondary,
             ),
           );
@@ -92,18 +92,18 @@ class _FuncaoUserWidgetState extends State<FuncaoUserWidget> {
             safeSetState(() {});
           }
           await SQLiteManager.instance.uPDTFuncaoUserLocal(
-            userID: widget!.user,
+            userID: widget.user,
             permissao: _model.dropdownAtividadesValue,
           );
           await showDialog(
             context: context,
             builder: (alertDialogContext) {
               return AlertDialog(
-                content: Text('Função atualizada'),
+                content: const Text('Função atualizada'),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(alertDialogContext),
-                    child: Text('Ok'),
+                    child: const Text('Ok'),
                   ),
                 ],
               );
@@ -129,12 +129,12 @@ class _FuncaoUserWidgetState extends State<FuncaoUserWidget> {
         color: FlutterFlowTheme.of(context).secondaryText,
         size: 24.0,
       ),
-      fillColor: Color(0xFFF1F1F1),
+      fillColor: const Color(0xFFF1F1F1),
       elevation: 0.0,
-      borderColor: Color(0x00E0E3E7),
+      borderColor: const Color(0x00E0E3E7),
       borderWidth: 0.0,
       borderRadius: 8.0,
-      margin: EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+      margin: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
       hidesUnderline: true,
       isOverButton: true,
       isSearchable: false,

@@ -42,13 +42,13 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+      padding: const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
       child: Container(
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
           color: FlutterFlowTheme.of(context).secondaryBackground,
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(6.0),
             bottomRight: Radius.circular(6.0),
             topLeft: Radius.circular(6.0),
@@ -56,14 +56,14 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
           ),
         ),
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Align(
-                  alignment: AlignmentDirectional(1.0, 0.0),
+                  alignment: const AlignmentDirectional(1.0, 0.0),
                   child: InkWell(
                     splashColor: Colors.transparent,
                     focusColor: Colors.transparent,
@@ -72,7 +72,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                     onTap: () async {
                       Navigator.pop(context);
                     },
-                    child: Icon(
+                    child: const Icon(
                       Icons.close,
                       color: Color(0xFF1E7A4C),
                       size: 24.0,
@@ -97,9 +97,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                             ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 24.0, 0.0, 0.0),
                           child: Text(
                             '1. Ative a comunicação \n   Bluetooth do bastão\n',
@@ -119,9 +119,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Text(
                             'No bastão: ',
@@ -131,7 +131,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                                 .override(
                                   fontFamily: FlutterFlowTheme.of(context)
                                       .bodyMediumFamily,
-                                  color: Color(0xFF1E7A4C),
+                                  color: const Color(0xFF1E7A4C),
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.normal,
@@ -142,9 +142,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Text(
                             '(01) Ligue o bastão\n(02) Menu\n(03) Configuração \n(04) Configuração das comunicações \n(05) Bluetooth \n(06) Definir modo Bluetooth \n(07) Selecione o modo Slave \n(08) Definir perfil Bluetooth \n(09) Selecione o modo HID \n(10) Sair',
@@ -163,9 +163,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 24.0, 0.0, 0.0),
                           child: Text(
                             '2. Pareie o bastão com o seu \n   celular',
@@ -185,9 +185,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Text(
                             'No celular: ',
@@ -197,7 +197,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                                 .override(
                                   fontFamily: FlutterFlowTheme.of(context)
                                       .bodyMediumFamily,
-                                  color: Color(0xFF1E7A4C),
+                                  color: const Color(0xFF1E7A4C),
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.normal,
@@ -208,9 +208,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Text(
                             '(01) Ligue o Bluetooth \n(02) Pesquise por dispositivos \n(03) Selecione o bastão \n(04) Faça o pareamento do bastão\n(05) Clique em confirmar',
@@ -229,9 +229,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Text(
                             'Obs.: Ao parear, o bastão irá emitir um som, confirmando que a operação foi concluída.',
@@ -240,7 +240,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                                 .override(
                                   fontFamily: FlutterFlowTheme.of(context)
                                       .bodyMediumFamily,
-                                  color: Color(0xFFCC3729),
+                                  color: const Color(0xFFCC3729),
                                   fontSize: 14.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.normal,
@@ -251,9 +251,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 24.0, 0.0, 0.0),
                           child: Text(
                             '3. Vincule um brinco eletrônico \n     aos animais do rebanho',
@@ -273,9 +273,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Text(
                             'Obs.: Antes de realizar essa ação, lembre que o animal deve estar previamente cadastrado no app.',
@@ -284,7 +284,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                                 .override(
                                   fontFamily: FlutterFlowTheme.of(context)
                                       .bodyMediumFamily,
-                                  color: Color(0xFFCC3729),
+                                  color: const Color(0xFFCC3729),
                                   fontSize: 14.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.normal,
@@ -295,9 +295,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Text(
                             'No celular: ',
@@ -307,7 +307,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                                 .override(
                                   fontFamily: FlutterFlowTheme.of(context)
                                       .bodyMediumFamily,
-                                  color: Color(0xFF1E7A4C),
+                                  color: const Color(0xFF1E7A4C),
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.normal,
@@ -318,9 +318,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Text(
                             '(01) Abra o app inLida \n(02) Selecione o animal \n(03) Editar animal \n(04) Clique no campo de chip',
@@ -339,9 +339,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Text(
                             'No bastão: ',
@@ -351,7 +351,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                                 .override(
                                   fontFamily: FlutterFlowTheme.of(context)
                                       .bodyMediumFamily,
-                                  color: Color(0xFF1E7A4C),
+                                  color: const Color(0xFF1E7A4C),
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.normal,
@@ -362,9 +362,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Text(
                             'Clique no botão verde (realizar leitura)',
@@ -383,9 +383,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Text(
                             'No celular: ',
@@ -395,7 +395,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                                 .override(
                                   fontFamily: FlutterFlowTheme.of(context)
                                       .bodyMediumFamily,
-                                  color: Color(0xFF1E7A4C),
+                                  color: const Color(0xFF1E7A4C),
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.normal,
@@ -406,9 +406,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Text(
                             '(01) O número do chip vai aparecer automaticamente \n(02) Clique em salvar',
@@ -427,9 +427,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 24.0, 0.0, 0.0),
                           child: Text(
                             '4. Busque os animais através da \n     leitura eletrônica do bastão',
@@ -448,9 +448,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Text(
                             'No celular: ',
@@ -460,7 +460,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                                 .override(
                                   fontFamily: FlutterFlowTheme.of(context)
                                       .bodyMediumFamily,
-                                  color: Color(0xFF1E7A4C),
+                                  color: const Color(0xFF1E7A4C),
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.normal,
@@ -471,9 +471,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Text(
                             '(01) Abra o app inLida\n(02) Clique no campo de busca do animal',
@@ -492,9 +492,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Text(
                             'No bastão: ',
@@ -504,7 +504,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                                 .override(
                                   fontFamily: FlutterFlowTheme.of(context)
                                       .bodyMediumFamily,
-                                  color: Color(0xFF1E7A4C),
+                                  color: const Color(0xFF1E7A4C),
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.normal,
@@ -515,9 +515,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Text(
                             'Clique no botão verde (realizar leitura)',
@@ -536,9 +536,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 24.0, 0.0, 0.0),
                           child: Text(
                             'No celular: ',
@@ -548,7 +548,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                                 .override(
                                   fontFamily: FlutterFlowTheme.of(context)
                                       .bodyMediumFamily,
-                                  color: Color(0xFF1E7A4C),
+                                  color: const Color(0xFF1E7A4C),
                                   fontSize: 16.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.normal,
@@ -559,9 +559,9 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                         ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(-1.0, 0.0),
+                        alignment: const AlignmentDirectional(-1.0, 0.0),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Text(
                             '( 01) O número do chip vai aparecer automaticamente \n(02) Clique no animal selecionado para olhar sua ficha',
@@ -582,7 +582,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                     ],
                   ),
                 ),
-              ].divide(SizedBox(height: 12.0)),
+              ].divide(const SizedBox(height: 12.0)),
             ),
           ),
         ),

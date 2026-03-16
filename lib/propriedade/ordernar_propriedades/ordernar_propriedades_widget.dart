@@ -49,7 +49,7 @@ class _OrdernarPropriedadesWidgetState
     return Material(
       color: Colors.transparent,
       elevation: 5.0,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(0.0),
           bottomRight: Radius.circular(0.0),
@@ -60,7 +60,7 @@ class _OrdernarPropriedadesWidgetState
       child: Container(
         width: double.infinity,
         height: 609.0,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(0.0),
@@ -70,15 +70,15 @@ class _OrdernarPropriedadesWidgetState
           ),
         ),
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 20.0),
+          padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 20.0),
           child: SingleChildScrollView(
             primary: false,
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding:
-                      EdgeInsetsDirectional.fromSTEB(25.0, 25.0, 25.0, 25.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      25.0, 25.0, 25.0, 25.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -86,7 +86,7 @@ class _OrdernarPropriedadesWidgetState
                       FlutterFlowIconButton(
                         borderRadius: 8.0,
                         buttonSize: 40.0,
-                        fillColor: Color(0x0028A365),
+                        fillColor: const Color(0x0028A365),
                         icon: Icon(
                           Icons.keyboard_arrow_down,
                           color: FlutterFlowTheme.of(context).primaryText,
@@ -106,7 +106,7 @@ class _OrdernarPropriedadesWidgetState
                                         .headlineSmall
                                         .fontStyle,
                                   ),
-                                  color: Color(0xFF2F2F2F),
+                                  color: const Color(0xFF2F2F2F),
                                   fontSize: 24.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.w500,
@@ -116,7 +116,7 @@ class _OrdernarPropriedadesWidgetState
                                 ),
                       ),
                       Align(
-                        alignment: AlignmentDirectional(0.0, 0.0),
+                        alignment: const AlignmentDirectional(0.0, 0.0),
                         child: InkWell(
                           splashColor: Colors.transparent,
                           focusColor: Colors.transparent,
@@ -139,7 +139,8 @@ class _OrdernarPropriedadesWidgetState
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                  alignment:
+                                      const AlignmentDirectional(0.0, 0.0),
                                   child: Text(
                                     'Limpar',
                                     style: FlutterFlowTheme.of(context)
@@ -154,21 +155,14 @@ class _OrdernarPropriedadesWidgetState
                                           ),
                                           color: valueOrDefault<Color>(
                                             (FFAppState()
-                                                                .filtroPropAtividades !=
-                                                            null &&
-                                                        FFAppState()
-                                                                .filtroPropAtividades !=
-                                                            '') ||
-                                                    (FFAppState().filtroPropCidades !=
-                                                            null &&
-                                                        FFAppState()
-                                                                .filtroPropCidades !=
-                                                            '') ||
-                                                    (FFAppState().filtroPropEstados !=
-                                                            null &&
-                                                        FFAppState()
-                                                                .filtroPropEstados !=
-                                                            '') ||
+                                                            .filtroPropAtividades !=
+                                                        '') ||
+                                                    (FFAppState()
+                                                            .filtroPropCidades !=
+                                                        '') ||
+                                                    (FFAppState()
+                                                            .filtroPropEstados !=
+                                                        '') ||
                                                     (FFAppState()
                                                             .filtroNumeroAnimais >
                                                         0.0)
@@ -176,7 +170,7 @@ class _OrdernarPropriedadesWidgetState
                                                     .secondaryText
                                                 : FlutterFlowTheme.of(context)
                                                     .accent4,
-                                            Color(0xFFBEBEBE),
+                                            const Color(0xFFBEBEBE),
                                           ),
                                           fontSize: 14.0,
                                           letterSpacing: 0.0,
@@ -196,7 +190,7 @@ class _OrdernarPropriedadesWidgetState
                     ],
                   ),
                 ),
-                Divider(
+                const Divider(
                   thickness: 1.0,
                   color: Color(0xFFBEBEBE),
                 ),
@@ -206,8 +200,8 @@ class _OrdernarPropriedadesWidgetState
                     color: FlutterFlowTheme.of(context).secondaryBackground,
                   ),
                   child: Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 20.0, 24.0, 0.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,7 +213,7 @@ class _OrdernarPropriedadesWidgetState
                               .override(
                                 fontFamily: FlutterFlowTheme.of(context)
                                     .bodyMediumFamily,
-                                color: Color(0xFF2F2F2F),
+                                color: const Color(0xFF2F2F2F),
                                 fontSize: 18.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w500,
@@ -256,7 +250,8 @@ class _OrdernarPropriedadesWidgetState
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Align(
-                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                  alignment:
+                                      const AlignmentDirectional(0.0, 0.0),
                                   child: Text(
                                     FFAppState().filtroOrdenacao == 'Crescente'
                                         ? 'Ordem crescente '
@@ -320,7 +315,7 @@ class _OrdernarPropriedadesWidgetState
                               ),
                             ),
                             child: Padding(
-                              padding: EdgeInsets.all(24.0),
+                              padding: const EdgeInsets.all(24.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -356,7 +351,7 @@ class _OrdernarPropriedadesWidgetState
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                                ].divide(SizedBox(width: 10.0)),
+                                ].divide(const SizedBox(width: 10.0)),
                               ),
                             ),
                           ),
@@ -384,7 +379,7 @@ class _OrdernarPropriedadesWidgetState
                               ),
                             ),
                             child: Padding(
-                              padding: EdgeInsets.all(24.0),
+                              padding: const EdgeInsets.all(24.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -420,7 +415,7 @@ class _OrdernarPropriedadesWidgetState
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                                ].divide(SizedBox(width: 10.0)),
+                                ].divide(const SizedBox(width: 10.0)),
                               ),
                             ),
                           ),
@@ -447,7 +442,7 @@ class _OrdernarPropriedadesWidgetState
                               ),
                             ),
                             child: Padding(
-                              padding: EdgeInsets.all(24.0),
+                              padding: const EdgeInsets.all(24.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -481,7 +476,7 @@ class _OrdernarPropriedadesWidgetState
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                                ].divide(SizedBox(width: 10.0)),
+                                ].divide(const SizedBox(width: 10.0)),
                               ),
                             ),
                           ),
@@ -509,7 +504,7 @@ class _OrdernarPropriedadesWidgetState
                               ),
                             ),
                             child: Padding(
-                              padding: EdgeInsets.all(24.0),
+                              padding: const EdgeInsets.all(24.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -545,7 +540,7 @@ class _OrdernarPropriedadesWidgetState
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                                ].divide(SizedBox(width: 10.0)),
+                                ].divide(const SizedBox(width: 10.0)),
                               ),
                             ),
                           ),
@@ -573,7 +568,7 @@ class _OrdernarPropriedadesWidgetState
                               ),
                             ),
                             child: Padding(
-                              padding: EdgeInsets.all(24.0),
+                              padding: const EdgeInsets.all(24.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
@@ -609,22 +604,22 @@ class _OrdernarPropriedadesWidgetState
                                                   .bodyMediumIsCustom,
                                         ),
                                   ),
-                                ].divide(SizedBox(width: 10.0)),
+                                ].divide(const SizedBox(width: 10.0)),
                               ),
                             ),
                           ),
                         ),
-                      ].divide(SizedBox(height: 16.0)),
+                      ].divide(const SizedBox(height: 16.0)),
                     ),
                   ),
                 ),
-                Divider(
+                const Divider(
                   thickness: 1.0,
                   color: Color(0xFFBEBEBE),
                 ),
                 Padding(
-                  padding:
-                      EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      24.0, 24.0, 24.0, 0.0),
                   child: FFButtonWidget(
                     onPressed: () async {
                       Navigator.pop(context);
@@ -633,11 +628,11 @@ class _OrdernarPropriedadesWidgetState
                     options: FFButtonOptions(
                       width: double.infinity,
                       height: 47.0,
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                      iconPadding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                      color: Color(0xFF28A365),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          24.0, 0.0, 24.0, 0.0),
+                      iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 0.0, 0.0, 0.0),
+                      color: const Color(0xFF28A365),
                       textStyle: FlutterFlowTheme.of(context)
                           .titleSmall
                           .override(
@@ -649,7 +644,7 @@ class _OrdernarPropriedadesWidgetState
                                 .titleSmallIsCustom,
                           ),
                       elevation: 0.0,
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Colors.transparent,
                         width: 0.0,
                       ),

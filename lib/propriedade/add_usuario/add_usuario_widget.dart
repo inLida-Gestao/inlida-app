@@ -59,7 +59,7 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
     return Material(
       color: Colors.transparent,
       elevation: 5.0,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(0.0),
           bottomRight: Radius.circular(0.0),
@@ -69,7 +69,7 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
       ),
       child: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(0.0),
@@ -84,7 +84,8 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
             mainAxisSize: MainAxisSize.max,
             children: [
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    24.0, 24.0, 24.0, 24.0),
                 child: InkWell(
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,
@@ -112,7 +113,7 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                                         .headlineSmall
                                         .fontStyle,
                                   ),
-                                  color: Color(0xFF2F2F2F),
+                                  color: const Color(0xFF2F2F2F),
                                   fontSize: 24.0,
                                   letterSpacing: 0.0,
                                   fontWeight: FontWeight.w500,
@@ -133,12 +134,13 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                   ),
                 ),
               ),
-              Divider(
+              const Divider(
                 thickness: 1.0,
                 color: Color(0xFFBEBEBE),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    24.0, 24.0, 24.0, 24.0),
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -153,7 +155,7 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).bodyMediumFamily,
-                              color: Color(0xFF474747),
+                              color: const Color(0xFF474747),
                               fontSize: 16.0,
                               letterSpacing: 0.0,
                               fontWeight: FontWeight.w600,
@@ -173,7 +175,7 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                               .override(
                                 fontFamily: FlutterFlowTheme.of(context)
                                     .labelMediumFamily,
-                                color: Color(0xFFBEBEBE),
+                                color: const Color(0xFFBEBEBE),
                                 fontSize: 16.0,
                                 letterSpacing: 0.0,
                                 fontWeight: FontWeight.w600,
@@ -182,14 +184,14 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                                     .labelMediumIsCustom,
                               ),
                           enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color(0x00E0E3E7),
                               width: 2.0,
                             ),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color(0xFF28A365),
                               width: 2.0,
                             ),
@@ -210,7 +212,7 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           filled: true,
-                          fillColor: Color(0xFFF1F1F1),
+                          fillColor: const Color(0xFFF1F1F1),
                         ),
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
@@ -228,27 +230,28 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                             .emailPropriedadeTextControllerValidator
                             .asValidator(context),
                       ),
-                    ].divide(SizedBox(height: 8.0)),
+                    ].divide(const SizedBox(height: 8.0)),
                   ),
                 ),
               ),
-              Divider(
+              const Divider(
                 thickness: 1.0,
                 color: Color(0xFFBEBEBE),
               ),
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    24.0, 24.0, 24.0, 24.0),
                 child: FFButtonWidget(
                   onPressed: () async {
-                    var _shouldSetState = false;
+                    var shouldSetState = false;
                     _model.user = await UsersTable().queryRows(
                       queryFn: (q) => q.eqOrNull(
                         'email',
                         _model.emailPropriedadeTextController.text,
                       ),
                     );
-                    _shouldSetState = true;
-                    if (_model.user!.length > 0) {
+                    shouldSetState = true;
+                    if (_model.user!.isNotEmpty) {
                       _model.userNaPropriedade =
                           await UsersPropriedadesTable().queryRows(
                         queryFn: (q) => q
@@ -258,28 +261,28 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                             )
                             .eqOrNull(
                               'idPropriedade',
-                              widget!.idPropriedade,
+                              widget.idPropriedade,
                             ),
                       );
-                      _shouldSetState = true;
-                      if (_model.userNaPropriedade!.length > 0) {
+                      shouldSetState = true;
+                      if (_model.userNaPropriedade!.isNotEmpty) {
                         await showDialog(
                           context: context,
                           builder: (alertDialogContext) {
                             return AlertDialog(
-                              content: Text(
+                              content: const Text(
                                   'Usuário já está adicionado nesta propriedade.'),
                               actions: [
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.pop(alertDialogContext),
-                                  child: Text('Ok'),
+                                  child: const Text('Ok'),
                                 ),
                               ],
                             );
                           },
                         );
-                        if (_shouldSetState) safeSetState(() {});
+                        if (shouldSetState) safeSetState(() {});
                         return;
                       } else {
                         if (!(FFAppState().dataDadosNaoSyncProp != null)) {
@@ -294,13 +297,13 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                           'foto': _model.user?.firstOrNull?.foto,
                           'permissao': 'Visualizador',
                           'deletado': 'NAO',
-                          'idPropriedade': widget!.idPropriedade,
+                          'idPropriedade': widget.idPropriedade,
                         });
                         _model.propriedade =
                             await SQLiteManager.instance.buscaPropriedade(
-                          idPropriedade: widget!.idPropriedade,
+                          idPropriedade: widget.idPropriedade,
                         );
-                        _shouldSetState = true;
+                        shouldSetState = true;
                         if (_model.propriedade?.firstOrNull?.usersID == ' ') {
                           _model.usersProp = _model.user!
                               .map((e) => e.userID)
@@ -308,7 +311,7 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                               .cast<String>();
                           safeSetState(() {});
                           await SQLiteManager.instance.addUserNaPropriedade(
-                            idPropriedade: widget!.idPropriedade,
+                            idPropriedade: widget.idPropriedade,
                             usersID: functions.converterListaParaJSON(
                                 _model.usersProp.toList()),
                             updatedat: dateTimeFormat(
@@ -328,7 +331,7 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                               .addToUsersProp(_model.user!.firstOrNull!.userID);
                           safeSetState(() {});
                           await SQLiteManager.instance.addUserNaPropriedade(
-                            idPropriedade: widget!.idPropriedade,
+                            idPropriedade: widget.idPropriedade,
                             usersID: functions.converterListaParaJSON(
                                 _model.usersProp.toList()),
                             updatedat: dateTimeFormat(
@@ -343,13 +346,13 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                           context: context,
                           builder: (alertDialogContext) {
                             return AlertDialog(
-                              content:
-                                  Text('Usuário(s) adicionado(s) com sucesso.'),
+                              content: const Text(
+                                  'Usuário(s) adicionado(s) com sucesso.'),
                               actions: [
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.pop(alertDialogContext),
-                                  child: Text('Ok'),
+                                  child: const Text('Ok'),
                                 ),
                               ],
                             );
@@ -362,14 +365,14 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                         context: context,
                         builder: (alertDialogContext) {
                           return AlertDialog(
-                            title: Text('Usuário não existe'),
-                            content: Text(
+                            title: const Text('Usuário não existe'),
+                            content: const Text(
                                 'Não há nenhum usuário cadastrado com este email verifique o email ou solicite que o mesmo faça o cadastro.'),
                             actions: [
                               TextButton(
                                 onPressed: () =>
                                     Navigator.pop(alertDialogContext),
-                                child: Text('Ok'),
+                                child: const Text('Ok'),
                               ),
                             ],
                           );
@@ -377,17 +380,17 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                       );
                     }
 
-                    if (_shouldSetState) safeSetState(() {});
+                    if (shouldSetState) safeSetState(() {});
                   },
                   text: 'Adicionar',
                   options: FFButtonOptions(
                     width: double.infinity,
                     height: 47.0,
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
-                    iconPadding:
-                        EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                    color: Color(0xFF28A365),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 0.0, 24.0, 0.0),
+                    iconPadding: const EdgeInsetsDirectional.fromSTEB(
+                        0.0, 0.0, 0.0, 0.0),
+                    color: const Color(0xFF28A365),
                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
                           fontFamily:
                               FlutterFlowTheme.of(context).titleSmallFamily,
@@ -397,7 +400,7 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                               !FlutterFlowTheme.of(context).titleSmallIsCustom,
                         ),
                     elevation: 0.0,
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Colors.transparent,
                       width: 1.0,
                     ),

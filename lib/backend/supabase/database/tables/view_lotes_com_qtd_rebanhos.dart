@@ -11,7 +11,7 @@ class ViewLotesComQtdRebanhosTable
 }
 
 class ViewLotesComQtdRebanhosRow extends SupabaseDataRow {
-  ViewLotesComQtdRebanhosRow(Map<String, dynamic> data) : super(data);
+  ViewLotesComQtdRebanhosRow(super.data);
 
   @override
   SupabaseTable get table => ViewLotesComQtdRebanhosTable();

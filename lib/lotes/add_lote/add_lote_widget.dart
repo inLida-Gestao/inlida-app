@@ -86,7 +86,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                  padding:
+                      const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
                   child: Container(
                     width: double.infinity,
                     height: 40.0,
@@ -94,8 +95,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                       color: FlutterFlowTheme.of(context).secondaryBackground,
                     ),
                     child: Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          24.0, 0.0, 24.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -125,7 +126,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                           .bodyMedium
                                           .fontStyle,
                                     ),
-                                    color: Color(0xFF232908),
+                                    color: const Color(0xFF232908),
                                     fontSize: 22.0,
                                     letterSpacing: 0.0,
                                     fontWeight: FontWeight.w500,
@@ -134,7 +135,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                         .fontStyle,
                                   ),
                             ),
-                          ].divide(SizedBox(width: 8.0)),
+                          ].divide(const SizedBox(width: 8.0)),
                         ),
                       ),
                     ),
@@ -146,8 +147,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                     color: FlutterFlowTheme.of(context).secondaryBackground,
                   ),
                   child: Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 0.0, 24.0, 0.0),
                     child: Text(
                       'Adicionar lote',
                       maxLines: 1,
@@ -158,7 +159,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                   .bodyMedium
                                   .fontStyle,
                             ),
-                            color: Color(0xFF181818),
+                            color: const Color(0xFF181818),
                             fontSize: 24.0,
                             letterSpacing: 0.0,
                             fontWeight: FontWeight.w500,
@@ -179,9 +180,9 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                     child: Column(
                       children: [
                         Align(
-                          alignment: Alignment(0.0, 0),
+                          alignment: const Alignment(0.0, 0),
                           child: TabBar(
-                            labelColor: Color(0xFF1E7A4C),
+                            labelColor: const Color(0xFF1E7A4C),
                             unselectedLabelColor:
                                 FlutterFlowTheme.of(context).secondaryText,
                             labelStyle: FlutterFlowTheme.of(context)
@@ -196,9 +197,9 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                   useGoogleFonts: !FlutterFlowTheme.of(context)
                                       .titleMediumIsCustom,
                                 ),
-                            unselectedLabelStyle: TextStyle(),
-                            indicatorColor: Color(0xFF1E7A4C),
-                            tabs: [
+                            unselectedLabelStyle: const TextStyle(),
+                            indicatorColor: const Color(0xFF1E7A4C),
+                            tabs: const [
                               Tab(
                                 text: 'Informações',
                               ),
@@ -224,7 +225,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                       .secondaryBackground,
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 24.0, 0.0, 24.0),
                                   child: SingleChildScrollView(
                                     primary: false,
@@ -232,15 +233,15 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Align(
-                                                alignment: AlignmentDirectional(
-                                                    -1.0, -1.0),
+                                                alignment:
+                                                    const AlignmentDirectional(
+                                                        -1.0, -1.0),
                                                 child: Text(
                                                   'Nome do lote*',
                                                   style: FlutterFlowTheme.of(
@@ -257,8 +258,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                   .bodyMedium
                                                                   .fontStyle,
                                                         ),
-                                                        color:
-                                                            Color(0xFF2F2F2F),
+                                                        color: const Color(
+                                                            0xFF2F2F2F),
                                                         fontSize: 16.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
@@ -295,8 +296,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                   .bodyMedium
                                                                   .fontStyle,
                                                         ),
-                                                        color:
-                                                            Color(0xFFBEBEBE),
+                                                        color: const Color(
+                                                            0xFFBEBEBE),
                                                         fontSize: 16.0,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
@@ -322,7 +323,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                   ),
                                                   focusedBorder:
                                                       UnderlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Color(0xFF28A365),
                                                       width: 2.0,
                                                     ),
@@ -391,12 +393,14 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                               .bodyMedium
                                                               .fontStyle,
                                                     ),
-                                                cursorColor: Color(0xFF28A365),
+                                                cursorColor:
+                                                    const Color(0xFF28A365),
                                                 validator: _model
                                                     .nomeloteTextControllerValidator
                                                     .asValidator(context),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                         Container(
@@ -406,15 +410,14 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                 .secondaryBackground,
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    24.0, 0.0, 24.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Align(
                                                   alignment:
-                                                      AlignmentDirectional(
+                                                      const AlignmentDirectional(
                                                           -1.0, -1.0),
                                                   child: Text(
                                                     'Anotações',
@@ -432,8 +435,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                     .bodyMedium
                                                                     .fontStyle,
                                                           ),
-                                                          color:
-                                                              Color(0xFF2F2F2F),
+                                                          color: const Color(
+                                                              0xFF2F2F2F),
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -469,8 +472,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                     .bodyMedium
                                                                     .fontStyle,
                                                           ),
-                                                          color:
-                                                              Color(0xFFBEBEBE),
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -496,7 +499,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                     ),
                                                     focusedBorder:
                                                         UnderlineInputBorder(
-                                                      borderSide: BorderSide(
+                                                      borderSide:
+                                                          const BorderSide(
                                                         color:
                                                             Color(0xFF28A365),
                                                         width: 2.0,
@@ -569,19 +573,19 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                       ),
                                                   maxLines: 5,
                                                   cursorColor:
-                                                      Color(0xFF28A365),
+                                                      const Color(0xFF28A365),
                                                   validator: _model
                                                       .anotacoesTextControllerValidator
                                                       .asValidator(context),
                                                 ),
-                                              ].divide(SizedBox(height: 8.0)),
+                                              ].divide(
+                                                  const SizedBox(height: 8.0)),
                                             ),
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           child: Container(
                                             width: double.infinity,
                                             height: 80.0,
@@ -589,7 +593,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                               color:
                                                   FlutterFlowTheme.of(context)
                                                       .secondaryBackground,
-                                              boxShadow: [
+                                              boxShadow: const [
                                                 BoxShadow(
                                                   blurRadius: 4.0,
                                                   color: Color(0x41000000),
@@ -599,7 +603,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                   ),
                                                 )
                                               ],
-                                              borderRadius: BorderRadius.only(
+                                              borderRadius:
+                                                  const BorderRadius.only(
                                                 bottomLeft:
                                                     Radius.circular(6.0),
                                                 bottomRight:
@@ -608,12 +613,13 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                 topRight: Radius.circular(6.0),
                                               ),
                                               border: Border.all(
-                                                color: Color(0xFFBEBEBE),
+                                                color: const Color(0xFFBEBEBE),
                                               ),
                                             ),
                                             child: Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
                                                       24.0, 0.0, 24.0, 0.0),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.max,
@@ -631,8 +637,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              Color(0xFF474747),
+                                                          color: const Color(
+                                                              0xFF474747),
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -650,8 +656,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                         (newValue) async {
                                                       safeSetState(() => _model
                                                               .ativoInativoValue =
-                                                          newValue!);
-                                                      if (newValue!) {
+                                                          newValue);
+                                                      if (newValue) {
                                                         safeSetState(() {
                                                           _model
                                                               .dropDownMotivoValueController
@@ -662,13 +668,13 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                       }
                                                     },
                                                     activeColor:
-                                                        Color(0xFF28A365),
+                                                        const Color(0xFF28A365),
                                                     activeTrackColor:
-                                                        Color(0xFF28A365),
+                                                        const Color(0xFF28A365),
                                                     inactiveTrackColor:
-                                                        Color(0xFFF1F1F1),
+                                                        const Color(0xFFF1F1F1),
                                                     inactiveThumbColor:
-                                                        Color(0xFF8E8E8E),
+                                                        const Color(0xFF8E8E8E),
                                                   ),
                                                 ],
                                               ),
@@ -677,9 +683,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                         ),
                                         if (_model.ativoInativoValue == false)
                                           Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    24.0, 0.0, 24.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.min,
                                               mainAxisAlignment:
@@ -710,7 +715,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                 fontFamily: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF474747),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
@@ -729,7 +734,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                               double.infinity,
                                                           height: 56.0,
                                                           decoration:
-                                                              BoxDecoration(
+                                                              const BoxDecoration(
                                                             color: Color(
                                                                 0xFFF1F1F1),
                                                             borderRadius:
@@ -764,7 +769,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                       FormFieldController<
                                                                               String>(
                                                                           null),
-                                                                  options: [
+                                                                  options: const [
                                                                     'Lote vendido'
                                                                   ],
                                                                   onChanged: (val) =>
@@ -803,12 +808,12 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                       0.0,
                                                                   borderRadius:
                                                                       8.0,
-                                                                  margin: EdgeInsetsDirectional
+                                                                  margin: const EdgeInsetsDirectional
                                                                       .fromSTEB(
-                                                                          12.0,
-                                                                          0.0,
-                                                                          12.0,
-                                                                          0.0),
+                                                                      12.0,
+                                                                      0.0,
+                                                                      12.0,
+                                                                      0.0),
                                                                   hidesUnderline:
                                                                       true,
                                                                   isOverButton:
@@ -822,7 +827,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                             ],
                                                           ),
                                                         ),
-                                                      ].divide(SizedBox(
+                                                      ].divide(const SizedBox(
                                                           height: 8.0)),
                                                     ),
                                                   ),
@@ -851,7 +856,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                 fontFamily: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFF474747),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
@@ -870,7 +875,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                               double.infinity,
                                                           height: 56.0,
                                                           decoration:
-                                                              BoxDecoration(
+                                                              const BoxDecoration(
                                                             color: Color(
                                                                 0xFFF1F1F1),
                                                             borderRadius:
@@ -902,7 +907,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                 Colors
                                                                     .transparent,
                                                             onTap: () async {
-                                                              final _datePickedDate =
+                                                              final datePickedDate =
                                                                   await showDatePicker(
                                                                 context:
                                                                     context,
@@ -923,7 +928,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                     context,
                                                                     child!,
                                                                     headerBackgroundColor:
-                                                                        Color(
+                                                                        const Color(
                                                                             0xFF28A365),
                                                                     headerForegroundColor:
                                                                         FlutterFlowTheme.of(context)
@@ -950,7 +955,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                         FlutterFlowTheme.of(context)
                                                                             .primaryText,
                                                                     selectedDateTimeBackgroundColor:
-                                                                        Color(
+                                                                        const Color(
                                                                             0xFF28A365),
                                                                     selectedDateTimeForegroundColor:
                                                                         FlutterFlowTheme.of(context)
@@ -964,17 +969,17 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                 },
                                                               );
 
-                                                              if (_datePickedDate !=
+                                                              if (datePickedDate !=
                                                                   null) {
                                                                 safeSetState(
                                                                     () {
                                                                   _model.datePicked =
                                                                       DateTime(
-                                                                    _datePickedDate
+                                                                    datePickedDate
                                                                         .year,
-                                                                    _datePickedDate
+                                                                    datePickedDate
                                                                         .month,
-                                                                    _datePickedDate
+                                                                    datePickedDate
                                                                         .day,
                                                                   );
                                                                 });
@@ -1020,25 +1025,25 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                       ),
                                                                 ),
                                                               ].addToStart(
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                       width:
                                                                           12.0)),
                                                             ),
                                                           ),
                                                         ),
-                                                      ].divide(SizedBox(
+                                                      ].divide(const SizedBox(
                                                           height: 8.0)),
                                                     ),
                                                   ),
                                                 ),
-                                              ].divide(SizedBox(width: 24.0)),
+                                              ].divide(
+                                                  const SizedBox(width: 24.0)),
                                             ),
                                           ),
                                         if (_model.ativoInativoValue == false)
                                           Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    24.0, 5.0, 24.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(24.0, 5.0, 24.0, 0.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment:
@@ -1046,27 +1051,28 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                               children: [
                                                 Text(
                                                   'Valor da venda (R\$)',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF474747),
-                                                        fontSize: 16.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF474747),
+                                                            fontSize: 16.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
-                                                Container(
+                                                SizedBox(
                                                   width: double.infinity,
                                                   height: 56.0,
                                                   child: custom_widgets
@@ -1094,9 +1100,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                             ),
                                           ),
                                         Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  24.0, 0.0, 24.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(24.0, 0.0, 24.0, 0.0),
                                           child: InkWell(
                                             splashColor: Colors.transparent,
                                             focusColor: Colors.transparent,
@@ -1113,7 +1118,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                       _model.tabBarController!
                                                               .index +
                                                           1),
-                                                  duration: Duration(
+                                                  duration: const Duration(
                                                       milliseconds: 300),
                                                   curve: Curves.ease,
                                                 );
@@ -1126,7 +1131,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                 color:
                                                     FlutterFlowTheme.of(context)
                                                         .secondaryBackground,
-                                                boxShadow: [
+                                                boxShadow: const [
                                                   BoxShadow(
                                                     blurRadius: 4.0,
                                                     color: Color(0x40000000),
@@ -1136,7 +1141,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                     ),
                                                   )
                                                 ],
-                                                borderRadius: BorderRadius.only(
+                                                borderRadius:
+                                                    const BorderRadius.only(
                                                   bottomLeft:
                                                       Radius.circular(6.0),
                                                   bottomRight:
@@ -1147,8 +1153,9 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         24.0, 24.0, 24.0, 24.0),
                                                 child: Column(
                                                   mainAxisSize:
@@ -1179,7 +1186,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF474747),
                                                                   fontSize:
                                                                       18.0,
@@ -1203,7 +1210,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF1E7A4C),
                                                                   fontSize:
                                                                       16.0,
@@ -1230,7 +1237,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                       ),
                                                       child: Align(
                                                         alignment:
-                                                            AlignmentDirectional(
+                                                            const AlignmentDirectional(
                                                                 0.0, 0.0),
                                                         child: Column(
                                                           mainAxisSize:
@@ -1282,7 +1289,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                     fontFamily:
                                                                         FlutterFlowTheme.of(context)
                                                                             .bodyMediumFamily,
-                                                                    color: Color(
+                                                                    color: const Color(
                                                                         0xFF1E7A4C),
                                                                     letterSpacing:
                                                                         0.0,
@@ -1297,8 +1304,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                         ),
                                                       ),
                                                     ),
-                                                  ].divide(
-                                                      SizedBox(height: 32.0)),
+                                                  ].divide(const SizedBox(
+                                                      height: 32.0)),
                                                 ),
                                               ),
                                             ),
@@ -1343,14 +1350,15 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                     width: 156.0,
                                                     height: 56.0,
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(24.0, 0.0,
-                                                                24.0, 0.0),
+                                                            24.0, 0.0),
                                                     iconPadding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(0.0, 0.0,
-                                                                0.0, 0.0),
-                                                    color: Color(0x004B39EF),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            0.0, 0.0, 0.0, 0.0),
+                                                    color:
+                                                        const Color(0x004B39EF),
                                                     textStyle: FlutterFlowTheme
                                                             .of(context)
                                                         .titleSmall
@@ -1359,8 +1367,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .titleSmallFamily,
-                                                          color:
-                                                              Color(0xFF1E7A4C),
+                                                          color: const Color(
+                                                              0xFF1E7A4C),
                                                           fontSize: 18.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
@@ -1371,7 +1379,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                   .titleSmallIsCustom,
                                                         ),
                                                     elevation: 0.0,
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Color(0xFF1E7A4C),
                                                       width: 2.0,
                                                     ),
@@ -1394,8 +1403,10 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                             _model.tabBarController!
                                                                     .index +
                                                                 1),
-                                                        duration: Duration(
-                                                            milliseconds: 300),
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    300),
                                                         curve: Curves.ease,
                                                       );
                                                     });
@@ -1405,14 +1416,15 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                     width: 156.0,
                                                     height: 56.0,
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(24.0, 0.0,
-                                                                24.0, 0.0),
+                                                            24.0, 0.0),
                                                     iconPadding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(0.0, 0.0,
-                                                                0.0, 0.0),
-                                                    color: Color(0xFF28A365),
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            0.0, 0.0, 0.0, 0.0),
+                                                    color:
+                                                        const Color(0xFF28A365),
                                                     textStyle: FlutterFlowTheme
                                                             .of(context)
                                                         .titleSmall
@@ -1432,7 +1444,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                   .titleSmallIsCustom,
                                                         ),
                                                     elevation: 0.0,
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Colors.transparent,
                                                       width: 1.0,
                                                     ),
@@ -1443,20 +1456,21 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                 ),
                                               ),
                                             ]
-                                                .divide(SizedBox(width: 16.0))
+                                                .divide(
+                                                    const SizedBox(width: 16.0))
                                                 .addToStart(
-                                                    SizedBox(width: 24.0))
-                                                .addToEnd(
-                                                    SizedBox(width: 24.0)),
+                                                    const SizedBox(width: 24.0))
+                                                .addToEnd(const SizedBox(
+                                                    width: 24.0)),
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 24.0)),
+                                      ].divide(const SizedBox(height: 24.0)),
                                     ),
                                   ),
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 16.0, 24.0, 30.0),
                                 child: SingleChildScrollView(
                                   primary: false,
@@ -1481,6 +1495,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                             raca: FFAppState().filtroRaca,
                                             origem: FFAppState()
                                                 .filtroOrigemRebanho,
+                                            loteId:
+                                                FFAppState().filtroLoteRebanho,
                                             pesquisa:
                                                 _model.textController3.text,
                                             statusReb: FFAppState()
@@ -1515,7 +1531,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                 color:
                                                     FlutterFlowTheme.of(context)
                                                         .secondaryBackground,
-                                                borderRadius: BorderRadius.only(
+                                                borderRadius:
+                                                    const BorderRadius.only(
                                                   bottomLeft:
                                                       Radius.circular(6.0),
                                                   bottomRight:
@@ -1525,12 +1542,14 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                       Radius.circular(6.0),
                                                 ),
                                                 border: Border.all(
-                                                  color: Color(0xFFBEBEBE),
+                                                  color:
+                                                      const Color(0xFFBEBEBE),
                                                 ),
                                               ),
                                               child: Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         12.0, 12.0, 12.0, 12.0),
                                                 child: Column(
                                                   mainAxisSize:
@@ -1568,7 +1587,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                            color: Color(
+                                                            color: const Color(
                                                                 0xFF181818),
                                                             fontSize: 18.0,
                                                             letterSpacing: 0.0,
@@ -1591,18 +1610,15 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                         shape:
                                                             BoxShape.rectangle,
                                                         border: Border.all(
-                                                          color:
-                                                              Color(0xFFBEBEBE),
+                                                          color: const Color(
+                                                              0xFFBEBEBE),
                                                         ),
                                                       ),
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    16.0,
-                                                                    8.0,
-                                                                    16.0,
-                                                                    8.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(16.0,
+                                                                8.0, 16.0, 8.0),
                                                         child: Row(
                                                           mainAxisSize:
                                                               MainAxisSize.max,
@@ -1621,7 +1637,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                     .cover,
                                                               ),
                                                             ),
-                                                            Container(
+                                                            SizedBox(
                                                               width: 200.0,
                                                               child:
                                                                   TextFormField(
@@ -1633,7 +1649,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                     EasyDebounce
                                                                         .debounce(
                                                                   '_model.textController3',
-                                                                  Duration(
+                                                                  const Duration(
                                                                       milliseconds:
                                                                           2000),
                                                                   () async {
@@ -1675,7 +1691,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                   enabledBorder:
                                                                       OutlineInputBorder(
                                                                     borderSide:
-                                                                        BorderSide(
+                                                                        const BorderSide(
                                                                       color: Color(
                                                                           0x00000000),
                                                                       width:
@@ -1688,7 +1704,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                   focusedBorder:
                                                                       OutlineInputBorder(
                                                                     borderSide:
-                                                                        BorderSide(
+                                                                        const BorderSide(
                                                                       color: Color(
                                                                           0x00000000),
                                                                       width:
@@ -1731,7 +1747,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                           context)
                                                                       .secondaryBackground,
                                                                   contentPadding:
-                                                                      EdgeInsetsDirectional.fromSTEB(
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
                                                                           0.0,
                                                                           2.0,
                                                                           0.0,
@@ -1760,8 +1777,9 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                         context),
                                                               ),
                                                             ),
-                                                          ].divide(SizedBox(
-                                                              width: 8.0)),
+                                                          ].divide(
+                                                              const SizedBox(
+                                                                  width: 8.0)),
                                                         ),
                                                       ),
                                                     ),
@@ -1812,7 +1830,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                           .viewInsetsOf(
                                                                               context),
                                                                       child:
-                                                                          FiltrosRebanhoWidget(),
+                                                                          const FiltrosRebanhoWidget(),
                                                                     );
                                                                   },
                                                                 ).then((value) =>
@@ -1833,13 +1851,14 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                       .rectangle,
                                                                   border: Border
                                                                       .all(
-                                                                    color: Color(
+                                                                    color: const Color(
                                                                         0xFFBEBEBE),
                                                                   ),
                                                                 ),
                                                                 child: Padding(
-                                                                  padding: EdgeInsetsDirectional
-                                                                      .fromSTEB(
+                                                                  padding:
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
                                                                           16.0,
                                                                           8.0,
                                                                           16.0,
@@ -1873,19 +1892,20 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                               .cover,
                                                                         ),
                                                                       ),
-                                                                    ].divide(SizedBox(
+                                                                    ].divide(const SizedBox(
                                                                         width:
                                                                             8.0)),
                                                                   ),
                                                                 ),
                                                               ),
                                                             ),
-                                                          ].divide(SizedBox(
-                                                              width: 8.0)),
+                                                          ].divide(
+                                                              const SizedBox(
+                                                                  width: 8.0)),
                                                         ),
                                                       ),
                                                     ),
-                                                    Divider(
+                                                    const Divider(
                                                       thickness: 1.0,
                                                       color: Color(0xFFEDEDED),
                                                     ),
@@ -1968,7 +1988,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                         width:
                                                                             2,
                                                                         color: FlutterFlowTheme.of(context)
-                                                                            .alternate!,
+                                                                            .alternate,
                                                                       )
                                                                     : null,
                                                                 activeColor:
@@ -2008,8 +2028,9 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                             .bodyMediumIsCustom,
                                                                   ),
                                                             ),
-                                                          ].divide(SizedBox(
-                                                              width: 5.0)),
+                                                          ].divide(
+                                                              const SizedBox(
+                                                                  width: 5.0)),
                                                         ),
                                                         FFButtonWidget(
                                                           onPressed: () async {
@@ -2053,20 +2074,20 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                               FFButtonOptions(
                                                             height: 34.0,
                                                             padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
-                                                                        24.0,
-                                                                        0.0,
-                                                                        24.0,
-                                                                        0.0),
+                                                                    24.0,
+                                                                    0.0,
+                                                                    24.0,
+                                                                    0.0),
                                                             iconPadding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
-                                                                        0.0,
-                                                                        0.0,
-                                                                        0.0,
-                                                                        0.0),
-                                                            color: Color(
+                                                                    0.0,
+                                                                    0.0,
+                                                                    0.0,
+                                                                    0.0),
+                                                            color: const Color(
                                                                 0xFF28A365),
                                                             textStyle:
                                                                 FlutterFlowTheme.of(
@@ -2091,7 +2112,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                     ),
                                                             elevation: 0.0,
                                                             borderSide:
-                                                                BorderSide(
+                                                                const BorderSide(
                                                               color: Colors
                                                                   .transparent,
                                                               width: 1.0,
@@ -2146,12 +2167,12 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                               ),
                                                               child: Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
-                                                                            0.0,
-                                                                            0.0,
-                                                                            0.0,
-                                                                            8.0),
+                                                                        0.0,
+                                                                        0.0,
+                                                                        0.0,
+                                                                        8.0),
                                                                 child: Row(
                                                                   mainAxisSize:
                                                                       MainAxisSize
@@ -2204,7 +2225,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                 null)
                                                                             ? BorderSide(
                                                                                 width: 2,
-                                                                                color: FlutterFlowTheme.of(context).alternate!,
+                                                                                color: FlutterFlowTheme.of(context).alternate,
                                                                               )
                                                                             : null,
                                                                         activeColor:
@@ -2282,7 +2303,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                         fontWeight: FontWeight.w500,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF474747),
+                                                                                      color: const Color(0xFF474747),
                                                                                       fontSize: 16.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.w500,
@@ -2296,7 +2317,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                         fontWeight: FontWeight.normal,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF474747),
+                                                                                      color: const Color(0xFF474747),
                                                                                       fontSize: 16.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.normal,
@@ -2313,15 +2334,10 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                         'null') {
                                                                                       return 'S/N';
                                                                                     } else if (valueOrDefault<String>(
-                                                                                              rebanhosSelectItem.nome,
-                                                                                              'nome',
-                                                                                            ) ==
-                                                                                            null ||
-                                                                                        valueOrDefault<String>(
-                                                                                              rebanhosSelectItem.nome,
-                                                                                              'nome',
-                                                                                            ) ==
-                                                                                            '') {
+                                                                                          rebanhosSelectItem.nome,
+                                                                                          'nome',
+                                                                                        ) ==
+                                                                                        '') {
                                                                                       return 'S/N';
                                                                                     } else {
                                                                                       return valueOrDefault<String>(
@@ -2337,7 +2353,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                         fontWeight: FontWeight.w500,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF474747),
+                                                                                      color: const Color(0xFF474747),
                                                                                       fontSize: 16.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.w500,
@@ -2351,7 +2367,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                         fontWeight: FontWeight.normal,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF474747),
+                                                                                      color: const Color(0xFF474747),
                                                                                       fontSize: 16.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.normal,
@@ -2369,14 +2385,14 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                         fontWeight: FontWeight.w500,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF474747),
+                                                                                      color: const Color(0xFF474747),
                                                                                       fontSize: 16.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.w500,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                     ),
                                                                               ),
-                                                                            ].divide(SizedBox(width: 4.0)),
+                                                                            ].divide(const SizedBox(width: 4.0)),
                                                                           ),
                                                                         ),
                                                                         SingleChildScrollView(
@@ -2395,9 +2411,6 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                     ) == 'null') || (valueOrDefault<String>(
                                                                                       rebanhosSelectItem.raca,
                                                                                       'N/A',
-                                                                                    ) == null || valueOrDefault<String>(
-                                                                                      rebanhosSelectItem.raca,
-                                                                                      'N/A',
                                                                                     ) == '') ? 'N/A' : valueOrDefault<String>(
                                                                                     rebanhosSelectItem.raca,
                                                                                     'N/A',
@@ -2407,14 +2420,14 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                         fontWeight: FontWeight.normal,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
-                                                                                      color: Color(0xFF5F5F5F),
+                                                                                      color: const Color(0xFF5F5F5F),
                                                                                       fontSize: 14.0,
                                                                                       letterSpacing: 0.0,
                                                                                       fontWeight: FontWeight.normal,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                     ),
                                                                               ),
-                                                                            ].divide(SizedBox(width: 4.0)),
+                                                                            ].divide(const SizedBox(width: 4.0)),
                                                                           ),
                                                                         ),
                                                                         Column(
@@ -2440,7 +2453,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF5F5F5F),
+                                                                                        color: const Color(0xFF5F5F5F),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
@@ -2457,15 +2470,10 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                           'null') {
                                                                                         return 'S/L';
                                                                                       } else if (valueOrDefault<String>(
-                                                                                                rebanhosSelectItem.loteNome,
-                                                                                                'Animal sem lote',
-                                                                                              ) ==
-                                                                                              null ||
-                                                                                          valueOrDefault<String>(
-                                                                                                rebanhosSelectItem.loteNome,
-                                                                                                'Animal sem lote',
-                                                                                              ) ==
-                                                                                              '') {
+                                                                                            rebanhosSelectItem.loteNome,
+                                                                                            'Animal sem lote',
+                                                                                          ) ==
+                                                                                          '') {
                                                                                         return 'S/L';
                                                                                       } else {
                                                                                         return valueOrDefault<String>(
@@ -2481,14 +2489,14 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                           fontWeight: FontWeight.normal,
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
-                                                                                        color: Color(0xFF5F5F5F),
+                                                                                        color: const Color(0xFF5F5F5F),
                                                                                         fontSize: 14.0,
                                                                                         letterSpacing: 0.0,
                                                                                         fontWeight: FontWeight.normal,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
                                                                                 ),
-                                                                              ].divide(SizedBox(width: 5.0)),
+                                                                              ].divide(const SizedBox(width: 5.0)),
                                                                             ),
                                                                             if (rebanhosSelectItem.dataEntradaLote != null &&
                                                                                 rebanhosSelectItem.dataEntradaLote != '')
@@ -2507,12 +2515,13 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                               ),
                                                                           ],
                                                                         ),
-                                                                      ].divide(SizedBox(
+                                                                      ].divide(const SizedBox(
                                                                               height: 8.0)),
                                                                     ),
-                                                                  ].divide(SizedBox(
-                                                                      width:
-                                                                          8.0)),
+                                                                  ].divide(
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8.0)),
                                                                 ),
                                                               ),
                                                             );
@@ -2520,8 +2529,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                         );
                                                       },
                                                     ),
-                                                  ].divide(
-                                                      SizedBox(height: 16.0)),
+                                                  ].divide(const SizedBox(
+                                                      height: 16.0)),
                                                 ),
                                               ),
                                             );
@@ -2534,20 +2543,21 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                           decoration: BoxDecoration(
                                             color: FlutterFlowTheme.of(context)
                                                 .primaryBackground,
-                                            borderRadius: BorderRadius.only(
+                                            borderRadius:
+                                                const BorderRadius.only(
                                               bottomLeft: Radius.circular(6.0),
                                               bottomRight: Radius.circular(6.0),
                                               topLeft: Radius.circular(6.0),
                                               topRight: Radius.circular(6.0),
                                             ),
                                             border: Border.all(
-                                              color: Color(0xFFBEBEBE),
+                                              color: const Color(0xFFBEBEBE),
                                             ),
                                           ),
                                           child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    12.0, 12.0, 12.0, 12.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(
+                                                12.0, 12.0, 12.0, 12.0),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment:
@@ -2564,27 +2574,28 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                     '0',
                                                   ),
                                                   textAlign: TextAlign.start,
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMediumFamily,
-                                                        color:
-                                                            Color(0xFF181818),
-                                                        fontSize: 18.0,
-                                                        letterSpacing: 0.0,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        useGoogleFonts:
-                                                            !FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMediumIsCustom,
-                                                      ),
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            color: const Color(
+                                                                0xFF181818),
+                                                            fontSize: 18.0,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
                                                 ),
-                                                Container(
+                                                SizedBox(
                                                   width: double.infinity,
                                                   child: TextFormField(
                                                     controller: _model
@@ -2594,7 +2605,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                     onChanged: (_) =>
                                                         EasyDebounce.debounce(
                                                       '_model.pesquisarTextController',
-                                                      Duration(
+                                                      const Duration(
                                                           milliseconds: 2000),
                                                       () => safeSetState(() {}),
                                                     ),
@@ -2800,11 +2811,12 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                       width: 2,
                                                                       color: FlutterFlowTheme.of(
                                                                               context)
-                                                                          .secondaryText!,
+                                                                          .secondaryText,
                                                                     )
                                                                   : null,
-                                                              activeColor: Color(
-                                                                  0xFF1E7A4C),
+                                                              activeColor:
+                                                                  const Color(
+                                                                      0xFF1E7A4C),
                                                               checkColor:
                                                                   FlutterFlowTheme.of(
                                                                           context)
@@ -2822,7 +2834,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color: Color(
+                                                                  color: const Color(
                                                                       0xFF474747),
                                                                   fontSize:
                                                                       14.0,
@@ -2855,21 +2867,15 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                       options: FFButtonOptions(
                                                         height: 34.0,
                                                         padding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    24.0,
-                                                                    0.0,
-                                                                    24.0,
-                                                                    0.0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(24.0,
+                                                                0.0, 24.0, 0.0),
                                                         iconPadding:
-                                                            EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0),
-                                                        color:
-                                                            Color(0xFFFF0000),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(0.0,
+                                                                0.0, 0.0, 0.0),
+                                                        color: const Color(
+                                                            0xFFFF0000),
                                                         textStyle:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -2893,7 +2899,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                           .titleSmallIsCustom,
                                                                 ),
                                                         elevation: 0.0,
-                                                        borderSide: BorderSide(
+                                                        borderSide:
+                                                            const BorderSide(
                                                           color: Colors
                                                               .transparent,
                                                           width: 1.0,
@@ -2943,8 +2950,9 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                         itemCount:
                                                             rebanhoAplicado
                                                                 .length,
-                                                        separatorBuilder:
-                                                            (_, __) => SizedBox(
+                                                        separatorBuilder: (_,
+                                                                __) =>
+                                                            const SizedBox(
                                                                 height: 8.0),
                                                         itemBuilder: (context,
                                                             rebanhoAplicadoIndex) {
@@ -3012,7 +3020,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                             width:
                                                                                 2,
                                                                             color:
-                                                                                FlutterFlowTheme.of(context).alternate!,
+                                                                                FlutterFlowTheme.of(context).alternate,
                                                                           )
                                                                         : null,
                                                                     activeColor:
@@ -3094,7 +3102,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                     fontWeight: FontWeight.w500,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFF474747),
+                                                                                  color: const Color(0xFF474747),
                                                                                   fontSize: 14.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.w500,
@@ -3108,7 +3116,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                     fontWeight: FontWeight.normal,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFF474747),
+                                                                                  color: const Color(0xFF474747),
                                                                                   fontSize: 14.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
@@ -3133,7 +3141,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                     fontWeight: FontWeight.w500,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFF474747),
+                                                                                  color: const Color(0xFF474747),
                                                                                   fontSize: 14.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.w500,
@@ -3147,7 +3155,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                     fontWeight: FontWeight.normal,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFF474747),
+                                                                                  color: const Color(0xFF474747),
                                                                                   fontSize: 14.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
@@ -3165,14 +3173,14 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                     fontWeight: FontWeight.w500,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFF474747),
+                                                                                  color: const Color(0xFF474747),
                                                                                   fontSize: 14.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.w500,
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                 ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 4.0)),
+                                                                        ].divide(const SizedBox(width: 4.0)),
                                                                       ),
                                                                     ),
                                                                     SingleChildScrollView(
@@ -3191,14 +3199,14 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                     fontWeight: FontWeight.normal,
                                                                                     fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                   ),
-                                                                                  color: Color(0xFF5F5F5F),
+                                                                                  color: const Color(0xFF5F5F5F),
                                                                                   fontSize: 14.0,
                                                                                   letterSpacing: 0.0,
                                                                                   fontWeight: FontWeight.normal,
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                 ),
                                                                           ),
-                                                                        ].divide(SizedBox(width: 4.0)),
+                                                                        ].divide(const SizedBox(width: 4.0)),
                                                                       ),
                                                                     ),
                                                                     Row(
@@ -3230,7 +3238,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                   fontWeight: FontWeight.normal,
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                 ),
-                                                                                color: Color(0xFF5F5F5F),
+                                                                                color: const Color(0xFF5F5F5F),
                                                                                 fontSize: 14.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.normal,
@@ -3258,22 +3266,24 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                   fontWeight: FontWeight.normal,
                                                                                   fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                 ),
-                                                                                color: Color(0xFF5F5F5F),
+                                                                                color: const Color(0xFF5F5F5F),
                                                                                 fontSize: 14.0,
                                                                                 letterSpacing: 0.0,
                                                                                 fontWeight: FontWeight.normal,
                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                               ),
                                                                         ),
-                                                                      ].divide(SizedBox(
+                                                                      ].divide(const SizedBox(
                                                                               width: 5.0)),
                                                                     ),
-                                                                  ].divide(SizedBox(
+                                                                  ].divide(const SizedBox(
                                                                       height:
                                                                           8.0)),
                                                                 ),
-                                                              ].divide(SizedBox(
-                                                                  width: 8.0)),
+                                                              ].divide(
+                                                                  const SizedBox(
+                                                                      width:
+                                                                          8.0)),
                                                             ),
                                                           );
                                                         },
@@ -3415,7 +3425,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                       ),
                                                   ],
                                                 ),
-                                              ].divide(SizedBox(height: 16.0)),
+                                              ].divide(
+                                                  const SizedBox(height: 16.0)),
                                             ),
                                           ),
                                         ),
@@ -3453,34 +3464,36 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                               options: FFButtonOptions(
                                                 width: 155.0,
                                                 height: 56.0,
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         24.0, 0.0, 24.0, 0.0),
                                                 iconPadding:
-                                                    EdgeInsetsDirectional
+                                                    const EdgeInsetsDirectional
                                                         .fromSTEB(
-                                                            0.0, 0.0, 0.0, 0.0),
-                                                color: Color(0x001E7A4C),
-                                                textStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .titleSmall
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .titleSmallFamily,
-                                                      color: Color(0xFF1E7A4C),
-                                                      fontSize: 18.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .titleSmallIsCustom,
-                                                    ),
+                                                        0.0, 0.0, 0.0, 0.0),
+                                                color: const Color(0x001E7A4C),
+                                                textStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .titleSmall
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .titleSmallFamily,
+                                                          color: const Color(
+                                                              0xFF1E7A4C),
+                                                          fontSize: 18.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .titleSmallIsCustom,
+                                                        ),
                                                 elevation: 0.0,
-                                                borderSide: BorderSide(
+                                                borderSide: const BorderSide(
                                                   color: Color(0xFF1E7A4C),
                                                   width: 2.0,
                                                 ),
@@ -3493,11 +3506,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                             child: FFButtonWidget(
                                               onPressed:
                                                   (_model.nomeloteTextController
-                                                                  .text ==
-                                                              null ||
-                                                          _model.nomeloteTextController
-                                                                  .text ==
-                                                              '')
+                                                              .text ==
+                                                          '')
                                                       ? null
                                                       : () async {
                                                           if (!(FFAppState()
@@ -3841,9 +3851,10 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                       .secondaryBackground,
                                                                 ),
                                                               ),
-                                                              duration: Duration(
-                                                                  milliseconds:
-                                                                      4000),
+                                                              duration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          4000),
                                                               backgroundColor:
                                                                   FlutterFlowTheme.of(
                                                                           context)
@@ -3857,14 +3868,15 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                               options: FFButtonOptions(
                                                 width: 155.0,
                                                 height: 56.0,
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         24.0, 0.0, 24.0, 0.0),
                                                 iconPadding:
-                                                    EdgeInsetsDirectional
+                                                    const EdgeInsetsDirectional
                                                         .fromSTEB(
-                                                            0.0, 0.0, 0.0, 0.0),
-                                                color: Color(0xFF28A365),
+                                                        0.0, 0.0, 0.0, 0.0),
+                                                color: const Color(0xFF28A365),
                                                 textStyle:
                                                     FlutterFlowTheme.of(context)
                                                         .titleSmall
@@ -3884,7 +3896,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                   .titleSmallIsCustom,
                                                         ),
                                                 elevation: 0.0,
-                                                borderSide: BorderSide(
+                                                borderSide: const BorderSide(
                                                   color: Colors.transparent,
                                                   width: 1.0,
                                                 ),
@@ -3896,9 +3908,9 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                               ),
                                             ),
                                           ),
-                                        ].divide(SizedBox(width: 16.0)),
+                                        ].divide(const SizedBox(width: 16.0)),
                                       ),
-                                    ].divide(SizedBox(height: 32.0)),
+                                    ].divide(const SizedBox(height: 32.0)),
                                   ),
                                 ),
                               ),
@@ -3909,7 +3921,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                     ),
                   ),
                 ),
-              ].divide(SizedBox(height: 24.0)),
+              ].divide(const SizedBox(height: 24.0)),
             ),
           ),
         ),

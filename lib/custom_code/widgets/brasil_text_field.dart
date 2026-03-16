@@ -17,7 +17,7 @@ import 'package:flutter/services.dart';
 
 class BrasilTextField extends StatefulWidget {
   const BrasilTextField({
-    Key? key,
+    super.key,
     this.width,
     this.height,
     this.value,
@@ -30,7 +30,7 @@ class BrasilTextField extends StatefulWidget {
     required this.borderSize,
     required this.focusBorderColor,
     required this.callback,
-  }) : super(key: key);
+  });
 
   final double? width;
   final double? height;
@@ -105,7 +105,8 @@ class _BrasilTextFieldState extends State<BrasilTextField> {
               child: Text(
                 'R\$ ',
                 style: TextStyle(
-                  color: Color(0xFF28A365), // Cor personalizada do símbolo R$
+                  color: const Color(
+                      0xFF28A365), // Cor personalizada do símbolo R$
                   fontSize: widget.fontSize,
                   fontWeight: FontWeight.normal,
                 ),

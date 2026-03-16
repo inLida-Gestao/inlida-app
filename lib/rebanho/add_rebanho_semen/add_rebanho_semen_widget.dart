@@ -70,7 +70,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
             child: InkWell(
               splashColor: Colors.transparent,
               focusColor: Colors.transparent,
@@ -99,17 +99,17 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                               !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                         ),
                   ),
-                ].divide(SizedBox(width: 16.0)),
+                ].divide(const SizedBox(width: 16.0)),
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 0.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 0.0, 0.0),
             child: Text(
               'Adicionar sêmen',
               style: FlutterFlowTheme.of(context).bodyMedium.override(
                     fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                    color: Color(0xFF181818),
+                    color: const Color(0xFF181818),
                     fontSize: 24.0,
                     letterSpacing: 0.0,
                     fontWeight: FontWeight.w500,
@@ -121,7 +121,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
           Flexible(
             child: Container(
               width: double.infinity,
-              constraints: BoxConstraints(
+              constraints: const BoxConstraints(
                 maxHeight: 700.0,
               ),
               decoration: BoxDecoration(
@@ -131,8 +131,8 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                 key: _model.formKey,
                 autovalidateMode: AutovalidateMode.always,
                 child: Padding(
-                  padding:
-                      EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 24.0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      24.0, 16.0, 24.0, 24.0),
                   child: SingleChildScrollView(
                     primary: false,
                     child: Column(
@@ -157,7 +157,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF474747),
+                                      color: const Color(0xFF474747),
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w600,
@@ -167,7 +167,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                     ),
                               ),
                               Expanded(
-                                child: Container(
+                                child: SizedBox(
                                   width: double.infinity,
                                   child: TextFormField(
                                     controller: _model.nAnimalTextController,
@@ -179,9 +179,8 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                             _model.nAnimalTextController!.value
                                                 .copyWith(
                                           text: upperValue,
-                                          selection:
-                                              TextSelection.collapsed(
-                                                  offset: upperValue.length),
+                                          selection: TextSelection.collapsed(
+                                              offset: upperValue.length),
                                           composing: TextRange.empty,
                                         );
                                       }
@@ -196,7 +195,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFFBEBEBE),
+                                            color: const Color(0xFFBEBEBE),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -205,7 +204,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                       enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x00E0E3E7),
                                           width: 2.0,
                                         ),
@@ -213,7 +212,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                             BorderRadius.circular(8.0),
                                       ),
                                       focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x004B39EF),
                                           width: 2.0,
                                         ),
@@ -239,7 +238,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                             BorderRadius.circular(8.0),
                                       ),
                                       filled: true,
-                                      fillColor: Color(0xFFF1F1F1),
+                                      fillColor: const Color(0xFFF1F1F1),
                                     ),
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
@@ -260,7 +259,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                         Container(
@@ -281,7 +280,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF474747),
+                                      color: const Color(0xFF474747),
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w600,
@@ -291,7 +290,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                     ),
                               ),
                               Expanded(
-                                child: Container(
+                                child: SizedBox(
                                   width: double.infinity,
                                   child: TextFormField(
                                     controller:
@@ -307,7 +306,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFFBEBEBE),
+                                            color: const Color(0xFFBEBEBE),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -316,7 +315,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                       enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x00E0E3E7),
                                           width: 2.0,
                                         ),
@@ -324,7 +323,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                             BorderRadius.circular(8.0),
                                       ),
                                       focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x004B39EF),
                                           width: 2.0,
                                         ),
@@ -350,7 +349,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                             BorderRadius.circular(8.0),
                                       ),
                                       filled: true,
-                                      fillColor: Color(0xFFF1F1F1),
+                                      fillColor: const Color(0xFFF1F1F1),
                                     ),
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
@@ -371,7 +370,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                         Container(
@@ -392,7 +391,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF474747),
+                                      color: const Color(0xFF474747),
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w600,
@@ -402,7 +401,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                     ),
                               ),
                               Expanded(
-                                child: Container(
+                                child: SizedBox(
                                   width: double.infinity,
                                   child: TextFormField(
                                     controller: _model.nomeAnimalTextController,
@@ -417,7 +416,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFFBEBEBE),
+                                            color: const Color(0xFFBEBEBE),
                                             fontSize: 16.0,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
@@ -426,7 +425,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                       enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x00E0E3E7),
                                           width: 2.0,
                                         ),
@@ -434,7 +433,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                             BorderRadius.circular(8.0),
                                       ),
                                       focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x004B39EF),
                                           width: 2.0,
                                         ),
@@ -460,7 +459,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                             BorderRadius.circular(8.0),
                                       ),
                                       filled: true,
-                                      fillColor: Color(0xFFF1F1F1),
+                                      fillColor: const Color(0xFFF1F1F1),
                                     ),
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
@@ -481,7 +480,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                         Container(
@@ -502,7 +501,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF474747),
+                                      color: const Color(0xFF474747),
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w600,
@@ -540,19 +539,19 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                       .secondaryText,
                                   size: 24.0,
                                 ),
-                                fillColor: Color(0xFFF1F1F1),
+                                fillColor: const Color(0xFFF1F1F1),
                                 elevation: 2.0,
-                                borderColor: Color(0x00E0E3E7),
+                                borderColor: const Color(0x00E0E3E7),
                                 borderWidth: 2.0,
                                 borderRadius: 8.0,
-                                margin: EdgeInsetsDirectional.fromSTEB(
+                                margin: const EdgeInsetsDirectional.fromSTEB(
                                     16.0, 4.0, 16.0, 4.0),
                                 hidesUnderline: true,
                                 isOverButton: true,
                                 isSearchable: false,
                                 isMultiSelect: false,
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                         Container(
@@ -572,7 +571,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                     .override(
                                       fontFamily: FlutterFlowTheme.of(context)
                                           .bodyMediumFamily,
-                                      color: Color(0xFF474747),
+                                      color: const Color(0xFF474747),
                                       fontSize: 16.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w600,
@@ -584,7 +583,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                               Container(
                                 width: double.infinity,
                                 height: 104.0,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: Color(0xFFF1F1F1),
                                   borderRadius: BorderRadius.only(
                                     bottomLeft: Radius.circular(6.0),
@@ -593,7 +592,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                     topRight: Radius.circular(6.0),
                                   ),
                                 ),
-                                child: Container(
+                                child: SizedBox(
                                   width: double.infinity,
                                   child: TextFormField(
                                     controller: _model.anotacoesTextController,
@@ -617,7 +616,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                                     .bodyMediumIsCustom,
                                           ),
                                       enabledBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x00E0E3E7),
                                           width: 2.0,
                                         ),
@@ -625,7 +624,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                             BorderRadius.circular(8.0),
                                       ),
                                       focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: Color(0x004B39EF),
                                           width: 2.0,
                                         ),
@@ -651,7 +650,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                             BorderRadius.circular(8.0),
                                       ),
                                       contentPadding:
-                                          EdgeInsetsDirectional.fromSTEB(
+                                          const EdgeInsetsDirectional.fromSTEB(
                                               16.0, 0.0, 16.0, 0.0),
                                     ),
                                     style: FlutterFlowTheme.of(context)
@@ -671,11 +670,11 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(height: 8.0)),
+                            ].divide(const SizedBox(height: 8.0)),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 0.0, 8.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -704,18 +703,20 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                   options: FFButtonOptions(
                                     width: 155.0,
                                     height: 56.0,
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        24.0, 0.0, 24.0, 0.0),
-                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 0.0, 0.0, 0.0),
-                                    color: Color(0x001E7A4C),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            24.0, 0.0, 24.0, 0.0),
+                                    iconPadding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 0.0, 0.0, 0.0),
+                                    color: const Color(0x001E7A4C),
                                     textStyle: FlutterFlowTheme.of(context)
                                         .titleSmall
                                         .override(
                                           fontFamily:
                                               FlutterFlowTheme.of(context)
                                                   .titleSmallFamily,
-                                          color: Color(0xFF1E7A4C),
+                                          color: const Color(0xFF1E7A4C),
                                           fontSize: 18.0,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w600,
@@ -724,7 +725,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                                   .titleSmallIsCustom,
                                         ),
                                     elevation: 0.0,
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Color(0xFF1E7A4C),
                                       width: 2.0,
                                     ),
@@ -796,7 +797,8 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                                 .secondaryBackground,
                                           ),
                                         ),
-                                        duration: Duration(milliseconds: 4000),
+                                        duration:
+                                            const Duration(milliseconds: 4000),
                                         backgroundColor:
                                             FlutterFlowTheme.of(context)
                                                 .secondary,
@@ -808,11 +810,13 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                   options: FFButtonOptions(
                                     width: 155.0,
                                     height: 56.0,
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        24.0, 0.0, 24.0, 0.0),
-                                    iconPadding: EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 0.0, 0.0, 0.0),
-                                    color: Color(0xFF28A365),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            24.0, 0.0, 24.0, 0.0),
+                                    iconPadding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 0.0, 0.0, 0.0),
+                                    color: const Color(0xFF28A365),
                                     textStyle: FlutterFlowTheme.of(context)
                                         .titleSmall
                                         .override(
@@ -828,7 +832,7 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                                   .titleSmallIsCustom,
                                         ),
                                     elevation: 3.0,
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: Colors.transparent,
                                       width: 1.0,
                                     ),
@@ -836,17 +840,17 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                   ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 16.0)),
+                            ].divide(const SizedBox(width: 16.0)),
                           ),
                         ),
-                      ].divide(SizedBox(height: 24.0)),
+                      ].divide(const SizedBox(height: 24.0)),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        ].divide(SizedBox(height: 24.0)),
+        ].divide(const SizedBox(height: 24.0)),
       ),
     );
   }

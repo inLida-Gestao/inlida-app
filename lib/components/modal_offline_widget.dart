@@ -68,7 +68,9 @@ class _ModalOfflineWidgetState extends State<ModalOfflineWidget> {
                       !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                 ),
           ),
-        ].divide(SizedBox(width: 8.0)).addToStart(SizedBox(width: 16.0)),
+        ]
+            .divide(const SizedBox(width: 8.0))
+            .addToStart(const SizedBox(width: 16.0)),
       ),
     );
   }

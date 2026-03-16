@@ -1,16 +1,7 @@
-import '/backend/sqlite/sqlite_manager.dart';
-import '/flutter_flow/flutter_flow_drop_down.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
-import 'dart:ui';
-import '/actions/actions.dart' as action_blocks;
-import '/flutter_flow/random_data_util.dart' as random_data;
 import 'add_rebanho_semen_widget.dart' show AddRebanhoSemenWidget;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
 class AddRebanhoSemenModel extends FlutterFlowModel<AddRebanhoSemenWidget> {
   ///  State fields for stateful widgets in this component.

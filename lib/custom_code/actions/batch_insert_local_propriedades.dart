@@ -27,42 +27,60 @@ Future<bool> batchInsertLocalPropriedades(List<dynamic> records) async {
         final Map<String, dynamic> source = Map<String, dynamic>.from(record);
         final Map<String, dynamic> mapped = {};
 
-        if (source['userID'] != null)
+        if (source['userID'] != null) {
           mapped['userID'] = _cleanNull(source['userID']);
-        if (source['anotacoes'] != null)
+        }
+        if (source['anotacoes'] != null) {
           mapped['anotacoes'] = _cleanNull(source['anotacoes']);
-        if (source['areaAgricultura'] != null)
+        }
+        if (source['areaAgricultura'] != null) {
           mapped['areaAgricultura'] = source['areaAgricultura'];
-        if (source['areaBenfeitoria'] != null)
+        }
+        if (source['areaBenfeitoria'] != null) {
           mapped['areaBenfeitoria'] = source['areaBenfeitoria'];
-        if (source['areaPastagem'] != null)
+        }
+        if (source['areaPastagem'] != null) {
           mapped['areaPastagem'] = source['areaPastagem'];
-        if (source['areaReserva'] != null)
+        }
+        if (source['areaReserva'] != null) {
           mapped['areaReserva'] = source['areaReserva'];
-        if (source['areaTotal'] != null)
+        }
+        if (source['areaTotal'] != null) {
           mapped['areaTotal'] = source['areaTotal'];
-        if (source['cidade'] != null)
+        }
+        if (source['cidade'] != null) {
           mapped['cidade'] = _cleanNull(source['cidade']);
-        if (source['estado'] != null)
+        }
+        if (source['estado'] != null) {
           mapped['estado'] = _cleanNull(source['estado']);
-        if (source['icone'] != null)
+        }
+        if (source['icone'] != null) {
           mapped['icone'] = _cleanNull(source['icone']);
-        if (source['idPropriedade'] != null)
+        }
+        if (source['idPropriedade'] != null) {
           mapped['idPropriedade'] = _cleanNull(source['idPropriedade']);
-        if (source['atividades'] != null)
+        }
+        if (source['atividades'] != null) {
           mapped['atividades'] = _cleanNull(source['atividades']);
-        if (source['nome'] != null)
+        }
+        if (source['nome'] != null) {
           mapped['nome'] = _cleanNull(source['nome']);
-        if (source['updated_at'] != null)
+        }
+        if (source['updated_at'] != null) {
           mapped['updated_at'] = _cleanNull(source['updated_at'].toString());
-        if (source['created_at'] != null)
+        }
+        if (source['created_at'] != null) {
           mapped['created_at'] = _cleanNull(source['created_at'].toString());
-        if (source['usersID'] != null)
+        }
+        if (source['usersID'] != null) {
           mapped['usersID'] = _cleanNull(source['usersID']);
-        if (source['rebanhosID'] != null)
+        }
+        if (source['rebanhosID'] != null) {
           mapped['rebanhosID'] = _cleanNull(source['rebanhosID']);
-        if (source['deletado'] != null)
+        }
+        if (source['deletado'] != null) {
           mapped['deletado'] = _cleanNull(source['deletado']);
+        }
 
         batch.insert('local_propriedades', mapped,
             conflictAlgorithm: ConflictAlgorithm.replace);

@@ -52,10 +52,10 @@ class _PopupCidadesWidgetState extends State<PopupCidadesWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+      padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
       child: FutureBuilder<List<LocalCidadesRow>>(
         future: SQLiteManager.instance.localCidades(
-          uf: widget!.uf,
+          uf: widget.uf,
         ),
         builder: (context, snapshot) {
           // Customize what your widget looks like when it's loading.
@@ -78,7 +78,7 @@ class _PopupCidadesWidgetState extends State<PopupCidadesWidget> {
             height: 450.0,
             decoration: BoxDecoration(
               color: FlutterFlowTheme.of(context).secondaryBackground,
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   blurRadius: 4.0,
                   color: Color(0x33000000),
@@ -94,15 +94,16 @@ class _PopupCidadesWidgetState extends State<PopupCidadesWidget> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(8.0, 8.0, 8.0, 0.0),
-                  child: Container(
+                  padding:
+                      const EdgeInsetsDirectional.fromSTEB(8.0, 8.0, 8.0, 0.0),
+                  child: SizedBox(
                     width: double.infinity,
                     child: TextFormField(
                       controller: _model.pesquisarTextController,
                       focusNode: _model.pesquisarFocusNode,
                       onChanged: (_) => EasyDebounce.debounce(
                         '_model.pesquisarTextController',
-                        Duration(milliseconds: 250),
+                        const Duration(milliseconds: 250),
                         () => safeSetState(() {}),
                       ),
                       autofocus: false,
@@ -196,17 +197,17 @@ class _PopupCidadesWidgetState extends State<PopupCidadesWidget> {
                 if (containerLocalCidadesRowList.isNotEmpty)
                   Flexible(
                     child: Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(0.0, 14.0, 0.0, 8.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 14.0, 0.0, 8.0),
                       child: Container(
                         width: double.infinity,
-                        constraints: BoxConstraints(
+                        constraints: const BoxConstraints(
                           maxHeight: 500.0,
                         ),
                         decoration: BoxDecoration(
                           color:
                               FlutterFlowTheme.of(context).secondaryBackground,
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(8.0),
                             bottomRight: Radius.circular(8.0),
                             topLeft: Radius.circular(0.0),
@@ -214,16 +215,14 @@ class _PopupCidadesWidgetState extends State<PopupCidadesWidget> {
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               8.0, 0.0, 8.0, 0.0),
                           child: Builder(
                             builder: (context) {
                               final localCidades = containerLocalCidadesRowList
                                   .where((e) =>
                                       (_model.pesquisarTextController.text ==
-                                              null ||
-                                          _model.pesquisarTextController.text ==
-                                              '') ||
+                                          '') ||
                                       (e.cidade.toLowerCase().contains(_model
                                           .pesquisarTextController.text
                                           .toLowerCase())))
@@ -257,9 +256,9 @@ class _PopupCidadesWidgetState extends State<PopupCidadesWidget> {
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    24.0, 12.0, 24.0, 12.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(
+                                                24.0, 12.0, 24.0, 12.0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
@@ -282,7 +281,7 @@ class _PopupCidadesWidgetState extends State<PopupCidadesWidget> {
                                                                   FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                              color: Color(
+                                                              color: const Color(
                                                                   0xFF474747),
                                                               fontSize: 16.0,
                                                               letterSpacing:
@@ -296,8 +295,8 @@ class _PopupCidadesWidgetState extends State<PopupCidadesWidget> {
                                                                       .bodyMediumIsCustom,
                                                             ),
                                                       ),
-                                                    ].divide(
-                                                        SizedBox(height: 2.0)),
+                                                    ].divide(const SizedBox(
+                                                        height: 2.0)),
                                                   ),
                                                 ),
                                                 Icon(

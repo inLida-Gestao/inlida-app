@@ -10,7 +10,7 @@ class RebanhoChangeTrackerTable extends SupabaseTable<RebanhoChangeTrackerRow> {
 }
 
 class RebanhoChangeTrackerRow extends SupabaseDataRow {
-  RebanhoChangeTrackerRow(Map<String, dynamic> data) : super(data);
+  RebanhoChangeTrackerRow(super.data);
 
   @override
   SupabaseTable get table => RebanhoChangeTrackerTable();

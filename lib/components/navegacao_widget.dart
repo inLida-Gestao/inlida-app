@@ -43,7 +43,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimer = InstantTimer.periodic(
-        duration: Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
         callback: (timer) async {
           _model.temNet = await actions.checkInternetConnection();
 
@@ -68,7 +68,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
     context.watch<FFAppState>();
 
     return Container(
-      decoration: BoxDecoration(),
+      decoration: const BoxDecoration(),
       child: SingleChildScrollView(
         primary: false,
         child: Column(
@@ -77,11 +77,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
             Container(
               width: double.infinity,
               height: 276.0,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Color(0xFF28A365),
               ),
               child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(24.0, 60.0, 24.0, 24.0),
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    24.0, 60.0, 24.0, 24.0),
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
@@ -95,13 +96,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                             width: 60.0,
                             height: 60.0,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                             ),
                             child: Image.network(
                               valueOrDefault<String>(
-                                FFAppState().userLogado.foto == null ||
-                                        FFAppState().userLogado.foto == ''
+                                FFAppState().userLogado.foto == ''
                                     ? 'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/in-linda-b-k-p-a05zov/assets/n2mzyrqvd7k7/empty_user_inlida.png'
                                     : FFAppState().userLogado.foto,
                                 'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/in-linda-b-k-p-a05zov/assets/n2mzyrqvd7k7/empty_user_inlida.png',
@@ -133,8 +133,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                         ],
                       ),
                       Padding(
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 10.0, 0.0, 0.0),
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            0.0, 10.0, 0.0, 0.0),
                         child: Text(
                           'Olá, ${valueOrDefault<String>(
                             FFAppState().userLogado.nome,
@@ -171,7 +171,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 10.0, 0.0, 0.0),
                                 child: Text(
                                   'Última sincronização:',
@@ -201,7 +201,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     0.0, 4.0, 0.0, 0.0),
                                 child: Text(
                                   valueOrDefault<String>(
@@ -254,205 +254,253 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 ),
                                 showLoadingIndicator: true,
                                 onPressed: () async {
-                              _model.temInternet =
-                                  await actions.checkInternetConnection();
-                              if (_model.temInternet == true) {
-                                _model.userLogado =
-                                    await UsersTable().queryRows(
-                                  queryFn: (q) => q.eqOrNull(
-                                    'userID',
-                                    currentUserUid,
-                                  ),
-                                );
-                                if ((_model.userLogado?.firstOrNull?.acesso ==
-                                        'Pago') ||
-                                    (_model.userLogado?.firstOrNull?.acesso ==
-                                        'Gratis')) {
-                                  FFAppState().syncProgressPercent = 0;
-                                  FFAppState().syncProgressLabel = 'Enviando...';
-                                  safeSetState(() {});
-                                  try {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Sincronização iniciada.',
-                                        style: TextStyle(
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
-                                        ),
+                                  _model.temInternet =
+                                      await actions.checkInternetConnection();
+                                  if (_model.temInternet == true) {
+                                    _model.userLogado =
+                                        await UsersTable().queryRows(
+                                      queryFn: (q) => q.eqOrNull(
+                                        'userID',
+                                        currentUserUid,
                                       ),
-                                      duration: Duration(milliseconds: 4000),
-                                      backgroundColor:
-                                          FlutterFlowTheme.of(context)
-                                              .secondary,
-                                    ),
-                                  );
-                                  // Upload phase - 20%
-                                  FFAppState().syncProgressPercent = 5;
-                                  FFAppState().syncProgressLabel = 'Enviando rebanhos...';
-                                  safeSetState(() {});
-                                  await Future.wait([
-                                    action_blocks.putUpdtRebanhos(context),
-                                    action_blocks.putUpdtLotes(context),
-                                    action_blocks
-                                        .putUpdtReproducao(context),
-                                  ]);
-                                  FFAppState().syncProgressPercent = 15;
-                                  FFAppState().syncProgressLabel = 'Enviando sanidades...';
-                                  safeSetState(() {});
-                                  FFAppState().dataDadosNaoSyncRepro = null;
-                                  safeSetState(() {});
-                                  await action_blocks.putUpdtSanidades(context);
-                                  FFAppState().syncProgressPercent = 20;
-                                  FFAppState().syncProgressLabel = 'Baixando propriedades...';
-                                  safeSetState(() {});
-                                  // Download propriedades - 25%
-                                  await action_blocks
-                                      .refreshPropriedades(context);
-                                  FFAppState().syncProgressPercent = 25;
-                                  FFAppState().syncProgressLabel = 'Enviando propriedades...';
-                                  safeSetState(() {});
-                                  await action_blocks
-                                      .putUpdtPropriedades(context);
-                                  FFAppState().syncProgressPercent = 30;
-                                  FFAppState().syncProgressLabel = 'Baixando lotes...';
-                                  safeSetState(() {});
-                                  // Download lotes - 35%
-                                  try { await action_blocks.refreshLotes(context); } catch (e) { debugPrint('[SYNC] Erro nav1 lotes: $e'); }
-                                  FFAppState().syncProgressPercent = 35;
-                                  FFAppState().syncProgressLabel = 'Baixando dados...';
-                                  safeSetState(() {});
-                                  // Download parallel - 35% to 95%
-                                  await Future.wait([
-                                    action_blocks
-                                        .refreshRebanhoOtimizada(context),
-                                    action_blocks
-                                        .refreshReproducaoOtimizada(context),
-                                    action_blocks
-                                        .refreshPesagens(context),
-                                    action_blocks
-                                        .refresSanidadeOtimizada(context),
-                                  ]).catchError((e) { debugPrint('[SYNC] Erro no Future.wait nav1: $e'); return <void>[]; });
-                                  FFAppState().syncProgressPercent = 95;
-                                  FFAppState().syncProgressLabel = 'Finalizando...';
-                                  safeSetState(() {});
-                                  await action_blocks
-                                      .countLotesCadastrados(context);
-                                  FFAppState().ultimaSincronizacao =
-                                      getCurrentTimestamp;
-                                  FFAppState().syncProgressPercent = 100;
-                                  FFAppState().syncProgressLabel = 'Concluído!';
-                                  safeSetState(() {});
-                                  FFAppState().dataDadosNaoSyncProp = null;
-                                  FFAppState().dataDadosNaoSyncRebanho = null;
-                                  FFAppState().dataDadosNaoSyncLotes = null;
-                                  FFAppState().dataDadosNaoSyncRepro = null;
-                                  FFAppState().dataDadosNaoSyncSanidade = null;
-                                  safeSetState(() {});
-                                  // Reset progress after a brief delay so user sees 100%
-                                  await Future.delayed(Duration(milliseconds: 1500));
-                                  FFAppState().syncProgressPercent = -1;
-                                  FFAppState().syncProgressLabel = '';
-                                  safeSetState(() {});
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Sincronização realizada com sucesso.',
-                                        style: TextStyle(
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
+                                    );
+                                    if ((_model.userLogado?.firstOrNull
+                                                ?.acesso ==
+                                            'Pago') ||
+                                        (_model.userLogado?.firstOrNull
+                                                ?.acesso ==
+                                            'Gratis')) {
+                                      FFAppState().syncProgressPercent = 0;
+                                      FFAppState().syncProgressLabel =
+                                          'Enviando...';
+                                      safeSetState(() {});
+                                      try {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Sincronização iniciada.',
+                                              style: TextStyle(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                              ),
+                                            ),
+                                            duration: const Duration(
+                                                milliseconds: 4000),
+                                            backgroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .secondary,
+                                          ),
+                                        );
+                                        // Upload phase - 20%
+                                        FFAppState().syncProgressPercent = 5;
+                                        FFAppState().syncProgressLabel =
+                                            'Enviando rebanhos...';
+                                        safeSetState(() {});
+                                        await Future.wait([
+                                          action_blocks
+                                              .putUpdtRebanhos(context),
+                                          action_blocks.putUpdtLotes(context),
+                                          action_blocks
+                                              .putUpdtReproducao(context),
+                                        ]);
+                                        FFAppState().syncProgressPercent = 15;
+                                        FFAppState().syncProgressLabel =
+                                            'Enviando sanidades...';
+                                        safeSetState(() {});
+                                        FFAppState().dataDadosNaoSyncRepro =
+                                            null;
+                                        safeSetState(() {});
+                                        await action_blocks
+                                            .putUpdtSanidades(context);
+                                        FFAppState().syncProgressPercent = 20;
+                                        FFAppState().syncProgressLabel =
+                                            'Baixando propriedades...';
+                                        safeSetState(() {});
+                                        // Download propriedades - 25%
+                                        await action_blocks
+                                            .refreshPropriedades(context);
+                                        FFAppState().syncProgressPercent = 25;
+                                        FFAppState().syncProgressLabel =
+                                            'Enviando propriedades...';
+                                        safeSetState(() {});
+                                        await action_blocks
+                                            .putUpdtPropriedades(context);
+                                        FFAppState().syncProgressPercent = 30;
+                                        FFAppState().syncProgressLabel =
+                                            'Baixando lotes...';
+                                        safeSetState(() {});
+                                        // Download lotes - 35%
+                                        try {
+                                          await action_blocks
+                                              .refreshLotes(context);
+                                        } catch (e) {
+                                          debugPrint(
+                                              '[SYNC] Erro nav1 lotes: $e');
+                                        }
+                                        FFAppState().syncProgressPercent = 35;
+                                        FFAppState().syncProgressLabel =
+                                            'Baixando dados...';
+                                        safeSetState(() {});
+                                        // Download parallel - 35% to 95%
+                                        await Future.wait([
+                                          action_blocks
+                                              .refreshRebanhoOtimizada(context),
+                                          action_blocks
+                                              .refreshReproducaoOtimizada(
+                                                  context),
+                                          action_blocks
+                                              .refreshPesagens(context),
+                                          action_blocks
+                                              .refresSanidadeOtimizada(context),
+                                        ]).catchError((e) {
+                                          debugPrint(
+                                              '[SYNC] Erro no Future.wait nav1: $e');
+                                          return <void>[];
+                                        });
+                                        FFAppState().syncProgressPercent = 95;
+                                        FFAppState().syncProgressLabel =
+                                            'Finalizando...';
+                                        safeSetState(() {});
+                                        await action_blocks
+                                            .countLotesCadastrados(context);
+                                        FFAppState().ultimaSincronizacao =
+                                            getCurrentTimestamp;
+                                        FFAppState().syncProgressPercent = 100;
+                                        FFAppState().syncProgressLabel =
+                                            'Concluído!';
+                                        safeSetState(() {});
+                                        FFAppState().dataDadosNaoSyncProp =
+                                            null;
+                                        FFAppState().dataDadosNaoSyncRebanho =
+                                            null;
+                                        FFAppState().dataDadosNaoSyncLotes =
+                                            null;
+                                        FFAppState().dataDadosNaoSyncRepro =
+                                            null;
+                                        FFAppState().dataDadosNaoSyncSanidade =
+                                            null;
+                                        safeSetState(() {});
+                                        // Reset progress after a brief delay so user sees 100%
+                                        await Future.delayed(
+                                            const Duration(milliseconds: 1500));
+                                        FFAppState().syncProgressPercent = -1;
+                                        FFAppState().syncProgressLabel = '';
+                                        safeSetState(() {});
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Sincronização realizada com sucesso.',
+                                              style: TextStyle(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                              ),
+                                            ),
+                                            duration: const Duration(
+                                                milliseconds: 4000),
+                                            backgroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .secondary,
+                                          ),
+                                        );
+                                        Navigator.pop(context);
+                                      } catch (e) {
+                                        debugPrint(
+                                            '[SYNC] Erro geral na sincronização: $e');
+                                        FFAppState().syncProgressPercent = -1;
+                                        FFAppState().syncProgressLabel = '';
+                                        safeSetState(() {});
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Erro na sincronização. Tente novamente.',
+                                              style: TextStyle(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                              ),
+                                            ),
+                                            duration: const Duration(
+                                                milliseconds: 4000),
+                                            backgroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .error,
+                                          ),
+                                        );
+                                      }
+                                    } else {
+                                      GoRouter.of(context).prepareAuthEvent();
+                                      await authManager.signOut();
+                                      GoRouter.of(context)
+                                          .clearRedirectLocation();
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Seu período de acesso grátis finalizou, assine um plano para continuar acessando.',
+                                            style: TextStyle(
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                            ),
+                                          ),
+                                          duration: const Duration(
+                                              milliseconds: 4000),
+                                          backgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .secondary,
                                         ),
-                                      ),
-                                      duration: Duration(milliseconds: 4000),
-                                      backgroundColor:
-                                          FlutterFlowTheme.of(context)
-                                              .secondary,
-                                    ),
-                                  );
-                                  Navigator.pop(context);
-                                  } catch (e) {
-                                    debugPrint('[SYNC] Erro geral na sincronização: $e');
-                                    FFAppState().syncProgressPercent = -1;
-                                    FFAppState().syncProgressLabel = '';
-                                    safeSetState(() {});
+                                      );
+                                    }
+                                  } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                          'Erro na sincronização. Tente novamente.',
+                                          'Você não está on-line, sincronize quando estiver on-line.',
                                           style: TextStyle(
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryBackground,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14.0,
                                           ),
                                         ),
-                                        duration: Duration(milliseconds: 4000),
+                                        duration:
+                                            const Duration(milliseconds: 4000),
                                         backgroundColor:
                                             FlutterFlowTheme.of(context).error,
                                       ),
                                     );
                                   }
-                                } else {
-                                  GoRouter.of(context).prepareAuthEvent();
-                                  await authManager.signOut();
-                                  GoRouter.of(context).clearRedirectLocation();
 
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Seu período de acesso grátis finalizou, assine um plano para continuar acessando.',
-                                        style: TextStyle(
+                                  safeSetState(() {});
+                                },
+                              ),
+                              if (FFAppState().syncProgressPercent >= 0)
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 4.0, 0.0, 0.0),
+                                  child: Text(
+                                    '${FFAppState().syncProgressPercent}%',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodySmall
+                                        .override(
+                                          font: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                           color: FlutterFlowTheme.of(context)
                                               .secondaryBackground,
+                                          fontSize: 11.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w600,
                                         ),
-                                      ),
-                                      duration: Duration(milliseconds: 4000),
-                                      backgroundColor:
-                                          FlutterFlowTheme.of(context)
-                                              .secondary,
-                                    ),
-                                  );
-                                }
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Você não está on-line, sincronize quando estiver on-line.',
-                                      style: TextStyle(
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 14.0,
-                                      ),
-                                    ),
-                                    duration: Duration(milliseconds: 4000),
-                                    backgroundColor:
-                                        FlutterFlowTheme.of(context).error,
                                   ),
-                                );
-                              }
-
-                              safeSetState(() {});
-                            },
-                          ),
-                          if (FFAppState().syncProgressPercent >= 0)
-                            Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
-                              child: Text(
-                                '${FFAppState().syncProgressPercent}%',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodySmall
-                                    .override(
-                                      font: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryBackground,
-                                      fontSize: 11.0,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                            ),
-                          ],
+                                ),
+                            ],
                           ),
                         ],
                       ),
@@ -469,8 +517,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 40.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 40.0, 24.0, 0.0),
                     child: InkWell(
                       splashColor: Colors.transparent,
                       focusColor: Colors.transparent,
@@ -482,7 +530,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       child: Container(
                         width: double.infinity,
                         height: 56.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF1F1F1),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(8.0),
@@ -492,7 +540,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 16.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -508,7 +556,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 ),
                               ),
                               Align(
-                                alignment: AlignmentDirectional(0.0, 0.0),
+                                alignment: const AlignmentDirectional(0.0, 0.0),
                                 child: Text(
                                   'Suporte',
                                   style: FlutterFlowTheme.of(context)
@@ -521,7 +569,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                                   .bodyMedium
                                                   .fontStyle,
                                         ),
-                                        color: Color(0xFF474747),
+                                        color: const Color(0xFF474747),
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -530,15 +578,15 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                       ),
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 40.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 40.0, 24.0, 0.0),
                     child: InkWell(
                       splashColor: Colors.transparent,
                       focusColor: Colors.transparent,
@@ -564,7 +612,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       child: Container(
                         width: double.infinity,
                         height: 56.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF1F1F1),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(8.0),
@@ -574,14 +622,14 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 16.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               if (FFAppState().navegacaoDashboard == 'painel')
-                                SizedBox(
+                                const SizedBox(
                                   height: 100.0,
                                   child: VerticalDivider(
                                     width: 4.0,
@@ -601,7 +649,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 ),
                               if (FFAppState().navegacaoDashboard != 'painel')
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 0.0, 0.0),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(0.0),
@@ -614,7 +662,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                   ),
                                 ),
                               Align(
-                                alignment: AlignmentDirectional(0.0, 0.0),
+                                alignment: const AlignmentDirectional(0.0, 0.0),
                                 child: Text(
                                   'Painel',
                                   style: FlutterFlowTheme.of(context)
@@ -630,7 +678,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         color:
                                             FFAppState().navegacaoDashboard ==
                                                     'painel'
-                                                ? Color(0xFF145232)
+                                                ? const Color(0xFF145232)
                                                 : FlutterFlowTheme.of(context)
                                                     .primaryText,
                                         fontSize: 16.0,
@@ -642,15 +690,15 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                       ),
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 16.0, 24.0, 0.0),
                     child: InkWell(
                       splashColor: Colors.transparent,
                       focusColor: Colors.transparent,
@@ -668,7 +716,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       child: Container(
                         width: double.infinity,
                         height: 56.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF1F1F1),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(8.0),
@@ -678,7 +726,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 16.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -686,7 +734,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                             children: [
                               if (FFAppState().navegacaoDashboard ==
                                   'propriedades')
-                                SizedBox(
+                                const SizedBox(
                                   height: 100.0,
                                   child: VerticalDivider(
                                     width: 4.0,
@@ -708,7 +756,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                               if (FFAppState().navegacaoDashboard !=
                                   'propriedades')
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 0.0, 0.0),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(0.0),
@@ -721,7 +769,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                   ),
                                 ),
                               Align(
-                                alignment: AlignmentDirectional(0.0, 0.0),
+                                alignment: const AlignmentDirectional(0.0, 0.0),
                                 child: Text(
                                   'Propriedades',
                                   style: FlutterFlowTheme.of(context)
@@ -737,8 +785,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         color:
                                             FFAppState().navegacaoDashboard ==
                                                     'propriedades'
-                                                ? Color(0xFF145232)
-                                                : Color(0xFF474747),
+                                                ? const Color(0xFF145232)
+                                                : const Color(0xFF474747),
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -747,15 +795,15 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                       ),
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 16.0, 24.0, 0.0),
                     child: InkWell(
                       splashColor: Colors.transparent,
                       focusColor: Colors.transparent,
@@ -773,7 +821,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       child: Container(
                         width: double.infinity,
                         height: 56.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF1F1F1),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(8.0),
@@ -783,14 +831,14 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 16.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               if (FFAppState().navegacaoDashboard == 'lotes')
-                                SizedBox(
+                                const SizedBox(
                                   height: 100.0,
                                   child: VerticalDivider(
                                     width: 4.0,
@@ -810,7 +858,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 ),
                               if (FFAppState().navegacaoDashboard != 'lotes')
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 0.0, 0.0),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(8.0),
@@ -823,7 +871,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                   ),
                                 ),
                               Align(
-                                alignment: AlignmentDirectional(0.0, 0.0),
+                                alignment: const AlignmentDirectional(0.0, 0.0),
                                 child: Text(
                                   'Lotes',
                                   style: FlutterFlowTheme.of(context)
@@ -839,7 +887,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         color:
                                             FFAppState().navegacaoDashboard ==
                                                     'lotes'
-                                                ? Color(0xFF145232)
+                                                ? const Color(0xFF145232)
                                                 : FlutterFlowTheme.of(context)
                                                     .primaryText,
                                         letterSpacing: 0.0,
@@ -850,15 +898,15 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                       ),
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 16.0, 24.0, 0.0),
                     child: InkWell(
                       splashColor: Colors.transparent,
                       focusColor: Colors.transparent,
@@ -877,7 +925,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       child: Container(
                         width: double.infinity,
                         height: 56.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF1F1F1),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(8.0),
@@ -887,14 +935,14 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 16.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               if (FFAppState().navegacaoDashboard == 'rebanhos')
-                                SizedBox(
+                                const SizedBox(
                                   height: 100.0,
                                   child: VerticalDivider(
                                     width: 4.0,
@@ -914,7 +962,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 ),
                               if (FFAppState().navegacaoDashboard != 'rebanhos')
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 0.0, 0.0),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(8.0),
@@ -927,7 +975,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                   ),
                                 ),
                               Align(
-                                alignment: AlignmentDirectional(0.0, 0.0),
+                                alignment: const AlignmentDirectional(0.0, 0.0),
                                 child: Text(
                                   'Rebanho',
                                   style: FlutterFlowTheme.of(context)
@@ -943,8 +991,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         color:
                                             FFAppState().navegacaoDashboard ==
                                                     'rebanhos'
-                                                ? Color(0xFF145232)
-                                                : Color(0xFF474747),
+                                                ? const Color(0xFF145232)
+                                                : const Color(0xFF474747),
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -953,15 +1001,15 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                       ),
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 0.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 16.0, 24.0, 0.0),
                     child: InkWell(
                       splashColor: Colors.transparent,
                       focusColor: Colors.transparent,
@@ -979,7 +1027,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       child: Container(
                         width: double.infinity,
                         height: 56.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF1F1F1),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(8.0),
@@ -989,7 +1037,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 16.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -997,7 +1045,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                             children: [
                               if (FFAppState().navegacaoDashboard ==
                                   'reproducoes')
-                                SizedBox(
+                                const SizedBox(
                                   height: 100.0,
                                   child: VerticalDivider(
                                     width: 4.0,
@@ -1019,7 +1067,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                               if (FFAppState().navegacaoDashboard !=
                                   'reproducoes')
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 0.0, 0.0),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(8.0),
@@ -1032,7 +1080,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                   ),
                                 ),
                               Align(
-                                alignment: AlignmentDirectional(0.0, 0.0),
+                                alignment: const AlignmentDirectional(0.0, 0.0),
                                 child: Text(
                                   'Reprodução',
                                   style: FlutterFlowTheme.of(context)
@@ -1048,8 +1096,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         color:
                                             FFAppState().navegacaoDashboard ==
                                                     'reproducoes'
-                                                ? Color(0xFF145232)
-                                                : Color(0xFF474747),
+                                                ? const Color(0xFF145232)
+                                                : const Color(0xFF474747),
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -1058,15 +1106,15 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                       ),
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 40.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 16.0, 24.0, 40.0),
                     child: InkWell(
                       splashColor: Colors.transparent,
                       focusColor: Colors.transparent,
@@ -1093,7 +1141,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       child: Container(
                         width: double.infinity,
                         height: 56.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF1F1F1),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(8.0),
@@ -1103,14 +1151,14 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 0.0, 16.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               if (FFAppState().navegacaoDashboard == 'sanidade')
-                                SizedBox(
+                                const SizedBox(
                                   height: 100.0,
                                   child: VerticalDivider(
                                     width: 4.0,
@@ -1130,7 +1178,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 ),
                               if (FFAppState().navegacaoDashboard != 'sanidade')
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       16.0, 0.0, 0.0, 0.0),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(8.0),
@@ -1143,7 +1191,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                   ),
                                 ),
                               Align(
-                                alignment: AlignmentDirectional(0.0, 0.0),
+                                alignment: const AlignmentDirectional(0.0, 0.0),
                                 child: Text(
                                   'Sanidade',
                                   style: FlutterFlowTheme.of(context)
@@ -1159,8 +1207,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         color:
                                             FFAppState().navegacaoDashboard ==
                                                     'sanidade'
-                                                ? Color(0xFF145232)
-                                                : Color(0xFF474747),
+                                                ? const Color(0xFF145232)
+                                                : const Color(0xFF474747),
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -1169,7 +1217,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                       ),
@@ -1183,8 +1231,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                     desktop: false,
                   ))
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 16.0, 24.0, 0.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          24.0, 16.0, 24.0, 0.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -1201,7 +1249,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                         child: Container(
                           width: double.infinity,
                           height: 56.0,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Color(0xFFF1F1F1),
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(8.0),
@@ -1211,7 +1259,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 16.0, 0.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -1219,7 +1267,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                               children: [
                                 if (FFAppState().navegacaoDashboard ==
                                     'piquetes')
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 100.0,
                                     child: VerticalDivider(
                                       width: 4.0,
@@ -1241,8 +1289,9 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 if (FFAppState().navegacaoDashboard !=
                                     'piquetes')
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        16.0, 0.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16.0, 0.0, 0.0, 0.0),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(8.0),
                                       child: Image.asset(
@@ -1254,7 +1303,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                     ),
                                   ),
                                 Align(
-                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                  alignment:
+                                      const AlignmentDirectional(0.0, 0.0),
                                   child: Text(
                                     'Piquete',
                                     style: FlutterFlowTheme.of(context)
@@ -1270,7 +1320,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                           color:
                                               FFAppState().navegacaoDashboard ==
                                                       'piquetes'
-                                                  ? Color(0xFF145232)
+                                                  ? const Color(0xFF145232)
                                                   : FlutterFlowTheme.of(context)
                                                       .primaryText,
                                           letterSpacing: 0.0,
@@ -1282,7 +1332,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         ),
                                   ),
                                 ),
-                              ].divide(SizedBox(width: 8.0)),
+                              ].divide(const SizedBox(width: 8.0)),
                             ),
                           ),
                         ),
@@ -1296,7 +1346,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                     desktop: false,
                   ))
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
                           24.0, 16.0, 24.0, 40.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
@@ -1314,7 +1364,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                         child: Container(
                           width: double.infinity,
                           height: 56.0,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Color(0xFFF1F1F1),
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(8.0),
@@ -1324,7 +1374,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 0.0, 0.0, 16.0, 0.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -1332,7 +1382,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                               children: [
                                 if (FFAppState().navegacaoDashboard ==
                                     'pastagem')
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 100.0,
                                     child: VerticalDivider(
                                       width: 4.0,
@@ -1354,8 +1404,9 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 if (FFAppState().navegacaoDashboard !=
                                     'pastagem')
                                   Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        16.0, 0.0, 0.0, 0.0),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            16.0, 0.0, 0.0, 0.0),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(8.0),
                                       child: Image.asset(
@@ -1367,7 +1418,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                     ),
                                   ),
                                 Align(
-                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                  alignment:
+                                      const AlignmentDirectional(0.0, 0.0),
                                   child: Text(
                                     'Pastagem',
                                     style: FlutterFlowTheme.of(context)
@@ -1383,8 +1435,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                           color:
                                               FFAppState().navegacaoDashboard ==
                                                       'pastagem'
-                                                  ? Color(0xFF145232)
-                                                  : Color(0xFF474747),
+                                                  ? const Color(0xFF145232)
+                                                  : const Color(0xFF474747),
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w500,
                                           fontStyle:
@@ -1394,19 +1446,19 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         ),
                                   ),
                                 ),
-                              ].divide(SizedBox(width: 8.0)),
+                              ].divide(const SizedBox(width: 8.0)),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  Divider(
+                  const Divider(
                     thickness: 1.0,
                     color: Color(0xFFBEBEBE),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 40.0, 24.0, 16.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 40.0, 24.0, 16.0),
                     child: InkWell(
                       splashColor: Colors.transparent,
                       focusColor: Colors.transparent,
@@ -1423,7 +1475,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       child: Container(
                         width: double.infinity,
                         height: 56.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF1F1F1),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(8.0),
@@ -1433,7 +1485,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 16.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -1449,7 +1501,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 ),
                               ),
                               Align(
-                                alignment: AlignmentDirectional(0.0, 0.0),
+                                alignment: const AlignmentDirectional(0.0, 0.0),
                                 child: Text(
                                   'Minha conta',
                                   style: FlutterFlowTheme.of(context)
@@ -1462,7 +1514,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                                   .bodyMedium
                                                   .fontStyle,
                                         ),
-                                        color: Color(0xFF474747),
+                                        color: const Color(0xFF474747),
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -1471,7 +1523,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                       ),
@@ -1485,8 +1537,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                     desktop: false,
                   ))
                     Padding(
-                      padding:
-                          EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 16.0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          24.0, 0.0, 24.0, 16.0),
                       child: InkWell(
                         splashColor: Colors.transparent,
                         focusColor: Colors.transparent,
@@ -1518,7 +1570,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                           .secondaryBackground,
                                     ),
                                   ),
-                                  duration: Duration(milliseconds: 4000),
+                                  duration: const Duration(milliseconds: 4000),
                                   backgroundColor:
                                       FlutterFlowTheme.of(context).secondary,
                                 ),
@@ -1528,12 +1580,41 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                               await action_blocks.putUpdtLotes(context);
                               await action_blocks.putUpdtReproducao(context);
                               await action_blocks.putUpdtSanidades(context);
-                              try { await action_blocks.refreshPropriedades(context); } catch (e) { debugPrint('[SYNC] Erro nav2 propriedades: $e'); }
-                              try { await action_blocks.refreshLotes(context); } catch (e) { debugPrint('[SYNC] Erro nav2 lotes: $e'); }
-                              try { await action_blocks.refreshRebanhoOtimizada(context); } catch (e) { debugPrint('[SYNC] Erro nav2 rebanho: $e'); }
-                              try { await action_blocks.refreshReproducaoOtimizada(context); } catch (e) { debugPrint('[SYNC] Erro nav2 reproducao: $e'); }
-                              try { await action_blocks.refresSanidadeOtimizada(context); } catch (e) { debugPrint('[SYNC] Erro nav2 sanidade: $e'); }
-                              try { await action_blocks.countLotesCadastrados(context); } catch (e) { debugPrint('[SYNC] Erro nav2 contadores: $e'); }
+                              try {
+                                await action_blocks
+                                    .refreshPropriedades(context);
+                              } catch (e) {
+                                debugPrint('[SYNC] Erro nav2 propriedades: $e');
+                              }
+                              try {
+                                await action_blocks.refreshLotes(context);
+                              } catch (e) {
+                                debugPrint('[SYNC] Erro nav2 lotes: $e');
+                              }
+                              try {
+                                await action_blocks
+                                    .refreshRebanhoOtimizada(context);
+                              } catch (e) {
+                                debugPrint('[SYNC] Erro nav2 rebanho: $e');
+                              }
+                              try {
+                                await action_blocks
+                                    .refreshReproducaoOtimizada(context);
+                              } catch (e) {
+                                debugPrint('[SYNC] Erro nav2 reproducao: $e');
+                              }
+                              try {
+                                await action_blocks
+                                    .refresSanidadeOtimizada(context);
+                              } catch (e) {
+                                debugPrint('[SYNC] Erro nav2 sanidade: $e');
+                              }
+                              try {
+                                await action_blocks
+                                    .countLotesCadastrados(context);
+                              } catch (e) {
+                                debugPrint('[SYNC] Erro nav2 contadores: $e');
+                              }
                               FFAppState().dataDadosNaoSyncProp = null;
                               FFAppState().dataDadosNaoSyncRebanho = null;
                               FFAppState().dataDadosNaoSyncLotes = null;
@@ -1549,7 +1630,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                           .secondaryBackground,
                                     ),
                                   ),
-                                  duration: Duration(milliseconds: 4000),
+                                  duration: const Duration(milliseconds: 4000),
                                   backgroundColor:
                                       FlutterFlowTheme.of(context).secondary,
                                 ),
@@ -1569,7 +1650,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                           .secondaryBackground,
                                     ),
                                   ),
-                                  duration: Duration(milliseconds: 4000),
+                                  duration: const Duration(milliseconds: 4000),
                                   backgroundColor:
                                       FlutterFlowTheme.of(context).secondary,
                                 ),
@@ -1587,7 +1668,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                     fontSize: 14.0,
                                   ),
                                 ),
-                                duration: Duration(milliseconds: 4000),
+                                duration: const Duration(milliseconds: 4000),
                                 backgroundColor:
                                     FlutterFlowTheme.of(context).error,
                               ),
@@ -1599,7 +1680,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                         child: Container(
                           width: double.infinity,
                           height: 56.0,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Color(0xFFF1F1F1),
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(8.0),
@@ -1609,7 +1690,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
                                 16.0, 0.0, 16.0, 0.0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
@@ -1625,7 +1706,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                   ),
                                 ),
                                 Align(
-                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                  alignment:
+                                      const AlignmentDirectional(0.0, 0.0),
                                   child: Text(
                                     'Sincronização',
                                     style: FlutterFlowTheme.of(context)
@@ -1638,7 +1720,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                                     .bodyMedium
                                                     .fontStyle,
                                           ),
-                                          color: Color(0xFF474747),
+                                          color: const Color(0xFF474747),
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.w500,
                                           fontStyle:
@@ -1648,15 +1730,15 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         ),
                                   ),
                                 ),
-                              ].divide(SizedBox(width: 8.0)),
+                              ].divide(const SizedBox(width: 8.0)),
                             ),
                           ),
                         ),
                       ),
                     ),
                   Padding(
-                    padding:
-                        EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 16.0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 0.0, 24.0, 16.0),
                     child: InkWell(
                       splashColor: Colors.transparent,
                       focusColor: Colors.transparent,
@@ -1673,7 +1755,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       child: Container(
                         width: double.infinity,
                         height: 56.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Color(0xFFF1F1F1),
                           borderRadius: BorderRadius.only(
                             bottomLeft: Radius.circular(8.0),
@@ -1683,7 +1765,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               16.0, 0.0, 16.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -1699,7 +1781,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 ),
                               ),
                               Align(
-                                alignment: AlignmentDirectional(0.0, 0.0),
+                                alignment: const AlignmentDirectional(0.0, 0.0),
                                 child: Text(
                                   'Sair',
                                   style: FlutterFlowTheme.of(context)
@@ -1712,7 +1794,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                                   .bodyMedium
                                                   .fontStyle,
                                         ),
-                                        color: Color(0xFF474747),
+                                        color: const Color(0xFF474747),
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w500,
                                         fontStyle: FlutterFlowTheme.of(context)
@@ -1721,7 +1803,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       ),
                                 ),
                               ),
-                            ].divide(SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ),
                       ),
@@ -1737,7 +1819,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                     Stack(
                       children: [
                         Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 0.0, 24.0, 16.0),
                           child: InkWell(
                             splashColor: Colors.transparent,
@@ -1754,18 +1836,18 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                               decoration: BoxDecoration(
                                 color: FlutterFlowTheme.of(context)
                                     .secondaryBackground,
-                                borderRadius: BorderRadius.only(
+                                borderRadius: const BorderRadius.only(
                                   bottomLeft: Radius.circular(8.0),
                                   bottomRight: Radius.circular(8.0),
                                   topLeft: Radius.circular(8.0),
                                   topRight: Radius.circular(8.0),
                                 ),
                                 border: Border.all(
-                                  color: Color(0xFFF1F1F1),
+                                  color: const Color(0xFFF1F1F1),
                                 ),
                               ),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     12.0, 8.0, 12.0, 8.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
@@ -1779,7 +1861,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                             fontFamily:
                                                 FlutterFlowTheme.of(context)
                                                     .bodyMediumFamily,
-                                            color: Color(0xFF5F5F5F),
+                                            color: const Color(0xFF5F5F5F),
                                             letterSpacing: 0.0,
                                             useGoogleFonts:
                                                 !FlutterFlowTheme.of(context)
@@ -1826,15 +1908,14 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                             child: Visibility(
                                               visible:
                                                   containerPatrociniosRowList
-                                                          .length >
-                                                      0,
+                                                      .isNotEmpty,
                                               child: Builder(
                                                 builder: (context) {
                                                   final carrossel =
                                                       containerPatrociniosRowList
                                                           .toList();
 
-                                                  return Container(
+                                                  return SizedBox(
                                                     width: double.infinity,
                                                     child:
                                                         CarouselSlider.builder(
@@ -1895,11 +1976,11 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                                             Axis.horizontal,
                                                         autoPlay: true,
                                                         autoPlayAnimationDuration:
-                                                            Duration(
+                                                            const Duration(
                                                                 milliseconds:
                                                                     800),
                                                         autoPlayInterval:
-                                                            Duration(
+                                                            const Duration(
                                                                 milliseconds:
                                                                     (800 +
                                                                         4000)),

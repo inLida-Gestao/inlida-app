@@ -90,9 +90,9 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Container(
-                              decoration: BoxDecoration(),
+                              decoration: const BoxDecoration(),
                               child: Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
@@ -183,7 +183,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                             ),
                                       ),
                                     ),
-                                  ].divide(SizedBox(height: 8.0)),
+                                  ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
                             ),
@@ -192,12 +192,12 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                               color: FlutterFlowTheme.of(context).customColor3,
                             ),
                             Container(
-                              decoration: BoxDecoration(),
+                              decoration: const BoxDecoration(),
                               child: Form(
                                 key: _model.formKey,
                                 autovalidateMode: AutovalidateMode.always,
                                 child: Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
                                       24.0, 8.0, 24.0, 24.0),
                                   child: FocusTraversalGroup(
                                     policy: OrderedTraversalPolicy(),
@@ -207,7 +207,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Container(
-                                          decoration: BoxDecoration(),
+                                          decoration: const BoxDecoration(),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
@@ -284,7 +284,8 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                           ),
                                                   enabledBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -294,7 +295,8 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                   ),
                                                   focusedBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -359,11 +361,12 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                     .nomeTextControllerValidator
                                                     .asValidator(context),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                         Container(
-                                          decoration: BoxDecoration(),
+                                          decoration: const BoxDecoration(),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
@@ -442,7 +445,8 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                           ),
                                                   enabledBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -452,7 +456,8 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                   ),
                                                   focusedBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -522,11 +527,12 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                   _model.telefoneMask
                                                 ],
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                         Container(
-                                          decoration: BoxDecoration(),
+                                          decoration: const BoxDecoration(),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
@@ -561,7 +567,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                         .funcaoValueController ??=
                                                     FormFieldController<String>(
                                                         null),
-                                                options: [
+                                                options: const [
                                                   'Não Atuo na Atividade',
                                                   'Estudante',
                                                   'Colaborador Campo',
@@ -575,24 +581,25 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                         .funcaoValue = val),
                                                 width: double.infinity,
                                                 height: 56.0,
-                                                textStyle: FlutterFlowTheme.of(
-                                                        context)
-                                                    .bodyMedium
-                                                    .override(
-                                                      fontFamily:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumFamily,
-                                                      color: Color(0xFF181818),
-                                                      fontSize: 16.0,
-                                                      letterSpacing: 0.0,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      useGoogleFonts:
-                                                          !FlutterFlowTheme.of(
-                                                                  context)
-                                                              .bodyMediumIsCustom,
-                                                    ),
+                                                textStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: const Color(
+                                                              0xFF181818),
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
                                                 hintText: 'Selecionar função',
                                                 icon: Icon(
                                                   Icons.arrow_drop_down_sharp,
@@ -608,19 +615,21 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                 borderColor: Colors.transparent,
                                                 borderWidth: 0.0,
                                                 borderRadius: 6.0,
-                                                margin: EdgeInsetsDirectional
-                                                    .fromSTEB(
+                                                margin:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(
                                                         12.0, 0.0, 12.0, 0.0),
                                                 hidesUnderline: true,
                                                 isOverButton: false,
                                                 isSearchable: false,
                                                 isMultiSelect: false,
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                         Container(
-                                          decoration: BoxDecoration(),
+                                          decoration: const BoxDecoration(),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
@@ -699,7 +708,8 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                           ),
                                                   enabledBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -709,7 +719,8 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                   ),
                                                   focusedBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -783,11 +794,12 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                     .emailTextControllerValidator
                                                     .asValidator(context),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                         Container(
-                                          decoration: BoxDecoration(),
+                                          decoration: const BoxDecoration(),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
@@ -866,7 +878,8 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                           ),
                                                   enabledBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -876,7 +889,8 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                   ),
                                                   focusedBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -972,11 +986,12 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                     .senhaTextControllerValidator
                                                     .asValidator(context),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                         Container(
-                                          decoration: BoxDecoration(),
+                                          decoration: const BoxDecoration(),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
@@ -1055,7 +1070,8 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                           ),
                                                   enabledBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -1065,7 +1081,8 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                   ),
                                                   focusedBorder:
                                                       OutlineInputBorder(
-                                                    borderSide: BorderSide(
+                                                    borderSide:
+                                                        const BorderSide(
                                                       color: Color(0x00000000),
                                                       width: 1.0,
                                                     ),
@@ -1161,7 +1178,8 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                     .confirmarSenhaTextControllerValidator
                                                     .asValidator(context),
                                               ),
-                                            ].divide(SizedBox(height: 8.0)),
+                                            ].divide(
+                                                const SizedBox(height: 8.0)),
                                           ),
                                         ),
                                         Row(
@@ -1203,7 +1221,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                         color:
                                                             FlutterFlowTheme.of(
                                                                     context)
-                                                                .accent3!,
+                                                                .accent3,
                                                       )
                                                     : null,
                                                 activeColor:
@@ -1236,7 +1254,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                           backgroundColor:
                                                               Colors
                                                                   .transparent,
-                                                          alignment: AlignmentDirectional(
+                                                          alignment: const AlignmentDirectional(
                                                                   0.0, 0.0)
                                                               .resolve(
                                                                   Directionality.of(
@@ -1253,7 +1271,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                                   ?.unfocus();
                                                             },
                                                             child:
-                                                                PoliticaPrivacidadeWidget(),
+                                                                const PoliticaPrivacidadeWidget(),
                                                           ),
                                                         );
                                                       },
@@ -1296,7 +1314,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                                 fontFamily: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                                color: Color(
+                                                                color: const Color(
                                                                     0xFFB1CC29),
                                                                 letterSpacing:
                                                                     0.0,
@@ -1329,7 +1347,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                 ),
                                               ),
                                             ),
-                                          ].divide(SizedBox(width: 8.0)),
+                                          ].divide(const SizedBox(width: 8.0)),
                                         ),
                                         FFButtonWidget(
                                           onPressed: () async {
@@ -1352,7 +1370,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                               .primaryText,
                                                     ),
                                                   ),
-                                                  duration: Duration(
+                                                  duration: const Duration(
                                                       milliseconds: 4000),
                                                   backgroundColor:
                                                       FlutterFlowTheme.of(
@@ -1371,7 +1389,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                     .text) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
-                                                SnackBar(
+                                                const SnackBar(
                                                   content: Text(
                                                     'Passwords don\'t match!',
                                                   ),
@@ -1411,11 +1429,11 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                           options: FFButtonOptions(
                                             width: double.infinity,
                                             height: 47.0,
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16.0, 0.0, 16.0, 0.0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 16.0, 0.0),
                                             iconPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional
+                                                    .fromSTEB(
                                                     0.0, 0.0, 0.0, 0.0),
                                             color: FlutterFlowTheme.of(context)
                                                 .primary,
@@ -1444,9 +1462,8 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  0.0, 9.0, 0.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0.0, 9.0, 0.0, 0.0),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
@@ -1475,7 +1492,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                     LoginWidget.routeName,
                                                     extra: <String, dynamic>{
                                                       '__transition_info__':
-                                                          TransitionInfo(
+                                                          const TransitionInfo(
                                                         hasTransition: true,
                                                         transitionType:
                                                             PageTransitionType
@@ -1490,13 +1507,14 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                 options: FFButtonOptions(
                                                   width: double.infinity,
                                                   height: 47.0,
-                                                  padding: EdgeInsetsDirectional
-                                                      .fromSTEB(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
                                                           16.0, 0.0, 16.0, 0.0),
                                                   iconPadding:
-                                                      EdgeInsetsDirectional
-                                                          .fromSTEB(0.0, 0.0,
-                                                              0.0, 0.0),
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          0.0, 0.0, 0.0, 0.0),
                                                   color: FlutterFlowTheme.of(
                                                           context)
                                                       .info,
@@ -1532,7 +1550,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                             ],
                                           ),
                                         ),
-                                      ].divide(SizedBox(height: 23.0)),
+                                      ].divide(const SizedBox(height: 23.0)),
                                     ),
                                   ),
                                 ),
