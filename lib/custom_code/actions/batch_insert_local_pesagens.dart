@@ -31,8 +31,7 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
 
   for (int i = 0; i < records.length; i++) {
     try {
-      final Map<String, dynamic> source =
-          Map<String, dynamic>.from(records[i]);
+      final Map<String, dynamic> source = Map<String, dynamic>.from(records[i]);
       final Map<String, dynamic> mapped = {};
 
       // Mapeamento específico Supabase -> SQLite

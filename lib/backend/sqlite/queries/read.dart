@@ -640,6 +640,7 @@ class BuscaHistPesagensRow extends SqliteRow {
     if (v is String) return double.tryParse(v);
     return null;
   }
+
   String? get deletado => data['deletado'] as String?;
   String? get createdAt => data['created_at'] as String?;
   int? get id => data['id'] as int?;
@@ -673,6 +674,7 @@ class BuscaHistPesagensPUTRow extends SqliteRow {
     if (v is String) return double.tryParse(v);
     return null;
   }
+
   String? get deletado => data['deletado'] as String?;
   String? get createdAt => data['created_at'] as String?;
   int? get id => data['id'] as int?;
@@ -705,6 +707,7 @@ class BuscaHistPesagensUPDTRow extends SqliteRow {
     if (v is String) return double.tryParse(v);
     return null;
   }
+
   String? get deletado => data['deletado'] as String?;
   String? get createdAt => data['created_at'] as String?;
   int? get id => data['id'] as int?;
