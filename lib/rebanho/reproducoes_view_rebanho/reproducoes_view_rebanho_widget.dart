@@ -409,7 +409,12 @@ class _ReproducoesViewRebanhoWidgetState
                                                       ),
                                                     ),
                                                   ),
-                                                  if (['Tradicional', 'Precoce', 'Superprecoce'].contains(reproducaoItem.ressinc))
+                                                  if ([
+                                                    'Tradicional',
+                                                    'Precoce',
+                                                    'Superprecoce'
+                                                  ].contains(
+                                                      reproducaoItem.ressinc))
                                                     Container(
                                                       width: 20.0,
                                                       height: 20.0,

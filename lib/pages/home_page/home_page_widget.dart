@@ -134,7 +134,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               } catch (e) {
                 debugPrint('[SYNC][rebanho] Erro na home: $e');
               }
-              debugPrint('[SYNC][home] Iniciando refreshReproducaoOtimizada...');
+              debugPrint(
+                  '[SYNC][home] Iniciando refreshReproducaoOtimizada...');
               try {
                 await action_blocks.refreshReproducaoOtimizada(context);
               } catch (e) {
@@ -596,8 +597,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                   updateCallback: () => safeSetState(() {}),
                                   child: SelecionarPropriedadeWidget(
                                     onPropriedadeChanged: () async {
-                                      await action_blocks.animaisPropriedade(context);
-                                      await action_blocks.countLotesCadastrados(context);
+                                      await action_blocks
+                                          .animaisPropriedade(context);
+                                      await action_blocks
+                                          .countLotesCadastrados(context);
                                       safeSetState(() {});
                                     },
                                   ),

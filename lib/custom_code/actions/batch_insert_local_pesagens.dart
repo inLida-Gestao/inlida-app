@@ -35,11 +35,14 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
       final Map<String, dynamic> mapped = {};
 
       // Mapeamento específico Supabase -> SQLite (com fallback para snake_case)
-      final idRebanho = source['idRebanho'] ?? source['idrebanho'] ?? source['id_rebanho'];
+      final idRebanho =
+          source['idRebanho'] ?? source['idrebanho'] ?? source['id_rebanho'];
       if (idRebanho != null) {
         mapped['idRebanho'] = _cleanNull(idRebanho);
       }
-      final dataPesagem = source['dataPesagem'] ?? source['datapesagem'] ?? source['data_pesagem'];
+      final dataPesagem = source['dataPesagem'] ??
+          source['datapesagem'] ??
+          source['data_pesagem'];
       if (dataPesagem != null) {
         mapped['dataPesagem'] = _cleanNull(dataPesagem);
       }
@@ -59,7 +62,9 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
       if (createdAt != null) {
         mapped['created_at'] = _cleanNull(createdAt);
       }
-      final idPropriedade = source['id_propriedade'] ?? source['idPropriedade'] ?? source['idpropriedade'];
+      final idPropriedade = source['id_propriedade'] ??
+          source['idPropriedade'] ??
+          source['idpropriedade'];
       if (idPropriedade != null) {
         mapped['id_propriedade'] = _cleanNull(idPropriedade);
       }

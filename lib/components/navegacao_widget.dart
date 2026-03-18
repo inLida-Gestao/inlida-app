@@ -363,11 +363,13 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                           return <void>[];
                                         });
                                         // Pesagens sync separado para garantir execução
-                                        debugPrint('[SYNC][nav] Chamando refreshPesagens SEPARADAMENTE...');
+                                        debugPrint(
+                                            '[SYNC][nav] Chamando refreshPesagens SEPARADAMENTE...');
                                         try {
                                           await action_blocks
                                               .refreshPesagens(context);
-                                          debugPrint('[SYNC][nav] refreshPesagens CONCLUÍDO com sucesso.');
+                                          debugPrint(
+                                              '[SYNC][nav] refreshPesagens CONCLUÍDO com sucesso.');
                                         } catch (e) {
                                           debugPrint(
                                               '[SYNC][nav] Erro em refreshPesagens: $e');
@@ -1599,11 +1601,16 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       FlutterFlowTheme.of(context).secondary,
                                 ),
                               );
-                              final propOk2 = await action_blocks.putUpdtPropriedades(context);
-                              final rebanhoOk2 = await action_blocks.putUpdtRebanhos(context);
-                              final lotesOk2 = await action_blocks.putUpdtLotes(context);
-                              final reproOk2 = await action_blocks.putUpdtReproducao(context);
-                              final sanidadeOk2 = await action_blocks.putUpdtSanidades(context);
+                              final propOk2 = await action_blocks
+                                  .putUpdtPropriedades(context);
+                              final rebanhoOk2 =
+                                  await action_blocks.putUpdtRebanhos(context);
+                              final lotesOk2 =
+                                  await action_blocks.putUpdtLotes(context);
+                              final reproOk2 = await action_blocks
+                                  .putUpdtReproducao(context);
+                              final sanidadeOk2 =
+                                  await action_blocks.putUpdtSanidades(context);
                               try {
                                 await action_blocks
                                     .refreshPropriedades(context);

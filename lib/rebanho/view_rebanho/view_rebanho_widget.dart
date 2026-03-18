@@ -3130,26 +3130,27 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               safeSetState(() {});
                                                                             }
                                                                           }
-                                                                          final matrizIdRebanho = containerBuscarRebanhoRowList.firstOrNull?.rebanhoIdMatriz;
-                                                                          if (matrizIdRebanho != null && matrizIdRebanho != '' && matrizIdRebanho != 'null') {
-                                                                          await showDialog(
-                                                                            barrierColor:
-                                                                                Colors.transparent,
-                                                                            context:
-                                                                                context,
-                                                                            builder:
-                                                                                (dialogContext) {
-                                                                              return Dialog(
-                                                                                elevation: 0,
-                                                                                insetPadding: EdgeInsets.zero,
-                                                                                backgroundColor: Colors.transparent,
-                                                                                alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
-                                                                                child: ViewRebanhoWidget(
-                                                                                  idRebanho: matrizIdRebanho,
-                                                                                ),
-                                                                              );
-                                                                            },
-                                                                          );
+                                                                          final matrizIdRebanho = containerBuscarRebanhoRowList
+                                                                              .firstOrNull
+                                                                              ?.rebanhoIdMatriz;
+                                                                          if (matrizIdRebanho != null &&
+                                                                              matrizIdRebanho != '' &&
+                                                                              matrizIdRebanho != 'null') {
+                                                                            await showDialog(
+                                                                              barrierColor: Colors.transparent,
+                                                                              context: context,
+                                                                              builder: (dialogContext) {
+                                                                                return Dialog(
+                                                                                  elevation: 0,
+                                                                                  insetPadding: EdgeInsets.zero,
+                                                                                  backgroundColor: Colors.transparent,
+                                                                                  alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                  child: ViewRebanhoWidget(
+                                                                                    idRebanho: matrizIdRebanho,
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                            );
                                                                           } else {
                                                                             await showDialog(
                                                                               context: context,
@@ -3168,8 +3169,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           }
                                                                         } else {
                                                                           await showDialog(
-                                                                            context: context,
-                                                                            builder: (alertDialogContext) {
+                                                                            context:
+                                                                                context,
+                                                                            builder:
+                                                                                (alertDialogContext) {
                                                                               return AlertDialog(
                                                                                 content: const Text('Nenhuma matriz associada a este animal'),
                                                                                 actions: [
@@ -3557,26 +3560,27 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               safeSetState(() {});
                                                                             }
                                                                           }
-                                                                          final reprodutorIdRebanho = containerBuscarRebanhoRowList.firstOrNull?.rebanhoIdReprodutor;
-                                                                          if (reprodutorIdRebanho != null && reprodutorIdRebanho != '' && reprodutorIdRebanho != 'null') {
-                                                                          await showDialog(
-                                                                            barrierColor:
-                                                                                Colors.transparent,
-                                                                            context:
-                                                                                context,
-                                                                            builder:
-                                                                                (dialogContext) {
-                                                                              return Dialog(
-                                                                                elevation: 0,
-                                                                                insetPadding: EdgeInsets.zero,
-                                                                                backgroundColor: Colors.transparent,
-                                                                                alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
-                                                                                child: ViewRebanhoWidget(
-                                                                                  idRebanho: reprodutorIdRebanho,
-                                                                                ),
-                                                                              );
-                                                                            },
-                                                                          );
+                                                                          final reprodutorIdRebanho = containerBuscarRebanhoRowList
+                                                                              .firstOrNull
+                                                                              ?.rebanhoIdReprodutor;
+                                                                          if (reprodutorIdRebanho != null &&
+                                                                              reprodutorIdRebanho != '' &&
+                                                                              reprodutorIdRebanho != 'null') {
+                                                                            await showDialog(
+                                                                              barrierColor: Colors.transparent,
+                                                                              context: context,
+                                                                              builder: (dialogContext) {
+                                                                                return Dialog(
+                                                                                  elevation: 0,
+                                                                                  insetPadding: EdgeInsets.zero,
+                                                                                  backgroundColor: Colors.transparent,
+                                                                                  alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                  child: ViewRebanhoWidget(
+                                                                                    idRebanho: reprodutorIdRebanho,
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                            );
                                                                           } else {
                                                                             await showDialog(
                                                                               context: context,
@@ -3595,8 +3599,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           }
                                                                         } else {
                                                                           await showDialog(
-                                                                            context: context,
-                                                                            builder: (alertDialogContext) {
+                                                                            context:
+                                                                                context,
+                                                                            builder:
+                                                                                (alertDialogContext) {
                                                                               return AlertDialog(
                                                                                 content: const Text('Nenhum reprodutor associado a este animal'),
                                                                                 actions: [

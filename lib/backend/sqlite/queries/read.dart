@@ -1096,9 +1096,8 @@ Future<List<BuscarLotesRow>> performBuscarLotes(
   String? idPropriedade,
 }) {
   // Support both single ID and comma-separated list from converterLista
-  final safeId = idPropriedade?.contains(',') == true
-      ? idPropriedade
-      : "'$idPropriedade'";
+  final safeId =
+      idPropriedade?.contains(',') == true ? idPropriedade : "'$idPropriedade'";
   final query = '''
 SELECT * FROM local_lotes
 WHERE ativo = 'Ativo'

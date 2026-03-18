@@ -212,8 +212,8 @@ Future refreshPropriedades(BuildContext context) async {
           .withoutNulls;
 
       if (propriedadesList.isEmpty) {
-        _syncLog('propriedades',
-            'Download retornou vazio. Mantendo dados locais.');
+        _syncLog(
+            'propriedades', 'Download retornou vazio. Mantendo dados locais.');
         return;
       }
 
@@ -530,151 +530,151 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
           );
           if (!((animalExiste).isNotEmpty)) {
             try {
-            await RebanhoTable().insert({
-              'idPropriedade': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.idPropriedade,
-              'numeroAnimal': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.numeroAnimal,
-              'chip': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.chip,
-              'codRegistro': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.codRegistro,
-              'nome': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.nome,
-              'sexo': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.sexo,
-              'categoria': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.categoria,
-              'dataNascimento': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhos
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataNascimento)),
-              'pesoNascimento': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.pesoNascimento,
-              'porte': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.porte,
-              'raca': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.raca,
-              'loteID': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.loteID,
-              'dataEntradaLote': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhos
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataEntradaLote)),
-              'rebanhoIdMatriz': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.rebanhoIdMatriz,
-              'rebanhoIdReprodutor': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.rebanhoIdReprodutor,
-              'dataDesmama': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhos
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataDesmama)),
-              'pesoDesmama': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.pesoDesmama,
-              'pesoAtual': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.pesoAtual,
-              'status': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.statusRebanho,
-              'origem': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.origem,
-              'anotacoes': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.anotacoes,
-              'idRebanho': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.idRebanho,
-              'deletado': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.deletado,
-              'loteNome': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.loteNome,
-              'tipo': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.tipo,
-              'dataAcao': supaSerialize<DateTime>(functions.converterParaData(
-                  localRebanhos
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataAcao)),
-              'valorCompra': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.valorCompra,
-              'dataUltimaPesagem': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhos
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataUltimaPesagem)),
-              'nomeConcat': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.nomeConcat,
-              'dataVenda': supaSerialize<DateTime>(functions.converterParaData(
-                  localRebanhos
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataVenda)),
-              'valorVenda': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.valorVenda,
-              'numeroMatriz': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.numeroMatriz,
-              'nomeMatriz': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.nomeMatriz,
-              'dataNascMatriz': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhos
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataNascMatriz)),
-              'racaMatriz': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.racaMatriz,
-              'numeroReprodutor': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.numeroReprodutor,
-              'nomeReprodutor': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.nomeReprodutor,
-              'dataNascReprodutor': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhos
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataNascReprodutor)),
-              'racaReprodutor': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.racaReprodutor,
-              'movimentacao_entrada': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhos
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.movimentacaoEntrada)),
-              'movimentacao_saida': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhos
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.movimentacaoSaida)),
-              'data_morte': supaSerialize<DateTime>(functions.converterParaData(
-                  localRebanhos
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataMorte)),
-              'motivo_morte': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.motivoMorte,
-              'categoria_matriz': localRebanhos
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.categoriaMatriz,
-            });
+              await RebanhoTable().insert({
+                'idPropriedade': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.idPropriedade,
+                'numeroAnimal': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.numeroAnimal,
+                'chip': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.chip,
+                'codRegistro': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.codRegistro,
+                'nome': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.nome,
+                'sexo': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.sexo,
+                'categoria': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.categoria,
+                'dataNascimento': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhos
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataNascimento)),
+                'pesoNascimento': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.pesoNascimento,
+                'porte': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.porte,
+                'raca': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.raca,
+                'loteID': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.loteID,
+                'dataEntradaLote': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhos
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataEntradaLote)),
+                'rebanhoIdMatriz': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.rebanhoIdMatriz,
+                'rebanhoIdReprodutor': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.rebanhoIdReprodutor,
+                'dataDesmama': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhos
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataDesmama)),
+                'pesoDesmama': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.pesoDesmama,
+                'pesoAtual': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.pesoAtual,
+                'status': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.statusRebanho,
+                'origem': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.origem,
+                'anotacoes': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.anotacoes,
+                'idRebanho': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.idRebanho,
+                'deletado': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.deletado,
+                'loteNome': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.loteNome,
+                'tipo': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.tipo,
+                'dataAcao': supaSerialize<DateTime>(functions.converterParaData(
+                    localRebanhos
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataAcao)),
+                'valorCompra': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.valorCompra,
+                'dataUltimaPesagem': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhos
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataUltimaPesagem)),
+                'nomeConcat': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.nomeConcat,
+                'dataVenda': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhos
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataVenda)),
+                'valorVenda': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.valorVenda,
+                'numeroMatriz': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.numeroMatriz,
+                'nomeMatriz': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.nomeMatriz,
+                'dataNascMatriz': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhos
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataNascMatriz)),
+                'racaMatriz': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.racaMatriz,
+                'numeroReprodutor': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.numeroReprodutor,
+                'nomeReprodutor': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.nomeReprodutor,
+                'dataNascReprodutor': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhos
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataNascReprodutor)),
+                'racaReprodutor': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.racaReprodutor,
+                'movimentacao_entrada': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhos
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.movimentacaoEntrada)),
+                'movimentacao_saida': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhos
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.movimentacaoSaida)),
+                'data_morte': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhos
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataMorte)),
+                'motivo_morte': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.motivoMorte,
+                'categoria_matriz': localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.categoriaMatriz,
+              });
             } catch (e) {
               allSuccess = false;
               _syncLog('putUpdtRebanhos',
@@ -695,147 +695,147 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
       if (localRebanhosUPDT!.isNotEmpty) {
         while (FFAppState().rebanhosIndex < localRebanhosUPDT.length) {
           try {
-          await RebanhoTable().update(
-            data: {
-              'numeroAnimal': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.numeroAnimal,
-              'chip': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.chip,
-              'codRegistro': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.codRegistro,
-              'nome': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.nome,
-              'sexo': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.sexo,
-              'categoria': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.categoria,
-              'dataNascimento': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhosUPDT
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataNascimento)),
-              'pesoNascimento': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.pesoNascimento,
-              'porte': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.porte,
-              'raca': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.raca,
-              'loteID': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.loteID,
-              'dataEntradaLote': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhosUPDT
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataEntradaLote)),
-              'rebanhoIdMatriz': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.rebanhoIdMatriz,
-              'rebanhoIdReprodutor': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.rebanhoIdReprodutor,
-              'dataDesmama': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhosUPDT
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataDesmama)),
-              'pesoDesmama': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.pesoDesmama,
-              'pesoAtual': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.pesoAtual,
-              'status': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.statusRebanho,
-              'origem': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.origem,
-              'anotacoes': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.anotacoes,
-              'deletado': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.deletado,
-              'loteNome': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.loteNome,
-              'tipo': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.tipo,
-              'dataAcao': supaSerialize<DateTime>(functions.converterParaData(
-                  localRebanhosUPDT
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataAcao)),
-              'valorCompra': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.valorCompra,
-              'dataUltimaPesagem': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhosUPDT
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataUltimaPesagem)),
-              'nomeConcat': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.nomeConcat,
-              'dataVenda': supaSerialize<DateTime>(functions.converterParaData(
-                  localRebanhosUPDT
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataVenda)),
-              'valorVenda': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.valorVenda,
-              'numeroMatriz': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.numeroMatriz,
-              'nomeMatriz': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.nomeMatriz,
-              'dataNascMatriz': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhosUPDT
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataNascMatriz)),
-              'racaMatriz': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.racaMatriz,
-              'numeroReprodutor': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.numeroReprodutor,
-              'nomeReprodutor': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.nomeReprodutor,
-              'dataNascReprodutor': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhosUPDT
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataNascReprodutor)),
-              'racaReprodutor': localRebanhosUPDT
-                  .elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.racaReprodutor,
-              'movimentacao_entrada': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhosUPDT
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.movimentacaoEntrada)),
-              'movimentacao_saida': supaSerialize<DateTime>(
-                  functions.converterParaData(localRebanhosUPDT
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.movimentacaoSaida)),
-              'data_morte': supaSerialize<DateTime>(functions.converterParaData(
-                  localRebanhosUPDT
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.dataMorte)),
-            },
-            matchingRows: (rows) => rows.eqOrNull(
-              'idRebanho',
-              localRebanhosUPDT
-                  ?.elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.idRebanho,
-            ),
-          );
+            await RebanhoTable().update(
+              data: {
+                'numeroAnimal': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.numeroAnimal,
+                'chip': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.chip,
+                'codRegistro': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.codRegistro,
+                'nome': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.nome,
+                'sexo': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.sexo,
+                'categoria': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.categoria,
+                'dataNascimento': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhosUPDT
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataNascimento)),
+                'pesoNascimento': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.pesoNascimento,
+                'porte': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.porte,
+                'raca': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.raca,
+                'loteID': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.loteID,
+                'dataEntradaLote': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhosUPDT
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataEntradaLote)),
+                'rebanhoIdMatriz': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.rebanhoIdMatriz,
+                'rebanhoIdReprodutor': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.rebanhoIdReprodutor,
+                'dataDesmama': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhosUPDT
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataDesmama)),
+                'pesoDesmama': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.pesoDesmama,
+                'pesoAtual': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.pesoAtual,
+                'status': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.statusRebanho,
+                'origem': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.origem,
+                'anotacoes': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.anotacoes,
+                'deletado': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.deletado,
+                'loteNome': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.loteNome,
+                'tipo': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.tipo,
+                'dataAcao': supaSerialize<DateTime>(functions.converterParaData(
+                    localRebanhosUPDT
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataAcao)),
+                'valorCompra': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.valorCompra,
+                'dataUltimaPesagem': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhosUPDT
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataUltimaPesagem)),
+                'nomeConcat': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.nomeConcat,
+                'dataVenda': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhosUPDT
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataVenda)),
+                'valorVenda': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.valorVenda,
+                'numeroMatriz': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.numeroMatriz,
+                'nomeMatriz': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.nomeMatriz,
+                'dataNascMatriz': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhosUPDT
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataNascMatriz)),
+                'racaMatriz': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.racaMatriz,
+                'numeroReprodutor': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.numeroReprodutor,
+                'nomeReprodutor': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.nomeReprodutor,
+                'dataNascReprodutor': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhosUPDT
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataNascReprodutor)),
+                'racaReprodutor': localRebanhosUPDT
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.racaReprodutor,
+                'movimentacao_entrada': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhosUPDT
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.movimentacaoEntrada)),
+                'movimentacao_saida': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhosUPDT
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.movimentacaoSaida)),
+                'data_morte': supaSerialize<DateTime>(
+                    functions.converterParaData(localRebanhosUPDT
+                        .elementAtOrNull(FFAppState().rebanhosIndex)
+                        ?.dataMorte)),
+              },
+              matchingRows: (rows) => rows.eqOrNull(
+                'idRebanho',
+                localRebanhosUPDT
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.idRebanho,
+              ),
+            );
           } catch (e) {
             allSuccess = false;
             _syncLog('putUpdtRebanhos',
@@ -856,24 +856,24 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
       if (localHistPesPUT!.isNotEmpty) {
         while (FFAppState().pesagensIndex < localHistPesPUT.length) {
           try {
-          await HistoricoPesagensTable().insert({
-            'idRebanho': localHistPesPUT
-                .elementAtOrNull(FFAppState().pesagensIndex)
-                ?.idRebanho,
-            'dataPesagem': supaSerialize<DateTime>(functions.converterParaData(
-                localHistPesPUT
-                    .elementAtOrNull(FFAppState().pesagensIndex)
-                    ?.dataPesagem)),
-            'tipo': localHistPesPUT
-                .elementAtOrNull(FFAppState().pesagensIndex)
-                ?.tipo,
-            'peso': localHistPesPUT
-                .elementAtOrNull(FFAppState().pesagensIndex)
-                ?.peso,
-            'deletado': localHistPesPUT
-                .elementAtOrNull(FFAppState().pesagensIndex)
-                ?.deletado,
-          });
+            await HistoricoPesagensTable().insert({
+              'idRebanho': localHistPesPUT
+                  .elementAtOrNull(FFAppState().pesagensIndex)
+                  ?.idRebanho,
+              'dataPesagem': supaSerialize<DateTime>(
+                  functions.converterParaData(localHistPesPUT
+                      .elementAtOrNull(FFAppState().pesagensIndex)
+                      ?.dataPesagem)),
+              'tipo': localHistPesPUT
+                  .elementAtOrNull(FFAppState().pesagensIndex)
+                  ?.tipo,
+              'peso': localHistPesPUT
+                  .elementAtOrNull(FFAppState().pesagensIndex)
+                  ?.peso,
+              'deletado': localHistPesPUT
+                  .elementAtOrNull(FFAppState().pesagensIndex)
+                  ?.deletado,
+            });
           } catch (e) {
             allSuccess = false;
             _syncLog('putUpdtRebanhos',
@@ -887,19 +887,19 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
       if (localPesagensUPDT!.isNotEmpty) {
         while (FFAppState().pesagensIndex < localPesagensUPDT.length) {
           try {
-          await HistoricoPesagensTable().update(
-            data: {
-              'deletado': localPesagensUPDT
-                  .elementAtOrNull(FFAppState().pesagensIndex)
-                  ?.deletado,
-            },
-            matchingRows: (rows) => rows.eqOrNull(
-              'id',
-              localPesagensUPDT
-                  ?.elementAtOrNull(FFAppState().pesagensIndex)
-                  ?.id,
-            ),
-          );
+            await HistoricoPesagensTable().update(
+              data: {
+                'deletado': localPesagensUPDT
+                    .elementAtOrNull(FFAppState().pesagensIndex)
+                    ?.deletado,
+              },
+              matchingRows: (rows) => rows.eqOrNull(
+                'id',
+                localPesagensUPDT
+                    ?.elementAtOrNull(FFAppState().pesagensIndex)
+                    ?.id,
+              ),
+            );
           } catch (e) {
             allSuccess = false;
             _syncLog('putUpdtRebanhos',
@@ -1133,16 +1133,19 @@ Future<bool> putUpdtLotes(BuildContext context) async {
               'id_propriedade': localLotes
                   .elementAtOrNull(FFAppState().lotesIndex)
                   ?.idPropriedade,
-              'id_animais':
-                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.idAnimais,
+              'id_animais': localLotes
+                  .elementAtOrNull(FFAppState().lotesIndex)
+                  ?.idAnimais,
               'nome': localLotes.elementAtOrNull(FFAppState().lotesIndex)?.nome,
-              'anotacoes':
-                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.anotacoes,
-              'ativo': localLotes.elementAtOrNull(FFAppState().lotesIndex)?.ativo,
+              'anotacoes': localLotes
+                  .elementAtOrNull(FFAppState().lotesIndex)
+                  ?.anotacoes,
+              'ativo':
+                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.ativo,
               'motivo':
                   localLotes.elementAtOrNull(FFAppState().lotesIndex)?.motivo,
-              'data_motivo': supaSerialize<DateTime>(functions.converterParaData(
-                  localLotes
+              'data_motivo': supaSerialize<DateTime>(
+                  functions.converterParaData(localLotes
                       .elementAtOrNull(FFAppState().lotesIndex)
                       ?.dataMotivo)),
               'id_lote':
@@ -1157,12 +1160,14 @@ Future<bool> putUpdtLotes(BuildContext context) async {
                   functions.converterParaData(localLotes
                       .elementAtOrNull(FFAppState().lotesIndex)
                       ?.dataSaidaPiquete)),
-              'valorVenda':
-                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.valorVenda,
+              'valorVenda': localLotes
+                  .elementAtOrNull(FFAppState().lotesIndex)
+                  ?.valorVenda,
             });
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtLotes', 'ERRO insert lote idx=${FFAppState().lotesIndex}: $e');
+            _syncLog('putUpdtLotes',
+                'ERRO insert lote idx=${FFAppState().lotesIndex}: $e');
           }
           FFAppState().lotesIndex = FFAppState().lotesIndex + 1;
         }
@@ -1186,13 +1191,15 @@ Future<bool> putUpdtLotes(BuildContext context) async {
                 'id_animais': localLotesUPT
                     .elementAtOrNull(FFAppState().lotesIndex)
                     ?.idAnimais,
-                'nome':
-                    localLotesUPT.elementAtOrNull(FFAppState().lotesIndex)?.nome,
+                'nome': localLotesUPT
+                    .elementAtOrNull(FFAppState().lotesIndex)
+                    ?.nome,
                 'anotacoes': localLotesUPT
                     .elementAtOrNull(FFAppState().lotesIndex)
                     ?.anotacoes,
-                'ativo':
-                    localLotesUPT.elementAtOrNull(FFAppState().lotesIndex)?.ativo,
+                'ativo': localLotesUPT
+                    .elementAtOrNull(FFAppState().lotesIndex)
+                    ?.ativo,
                 'motivo': localLotesUPT
                     .elementAtOrNull(FFAppState().lotesIndex)
                     ?.motivo,
@@ -1206,8 +1213,8 @@ Future<bool> putUpdtLotes(BuildContext context) async {
                 'deletado': localLotesUPT
                     .elementAtOrNull(FFAppState().lotesIndex)
                     ?.deletado,
-                'updated_at': supaSerialize<DateTime>(functions.converterParaData(
-                    localLotesUPT
+                'updated_at': supaSerialize<DateTime>(
+                    functions.converterParaData(localLotesUPT
                         .elementAtOrNull(FFAppState().lotesIndex)
                         ?.updatedAt)),
                 'data_entrada_piquete': supaSerialize<DateTime>(
@@ -1229,7 +1236,8 @@ Future<bool> putUpdtLotes(BuildContext context) async {
             );
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtLotes', 'ERRO update lote idx=${FFAppState().lotesIndex}: $e');
+            _syncLog('putUpdtLotes',
+                'ERRO update lote idx=${FFAppState().lotesIndex}: $e');
           }
           FFAppState().lotesIndex = FFAppState().lotesIndex + 1;
         }
@@ -1300,160 +1308,161 @@ Future<bool> putUpdtReproducao(BuildContext context) async {
         while (FFAppState().reproducaoIndex < localReproducao.length) {
           try {
             await ReproducaoTable().insert({
-            'id_propriedade': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.idPropriedade,
-            'tipo_reproducao': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.tipoReproducao,
-            'score_corporal': valueOrDefault<double>(
-              localReproducao
+              'id_propriedade': localReproducao
                   .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.scoreCorporal,
-              0.5,
-            ),
-            'data_inseminacao': supaSerialize<DateTime>(
-                functions.converterParaData(localReproducao
-                    .elementAtOrNull(FFAppState().reproducaoIndex)
-                    ?.dataInseminacao)),
-            'data_partida_semen': supaSerialize<DateTime>(localReproducao
-                            .elementAtOrNull(FFAppState().reproducaoIndex)
-                            ?.dataPartidaSemen !=
-                        null &&
-                    localReproducao
-                            .elementAtOrNull(FFAppState().reproducaoIndex)
-                            ?.dataPartidaSemen !=
-                        ''
-                ? functions.converterParaData(localReproducao
-                    .elementAtOrNull(FFAppState().reproducaoIndex)
-                    ?.dataPartidaSemen)
-                : FFAppState().dateDefault),
-            'partida_semen': valueOrDefault<int>(
-              localReproducao
+                  ?.idPropriedade,
+              'tipo_reproducao': localReproducao
                   .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.partidaSemen,
-              1,
-            ),
-            'previsao_parto': supaSerialize<DateTime>(
-                functions.converterParaData(localReproducao
-                    .elementAtOrNull(FFAppState().reproducaoIndex)
-                    ?.previsaoParto)),
-            'id_lote': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.idLote,
-            'data_inicial': supaSerialize<DateTime>(functions.converterParaData(
+                  ?.tipoReproducao,
+              'score_corporal': valueOrDefault<double>(
                 localReproducao
                     .elementAtOrNull(FFAppState().reproducaoIndex)
-                    ?.dataInicial)),
-            'data_final': supaSerialize<DateTime>(functions.converterParaData(
+                    ?.scoreCorporal,
+                0.5,
+              ),
+              'data_inseminacao': supaSerialize<DateTime>(
+                  functions.converterParaData(localReproducao
+                      .elementAtOrNull(FFAppState().reproducaoIndex)
+                      ?.dataInseminacao)),
+              'data_partida_semen': supaSerialize<DateTime>(localReproducao
+                              .elementAtOrNull(FFAppState().reproducaoIndex)
+                              ?.dataPartidaSemen !=
+                          null &&
+                      localReproducao
+                              .elementAtOrNull(FFAppState().reproducaoIndex)
+                              ?.dataPartidaSemen !=
+                          ''
+                  ? functions.converterParaData(localReproducao
+                      .elementAtOrNull(FFAppState().reproducaoIndex)
+                      ?.dataPartidaSemen)
+                  : FFAppState().dateDefault),
+              'partida_semen': valueOrDefault<int>(
                 localReproducao
                     .elementAtOrNull(FFAppState().reproducaoIndex)
-                    ?.dataFinal)),
-            'status_reproducao': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.statusReproducao,
-            'inseminador': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.inseminador,
-            'anotacoes': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.anotacoes,
-            'deletado': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.deletado,
-            'updated_at': supaSerialize<DateTime>(functions.converterParaData(
+                    ?.partidaSemen,
+                1,
+              ),
+              'previsao_parto': supaSerialize<DateTime>(
+                  functions.converterParaData(localReproducao
+                      .elementAtOrNull(FFAppState().reproducaoIndex)
+                      ?.previsaoParto)),
+              'id_lote': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.idLote,
+              'data_inicial': supaSerialize<DateTime>(
+                  functions.converterParaData(localReproducao
+                      .elementAtOrNull(FFAppState().reproducaoIndex)
+                      ?.dataInicial)),
+              'data_final': supaSerialize<DateTime>(functions.converterParaData(
+                  localReproducao
+                      .elementAtOrNull(FFAppState().reproducaoIndex)
+                      ?.dataFinal)),
+              'status_reproducao': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.statusReproducao,
+              'inseminador': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.inseminador,
+              'anotacoes': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.anotacoes,
+              'deletado': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.deletado,
+              'updated_at': supaSerialize<DateTime>(functions.converterParaData(
+                  localReproducao
+                      .elementAtOrNull(FFAppState().reproducaoIndex)
+                      ?.updatedAt)),
+              'categoria': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.categoria,
+              'numMatriz': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.numMatriz,
+              'nomeMatriz': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.nomeMatriz,
+              'nascimentoMatriz': supaSerialize<DateTime>(
+                  functions.converterParaData(localReproducao
+                      .elementAtOrNull(FFAppState().reproducaoIndex)
+                      ?.nascimentoMatriz)),
+              'numReprodutor': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.numReprodutor,
+              'nomeReprodutor': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.nomeReprodutor,
+              'nascimentoReprodutor': supaSerialize<DateTime>(
+                  functions.converterParaData(localReproducao
+                      .elementAtOrNull(FFAppState().reproducaoIndex)
+                      ?.nascimentoReprodutor)),
+              'loteNome': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.loteNome,
+              'data_status': supaSerialize<DateTime>(
+                  functions.converterParaData(localReproducao
+                      .elementAtOrNull(FFAppState().reproducaoIndex)
+                      ?.dataStatus)),
+              'chipReprodutor': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.chipReprodutor,
+              'chipMatriz': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.chipMatriz,
+              'racaMatriz': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.racaMatriz,
+              'racaReprodutor': localReproducao
+                  .elementAtOrNull(FFAppState().reproducaoIndex)
+                  ?.racaReprodutor,
+              'ressinc': valueOrDefault<String>(
                 localReproducao
                     .elementAtOrNull(FFAppState().reproducaoIndex)
-                    ?.updatedAt)),
-            'categoria': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.categoria,
-            'numMatriz': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.numMatriz,
-            'nomeMatriz': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.nomeMatriz,
-            'nascimentoMatriz': supaSerialize<DateTime>(
-                functions.converterParaData(localReproducao
-                    .elementAtOrNull(FFAppState().reproducaoIndex)
-                    ?.nascimentoMatriz)),
-            'numReprodutor': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.numReprodutor,
-            'nomeReprodutor': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.nomeReprodutor,
-            'nascimentoReprodutor': supaSerialize<DateTime>(
-                functions.converterParaData(localReproducao
-                    .elementAtOrNull(FFAppState().reproducaoIndex)
-                    ?.nascimentoReprodutor)),
-            'loteNome': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.loteNome,
-            'data_status': supaSerialize<DateTime>(functions.converterParaData(
+                    ?.ressinc,
+                'NAO',
+              ),
+              'parida': valueOrDefault<String>(
                 localReproducao
                     .elementAtOrNull(FFAppState().reproducaoIndex)
-                    ?.dataStatus)),
-            'chipReprodutor': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.chipReprodutor,
-            'chipMatriz': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.chipMatriz,
-            'racaMatriz': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.racaMatriz,
-            'racaReprodutor': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.racaReprodutor,
-            'ressinc': valueOrDefault<String>(
-              localReproducao
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.ressinc,
-              'NAO',
-            ),
-            'parida': valueOrDefault<String>(
-              localReproducao
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.parida,
-              'NAO',
-            ),
-            'data_parto': supaSerialize<DateTime>(functions.converterParaData(
+                    ?.parida,
+                'NAO',
+              ),
+              'data_parto': supaSerialize<DateTime>(functions.converterParaData(
+                  localReproducao
+                      .elementAtOrNull(FFAppState().reproducaoIndex)
+                      ?.dataParto)),
+              'gnrh': valueOrDefault<String>(
                 localReproducao
                     .elementAtOrNull(FFAppState().reproducaoIndex)
-                    ?.dataParto)),
-            'gnrh': valueOrDefault<String>(
-              localReproducao
+                    ?.gnrh,
+                'Não',
+              ),
+              'cio': valueOrDefault<String>(
+                localReproducao
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.cio,
+                'Não',
+              ),
+              'id_rebanho_matriz': valueOrDefault<String>(
+                localReproducao
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.idRebanhoMatriz,
+                'Não',
+              ),
+              'id_rebanho_reprodutor': valueOrDefault<String>(
+                localReproducao
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.idRebanhoReprodutor,
+                'Não',
+              ),
+              'id_reproducao': localReproducao
                   .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.gnrh,
-              'Não',
-            ),
-            'cio': valueOrDefault<String>(
-              localReproducao
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.cio,
-              'Não',
-            ),
-            'id_rebanho_matriz': valueOrDefault<String>(
-              localReproducao
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.idRebanhoMatriz,
-              'Não',
-            ),
-            'id_rebanho_reprodutor': valueOrDefault<String>(
-              localReproducao
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.idRebanhoReprodutor,
-              'Não',
-            ),
-            'id_reproducao': localReproducao
-                .elementAtOrNull(FFAppState().reproducaoIndex)
-                ?.idReproducao,
-          });
+                  ?.idReproducao,
+            });
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtReproducao', 'ERRO insert reproducao idx=${FFAppState().reproducaoIndex}: $e');
+            _syncLog('putUpdtReproducao',
+                'ERRO insert reproducao idx=${FFAppState().reproducaoIndex}: $e');
           }
           FFAppState().reproducaoIndex = FFAppState().reproducaoIndex + 1;
         }
@@ -1470,124 +1479,125 @@ Future<bool> putUpdtReproducao(BuildContext context) async {
         while (FFAppState().reproducaoIndex < localReproducaoUPDT.length) {
           try {
             await ReproducaoTable().update(
-            data: {
-              'tipo_reproducao': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.tipoReproducao,
-              'id_rebanho_matriz': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.idRebanhoMatriz,
-              'score_corporal': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.scoreCorporal,
-              'id_rebanho_reprodutor': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.idRebanhoReprodutor,
-              'data_inseminacao': supaSerialize<DateTime>(
-                  functions.converterParaData(localReproducaoUPDT
-                      .elementAtOrNull(FFAppState().reproducaoIndex)
-                      ?.dataInseminacao)),
-              'data_partida_semen': supaSerialize<DateTime>(
-                  functions.converterParaData(localReproducaoUPDT
-                      .elementAtOrNull(FFAppState().reproducaoIndex)
-                      ?.dataPartidaSemen)),
-              'partida_semen': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.partidaSemen,
-              'previsao_parto': supaSerialize<DateTime>(
-                  functions.converterParaData(localReproducaoUPDT
-                      .elementAtOrNull(FFAppState().reproducaoIndex)
-                      ?.previsaoParto)),
-              'id_lote': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.idLote,
-              'data_inicial': supaSerialize<DateTime>(
-                  functions.converterParaData(localReproducaoUPDT
-                      .elementAtOrNull(FFAppState().reproducaoIndex)
-                      ?.dataInicial)),
-              'data_final': supaSerialize<DateTime>(functions.converterParaData(
-                  localReproducaoUPDT
-                      .elementAtOrNull(FFAppState().reproducaoIndex)
-                      ?.dataFinal)),
-              'inseminador': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.inseminador,
-              'anotacoes': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.anotacoes,
-              'deletado': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.deletado,
-              'updated_at': supaSerialize<DateTime>(functions.converterParaData(
-                  localReproducaoUPDT
-                      .elementAtOrNull(FFAppState().reproducaoIndex)
-                      ?.updatedAt)),
-              'categoria': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.categoria,
-              'numMatriz': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.numMatriz,
-              'nomeMatriz': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.nomeMatriz,
-              'nascimentoMatriz': supaSerialize<DateTime>(
-                  functions.converterParaData(localReproducaoUPDT
-                      .elementAtOrNull(FFAppState().reproducaoIndex)
-                      ?.nascimentoMatriz)),
-              'status_reproducao': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.statusReproducao,
-              'numReprodutor': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.numReprodutor,
-              'nomeReprodutor': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.nomeReprodutor,
-              'nascimentoReprodutor': supaSerialize<DateTime>(
-                  functions.converterParaData(localReproducaoUPDT
-                      .elementAtOrNull(FFAppState().reproducaoIndex)
-                      ?.nascimentoReprodutor)),
-              'loteNome': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.loteNome,
-              'data_status': supaSerialize<DateTime>(
-                  functions.converterParaData(localReproducaoUPDT
-                      .elementAtOrNull(FFAppState().reproducaoIndex)
-                      ?.dataStatus)),
-              'ressinc': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.ressinc,
-              'chipReprodutor': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.chipReprodutor,
-              'chipMatriz': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.chipMatriz,
-              'parida': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.parida,
-              'data_parto': supaSerialize<DateTime>(functions.converterParaData(
-                  localReproducaoUPDT
-                      .elementAtOrNull(FFAppState().reproducaoIndex)
-                      ?.dataParto)),
-              'gnrh': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.gnrh,
-              'cio': localReproducaoUPDT
-                  .elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.cio,
-            },
-            matchingRows: (rows) => rows.eqOrNull(
-              'id_reproducao',
-              localReproducaoUPDT
-                  ?.elementAtOrNull(FFAppState().reproducaoIndex)
-                  ?.idReproducao,
-            ),
-          );
+              data: {
+                'tipo_reproducao': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.tipoReproducao,
+                'id_rebanho_matriz': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.idRebanhoMatriz,
+                'score_corporal': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.scoreCorporal,
+                'id_rebanho_reprodutor': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.idRebanhoReprodutor,
+                'data_inseminacao': supaSerialize<DateTime>(
+                    functions.converterParaData(localReproducaoUPDT
+                        .elementAtOrNull(FFAppState().reproducaoIndex)
+                        ?.dataInseminacao)),
+                'data_partida_semen': supaSerialize<DateTime>(
+                    functions.converterParaData(localReproducaoUPDT
+                        .elementAtOrNull(FFAppState().reproducaoIndex)
+                        ?.dataPartidaSemen)),
+                'partida_semen': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.partidaSemen,
+                'previsao_parto': supaSerialize<DateTime>(
+                    functions.converterParaData(localReproducaoUPDT
+                        .elementAtOrNull(FFAppState().reproducaoIndex)
+                        ?.previsaoParto)),
+                'id_lote': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.idLote,
+                'data_inicial': supaSerialize<DateTime>(
+                    functions.converterParaData(localReproducaoUPDT
+                        .elementAtOrNull(FFAppState().reproducaoIndex)
+                        ?.dataInicial)),
+                'data_final': supaSerialize<DateTime>(
+                    functions.converterParaData(localReproducaoUPDT
+                        .elementAtOrNull(FFAppState().reproducaoIndex)
+                        ?.dataFinal)),
+                'inseminador': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.inseminador,
+                'anotacoes': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.anotacoes,
+                'deletado': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.deletado,
+                'updated_at': supaSerialize<DateTime>(
+                    functions.converterParaData(localReproducaoUPDT
+                        .elementAtOrNull(FFAppState().reproducaoIndex)
+                        ?.updatedAt)),
+                'categoria': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.categoria,
+                'numMatriz': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.numMatriz,
+                'nomeMatriz': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.nomeMatriz,
+                'nascimentoMatriz': supaSerialize<DateTime>(
+                    functions.converterParaData(localReproducaoUPDT
+                        .elementAtOrNull(FFAppState().reproducaoIndex)
+                        ?.nascimentoMatriz)),
+                'status_reproducao': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.statusReproducao,
+                'numReprodutor': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.numReprodutor,
+                'nomeReprodutor': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.nomeReprodutor,
+                'nascimentoReprodutor': supaSerialize<DateTime>(
+                    functions.converterParaData(localReproducaoUPDT
+                        .elementAtOrNull(FFAppState().reproducaoIndex)
+                        ?.nascimentoReprodutor)),
+                'loteNome': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.loteNome,
+                'data_status': supaSerialize<DateTime>(
+                    functions.converterParaData(localReproducaoUPDT
+                        .elementAtOrNull(FFAppState().reproducaoIndex)
+                        ?.dataStatus)),
+                'ressinc': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.ressinc,
+                'chipReprodutor': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.chipReprodutor,
+                'chipMatriz': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.chipMatriz,
+                'parida': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.parida,
+                'data_parto': supaSerialize<DateTime>(
+                    functions.converterParaData(localReproducaoUPDT
+                        .elementAtOrNull(FFAppState().reproducaoIndex)
+                        ?.dataParto)),
+                'gnrh': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.gnrh,
+                'cio': localReproducaoUPDT
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.cio,
+              },
+              matchingRows: (rows) => rows.eqOrNull(
+                'id_reproducao',
+                localReproducaoUPDT
+                    ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                    ?.idReproducao,
+              ),
+            );
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtReproducao', 'ERRO update reproducao idx=${FFAppState().reproducaoIndex}: $e');
+            _syncLog('putUpdtReproducao',
+                'ERRO update reproducao idx=${FFAppState().reproducaoIndex}: $e');
           }
           FFAppState().reproducaoIndex = FFAppState().reproducaoIndex + 1;
         }
@@ -1662,85 +1672,86 @@ Future<bool> putUpdtSanidades(BuildContext context) async {
         while (FFAppState().sanidadeIndex < localSanidade.length) {
           try {
             await SanidadeTable().insert({
-            'id_propriedade': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.idPropriedade,
-            'deletado': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.deletado,
-            'updated_at': supaSerialize<DateTime>(functions.converterParaData(
-                localSanidade
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.updatedAt)),
-            'created_at': supaSerialize<DateTime>(functions.converterParaData(
-                localSanidade
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.createdAt)),
-            'id_rebanho': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.idRebanho,
-            'data_sanidade': supaSerialize<DateTime>(
-                functions.converterParaData(localSanidade
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.dataSanidade)),
-            'id_lote': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.idLote,
-            'porcentagem_lote': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.porcentagemLote,
-            'id_sanidade': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.idSanidade,
-            'vacinacao': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.vacinacao,
-            'vacinacao_outros': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.vacinacaoOutros,
-            'vacinacao_obs': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.vacinacaoObs,
-            'antiparasitario': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.antiparasitario,
-            'antiparasitario_outros': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.antiparasitarioOutros,
-            'antiparasitario_obs': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.antiparasitarioObs,
-            'tratamento': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.tratamento,
-            'tratamento_outros': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.tratamentoOutros,
-            'tratamento_obs': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.tratamentoObs,
-            'protocolo_reprodutivo': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.protocoloReprodutivo,
-            'protocolo_reprodutivo_outros': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.protocoloReprodutivoOutros,
-            'protocolo_reprodutivo_obs': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.protocoloReprodutivoObs,
-            'protocolo_d0': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.protocoloD0,
-            'protocolo_retirada': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.protocoloRetirada,
-            'protocolo_iatf': localSanidade
-                .elementAtOrNull(FFAppState().sanidadeIndex)
-                ?.protocoloIatf,
-          });
+              'id_propriedade': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.idPropriedade,
+              'deletado': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.deletado,
+              'updated_at': supaSerialize<DateTime>(functions.converterParaData(
+                  localSanidade
+                      .elementAtOrNull(FFAppState().sanidadeIndex)
+                      ?.updatedAt)),
+              'created_at': supaSerialize<DateTime>(functions.converterParaData(
+                  localSanidade
+                      .elementAtOrNull(FFAppState().sanidadeIndex)
+                      ?.createdAt)),
+              'id_rebanho': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.idRebanho,
+              'data_sanidade': supaSerialize<DateTime>(
+                  functions.converterParaData(localSanidade
+                      .elementAtOrNull(FFAppState().sanidadeIndex)
+                      ?.dataSanidade)),
+              'id_lote': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.idLote,
+              'porcentagem_lote': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.porcentagemLote,
+              'id_sanidade': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.idSanidade,
+              'vacinacao': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.vacinacao,
+              'vacinacao_outros': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.vacinacaoOutros,
+              'vacinacao_obs': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.vacinacaoObs,
+              'antiparasitario': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.antiparasitario,
+              'antiparasitario_outros': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.antiparasitarioOutros,
+              'antiparasitario_obs': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.antiparasitarioObs,
+              'tratamento': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.tratamento,
+              'tratamento_outros': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.tratamentoOutros,
+              'tratamento_obs': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.tratamentoObs,
+              'protocolo_reprodutivo': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.protocoloReprodutivo,
+              'protocolo_reprodutivo_outros': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.protocoloReprodutivoOutros,
+              'protocolo_reprodutivo_obs': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.protocoloReprodutivoObs,
+              'protocolo_d0': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.protocoloD0,
+              'protocolo_retirada': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.protocoloRetirada,
+              'protocolo_iatf': localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.protocoloIatf,
+            });
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtSanidades', 'ERRO insert sanidade idx=${FFAppState().sanidadeIndex}: $e');
+            _syncLog('putUpdtSanidades',
+                'ERRO insert sanidade idx=${FFAppState().sanidadeIndex}: $e');
           }
           FFAppState().sanidadeIndex = FFAppState().sanidadeIndex + 1;
         }
@@ -1757,77 +1768,78 @@ Future<bool> putUpdtSanidades(BuildContext context) async {
         while (FFAppState().sanidadeIndex < localSanidadeUPDT.length) {
           try {
             await SanidadeTable().update(
-            data: {
-              'data_sanidade': supaSerialize<DateTime>(
-                  functions.converterParaData(localSanidadeUPDT
-                      .elementAtOrNull(FFAppState().sanidadeIndex)
-                      ?.dataSanidade)),
-              'porcentagem_lote': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.porcentagemLote,
-              'updated_at': supaSerialize<DateTime>(functions.converterParaData(
-                  localSanidadeUPDT
-                      .elementAtOrNull(FFAppState().sanidadeIndex)
-                      ?.updatedAt)),
-              'deletado': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.deletado,
-              'vacinacao': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.vacinacao,
-              'vacinacao_outros': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.vacinacaoOutros,
-              'vacinacao_obs': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.vacinacaoObs,
-              'antiparasitario': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.antiparasitario,
-              'antiparasitario_outros': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.antiparasitarioOutros,
-              'antiparasitario_obs': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.antiparasitarioObs,
-              'tratamento': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.tratamento,
-              'tratamento_outros': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.tratamentoOutros,
-              'tratamento_obs': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.tratamentoObs,
-              'protocolo_reprodutivo': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.protocoloReprodutivo,
-              'protocolo_reprodutivo_outros': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.protocoloReprodutivoOutros,
-              'protocolo_reprodutivo_obs': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.protocoloReprodutivoObs,
-              'protocolo_d0': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.protocoloD0,
-              'protocolo_retirada': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.protocoloRetirada,
-              'protocolo_iatf': localSanidadeUPDT
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.protocoloIatf,
-            },
-            matchingRows: (rows) => rows.eqOrNull(
-              'id_sanidade',
-              localSanidadeUPDT
-                  ?.elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.idSanidade,
-            ),
-          );
+              data: {
+                'data_sanidade': supaSerialize<DateTime>(
+                    functions.converterParaData(localSanidadeUPDT
+                        .elementAtOrNull(FFAppState().sanidadeIndex)
+                        ?.dataSanidade)),
+                'porcentagem_lote': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.porcentagemLote,
+                'updated_at': supaSerialize<DateTime>(
+                    functions.converterParaData(localSanidadeUPDT
+                        .elementAtOrNull(FFAppState().sanidadeIndex)
+                        ?.updatedAt)),
+                'deletado': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.deletado,
+                'vacinacao': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.vacinacao,
+                'vacinacao_outros': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.vacinacaoOutros,
+                'vacinacao_obs': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.vacinacaoObs,
+                'antiparasitario': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.antiparasitario,
+                'antiparasitario_outros': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.antiparasitarioOutros,
+                'antiparasitario_obs': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.antiparasitarioObs,
+                'tratamento': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.tratamento,
+                'tratamento_outros': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.tratamentoOutros,
+                'tratamento_obs': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.tratamentoObs,
+                'protocolo_reprodutivo': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.protocoloReprodutivo,
+                'protocolo_reprodutivo_outros': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.protocoloReprodutivoOutros,
+                'protocolo_reprodutivo_obs': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.protocoloReprodutivoObs,
+                'protocolo_d0': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.protocoloD0,
+                'protocolo_retirada': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.protocoloRetirada,
+                'protocolo_iatf': localSanidadeUPDT
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.protocoloIatf,
+              },
+              matchingRows: (rows) => rows.eqOrNull(
+                'id_sanidade',
+                localSanidadeUPDT
+                    ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.idSanidade,
+              ),
+            );
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtSanidades', 'ERRO update sanidade idx=${FFAppState().sanidadeIndex}: $e');
+            _syncLog('putUpdtSanidades',
+                'ERRO update sanidade idx=${FFAppState().sanidadeIndex}: $e');
           }
           FFAppState().sanidadeIndex = FFAppState().sanidadeIndex + 1;
         }
@@ -2166,142 +2178,140 @@ Future refreshPesagens(BuildContext context) async {
     int totalInserted = 0;
 
     try {
-        propriedadessO =
-            await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
-          pUserId: currentUserUid,
-        );
+      propriedadessO =
+          await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+        pUserId: currentUserUid,
+      );
 
-        final propertyIds = _safePropertyIds(propriedadessO.jsonBody);
+      final propertyIds = _safePropertyIds(propriedadessO.jsonBody);
+      _syncLog('pesagens',
+          'Propriedades encontradas: ${propertyIds.length}. IDs: $propertyIds');
+
+      if (propertyIds.isEmpty) {
+        _syncLog('pesagens', 'Nenhuma propriedade encontrada. Abortando sync.');
+        return;
+      }
+
+      // Buscar a primeira página direto da tabela REST, pois a RPC de
+      // pesagens está retornando 0/[] apesar de existirem registros.
+      pesagensAPI = await _buscarPesagensDireto(
+        propertyIds: propertyIds,
+        limit: 999,
+        offset: 0,
+        includeCount: true,
+      );
+
+      final firstPageRecords = _safeRecordsFromApi(pesagensAPI.jsonBody);
+      final totalPesagens = _safeTotalFromContentRange(pesagensAPI.headers) > 0
+          ? _safeTotalFromContentRange(pesagensAPI.headers)
+          : firstPageRecords.length;
+      FFAppState().totalPesagens = totalPesagens;
+      FFAppState().indexPesagens = 0;
+      _syncLog('pesagens', 'Total remoto informado: $totalPesagens.');
+      _syncLog('pesagens',
+          'Primeira página parseada: ${firstPageRecords.length} registros.');
+
+      if (firstPageRecords.isEmpty) {
         _syncLog('pesagens',
-            'Propriedades encontradas: ${propertyIds.length}. IDs: $propertyIds');
+            'Primeira página vazia apesar de total=$totalPesagens. Não apagando dados locais. Abortando sync.');
+        return;
+      }
 
-        if (propertyIds.isEmpty) {
-          _syncLog(
-              'pesagens', 'Nenhuma propriedade encontrada. Abortando sync.');
-          return;
-        }
+      // Agora sim, apagar dados locais pois confirmamos que a API retorna dados
+      await SQLiteManager.instance.deletarTodasPesagens();
+      _syncLog('pesagens', 'Tabela local limpa. Inserindo primeira página...');
 
-        // Buscar a primeira página direto da tabela REST, pois a RPC de
-        // pesagens está retornando 0/[] apesar de existirem registros.
-        pesagensAPI = await _buscarPesagensDireto(
-          propertyIds: propertyIds,
-          limit: 999,
-          offset: 0,
-          includeCount: true,
-        );
+      // Inserir a primeira página já obtida
+      final firstResult =
+          await actions.batchInsertLocalPesagens(firstPageRecords);
+      final firstPageErrors =
+          firstResult['errors'] as List<Map<String, String>>? ?? [];
+      if (firstPageErrors.isNotEmpty) {
+        syncErrors.addAll(firstPageErrors);
+      }
+      totalInserted += (firstResult['inserted'] as int? ?? 0);
+      _syncLog('pesagens',
+          '${firstResult['inserted']} registros inseridos na primeira página.');
 
-        final firstPageRecords = _safeRecordsFromApi(pesagensAPI.jsonBody);
-        final totalPesagens = _safeTotalFromContentRange(pesagensAPI.headers) > 0
-            ? _safeTotalFromContentRange(pesagensAPI.headers)
-            : firstPageRecords.length;
-        FFAppState().totalPesagens = totalPesagens;
-        FFAppState().indexPesagens = 0;
-        _syncLog('pesagens', 'Total remoto informado: $totalPesagens.');
-        _syncLog('pesagens',
-            'Primeira página parseada: ${firstPageRecords.length} registros.');
+      FFAppState().indexPesagens = firstPageRecords.length;
 
-        if (firstPageRecords.isEmpty) {
-          _syncLog('pesagens',
-              'Primeira página vazia apesar de total=$totalPesagens. Não apagando dados locais. Abortando sync.');
-          return;
-        }
+      // Continuar com as páginas restantes
+      if (firstPageRecords.length >= 999) {
+        while (true) {
+          final offsetAtual = FFAppState().indexPesagens;
+          try {
+            pesagensAPI = await _buscarPesagensDireto(
+              propertyIds: propertyIds,
+              limit: 999,
+              offset: offsetAtual,
+            );
 
-        // Agora sim, apagar dados locais pois confirmamos que a API retorna dados
-        await SQLiteManager.instance.deletarTodasPesagens();
-        _syncLog('pesagens', 'Tabela local limpa. Inserindo primeira página...');
-
-        // Inserir a primeira página já obtida
-        final firstResult =
-            await actions.batchInsertLocalPesagens(firstPageRecords);
-        final firstPageErrors =
-            firstResult['errors'] as List<Map<String, String>>? ?? [];
-        if (firstPageErrors.isNotEmpty) {
-          syncErrors.addAll(firstPageErrors);
-        }
-        totalInserted += (firstResult['inserted'] as int? ?? 0);
-        _syncLog('pesagens',
-            '${firstResult['inserted']} registros inseridos na primeira página.');
-
-        FFAppState().indexPesagens = firstPageRecords.length;
-
-        // Continuar com as páginas restantes
-        if (firstPageRecords.length >= 999) {
-          while (true) {
-            final offsetAtual = FFAppState().indexPesagens;
-            try {
-              pesagensAPI = await _buscarPesagensDireto(
-                propertyIds: propertyIds,
-                limit: 999,
-                offset: offsetAtual,
-              );
-
-              final pageRecords = _safeRecordsFromApi(pesagensAPI.jsonBody);
+            final pageRecords = _safeRecordsFromApi(pesagensAPI.jsonBody);
+            _syncLog('pesagens',
+                'Página recebida. offset=$offsetAtual, tamanho=${pageRecords.length}.');
+            if (pageRecords.isEmpty) {
               _syncLog('pesagens',
-                  'Página recebida. offset=$offsetAtual, tamanho=${pageRecords.length}.');
-              if (pageRecords.isEmpty) {
-                _syncLog('pesagens',
-                    'Página vazia recebida antes do total esperado. Encerrando paginação.');
-                break;
-              }
-
-              final result =
-                  await actions.batchInsertLocalPesagens(pageRecords);
-              final pageErrors =
-                  result['errors'] as List<Map<String, String>>? ?? [];
-              if (pageErrors.isNotEmpty) {
-                _syncLog('pesagens',
-                    '${pageErrors.length} erro(s) ao inserir. offset=$offsetAtual.');
-                syncErrors.addAll(pageErrors);
-              }
-              totalInserted += (result['inserted'] as int? ?? 0);
-              _syncLog('pesagens',
-                  '${result['inserted']} registros inseridos nesta página.');
-
-              FFAppState().indexPesagens =
-                  FFAppState().indexPesagens + pageRecords.length;
-              if (pageRecords.length < 999) {
-                _syncLog('pesagens',
-                    'Última página detectada (tamanho < 999). Encerrando paginação.');
-                break;
-              }
-            } catch (e, s) {
-              _syncLog('pesagens',
-                  'Erro ao processar página offset=$offsetAtual: $e\n$s');
-              syncErrors.add({
-                'id': 'página offset=$offsetAtual',
-                'error': 'Erro na requisição ou processamento: $e',
-              });
-              FFAppState().indexPesagens = FFAppState().indexPesagens + 999;
+                  'Página vazia recebida antes do total esperado. Encerrando paginação.');
+              break;
             }
+
+            final result = await actions.batchInsertLocalPesagens(pageRecords);
+            final pageErrors =
+                result['errors'] as List<Map<String, String>>? ?? [];
+            if (pageErrors.isNotEmpty) {
+              _syncLog('pesagens',
+                  '${pageErrors.length} erro(s) ao inserir. offset=$offsetAtual.');
+              syncErrors.addAll(pageErrors);
+            }
+            totalInserted += (result['inserted'] as int? ?? 0);
+            _syncLog('pesagens',
+                '${result['inserted']} registros inseridos nesta página.');
+
+            FFAppState().indexPesagens =
+                FFAppState().indexPesagens + pageRecords.length;
+            if (pageRecords.length < 999) {
+              _syncLog('pesagens',
+                  'Última página detectada (tamanho < 999). Encerrando paginação.');
+              break;
+            }
+          } catch (e, s) {
+            _syncLog('pesagens',
+                'Erro ao processar página offset=$offsetAtual: $e\n$s');
+            syncErrors.add({
+              'id': 'página offset=$offsetAtual',
+              'error': 'Erro na requisição ou processamento: $e',
+            });
+            FFAppState().indexPesagens = FFAppState().indexPesagens + 999;
           }
         }
+      }
 
-        if (syncErrors.isNotEmpty) {
-          syncOk = false;
-          _syncLog(
-              'pesagens', 'Total de erros acumulados: ${syncErrors.length}.');
-        }
-        // Só atualiza o timestamp se realmente inseriu registros
-        if (totalInserted > 0) {
-          FFAppState().pesagensChangeDateTime = DateTime.now();
-          _syncLog('pesagens',
-              'Timestamp atualizado para: ${FFAppState().pesagensChangeDateTime}');
-        } else {
-          _syncLog('pesagens',
-              'Nenhum registro inserido. Timestamp NÃO atualizado para forçar re-sync.');
-        }
-        if (syncOk) {
-          _syncLog('pesagens',
-              'Sincronização finalizada com sucesso. $totalInserted registros inseridos.');
-        } else {
-          _syncLog('pesagens',
-              'Sincronização finalizada com erros. ${syncErrors.length} registro(s) falharam.');
-        }
-        await _showSyncErrorsDialog(context, 'Pesagens', syncErrors);
-      } catch (e, s) {
-        _syncLog('pesagens', 'ERRO FATAL na sincronização: $e\n$s');
-      } finally {
-        FFAppState().indexPesagens = 0;
+      if (syncErrors.isNotEmpty) {
+        syncOk = false;
+        _syncLog(
+            'pesagens', 'Total de erros acumulados: ${syncErrors.length}.');
+      }
+      // Só atualiza o timestamp se realmente inseriu registros
+      if (totalInserted > 0) {
+        FFAppState().pesagensChangeDateTime = DateTime.now();
+        _syncLog('pesagens',
+            'Timestamp atualizado para: ${FFAppState().pesagensChangeDateTime}');
+      } else {
+        _syncLog('pesagens',
+            'Nenhum registro inserido. Timestamp NÃO atualizado para forçar re-sync.');
+      }
+      if (syncOk) {
+        _syncLog('pesagens',
+            'Sincronização finalizada com sucesso. $totalInserted registros inseridos.');
+      } else {
+        _syncLog('pesagens',
+            'Sincronização finalizada com erros. ${syncErrors.length} registro(s) falharam.');
+      }
+      await _showSyncErrorsDialog(context, 'Pesagens', syncErrors);
+    } catch (e, s) {
+      _syncLog('pesagens', 'ERRO FATAL na sincronização: $e\n$s');
+    } finally {
+      FFAppState().indexPesagens = 0;
     }
   } catch (e, s) {
     _syncLog('pesagens', 'EXCEÇÃO NÃO TRATADA: $e\n$s');

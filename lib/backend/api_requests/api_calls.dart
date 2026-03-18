@@ -212,7 +212,8 @@ class BuscarPesagensCall {
     int? pLimite = 999,
     int? pOffset = 0,
   }) async {
-    final baseUrl = SupabaseFunctionsGroup.getBaseUrl().replaceFirst('/rpc', '');
+    final baseUrl =
+        SupabaseFunctionsGroup.getBaseUrl().replaceFirst('/rpc', '');
     final propertyFilter = _serializeInFilter(pIdPropriedadeList);
 
     return ApiManager.instance.makeApiCall(
@@ -282,7 +283,8 @@ class QTDPesagensPropriedadeCall {
   Future<ApiCallResponse> call({
     List<String>? pIdsPropriedadesList,
   }) async {
-    final baseUrl = SupabaseFunctionsGroup.getBaseUrl().replaceFirst('/rpc', '');
+    final baseUrl =
+        SupabaseFunctionsGroup.getBaseUrl().replaceFirst('/rpc', '');
     final propertyFilter = _serializeInFilter(pIdsPropriedadesList);
 
     return ApiManager.instance.makeApiCall(
