@@ -10,7 +10,12 @@ import 'selecionar_propriedade_model.dart';
 export 'selecionar_propriedade_model.dart';
 
 class SelecionarPropriedadeWidget extends StatefulWidget {
-  const SelecionarPropriedadeWidget({super.key});
+  const SelecionarPropriedadeWidget({
+    super.key,
+    this.onPropriedadeChanged,
+  });
+
+  final Future Function()? onPropriedadeChanged;
 
   @override
   State<SelecionarPropriedadeWidget> createState() =>
@@ -65,7 +70,12 @@ class _SelecionarPropriedadeWidgetState
                 child: const SelecaoPropriedadeWidget(),
               );
             },
-          ).then((value) => safeSetState(() {}));
+          ).then((value) async {
+            if (widget.onPropriedadeChanged != null) {
+              await widget.onPropriedadeChanged!();
+            }
+            safeSetState(() {});
+          });
         },
         child: Container(
           width: double.infinity,

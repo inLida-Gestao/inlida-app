@@ -102,6 +102,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                   DateTime.fromMillisecondsSinceEpoch(1497796620000);
               FFAppState().sanidadeChangeDateTime =
                   DateTime.fromMillisecondsSinceEpoch(1498343520000);
+              FFAppState().pesagensChangeDateTime =
+                  DateTime.fromMillisecondsSinceEpoch(1505578800000);
               FFAppState().animaisRegistrados = 0;
               FFAppState().countReproducoes = 0;
               FFAppState().countInseminacoes = 0;
@@ -132,25 +134,25 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               } catch (e) {
                 debugPrint('[SYNC][rebanho] Erro na home: $e');
               }
+              debugPrint('[SYNC][home] Iniciando refreshReproducaoOtimizada...');
               try {
                 await action_blocks.refreshReproducaoOtimizada(context);
               } catch (e) {
                 debugPrint('[SYNC][reproducao] Erro na home: $e');
               }
-              unawaited(
-                () async {
-                  try {
-                    await action_blocks.refreshPesagens(context);
-                  } catch (e) {
-                    debugPrint('[SYNC][pesagens] Erro na home: $e');
-                  }
-                }(),
-              );
+              debugPrint('[SYNC][home] Iniciando refreshPesagens...');
+              try {
+                await action_blocks.refreshPesagens(context);
+              } catch (e) {
+                debugPrint('[SYNC][pesagens] Erro na home: $e');
+              }
+              debugPrint('[SYNC][home] Iniciando refresSanidadeOtimizada...');
               try {
                 await action_blocks.refresSanidadeOtimizada(context);
               } catch (e) {
                 debugPrint('[SYNC][sanidade] Erro na home: $e');
               }
+              debugPrint('[SYNC][home] Todas as syncs finalizadas.');
               FFAppState().firstRunUserEmail = currentUserEmail;
               FFAppState().ultimaSincronizacao = getCurrentTimestamp;
               safeSetState(() {});
@@ -336,6 +338,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         );
                       },
                     );
+                    safeSetState(() {});
                   } else if (FFAppState().navegacaoDashboard == 'reproducoes') {
                     await showAlignedDialog(
                       barrierColor: Colors.transparent,
@@ -591,7 +594,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                 wrapWithModel(
                                   model: _model.selecionarPropriedadeModel,
                                   updateCallback: () => safeSetState(() {}),
-                                  child: const SelecionarPropriedadeWidget(),
+                                  child: SelecionarPropriedadeWidget(
+                                    onPropriedadeChanged: () async {
+                                      await action_blocks.animaisPropriedade(context);
+                                      await action_blocks.countLotesCadastrados(context);
+                                      safeSetState(() {});
+                                    },
+                                  ),
                                 ),
                                 Row(
                                   mainAxisSize: MainAxisSize.max,

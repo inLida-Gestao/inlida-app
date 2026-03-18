@@ -11,6 +11,7 @@ import '/rebanho/view_rebanho/view_rebanho_widget.dart';
 import '/rebanho/edit_rebanho/edit_rebanho_widget.dart';
 import 'dart:ui';
 import '/flutter_flow/custom_functions.dart' as functions;
+import '/actions/actions.dart' as action_blocks;
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -230,7 +231,15 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                 child: wrapWithModel(
                   model: _model.selecionarPropriedadeModel,
                   updateCallback: () => safeSetState(() {}),
-                  child: const SelecionarPropriedadeWidget(),
+                  child: SelecionarPropriedadeWidget(
+                    onPropriedadeChanged: () async {
+                      _model.pageNum = 1;
+                      _model.offset = 0;
+                      _model.pesquisarTextController?.clear();
+                      await action_blocks.animaisPropriedade(context);
+                      safeSetState(() {});
+                    },
+                  ),
                 ),
               ),
               Padding(

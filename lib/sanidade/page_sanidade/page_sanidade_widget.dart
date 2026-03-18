@@ -79,7 +79,15 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
               child: wrapWithModel(
                 model: _model.selecionarPropriedadeModel,
                 updateCallback: () => safeSetState(() {}),
-                child: const SelecionarPropriedadeWidget(),
+                child: SelecionarPropriedadeWidget(
+                  onPropriedadeChanged: () async {
+                    _model.pageNum = 1;
+                    _model.offset = 0;
+                    _model.pesquisarTextController?.clear();
+                    await action_blocks.qTDSanidades(context);
+                    safeSetState(() {});
+                  },
+                ),
               ),
             ),
             Padding(

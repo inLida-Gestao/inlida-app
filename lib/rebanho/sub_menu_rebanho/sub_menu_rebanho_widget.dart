@@ -102,6 +102,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                               FFAppState().propriedadeSelecionada.idPropriedade,
                         );
                         FFAppState().rebanhoLotesSelecionar = [];
+                        _model.index = 0;
                         safeSetState(() {});
                         if (_model.lotesRebNasc!.isNotEmpty) {
                           while (_model.index < _model.lotesRebNasc!.length) {
@@ -214,6 +215,7 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                               FFAppState().propriedadeSelecionada.idPropriedade,
                         );
                         FFAppState().rebanhoLotesSelecionar = [];
+                        _model.index = 0;
                         safeSetState(() {});
                         if (_model.lotesReb!.isNotEmpty) {
                           while (_model.index < _model.lotesReb!.length) {

@@ -34,12 +34,14 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
       final Map<String, dynamic> source = Map<String, dynamic>.from(records[i]);
       final Map<String, dynamic> mapped = {};
 
-      // Mapeamento específico Supabase -> SQLite
-      if (source['idRebanho'] != null) {
-        mapped['idRebanho'] = _cleanNull(source['idRebanho']);
+      // Mapeamento específico Supabase -> SQLite (com fallback para snake_case)
+      final idRebanho = source['idRebanho'] ?? source['idrebanho'] ?? source['id_rebanho'];
+      if (idRebanho != null) {
+        mapped['idRebanho'] = _cleanNull(idRebanho);
       }
-      if (source['dataPesagem'] != null) {
-        mapped['dataPesagem'] = _cleanNull(source['dataPesagem']);
+      final dataPesagem = source['dataPesagem'] ?? source['datapesagem'] ?? source['data_pesagem'];
+      if (dataPesagem != null) {
+        mapped['dataPesagem'] = _cleanNull(dataPesagem);
       }
       if (source['tipo'] != null) {
         mapped['tipo'] = _cleanNull(source['tipo']);
@@ -47,14 +49,19 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
       if (source['peso'] != null) {
         mapped['peso'] = _toDouble(source['peso']);
       }
-      if (source['deletado'] != null) {
-        mapped['deletado'] = _cleanNull(source['deletado']);
+      final deletado = source['deletado'];
+      if (deletado != null) {
+        mapped['deletado'] = _cleanNull(deletado) ?? 'NAO';
+      } else {
+        mapped['deletado'] = 'NAO';
       }
-      if (source['created_at'] != null) {
-        mapped['created_at'] = _cleanNull(source['created_at']);
+      final createdAt = source['created_at'] ?? source['createdAt'];
+      if (createdAt != null) {
+        mapped['created_at'] = _cleanNull(createdAt);
       }
-      if (source['id_propriedade'] != null) {
-        mapped['id_propriedade'] = _cleanNull(source['id_propriedade']);
+      final idPropriedade = source['id_propriedade'] ?? source['idPropriedade'] ?? source['idpropriedade'];
+      if (idPropriedade != null) {
+        mapped['id_propriedade'] = _cleanNull(idPropriedade);
       }
 
       mappedRecords.add(mapped);
@@ -75,6 +82,7 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
       }
       await batch.commit(noResult: true);
     });
+
     return {'inserted': mappedRecords.length, 'errors': errors};
   } catch (batchError) {
     debugPrint(

@@ -293,27 +293,34 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                                     .secondary,
                                           ),
                                         );
-                                        // Upload phase - 20%
+                                        // Upload phase
                                         FFAppState().syncProgressPercent = 5;
+                                        FFAppState().syncProgressLabel =
+                                            'Enviando propriedades...';
+                                        safeSetState(() {});
+                                        final propUploadOk = await action_blocks
+                                            .putUpdtPropriedades(context);
+                                        FFAppState().syncProgressPercent = 10;
                                         FFAppState().syncProgressLabel =
                                             'Enviando rebanhos...';
                                         safeSetState(() {});
-                                        await Future.wait([
+                                        final results = await Future.wait([
                                           action_blocks
                                               .putUpdtRebanhos(context),
                                           action_blocks.putUpdtLotes(context),
                                           action_blocks
                                               .putUpdtReproducao(context),
                                         ]);
+                                        final rebanhoUploadOk = results[0];
+                                        final lotesUploadOk = results[1];
+                                        final reproUploadOk = results[2];
                                         FFAppState().syncProgressPercent = 15;
                                         FFAppState().syncProgressLabel =
                                             'Enviando sanidades...';
                                         safeSetState(() {});
-                                        FFAppState().dataDadosNaoSyncRepro =
-                                            null;
-                                        safeSetState(() {});
-                                        await action_blocks
-                                            .putUpdtSanidades(context);
+                                        final sanidadeUploadOk =
+                                            await action_blocks
+                                                .putUpdtSanidades(context);
                                         FFAppState().syncProgressPercent = 20;
                                         FFAppState().syncProgressLabel =
                                             'Baixando propriedades...';
@@ -321,12 +328,6 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         // Download propriedades - 25%
                                         await action_blocks
                                             .refreshPropriedades(context);
-                                        FFAppState().syncProgressPercent = 25;
-                                        FFAppState().syncProgressLabel =
-                                            'Enviando propriedades...';
-                                        safeSetState(() {});
-                                        await action_blocks
-                                            .putUpdtPropriedades(context);
                                         FFAppState().syncProgressPercent = 30;
                                         FFAppState().syncProgressLabel =
                                             'Baixando lotes...';
@@ -343,6 +344,10 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         FFAppState().syncProgressLabel =
                                             'Baixando dados...';
                                         safeSetState(() {});
+                                        // Forçar re-sync de pesagens resetando o timestamp
+                                        FFAppState().pesagensChangeDateTime =
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                1505578800000);
                                         // Download parallel - 35% to 95%
                                         await Future.wait([
                                           action_blocks
@@ -351,14 +356,22 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                               .refreshReproducaoOtimizada(
                                                   context),
                                           action_blocks
-                                              .refreshPesagens(context),
-                                          action_blocks
                                               .refresSanidadeOtimizada(context),
                                         ]).catchError((e) {
                                           debugPrint(
                                               '[SYNC] Erro no Future.wait nav1: $e');
                                           return <void>[];
                                         });
+                                        // Pesagens sync separado para garantir execução
+                                        debugPrint('[SYNC][nav] Chamando refreshPesagens SEPARADAMENTE...');
+                                        try {
+                                          await action_blocks
+                                              .refreshPesagens(context);
+                                          debugPrint('[SYNC][nav] refreshPesagens CONCLUÍDO com sucesso.');
+                                        } catch (e) {
+                                          debugPrint(
+                                              '[SYNC][nav] Erro em refreshPesagens: $e');
+                                        }
                                         FFAppState().syncProgressPercent = 95;
                                         FFAppState().syncProgressLabel =
                                             'Finalizando...';
@@ -371,16 +384,27 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         FFAppState().syncProgressLabel =
                                             'Concluído!';
                                         safeSetState(() {});
-                                        FFAppState().dataDadosNaoSyncProp =
-                                            null;
-                                        FFAppState().dataDadosNaoSyncRebanho =
-                                            null;
-                                        FFAppState().dataDadosNaoSyncLotes =
-                                            null;
-                                        FFAppState().dataDadosNaoSyncRepro =
-                                            null;
-                                        FFAppState().dataDadosNaoSyncSanidade =
-                                            null;
+                                        // Só limpar flags dos módulos cujo upload teve sucesso
+                                        if (propUploadOk) {
+                                          FFAppState().dataDadosNaoSyncProp =
+                                              null;
+                                        }
+                                        if (rebanhoUploadOk) {
+                                          FFAppState().dataDadosNaoSyncRebanho =
+                                              null;
+                                        }
+                                        if (lotesUploadOk) {
+                                          FFAppState().dataDadosNaoSyncLotes =
+                                              null;
+                                        }
+                                        if (reproUploadOk) {
+                                          FFAppState().dataDadosNaoSyncRepro =
+                                              null;
+                                        }
+                                        if (sanidadeUploadOk) {
+                                          FFAppState()
+                                              .dataDadosNaoSyncSanidade = null;
+                                        }
                                         safeSetState(() {});
                                         // Reset progress after a brief delay so user sees 100%
                                         await Future.delayed(
@@ -1575,11 +1599,11 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       FlutterFlowTheme.of(context).secondary,
                                 ),
                               );
-                              await action_blocks.putUpdtPropriedades(context);
-                              await action_blocks.putUpdtRebanhos(context);
-                              await action_blocks.putUpdtLotes(context);
-                              await action_blocks.putUpdtReproducao(context);
-                              await action_blocks.putUpdtSanidades(context);
+                              final propOk2 = await action_blocks.putUpdtPropriedades(context);
+                              final rebanhoOk2 = await action_blocks.putUpdtRebanhos(context);
+                              final lotesOk2 = await action_blocks.putUpdtLotes(context);
+                              final reproOk2 = await action_blocks.putUpdtReproducao(context);
+                              final sanidadeOk2 = await action_blocks.putUpdtSanidades(context);
                               try {
                                 await action_blocks
                                     .refreshPropriedades(context);
@@ -1615,11 +1639,21 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                               } catch (e) {
                                 debugPrint('[SYNC] Erro nav2 contadores: $e');
                               }
-                              FFAppState().dataDadosNaoSyncProp = null;
-                              FFAppState().dataDadosNaoSyncRebanho = null;
-                              FFAppState().dataDadosNaoSyncLotes = null;
-                              FFAppState().dataDadosNaoSyncRepro = null;
-                              FFAppState().dataDadosNaoSyncSanidade = null;
+                              if (propOk2) {
+                                FFAppState().dataDadosNaoSyncProp = null;
+                              }
+                              if (rebanhoOk2) {
+                                FFAppState().dataDadosNaoSyncRebanho = null;
+                              }
+                              if (lotesOk2) {
+                                FFAppState().dataDadosNaoSyncLotes = null;
+                              }
+                              if (reproOk2) {
+                                FFAppState().dataDadosNaoSyncRepro = null;
+                              }
+                              if (sanidadeOk2) {
+                                FFAppState().dataDadosNaoSyncSanidade = null;
+                              }
                               safeSetState(() {});
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

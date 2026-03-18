@@ -135,7 +135,14 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                     child: wrapWithModel(
                       model: _model.selecionarPropriedadeModel,
                       updateCallback: () => safeSetState(() {}),
-                      child: const SelecionarPropriedadeWidget(),
+                      child: SelecionarPropriedadeWidget(
+                        onPropriedadeChanged: () async {
+                          _model.pesquisarTextController?.clear();
+                          await action_blocks.countLotesCadastrados(context);
+                          await action_blocks.countLotesAtivoInativo(context);
+                          safeSetState(() {});
+                        },
+                      ),
                     ),
                   ),
                   Padding(

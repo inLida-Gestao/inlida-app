@@ -673,7 +673,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
             child: wrapWithModel(
               model: _model.selecionarPropriedadeModel,
               updateCallback: () => safeSetState(() {}),
-              child: const SelecionarPropriedadeWidget(),
+              child: SelecionarPropriedadeWidget(
+                onPropriedadeChanged: () async {
+                  await action_blocks.qTDReproducoes(context);
+                  safeSetState(() {});
+                },
+              ),
             ),
           ),
           Expanded(

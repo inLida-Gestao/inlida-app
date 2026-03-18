@@ -262,7 +262,16 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
               child: wrapWithModel(
                 model: _model.selecionarPropriedadeModel,
                 updateCallback: () => safeSetState(() {}),
-                child: const SelecionarPropriedadeWidget(),
+                child: SelecionarPropriedadeWidget(
+                  onPropriedadeChanged: () async {
+                    _model.pageNum = 1;
+                    _model.offset = 0;
+                    _model.pesquisarTextController?.clear();
+                    await action_blocks.qTDReproducoes(context);
+                    await _atualizarCountReproducoesFiltradas();
+                    safeSetState(() {});
+                  },
+                ),
               ),
             ),
             if (FFAppState().visibilidadeProgressBarRepro == true)
@@ -1227,11 +1236,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                        if ((reproducaoItem.ressinc != null && reproducaoItem.ressinc != '') &&
-                                                                            (reproducaoItem.ressinc !=
-                                                                                '-') &&
-                                                                            (reproducaoItem.ressinc !=
-                                                                                'null'))
+                                                                        if (['Tradicional', 'Precoce', 'Superprecoce'].contains(reproducaoItem.ressinc))
                                                                           Container(
                                                                             width:
                                                                                 20.0,
@@ -2276,11 +2281,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                             ),
                                                                           ),
                                                                         ),
-                                                                        if ((reproducaoItem.ressinc != null && reproducaoItem.ressinc != '') &&
-                                                                            (reproducaoItem.ressinc !=
-                                                                                '-') &&
-                                                                            (reproducaoItem.ressinc !=
-                                                                                'null'))
+                                                                        if (['Tradicional', 'Precoce', 'Superprecoce'].contains(reproducaoItem.ressinc))
                                                                           Container(
                                                                             width:
                                                                                 20.0,

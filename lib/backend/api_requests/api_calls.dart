@@ -212,30 +212,26 @@ class BuscarPesagensCall {
     int? pLimite = 999,
     int? pOffset = 0,
   }) async {
-    final baseUrl = SupabaseFunctionsGroup.getBaseUrl();
-    final pIdPropriedade = _serializeList(pIdPropriedadeList);
+    final baseUrl = SupabaseFunctionsGroup.getBaseUrl().replaceFirst('/rpc', '');
+    final propertyFilter = _serializeInFilter(pIdPropriedadeList);
 
-    final ffApiRequestBody = '''
-{
-  "p_id_propriedade": [
-    $pIdPropriedade
-  ],
-  "p_limite": $pLimite,
-  "p_offset": $pOffset
-}''';
     return ApiManager.instance.makeApiCall(
       callName: 'Buscar Pesagens',
-      apiUrl: '$baseUrl/pesagens_propriedade_mobile',
-      callType: ApiCallType.POST,
+      apiUrl: '$baseUrl/historico_pesagens',
+      callType: ApiCallType.GET,
       headers: {
         'apikey':
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
         'Authorization':
             'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
       },
-      params: {},
-      body: ffApiRequestBody,
-      bodyType: BodyType.JSON,
+      params: {
+        'select': '*',
+        'id_propriedade': 'in.$propertyFilter',
+        'order': 'id.asc',
+        'limit': pLimite,
+        'offset': pOffset,
+      },
       returnBody: true,
       encodeBodyUtf8: false,
       decodeUtf8: false,
@@ -286,28 +282,25 @@ class QTDPesagensPropriedadeCall {
   Future<ApiCallResponse> call({
     List<String>? pIdsPropriedadesList,
   }) async {
-    final baseUrl = SupabaseFunctionsGroup.getBaseUrl();
-    final pIdsPropriedades = _serializeList(pIdsPropriedadesList);
+    final baseUrl = SupabaseFunctionsGroup.getBaseUrl().replaceFirst('/rpc', '');
+    final propertyFilter = _serializeInFilter(pIdsPropriedadesList);
 
-    final ffApiRequestBody = '''
-{
-  "p_ids_propriedades": [
-    $pIdsPropriedades
-  ]
-}''';
     return ApiManager.instance.makeApiCall(
       callName: 'QTD Pesagens Propriedade',
-      apiUrl: '$baseUrl/count_pesagens_propriedade_mobile',
-      callType: ApiCallType.POST,
+      apiUrl: '$baseUrl/historico_pesagens',
+      callType: ApiCallType.GET,
       headers: {
+        'Prefer': 'count=exact',
         'apikey':
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
         'Authorization':
             'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
       },
-      params: {},
-      body: ffApiRequestBody,
-      bodyType: BodyType.JSON,
+      params: {
+        'select': 'id',
+        'id_propriedade': 'in.$propertyFilter',
+        'limit': 1,
+      },
       returnBody: true,
       encodeBodyUtf8: false,
       decodeUtf8: false,
@@ -605,6 +598,14 @@ String _serializeList(List? list) {
     }
     return '[]';
   }
+}
+
+String _serializeInFilter(List? list) {
+  final values = (list ?? <String>[])
+      .whereType<String>()
+      .where((e) => e.isNotEmpty)
+      .toList();
+  return '(${values.join(',')})';
 }
 
 String _serializeJson(dynamic jsonVar, [bool isList = false]) {

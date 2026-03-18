@@ -361,11 +361,11 @@ class SQLiteManager {
       );
 
   Future<List<BuscarReproducoesRebanhoRow>> buscarReproducoesRebanho({
-    String? numAnimal,
+    String? idRebanho,
   }) =>
       performBuscarReproducoesRebanho(
         _database,
-        numAnimal: numAnimal,
+        idRebanho: idRebanho,
       );
 
   Future<List<BuscarSanidadesRebanhoRow>> buscarSanidadesRebanho({
@@ -461,17 +461,11 @@ class SQLiteManager {
       );
 
   Future<List<BuscarRebanhoNumRow>> buscarRebanhoNum({
-    String? numeroAnimal,
-    String? nome,
-    String? dataNascimento,
-    String? raca,
+    String? idRebanho,
   }) =>
       performBuscarRebanhoNum(
         _database,
-        numeroAnimal: numeroAnimal,
-        nome: nome,
-        dataNascimento: dataNascimento,
-        raca: raca,
+        idRebanho: idRebanho,
       );
 
   Future<List<BuscaRebanhoPaginadaPesquisaRow>> buscaRebanhoPaginadaPesquisa({

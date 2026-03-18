@@ -622,7 +622,7 @@ Future<List<BuscaHistPesagensRow>> performBuscaHistPesagens(
   final query = '''
 SELECT * FROM local_historico_pesagens
 WHERE idRebanho = '$idRebanho'
-AND deletado = 'NAO'
+AND (deletado = 'NAO' OR deletado IS NULL OR deletado = '')
 ''';
   return _readQuery(database, query, (d) => BuscaHistPesagensRow(d));
 }
@@ -1095,10 +1095,14 @@ Future<List<BuscarLotesRow>> performBuscarLotes(
   Database database, {
   String? idPropriedade,
 }) {
+  // Support both single ID and comma-separated list from converterLista
+  final safeId = idPropriedade?.contains(',') == true
+      ? idPropriedade
+      : "'$idPropriedade'";
   final query = '''
 SELECT * FROM local_lotes
 WHERE ativo = 'Ativo'
-AND id_propriedade = '$idPropriedade'
+AND id_propriedade IN ($safeId)
 ''';
   return _readQuery(database, query, (d) => BuscarLotesRow(d));
 }
@@ -1512,11 +1516,11 @@ class BuscarSanidadeUPDTRow extends SqliteRow {
 /// BEGIN BUSCAR REPRODUCOES REBANHO
 Future<List<BuscarReproducoesRebanhoRow>> performBuscarReproducoesRebanho(
   Database database, {
-  String? numAnimal,
+  String? idRebanho,
 }) {
   final query = '''
 SELECT * FROM local_reproducao
-WHERE (numMatriz = '$numAnimal' OR numReprodutor = '$numAnimal')
+WHERE (id_rebanho_matriz = '$idRebanho' OR id_rebanho_reprodutor = '$idRebanho')
 AND deletado = 'NAO'
 ''';
   return _readQuery(database, query, (d) => BuscarReproducoesRebanhoRow(d));
@@ -1914,17 +1918,11 @@ class CountAnimaisLoteRow extends SqliteRow {
 /// BEGIN BUSCAR REBANHO NUM
 Future<List<BuscarRebanhoNumRow>> performBuscarRebanhoNum(
   Database database, {
-  String? numeroAnimal,
-  String? nome,
-  String? dataNascimento,
-  String? raca,
+  String? idRebanho,
 }) {
   final query = '''
 SELECT * FROM local_rebanho
-WHERE numeroAnimal = '$numeroAnimal'
-AND nome = '$nome'
-AND dataNascimento = '$dataNascimento'
-AND raca = '$raca'
+WHERE idRebanho = '$idRebanho'
 ''';
   return _readQuery(database, query, (d) => BuscarRebanhoNumRow(d));
 }

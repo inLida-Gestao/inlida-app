@@ -55,6 +55,54 @@ List<String> _safePropertyIds(dynamic body) {
       .toList();
 }
 
+String _buildSupabaseInFilter(List<String> values) {
+  final sanitized = values.where((e) => e.isNotEmpty).toList();
+  return '(${sanitized.join(',')})';
+}
+
+int _safeTotalFromContentRange(Map<String, String> headers) {
+  final contentRange = headers['content-range'] ?? headers['Content-Range'];
+  if (contentRange == null || contentRange.isEmpty) return 0;
+
+  final parts = contentRange.split('/');
+  if (parts.length < 2) return 0;
+
+  return int.tryParse(parts.last.trim()) ?? 0;
+}
+
+Future<ApiCallResponse> _buscarPesagensDireto({
+  required List<String> propertyIds,
+  required int limit,
+  required int offset,
+  bool includeCount = false,
+}) {
+  final headers = <String, dynamic>{
+    ...SupabaseFunctionsGroup.headers,
+    if (includeCount) 'Prefer': 'count=exact',
+  };
+
+  return ApiManager.instance.makeApiCall(
+    callName: 'Buscar Pesagens Direto',
+    apiUrl:
+        '${SupabaseFunctionsGroup.getBaseUrl().replaceFirst('/rpc', '')}/historico_pesagens',
+    callType: ApiCallType.GET,
+    headers: headers,
+    params: {
+      'select': '*',
+      'id_propriedade': 'in.${_buildSupabaseInFilter(propertyIds)}',
+      'order': 'id.asc',
+      'limit': limit,
+      'offset': offset,
+    },
+    returnBody: true,
+    encodeBodyUtf8: false,
+    decodeUtf8: false,
+    cache: false,
+    isStreamingApi: false,
+    alwaysAllowBody: false,
+  );
+}
+
 /// Exibe um popup com a lista de registros que falharam durante a sincronização.
 Future<void> _showSyncErrorsDialog(
   BuildContext context,
@@ -152,7 +200,6 @@ Future refreshPropriedades(BuildContext context) async {
     _syncLog('propriedades',
         'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
     if (shouldSync) {
-      await SQLiteManager.instance.deletarTodasPropriedades();
       propriedade =
           await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
         pUserId: currentUserUid,
@@ -163,6 +210,12 @@ Future refreshPropriedades(BuildContext context) async {
               .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
               .toList() as Iterable<PropriedadesStruct?>)
           .withoutNulls;
+
+      if (propriedadesList.isEmpty) {
+        _syncLog('propriedades',
+            'Download retornou vazio. Mantendo dados locais.');
+        return;
+      }
 
       // Converter para lista de maps para batch insert
       final records = <Map<String, dynamic>>[];
@@ -197,6 +250,8 @@ Future refreshPropriedades(BuildContext context) async {
         });
       }
 
+      // Só deleta dados locais DEPOIS de confirmar download com sucesso
+      await SQLiteManager.instance.deletarTodasPropriedades();
       await actions.batchInsertLocalPropriedades(records);
 
       FFAppState().propriedadesChangeDateTime =
@@ -212,7 +267,8 @@ Future refreshPropriedades(BuildContext context) async {
   }
 }
 
-Future putUpdtPropriedades(BuildContext context) async {
+Future<bool> putUpdtPropriedades(BuildContext context) async {
+  var allSuccess = true;
   try {
     List<BuscaPropriedadesPUTRow>? localPropriedades;
     List<BuscaPropriedadesUPDATEDRow>? localPropriedadesUPT;
@@ -227,53 +283,59 @@ Future putUpdtPropriedades(BuildContext context) async {
       );
       if (localPropriedades!.isNotEmpty) {
         while (FFAppState().propriedadesIndex < localPropriedades.length) {
-          await PropriedadesTable().insert({
-            'userID': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.userID,
-            'anotacoes': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.anotacoes,
-            'areaAgricultura': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.areaAgricultura,
-            'areaBenfeitoria': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.areaBenfeitoria,
-            'areaPastagem': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.areaPastagem,
-            'areaReserva': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.areaReserva,
-            'areaTotal': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.areaTotal,
-            'cidade': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.cidade,
-            'estado': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.estado,
-            'icone': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.icone,
-            'idPropriedade': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.idPropriedade,
-            'nome': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.nome,
-            'usersID': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.usersID,
-            'rebanhosID': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.rebanhosID,
-            'atividades': localPropriedades
-                .elementAtOrNull(FFAppState().propriedadesIndex)
-                ?.atividades,
-          });
+          try {
+            await PropriedadesTable().insert({
+              'userID': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.userID,
+              'anotacoes': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.anotacoes,
+              'areaAgricultura': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.areaAgricultura,
+              'areaBenfeitoria': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.areaBenfeitoria,
+              'areaPastagem': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.areaPastagem,
+              'areaReserva': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.areaReserva,
+              'areaTotal': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.areaTotal,
+              'cidade': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.cidade,
+              'estado': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.estado,
+              'icone': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.icone,
+              'idPropriedade': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.idPropriedade,
+              'nome': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.nome,
+              'usersID': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.usersID,
+              'rebanhosID': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.rebanhosID,
+              'atividades': localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.atividades,
+            });
+          } catch (e) {
+            allSuccess = false;
+            _syncLog('putUpdtPropriedades',
+                'ERRO insert propriedade idx=${FFAppState().propriedadesIndex}: $e');
+          }
           FFAppState().propriedadesIndex = FFAppState().propriedadesIndex + 1;
         }
       }
@@ -288,60 +350,68 @@ Future putUpdtPropriedades(BuildContext context) async {
       );
       if (localPropriedadesUPT!.isNotEmpty) {
         while (FFAppState().propriedadesIndex < localPropriedadesUPT.length) {
-          await PropriedadesTable().update(
-            data: {
-              'anotacoes': localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.anotacoes,
-              'areaAgricultura': localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.areaAgricultura,
-              'areaBenfeitoria': localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.areaBenfeitoria,
-              'areaPastagem': localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.areaPastagem,
-              'areaReserva': localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.areaReserva,
-              'areaTotal': localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.areaTotal,
-              'cidade': localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.cidade,
-              'estado': localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.estado,
-              'icone': localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.icone,
-              'atividades': localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.atividades,
-              'nome': localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.nome,
-              'usersID': localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.usersID,
-            },
-            matchingRows: (rows) => rows.eqOrNull(
-              'idPropriedade',
-              localPropriedadesUPT
-                  ?.elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.idPropriedade,
-            ),
-          );
+          try {
+            await PropriedadesTable().update(
+              data: {
+                'anotacoes': localPropriedadesUPT
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.anotacoes,
+                'areaAgricultura': localPropriedadesUPT
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.areaAgricultura,
+                'areaBenfeitoria': localPropriedadesUPT
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.areaBenfeitoria,
+                'areaPastagem': localPropriedadesUPT
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.areaPastagem,
+                'areaReserva': localPropriedadesUPT
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.areaReserva,
+                'areaTotal': localPropriedadesUPT
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.areaTotal,
+                'cidade': localPropriedadesUPT
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.cidade,
+                'estado': localPropriedadesUPT
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.estado,
+                'icone': localPropriedadesUPT
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.icone,
+                'atividades': localPropriedadesUPT
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.atividades,
+                'nome': localPropriedadesUPT
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.nome,
+                'usersID': localPropriedadesUPT
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.usersID,
+              },
+              matchingRows: (rows) => rows.eqOrNull(
+                'idPropriedade',
+                localPropriedadesUPT
+                    ?.elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.idPropriedade,
+              ),
+            );
+          } catch (e) {
+            allSuccess = false;
+            _syncLog('putUpdtPropriedades',
+                'ERRO update propriedade idx=${FFAppState().propriedadesIndex}: $e');
+          }
           FFAppState().propriedadesIndex = FFAppState().propriedadesIndex + 1;
         }
       }
       FFAppState().propriedadesIndex = 0;
     }
   } catch (e, s) {
+    allSuccess = false;
     _syncLog('putUpdtPropriedades', 'ERRO no upload de propriedades: $e\n$s');
   }
+  return allSuccess;
 }
 
 Future buscaPropriedade(
@@ -430,7 +500,8 @@ Future animaisPropriedade(BuildContext context) async {
   );
 }
 
-Future putUpdtRebanhos(BuildContext context) async {
+Future<bool> putUpdtRebanhos(BuildContext context) async {
+  var allSuccess = true;
   try {
     List<BuscarRebanhoPUTRow>? localRebanhos;
     List<RebanhoRow>? animalExiste;
@@ -458,6 +529,7 @@ Future putUpdtRebanhos(BuildContext context) async {
             ),
           );
           if (!((animalExiste).isNotEmpty)) {
+            try {
             await RebanhoTable().insert({
               'idPropriedade': localRebanhos
                   .elementAtOrNull(FFAppState().rebanhosIndex)
@@ -603,6 +675,11 @@ Future putUpdtRebanhos(BuildContext context) async {
                   .elementAtOrNull(FFAppState().rebanhosIndex)
                   ?.categoriaMatriz,
             });
+            } catch (e) {
+              allSuccess = false;
+              _syncLog('putUpdtRebanhos',
+                  'ERRO insert rebanho idx=${FFAppState().rebanhosIndex}: $e');
+            }
           }
           FFAppState().rebanhosIndex = FFAppState().rebanhosIndex + 1;
         }
@@ -617,6 +694,7 @@ Future putUpdtRebanhos(BuildContext context) async {
       );
       if (localRebanhosUPDT!.isNotEmpty) {
         while (FFAppState().rebanhosIndex < localRebanhosUPDT.length) {
+          try {
           await RebanhoTable().update(
             data: {
               'numeroAnimal': localRebanhosUPDT
@@ -758,6 +836,11 @@ Future putUpdtRebanhos(BuildContext context) async {
                   ?.idRebanho,
             ),
           );
+          } catch (e) {
+            allSuccess = false;
+            _syncLog('putUpdtRebanhos',
+                'ERRO update rebanho idx=${FFAppState().rebanhosIndex}: $e');
+          }
           FFAppState().rebanhosIndex = FFAppState().rebanhosIndex + 1;
         }
       }
@@ -772,6 +855,7 @@ Future putUpdtRebanhos(BuildContext context) async {
       FFAppState().pesagensIndex = 0;
       if (localHistPesPUT!.isNotEmpty) {
         while (FFAppState().pesagensIndex < localHistPesPUT.length) {
+          try {
           await HistoricoPesagensTable().insert({
             'idRebanho': localHistPesPUT
                 .elementAtOrNull(FFAppState().pesagensIndex)
@@ -790,6 +874,11 @@ Future putUpdtRebanhos(BuildContext context) async {
                 .elementAtOrNull(FFAppState().pesagensIndex)
                 ?.deletado,
           });
+          } catch (e) {
+            allSuccess = false;
+            _syncLog('putUpdtRebanhos',
+                'ERRO insert pesagem idx=${FFAppState().pesagensIndex}: $e');
+          }
           FFAppState().pesagensIndex = FFAppState().pesagensIndex + 1;
         }
       }
@@ -797,6 +886,7 @@ Future putUpdtRebanhos(BuildContext context) async {
       localPesagensUPDT = await SQLiteManager.instance.buscaHistPesagensUPDT();
       if (localPesagensUPDT!.isNotEmpty) {
         while (FFAppState().pesagensIndex < localPesagensUPDT.length) {
+          try {
           await HistoricoPesagensTable().update(
             data: {
               'deletado': localPesagensUPDT
@@ -810,14 +900,21 @@ Future putUpdtRebanhos(BuildContext context) async {
                   ?.id,
             ),
           );
+          } catch (e) {
+            allSuccess = false;
+            _syncLog('putUpdtRebanhos',
+                'ERRO update pesagem idx=${FFAppState().pesagensIndex}: $e');
+          }
           FFAppState().pesagensIndex = FFAppState().pesagensIndex + 1;
         }
       }
       FFAppState().pesagensIndex = 0;
     }
   } catch (e, s) {
+    allSuccess = false;
     _syncLog('putUpdtRebanhos', 'ERRO no upload de rebanhos: $e\n$s');
   }
+  return allSuccess;
 }
 
 Future countLotesAtivoInativo(BuildContext context) async {
@@ -953,7 +1050,6 @@ Future refreshLotes(BuildContext context) async {
     _syncLog('lotes',
         'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
     if (shouldSync) {
-      await SQLiteManager.instance.deleteAllLotes();
       propriedades =
           await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
         pUserId: currentUserUid,
@@ -1000,6 +1096,8 @@ Future refreshLotes(BuildContext context) async {
         });
       }
 
+      // Só deleta dados locais DEPOIS de confirmar download com sucesso
+      await SQLiteManager.instance.deleteAllLotes();
       await actions.batchInsertLocalLotes(records);
 
       FFAppState().lotesChangeDateTime = remoteLastChange ?? DateTime.now();
@@ -1013,7 +1111,8 @@ Future refreshLotes(BuildContext context) async {
   }
 }
 
-Future putUpdtLotes(BuildContext context) async {
+Future<bool> putUpdtLotes(BuildContext context) async {
+  var allSuccess = true;
   try {
     List<BuscarLotePUTRow>? localLotes;
     List<BuscarLoteUPDTRow>? localLotesUPT;
@@ -1029,37 +1128,42 @@ Future putUpdtLotes(BuildContext context) async {
       FFAppState().lotesIndex = 0;
       if (localLotes!.isNotEmpty) {
         while (FFAppState().lotesIndex < localLotes.length) {
-          await LotesTable().insert({
-            'id_propriedade': localLotes
-                .elementAtOrNull(FFAppState().lotesIndex)
-                ?.idPropriedade,
-            'id_animais':
-                localLotes.elementAtOrNull(FFAppState().lotesIndex)?.idAnimais,
-            'nome': localLotes.elementAtOrNull(FFAppState().lotesIndex)?.nome,
-            'anotacoes':
-                localLotes.elementAtOrNull(FFAppState().lotesIndex)?.anotacoes,
-            'ativo': localLotes.elementAtOrNull(FFAppState().lotesIndex)?.ativo,
-            'motivo':
-                localLotes.elementAtOrNull(FFAppState().lotesIndex)?.motivo,
-            'data_motivo': supaSerialize<DateTime>(functions.converterParaData(
-                localLotes
-                    .elementAtOrNull(FFAppState().lotesIndex)
-                    ?.dataMotivo)),
-            'id_lote':
-                localLotes.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
-            'deletado':
-                localLotes.elementAtOrNull(FFAppState().lotesIndex)?.deletado,
-            'data_entrada_piquete': supaSerialize<DateTime>(
-                functions.converterParaData(localLotes
-                    .elementAtOrNull(FFAppState().lotesIndex)
-                    ?.dataEntradaPiquete)),
-            'data_saida_piquete': supaSerialize<DateTime>(
-                functions.converterParaData(localLotes
-                    .elementAtOrNull(FFAppState().lotesIndex)
-                    ?.dataSaidaPiquete)),
-            'valorVenda':
-                localLotes.elementAtOrNull(FFAppState().lotesIndex)?.valorVenda,
-          });
+          try {
+            await LotesTable().insert({
+              'id_propriedade': localLotes
+                  .elementAtOrNull(FFAppState().lotesIndex)
+                  ?.idPropriedade,
+              'id_animais':
+                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.idAnimais,
+              'nome': localLotes.elementAtOrNull(FFAppState().lotesIndex)?.nome,
+              'anotacoes':
+                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.anotacoes,
+              'ativo': localLotes.elementAtOrNull(FFAppState().lotesIndex)?.ativo,
+              'motivo':
+                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.motivo,
+              'data_motivo': supaSerialize<DateTime>(functions.converterParaData(
+                  localLotes
+                      .elementAtOrNull(FFAppState().lotesIndex)
+                      ?.dataMotivo)),
+              'id_lote':
+                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
+              'deletado':
+                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.deletado,
+              'data_entrada_piquete': supaSerialize<DateTime>(
+                  functions.converterParaData(localLotes
+                      .elementAtOrNull(FFAppState().lotesIndex)
+                      ?.dataEntradaPiquete)),
+              'data_saida_piquete': supaSerialize<DateTime>(
+                  functions.converterParaData(localLotes
+                      .elementAtOrNull(FFAppState().lotesIndex)
+                      ?.dataSaidaPiquete)),
+              'valorVenda':
+                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.valorVenda,
+            });
+          } catch (e) {
+            allSuccess = false;
+            _syncLog('putUpdtLotes', 'ERRO insert lote idx=${FFAppState().lotesIndex}: $e');
+          }
           FFAppState().lotesIndex = FFAppState().lotesIndex + 1;
         }
       }
@@ -1073,63 +1177,70 @@ Future putUpdtLotes(BuildContext context) async {
       );
       if (localLotesUPT!.isNotEmpty) {
         while (FFAppState().lotesIndex < localLotesUPT.length) {
-          await LotesTable().update(
-            data: {
-              'id_propriedade': localLotesUPT
-                  .elementAtOrNull(FFAppState().lotesIndex)
-                  ?.idPropriedade,
-              'id_animais': localLotesUPT
-                  .elementAtOrNull(FFAppState().lotesIndex)
-                  ?.idAnimais,
-              'nome':
-                  localLotesUPT.elementAtOrNull(FFAppState().lotesIndex)?.nome,
-              'anotacoes': localLotesUPT
-                  .elementAtOrNull(FFAppState().lotesIndex)
-                  ?.anotacoes,
-              'ativo':
-                  localLotesUPT.elementAtOrNull(FFAppState().lotesIndex)?.ativo,
-              'motivo': localLotesUPT
-                  .elementAtOrNull(FFAppState().lotesIndex)
-                  ?.motivo,
-              'data_motivo': supaSerialize<DateTime>(
-                  functions.converterParaData(localLotesUPT
-                      .elementAtOrNull(FFAppState().lotesIndex)
-                      ?.dataMotivo)),
-              'id_lote': localLotesUPT
-                  .elementAtOrNull(FFAppState().lotesIndex)
-                  ?.idLote,
-              'deletado': localLotesUPT
-                  .elementAtOrNull(FFAppState().lotesIndex)
-                  ?.deletado,
-              'updated_at': supaSerialize<DateTime>(functions.converterParaData(
-                  localLotesUPT
-                      .elementAtOrNull(FFAppState().lotesIndex)
-                      ?.updatedAt)),
-              'data_entrada_piquete': supaSerialize<DateTime>(
-                  functions.converterParaData(localLotesUPT
-                      .elementAtOrNull(FFAppState().lotesIndex)
-                      ?.dataEntradaPiquete)),
-              'data_saida_piquete': supaSerialize<DateTime>(
-                  functions.converterParaData(localLotesUPT
-                      .elementAtOrNull(FFAppState().lotesIndex)
-                      ?.dataSaidaPiquete)),
-              'valorVenda': localLotesUPT
-                  .elementAtOrNull(FFAppState().lotesIndex)
-                  ?.valorVenda,
-            },
-            matchingRows: (rows) => rows.eqOrNull(
-              'id_lote',
-              localLotesUPT?.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
-            ),
-          );
+          try {
+            await LotesTable().update(
+              data: {
+                'id_propriedade': localLotesUPT
+                    .elementAtOrNull(FFAppState().lotesIndex)
+                    ?.idPropriedade,
+                'id_animais': localLotesUPT
+                    .elementAtOrNull(FFAppState().lotesIndex)
+                    ?.idAnimais,
+                'nome':
+                    localLotesUPT.elementAtOrNull(FFAppState().lotesIndex)?.nome,
+                'anotacoes': localLotesUPT
+                    .elementAtOrNull(FFAppState().lotesIndex)
+                    ?.anotacoes,
+                'ativo':
+                    localLotesUPT.elementAtOrNull(FFAppState().lotesIndex)?.ativo,
+                'motivo': localLotesUPT
+                    .elementAtOrNull(FFAppState().lotesIndex)
+                    ?.motivo,
+                'data_motivo': supaSerialize<DateTime>(
+                    functions.converterParaData(localLotesUPT
+                        .elementAtOrNull(FFAppState().lotesIndex)
+                        ?.dataMotivo)),
+                'id_lote': localLotesUPT
+                    .elementAtOrNull(FFAppState().lotesIndex)
+                    ?.idLote,
+                'deletado': localLotesUPT
+                    .elementAtOrNull(FFAppState().lotesIndex)
+                    ?.deletado,
+                'updated_at': supaSerialize<DateTime>(functions.converterParaData(
+                    localLotesUPT
+                        .elementAtOrNull(FFAppState().lotesIndex)
+                        ?.updatedAt)),
+                'data_entrada_piquete': supaSerialize<DateTime>(
+                    functions.converterParaData(localLotesUPT
+                        .elementAtOrNull(FFAppState().lotesIndex)
+                        ?.dataEntradaPiquete)),
+                'data_saida_piquete': supaSerialize<DateTime>(
+                    functions.converterParaData(localLotesUPT
+                        .elementAtOrNull(FFAppState().lotesIndex)
+                        ?.dataSaidaPiquete)),
+                'valorVenda': localLotesUPT
+                    .elementAtOrNull(FFAppState().lotesIndex)
+                    ?.valorVenda,
+              },
+              matchingRows: (rows) => rows.eqOrNull(
+                'id_lote',
+                localLotesUPT?.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
+              ),
+            );
+          } catch (e) {
+            allSuccess = false;
+            _syncLog('putUpdtLotes', 'ERRO update lote idx=${FFAppState().lotesIndex}: $e');
+          }
           FFAppState().lotesIndex = FFAppState().lotesIndex + 1;
         }
       }
       FFAppState().lotesIndex = 0;
     }
   } catch (e, s) {
+    allSuccess = false;
     _syncLog('putUpdtLotes', 'ERRO no upload de lotes: $e\n$s');
   }
+  return allSuccess;
 }
 
 Future countLotesCadastrados(BuildContext context) async {
@@ -1170,7 +1281,8 @@ Future qTDReproducoes(BuildContext context) async {
   );
 }
 
-Future putUpdtReproducao(BuildContext context) async {
+Future<bool> putUpdtReproducao(BuildContext context) async {
+  var allSuccess = true;
   try {
     List<BuscarReproducaoPUTRow>? localReproducao;
     List<BuscarReproducaoUPDTRow>? localReproducaoUPDT;
@@ -1186,7 +1298,8 @@ Future putUpdtReproducao(BuildContext context) async {
       FFAppState().reproducaoIndex = 0;
       if (localReproducao!.isNotEmpty) {
         while (FFAppState().reproducaoIndex < localReproducao.length) {
-          await ReproducaoTable().insert({
+          try {
+            await ReproducaoTable().insert({
             'id_propriedade': localReproducao
                 .elementAtOrNull(FFAppState().reproducaoIndex)
                 ?.idPropriedade,
@@ -1338,6 +1451,10 @@ Future putUpdtReproducao(BuildContext context) async {
                 .elementAtOrNull(FFAppState().reproducaoIndex)
                 ?.idReproducao,
           });
+          } catch (e) {
+            allSuccess = false;
+            _syncLog('putUpdtReproducao', 'ERRO insert reproducao idx=${FFAppState().reproducaoIndex}: $e');
+          }
           FFAppState().reproducaoIndex = FFAppState().reproducaoIndex + 1;
         }
       }
@@ -1351,7 +1468,8 @@ Future putUpdtReproducao(BuildContext context) async {
       );
       if (localReproducaoUPDT!.isNotEmpty) {
         while (FFAppState().reproducaoIndex < localReproducaoUPDT.length) {
-          await ReproducaoTable().update(
+          try {
+            await ReproducaoTable().update(
             data: {
               'tipo_reproducao': localReproducaoUPDT
                   .elementAtOrNull(FFAppState().reproducaoIndex)
@@ -1467,14 +1585,20 @@ Future putUpdtReproducao(BuildContext context) async {
                   ?.idReproducao,
             ),
           );
+          } catch (e) {
+            allSuccess = false;
+            _syncLog('putUpdtReproducao', 'ERRO update reproducao idx=${FFAppState().reproducaoIndex}: $e');
+          }
           FFAppState().reproducaoIndex = FFAppState().reproducaoIndex + 1;
         }
       }
       FFAppState().reproducaoIndex = 0;
     }
   } catch (e, s) {
+    allSuccess = false;
     _syncLog('putUpdtReproducao', 'ERRO no upload de reprodução: $e\n$s');
   }
+  return allSuccess;
 }
 
 Future countSanidades(BuildContext context) async {
@@ -1520,7 +1644,8 @@ Future countSanidades(BuildContext context) async {
   }
 }
 
-Future putUpdtSanidades(BuildContext context) async {
+Future<bool> putUpdtSanidades(BuildContext context) async {
+  var allSuccess = true;
   try {
     List<BuscarSanidadePUTRow>? localSanidade;
     List<BuscarSanidadeUPDTRow>? localSanidadeUPDT;
@@ -1535,7 +1660,8 @@ Future putUpdtSanidades(BuildContext context) async {
       );
       if (localSanidade!.isNotEmpty) {
         while (FFAppState().sanidadeIndex < localSanidade.length) {
-          await SanidadeTable().insert({
+          try {
+            await SanidadeTable().insert({
             'id_propriedade': localSanidade
                 .elementAtOrNull(FFAppState().sanidadeIndex)
                 ?.idPropriedade,
@@ -1612,6 +1738,10 @@ Future putUpdtSanidades(BuildContext context) async {
                 .elementAtOrNull(FFAppState().sanidadeIndex)
                 ?.protocoloIatf,
           });
+          } catch (e) {
+            allSuccess = false;
+            _syncLog('putUpdtSanidades', 'ERRO insert sanidade idx=${FFAppState().sanidadeIndex}: $e');
+          }
           FFAppState().sanidadeIndex = FFAppState().sanidadeIndex + 1;
         }
       }
@@ -1625,7 +1755,8 @@ Future putUpdtSanidades(BuildContext context) async {
       );
       if (localSanidadeUPDT!.isNotEmpty) {
         while (FFAppState().sanidadeIndex < localSanidadeUPDT.length) {
-          await SanidadeTable().update(
+          try {
+            await SanidadeTable().update(
             data: {
               'data_sanidade': supaSerialize<DateTime>(
                   functions.converterParaData(localSanidadeUPDT
@@ -1694,14 +1825,20 @@ Future putUpdtSanidades(BuildContext context) async {
                   ?.idSanidade,
             ),
           );
+          } catch (e) {
+            allSuccess = false;
+            _syncLog('putUpdtSanidades', 'ERRO update sanidade idx=${FFAppState().sanidadeIndex}: $e');
+          }
           FFAppState().sanidadeIndex = FFAppState().sanidadeIndex + 1;
         }
       }
       FFAppState().sanidadeIndex = 0;
     }
   } catch (e, s) {
+    allSuccess = false;
     _syncLog('putUpdtSanidades', 'ERRO no upload de sanidades: $e\n$s');
   }
+  return allSuccess;
 }
 
 Future qTDSanidades(BuildContext context) async {
@@ -2019,35 +2156,16 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
 
 Future refreshPesagens(BuildContext context) async {
   try {
-    _syncLog('pesagens', 'Iniciando verificação do change tracker...');
-    List<HistoricoPesagensChangeTrackerRow>? lastChangeResultt;
+    _syncLog('pesagens', 'Iniciando sincronização (sem change tracker)...');
     ApiCallResponse? propriedadessO;
-    ApiCallResponse? qtdPesagens;
     ApiCallResponse? pesagensAPI;
 
+    _syncLog('pesagens', 'Iniciando sincronização otimizada.');
+    var syncOk = true;
+    final List<Map<String, String>> syncErrors = [];
+    int totalInserted = 0;
+
     try {
-      lastChangeResultt = await HistoricoPesagensChangeTrackerTable().queryRows(
-        queryFn: (q) => q,
-      );
-    } catch (e, s) {
-      _syncLog('pesagens', 'ERRO ao consultar change tracker: $e\n$s');
-      lastChangeResultt = [];
-    }
-    final remoteLastChange = lastChangeResultt.firstOrNull?.lastChange;
-    final localLastChange = FFAppState().pesagensChangeDateTime;
-    final shouldSync = remoteLastChange == null ||
-        localLastChange == null ||
-        remoteLastChange.isAfter(localLastChange);
-    _syncLog('pesagens',
-        'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
-
-    if (shouldSync) {
-      _syncLog('pesagens', 'Iniciando sincronização otimizada.');
-      var syncOk = true;
-      final List<Map<String, String>> syncErrors = [];
-      int totalInserted = 0;
-
-      try {
         propriedadessO =
             await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
           pUserId: currentUserUid,
@@ -2063,65 +2181,98 @@ Future refreshPesagens(BuildContext context) async {
           return;
         }
 
-        qtdPesagens =
-            await SupabaseFunctionsGroup.qTDPesagensPropriedadeCall.call(
-          pIdsPropriedadesList: propertyIds,
+        // Buscar a primeira página direto da tabela REST, pois a RPC de
+        // pesagens está retornando 0/[] apesar de existirem registros.
+        pesagensAPI = await _buscarPesagensDireto(
+          propertyIds: propertyIds,
+          limit: 999,
+          offset: 0,
+          includeCount: true,
         );
-        _syncLog(
-            'pesagens', 'Resposta qtdPesagens raw: ${qtdPesagens.jsonBody}');
 
-        final totalPesagens = _safeTotalFromApi(qtdPesagens.jsonBody);
+        final firstPageRecords = _safeRecordsFromApi(pesagensAPI.jsonBody);
+        final totalPesagens = _safeTotalFromContentRange(pesagensAPI.headers) > 0
+            ? _safeTotalFromContentRange(pesagensAPI.headers)
+            : firstPageRecords.length;
         FFAppState().totalPesagens = totalPesagens;
         FFAppState().indexPesagens = 0;
         _syncLog('pesagens', 'Total remoto informado: $totalPesagens.');
+        _syncLog('pesagens',
+            'Primeira página parseada: ${firstPageRecords.length} registros.');
 
+        if (firstPageRecords.isEmpty) {
+          _syncLog('pesagens',
+              'Primeira página vazia apesar de total=$totalPesagens. Não apagando dados locais. Abortando sync.');
+          return;
+        }
+
+        // Agora sim, apagar dados locais pois confirmamos que a API retorna dados
         await SQLiteManager.instance.deletarTodasPesagens();
-        _syncLog('pesagens', 'Tabela local limpa. Iniciando paginação...');
-        while (FFAppState().indexPesagens < totalPesagens) {
-          final offsetAtual = FFAppState().indexPesagens;
-          try {
-            pesagensAPI = await SupabaseFunctionsGroup.buscarPesagensCall.call(
-              pIdPropriedadeList: propertyIds,
-              pLimite: 999,
-              pOffset: offsetAtual,
-            );
+        _syncLog('pesagens', 'Tabela local limpa. Inserindo primeira página...');
 
-            final pageRecords = _safeRecordsFromApi(pesagensAPI.jsonBody);
-            _syncLog('pesagens',
-                'Página recebida. offset=$offsetAtual, tamanho=${pageRecords.length}.');
-            if (pageRecords.isEmpty) {
-              _syncLog('pesagens',
-                  'Página vazia recebida antes do total esperado. Encerrando paginação.');
-              break;
-            }
+        // Inserir a primeira página já obtida
+        final firstResult =
+            await actions.batchInsertLocalPesagens(firstPageRecords);
+        final firstPageErrors =
+            firstResult['errors'] as List<Map<String, String>>? ?? [];
+        if (firstPageErrors.isNotEmpty) {
+          syncErrors.addAll(firstPageErrors);
+        }
+        totalInserted += (firstResult['inserted'] as int? ?? 0);
+        _syncLog('pesagens',
+            '${firstResult['inserted']} registros inseridos na primeira página.');
 
-            final result = await actions.batchInsertLocalPesagens(pageRecords);
-            final pageErrors =
-                result['errors'] as List<Map<String, String>>? ?? [];
-            if (pageErrors.isNotEmpty) {
-              _syncLog('pesagens',
-                  '${pageErrors.length} erro(s) ao inserir. offset=$offsetAtual.');
-              syncErrors.addAll(pageErrors);
-            }
-            totalInserted += (result['inserted'] as int? ?? 0);
-            _syncLog('pesagens',
-                '${result['inserted']} registros inseridos nesta página.');
+        FFAppState().indexPesagens = firstPageRecords.length;
 
-            FFAppState().indexPesagens =
-                FFAppState().indexPesagens + pageRecords.length;
-            if (pageRecords.length < 999) {
+        // Continuar com as páginas restantes
+        if (firstPageRecords.length >= 999) {
+          while (true) {
+            final offsetAtual = FFAppState().indexPesagens;
+            try {
+              pesagensAPI = await _buscarPesagensDireto(
+                propertyIds: propertyIds,
+                limit: 999,
+                offset: offsetAtual,
+              );
+
+              final pageRecords = _safeRecordsFromApi(pesagensAPI.jsonBody);
               _syncLog('pesagens',
-                  'Última página detectada (tamanho < 999). Encerrando paginação.');
-              break;
+                  'Página recebida. offset=$offsetAtual, tamanho=${pageRecords.length}.');
+              if (pageRecords.isEmpty) {
+                _syncLog('pesagens',
+                    'Página vazia recebida antes do total esperado. Encerrando paginação.');
+                break;
+              }
+
+              final result =
+                  await actions.batchInsertLocalPesagens(pageRecords);
+              final pageErrors =
+                  result['errors'] as List<Map<String, String>>? ?? [];
+              if (pageErrors.isNotEmpty) {
+                _syncLog('pesagens',
+                    '${pageErrors.length} erro(s) ao inserir. offset=$offsetAtual.');
+                syncErrors.addAll(pageErrors);
+              }
+              totalInserted += (result['inserted'] as int? ?? 0);
+              _syncLog('pesagens',
+                  '${result['inserted']} registros inseridos nesta página.');
+
+              FFAppState().indexPesagens =
+                  FFAppState().indexPesagens + pageRecords.length;
+              if (pageRecords.length < 999) {
+                _syncLog('pesagens',
+                    'Última página detectada (tamanho < 999). Encerrando paginação.');
+                break;
+              }
+            } catch (e, s) {
+              _syncLog('pesagens',
+                  'Erro ao processar página offset=$offsetAtual: $e\n$s');
+              syncErrors.add({
+                'id': 'página offset=$offsetAtual',
+                'error': 'Erro na requisição ou processamento: $e',
+              });
+              FFAppState().indexPesagens = FFAppState().indexPesagens + 999;
             }
-          } catch (e, s) {
-            _syncLog('pesagens',
-                'Erro ao processar página offset=$offsetAtual: $e\n$s');
-            syncErrors.add({
-              'id': 'página offset=$offsetAtual',
-              'error': 'Erro na requisição ou processamento: $e',
-            });
-            FFAppState().indexPesagens = FFAppState().indexPesagens + 999;
           }
         }
 
@@ -2130,9 +2281,14 @@ Future refreshPesagens(BuildContext context) async {
           _syncLog(
               'pesagens', 'Total de erros acumulados: ${syncErrors.length}.');
         }
-        if (totalInserted > 0 || syncErrors.isEmpty) {
-          FFAppState().pesagensChangeDateTime =
-              remoteLastChange ?? DateTime.now();
+        // Só atualiza o timestamp se realmente inseriu registros
+        if (totalInserted > 0) {
+          FFAppState().pesagensChangeDateTime = DateTime.now();
+          _syncLog('pesagens',
+              'Timestamp atualizado para: ${FFAppState().pesagensChangeDateTime}');
+        } else {
+          _syncLog('pesagens',
+              'Nenhum registro inserido. Timestamp NÃO atualizado para forçar re-sync.');
         }
         if (syncOk) {
           _syncLog('pesagens',
@@ -2146,9 +2302,6 @@ Future refreshPesagens(BuildContext context) async {
         _syncLog('pesagens', 'ERRO FATAL na sincronização: $e\n$s');
       } finally {
         FFAppState().indexPesagens = 0;
-      }
-    } else {
-      _syncLog('pesagens', 'Sem necessidade de sincronização.');
     }
   } catch (e, s) {
     _syncLog('pesagens', 'EXCEÇÃO NÃO TRATADA: $e\n$s');

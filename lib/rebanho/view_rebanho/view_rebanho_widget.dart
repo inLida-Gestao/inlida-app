@@ -3064,23 +3064,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                 0;
                                                                             safeSetState(() {});
                                                                           }
-                                                                          _model.matrizRebanho = await SQLiteManager
-                                                                              .instance
-                                                                              .buscarRebanhoNum(
-                                                                            numeroAnimal:
-                                                                                containerBuscarRebanhoRowList.firstOrNull?.numeroMatriz,
-                                                                            nome:
-                                                                                containerBuscarRebanhoRowList.firstOrNull?.nomeMatriz,
-                                                                            dataNascimento:
-                                                                                containerBuscarRebanhoRowList.firstOrNull?.dataNascMatriz,
-                                                                            raca:
-                                                                                containerBuscarRebanhoRowList.firstOrNull?.racaMatriz,
-                                                                          );
                                                                           _model.histPesagensMatriz = await SQLiteManager
                                                                               .instance
                                                                               .buscaHistPesagens(
                                                                             idRebanho:
-                                                                                _model.matrizRebanho?.firstOrNull?.idRebanho,
+                                                                                containerBuscarRebanhoRowList.firstOrNull?.rebanhoIdMatriz,
                                                                           );
                                                                           FFAppState().histPesagens =
                                                                               [];
@@ -3142,6 +3130,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               safeSetState(() {});
                                                                             }
                                                                           }
+                                                                          final matrizIdRebanho = containerBuscarRebanhoRowList.firstOrNull?.rebanhoIdMatriz;
+                                                                          if (matrizIdRebanho != null && matrizIdRebanho != '' && matrizIdRebanho != 'null') {
                                                                           await showDialog(
                                                                             barrierColor:
                                                                                 Colors.transparent,
@@ -3155,17 +3145,31 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                 backgroundColor: Colors.transparent,
                                                                                 alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                                 child: ViewRebanhoWidget(
-                                                                                  idRebanho: _model.matrizRebanho!.firstOrNull!.idRebanho!,
+                                                                                  idRebanho: matrizIdRebanho,
                                                                                 ),
                                                                               );
                                                                             },
                                                                           );
+                                                                          } else {
+                                                                            await showDialog(
+                                                                              context: context,
+                                                                              builder: (alertDialogContext) {
+                                                                                return AlertDialog(
+                                                                                  content: const Text('Ficha da matriz não encontrada'),
+                                                                                  actions: [
+                                                                                    TextButton(
+                                                                                      onPressed: () => Navigator.pop(alertDialogContext),
+                                                                                      child: const Text('Ok'),
+                                                                                    ),
+                                                                                  ],
+                                                                                );
+                                                                              },
+                                                                            );
+                                                                          }
                                                                         } else {
                                                                           await showDialog(
-                                                                            context:
-                                                                                context,
-                                                                            builder:
-                                                                                (alertDialogContext) {
+                                                                            context: context,
+                                                                            builder: (alertDialogContext) {
                                                                               return AlertDialog(
                                                                                 content: const Text('Nenhuma matriz associada a este animal'),
                                                                                 actions: [
@@ -3492,23 +3496,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                 0;
                                                                             safeSetState(() {});
                                                                           }
-                                                                          _model.reprodutorRebanho = await SQLiteManager
-                                                                              .instance
-                                                                              .buscarRebanhoNum(
-                                                                            numeroAnimal:
-                                                                                containerBuscarRebanhoRowList.firstOrNull?.numeroReprodutor,
-                                                                            nome:
-                                                                                containerBuscarRebanhoRowList.firstOrNull?.nomeReprodutor,
-                                                                            dataNascimento:
-                                                                                containerBuscarRebanhoRowList.firstOrNull?.dataNascReprodutor,
-                                                                            raca:
-                                                                                containerBuscarRebanhoRowList.firstOrNull?.racaReprodutor,
-                                                                          );
                                                                           _model.histPesagensReprodutor = await SQLiteManager
                                                                               .instance
                                                                               .buscaHistPesagens(
                                                                             idRebanho:
-                                                                                _model.reprodutorRebanho?.firstOrNull?.idRebanho,
+                                                                                containerBuscarRebanhoRowList.firstOrNull?.rebanhoIdReprodutor,
                                                                           );
                                                                           FFAppState().histPesagens =
                                                                               [];
@@ -3565,6 +3557,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               safeSetState(() {});
                                                                             }
                                                                           }
+                                                                          final reprodutorIdRebanho = containerBuscarRebanhoRowList.firstOrNull?.rebanhoIdReprodutor;
+                                                                          if (reprodutorIdRebanho != null && reprodutorIdRebanho != '' && reprodutorIdRebanho != 'null') {
                                                                           await showDialog(
                                                                             barrierColor:
                                                                                 Colors.transparent,
@@ -3578,17 +3572,31 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                 backgroundColor: Colors.transparent,
                                                                                 alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
                                                                                 child: ViewRebanhoWidget(
-                                                                                  idRebanho: _model.reprodutorRebanho!.firstOrNull!.idRebanho!,
+                                                                                  idRebanho: reprodutorIdRebanho,
                                                                                 ),
                                                                               );
                                                                             },
                                                                           );
+                                                                          } else {
+                                                                            await showDialog(
+                                                                              context: context,
+                                                                              builder: (alertDialogContext) {
+                                                                                return AlertDialog(
+                                                                                  content: const Text('Ficha do reprodutor não encontrada'),
+                                                                                  actions: [
+                                                                                    TextButton(
+                                                                                      onPressed: () => Navigator.pop(alertDialogContext),
+                                                                                      child: const Text('Ok'),
+                                                                                    ),
+                                                                                  ],
+                                                                                );
+                                                                              },
+                                                                            );
+                                                                          }
                                                                         } else {
                                                                           await showDialog(
-                                                                            context:
-                                                                                context,
-                                                                            builder:
-                                                                                (alertDialogContext) {
+                                                                            context: context,
+                                                                            builder: (alertDialogContext) {
                                                                               return AlertDialog(
                                                                                 content: const Text('Nenhum reprodutor associado a este animal'),
                                                                                 actions: [
@@ -6344,6 +6352,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                       .firstOrNull?.numeroAnimal,
                                   createdAt: containerBuscarRebanhoRowList
                                       .firstOrNull!.createdAt!,
+                                  idRebanho: widget.idRebanho,
                                 ),
                               ),
                               FutureBuilder<List<BuscarSanidadesRebanhoRow>>(

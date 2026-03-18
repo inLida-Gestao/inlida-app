@@ -18,10 +18,12 @@ class ReproducoesViewRebanhoWidget extends StatefulWidget {
     super.key,
     this.numAnimal,
     required this.createdAt,
+    this.idRebanho,
   });
 
   final String? numAnimal;
   final String? createdAt;
+  final String? idRebanho;
 
   @override
   State<ReproducoesViewRebanhoWidget> createState() =>
@@ -57,7 +59,7 @@ class _ReproducoesViewRebanhoWidgetState
   Widget build(BuildContext context) {
     return FutureBuilder<List<BuscarReproducoesRebanhoRow>>(
       future: SQLiteManager.instance.buscarReproducoesRebanho(
-        numAnimal: widget.numAnimal,
+        idRebanho: widget.idRebanho,
       ),
       builder: (context, snapshot) {
         // Customize what your widget looks like when it's loading.
@@ -407,8 +409,7 @@ class _ReproducoesViewRebanhoWidgetState
                                                       ),
                                                     ),
                                                   ),
-                                                  if (reproducaoItem.ressinc ==
-                                                      'SIM')
+                                                  if (['Tradicional', 'Precoce', 'Superprecoce'].contains(reproducaoItem.ressinc))
                                                     Container(
                                                       width: 20.0,
                                                       height: 20.0,
