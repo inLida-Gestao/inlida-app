@@ -2164,8 +2164,8 @@ class _ViewReproducaoRebanhoWidgetState
                                       rAddInseminacaoBuscarReproducaoRowList
                                           .firstOrNull?.parida,
                                       'N/A',
-                                    ) ==
-                                    'Não')
+                                    ) !=
+                                    'Sim')
                                   Icon(
                                     Icons.check_box_outline_blank,
                                     color: FlutterFlowTheme.of(context).accent3,

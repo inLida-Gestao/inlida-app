@@ -5799,6 +5799,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               .languageCode,
                                                     ),
                                                     idRebanho: _model.idRebanho,
+                                                    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
                                                   );
                                                 }
                                                 if (_model
@@ -5829,6 +5830,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               .languageCode,
                                                     ),
                                                     idRebanho: _model.idRebanho,
+                                                    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
                                                   );
                                                 }
                                                 if (_model
@@ -5863,6 +5865,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               .languageCode,
                                                     ),
                                                     idRebanho: _model.idRebanho,
+                                                    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
                                                   );
                                                 }
                                                 if (_model.dPLoteValue !=
@@ -5928,9 +5931,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                             .secondary,
                                                   ),
                                                 );
+                                                FFAppState().update(() {});
                                                 Navigator.pop(context);
-
-                                                safeSetState(() {});
                                               },
                                               text: 'Salvar',
                                               options: FFButtonOptions(

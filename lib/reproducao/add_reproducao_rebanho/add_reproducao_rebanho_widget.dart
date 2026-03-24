@@ -3554,6 +3554,7 @@ class _AddReproducaoRebanhoWidgetState
                                     }
 
                                     await action_blocks.qTDReproducoes(context);
+                                    FFAppState().update(() {});
                                     Navigator.pop(context);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(

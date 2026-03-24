@@ -1471,6 +1471,7 @@ class _EditPropriedadeWidgetState extends State<EditPropriedadeWidget> {
                                               .secondary,
                                     ),
                                   );
+                                  FFAppState().update(() {});
                                   Navigator.pop(context);
                                 } else {
                                   await showDialog(

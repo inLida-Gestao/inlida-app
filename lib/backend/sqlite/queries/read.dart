@@ -61,7 +61,8 @@ Future<List<ListarPropriedadesRow>> performListarPropriedades(
 SELECT * FROM local_propriedades 
 WHERE 1=1
 AND (userID = '$userID' OR usersID LIKE '%$userID%') 
-AND deletado = 'NAO' 
+AND deletado = 'NAO'
+ORDER BY created_at DESC
 ''';
   return _readQuery(database, query, (d) => ListarPropriedadesRow(d));
 }
@@ -778,6 +779,7 @@ Future<List<ListarLotesRow>> performListarLotes(
 SELECT * FROM local_lotes
 WHERE id_propriedade = '$idPropriedade'
 AND deletado = 'NAO'
+ORDER BY created_at DESC
 ''';
   return _readQuery(database, query, (d) => ListarLotesRow(d));
 }
@@ -2005,6 +2007,7 @@ AND ('$pesquisa' = '' OR numeroAnimal LIKE '%$pesquisa%' OR nome LIKE '%$pesquis
 OR chip LIKE '%$pesquisa%')
 AND $statusCondition
 AND deletado = 'NAO'
+ORDER BY created_at DESC
 LIMIT 100
 
 ''';
@@ -2170,6 +2173,7 @@ AND ('$protocolo' = '' OR ls.protocolo_reprodutivo LIKE '%$protocolo%')
 AND ('$idRebanho' = '' OR ls.id_rebanho = '$idRebanho')
 AND ('$dataSanidade' = '' OR ls.data_sanidade >= '$dataSanidade')
 AND ls.deletado = 'NAO'
+ORDER BY ls.created_at DESC
 ''';
   return _readQuery(database, query, (d) => BuscaSanidadesPesqRow(d));
 }
@@ -2233,6 +2237,7 @@ AND ('$protocolo' = '' OR protocolo_reprodutivo LIKE '%$protocolo%')
 AND ('$idRebanho' = '' OR id_rebanho = '$idRebanho')
 AND ('$dataSanidade' = '' OR data_sanidade >= '$dataSanidade')
 AND deletado = 'NAO'
+ORDER BY created_at DESC
 LIMIT $limitRows OFFSET $offsetRows
 ''';
   return _readQuery(database, query, (d) => BuscaSanidadesPaginadaRow(d));

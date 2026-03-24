@@ -296,6 +296,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                             locale: FFLocalizations.of(context).languageCode,
                           ),
                         );
+                        FFAppState().update(() {});
                         Navigator.pop(context);
                       }
                     },
@@ -5982,6 +5983,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   idRebanho: FFAppState()
                                                       .rebanhoSelecionado
                                                       .idRebanho,
+                                                  idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
                                                 );
                                               }
                                               final novoPesoDesmama =
@@ -6032,6 +6034,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   idRebanho: FFAppState()
                                                       .rebanhoSelecionado
                                                       .idRebanho,
+                                                  idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
                                                 );
                                               }
                                               final novoPesoAtual =
@@ -6085,6 +6088,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   idRebanho: FFAppState()
                                                       .rebanhoSelecionado
                                                       .idRebanho,
+                                                  idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
                                                 );
                                               }
                                               if (FFAppState()
@@ -6240,9 +6244,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           .secondary,
                                                 ),
                                               );
+                                              FFAppState().update(() {});
                                               Navigator.pop(context);
-
-                                              safeSetState(() {});
                                             },
                                             text: 'Salvar',
                                             options: FFButtonOptions(

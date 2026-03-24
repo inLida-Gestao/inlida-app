@@ -225,6 +225,7 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                               .languageCode,
                                         ),
                                       );
+                                      FFAppState().update(() {});
                                       Navigator.pop(context);
                                     },
                                   ),

@@ -254,6 +254,28 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 ),
                                 showLoadingIndicator: true,
                                 onPressed: () async {
+                                  // Evitar sync duplo (manual + auto)
+                                  if (FFAppState().isSyncing) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Sincronização já em andamento...',
+                                          style: TextStyle(
+                                            color:
+                                                FlutterFlowTheme.of(context)
+                                                    .secondaryBackground,
+                                          ),
+                                        ),
+                                        duration: const Duration(
+                                            milliseconds: 2000),
+                                        backgroundColor:
+                                            FlutterFlowTheme.of(context)
+                                                .secondary,
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  FFAppState().isSyncing = true;
                                   _model.temInternet =
                                       await actions.checkInternetConnection();
                                   if (_model.temInternet == true) {
@@ -413,7 +435,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                             const Duration(milliseconds: 1500));
                                         FFAppState().syncProgressPercent = -1;
                                         FFAppState().syncProgressLabel = '';
-                                        safeSetState(() {});
+                                        FFAppState().isSyncing = false;
+                                        FFAppState().update(() {});
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           SnackBar(
@@ -438,6 +461,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                             '[SYNC] Erro geral na sincronização: $e');
                                         FFAppState().syncProgressPercent = -1;
                                         FFAppState().syncProgressLabel = '';
+                                        FFAppState().isSyncing = false;
                                         safeSetState(() {});
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
@@ -459,6 +483,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         );
                                       }
                                     } else {
+                                      FFAppState().isSyncing = false;
                                       GoRouter.of(context).prepareAuthEvent();
                                       await authManager.signOut();
                                       GoRouter.of(context)
@@ -484,6 +509,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       );
                                     }
                                   } else {
+                                    FFAppState().isSyncing = false;
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(

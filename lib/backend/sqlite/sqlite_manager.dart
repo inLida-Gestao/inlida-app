@@ -1157,6 +1157,7 @@ class SQLiteManager {
     double? peso,
     String? deletado,
     String? createdat,
+    String? idPropriedade,
   }) async {
     await performAddPesagem(
       _database,
@@ -1166,6 +1167,7 @@ class SQLiteManager {
       peso: peso,
       deletado: deletado,
       createdat: createdat,
+      idPropriedade: idPropriedade,
     );
 
     await _syncUltimaPesagemNoRebanho(idRebanho);

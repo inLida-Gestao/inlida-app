@@ -1,7 +1,6 @@
 import '/backend/supabase/supabase.dart';
 import '/components/navegacao_widget.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/instant_timer.dart';
 import '/lotes/page_lotes/page_lotes_widget.dart';
 import '/perfil/minha_conta/minha_conta_widget.dart';
 import '/propriedade/page_propriedades/page_propriedades_widget.dart';
@@ -12,13 +11,15 @@ import '/sanidade/page_sanidade/page_sanidade_widget.dart';
 import '/index.dart';
 import 'home_page_widget.dart' show HomePageWidget;
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class HomePageModel extends FlutterFlowModel<HomePageWidget> {
   ///  State fields for stateful widgets in this page.
 
   // Stores action output result for [Backend Call - Query Rows] action in HomePage widget.
   List<UsersRow>? userLogadoON;
-  InstantTimer? instantTimer;
+  StreamSubscription<List<ConnectivityResult>>? connectivitySubscription;
   // Stores action output result for [Custom Action - checkInternetConnection] action in HomePage widget.
   bool? temNet;
   // Stores action output result for [Backend Call - Query Rows] action in HomePage widget.
@@ -63,7 +64,7 @@ class HomePageModel extends FlutterFlowModel<HomePageWidget> {
 
   @override
   void dispose() {
-    instantTimer?.cancel();
+    connectivitySubscription?.cancel();
     pagePropriedadesModel.dispose();
     selecionarPropriedadeModel.dispose();
     pageRebanhoModel.dispose();

@@ -1425,6 +1425,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                               .secondary,
                                     ),
                                   );
+                                  FFAppState().update(() {});
                                   Navigator.pop(context);
                                 },
                           text: 'Salvar',

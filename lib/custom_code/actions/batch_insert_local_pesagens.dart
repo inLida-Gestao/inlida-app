@@ -20,6 +20,22 @@ double? _toDouble(dynamic value) {
   return null;
 }
 
+/// Normaliza datas ISO (ex: "2026-01-15T00:00:00+00:00") para "yyyy-MM-dd"
+/// para evitar duplicatas no índice UNIQUE (idRebanho, dataPesagem, tipo).
+String? _normalizeDateToYMD(dynamic value) {
+  if (value == null || value == 'null') return null;
+  final str = value.toString().trim();
+  if (str.isEmpty) return null;
+  if (str.length == 10 && RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(str)) {
+    return str;
+  }
+  final dt = DateTime.tryParse(str);
+  if (dt != null) {
+    return '${dt.year.toString().padLeft(4, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
+  }
+  return str;
+}
+
 Future<Map<String, dynamic>> batchInsertLocalPesagens(
     List<dynamic> records) async {
   if (records.isEmpty) {
@@ -44,7 +60,7 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
           source['datapesagem'] ??
           source['data_pesagem'];
       if (dataPesagem != null) {
-        mapped['dataPesagem'] = _cleanNull(dataPesagem);
+        mapped['dataPesagem'] = _normalizeDateToYMD(dataPesagem);
       }
       if (source['tipo'] != null) {
         mapped['tipo'] = _cleanNull(source['tipo']);

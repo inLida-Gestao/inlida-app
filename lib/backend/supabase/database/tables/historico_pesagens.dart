@@ -38,4 +38,7 @@ class HistoricoPesagensRow extends SupabaseDataRow {
 
   String? get idPropriedade => getField<String>('id_propriedade');
   set idPropriedade(String? value) => setField<String>('id_propriedade', value);
+
+  DateTime? get updatedAt => getField<DateTime>('updated_at');
+  set updatedAt(DateTime? value) => setField<DateTime>('updated_at', value);
 }

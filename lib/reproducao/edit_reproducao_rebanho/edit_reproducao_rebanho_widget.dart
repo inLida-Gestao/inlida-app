@@ -4182,9 +4182,9 @@ class _EditReproducaoRebanhoWidgetState
 
                                             await action_blocks
                                                 .qTDReproducoes(context);
+                                            FFAppState().update(() {});
                                             Navigator.pop(context);
 
-                                            FFAppState().update(() {});
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               SnackBar(

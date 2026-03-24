@@ -3836,6 +3836,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                           await action_blocks
                                                               .countLotesCadastrados(
                                                                   context);
+                                                          FFAppState().update(() {});
                                                           Navigator.pop(
                                                               context);
                                                           ScaffoldMessenger.of(

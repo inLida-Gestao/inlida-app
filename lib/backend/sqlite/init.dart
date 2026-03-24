@@ -113,6 +113,9 @@ Future<Database> initializeDatabaseFromDbFile(
   // Criar índices para otimizar buscas no rebanho popup
   await _ensureRebanhoIndexes(database);
 
+  // Criar índices UNIQUE para suportar UPSERT incremental
+  await _ensureUniqueBusinessKeys(database);
+
   return database;
 }
 
@@ -181,4 +184,32 @@ Future<void> _ensureRebanhoIndexes(Database db) async {
     }
   }
   debugPrint('[SQLite] Índices de busca do rebanho verificados/criados.');
+}
+
+/// Cria índices UNIQUE nas colunas de chave de negócio para que
+/// ConflictAlgorithm.replace funcione como UPSERT na sync incremental.
+Future<void> _ensureUniqueBusinessKeys(Database db) async {
+  const indexes = <String>[
+    '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_propriedade
+       ON local_propriedades (idPropriedade)''',
+    '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_rebanho
+       ON local_rebanho (idRebanho)''',
+    '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_lote
+       ON local_lotes (id_lote)''',
+    '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_reproducao
+       ON local_reproducao (id_reproducao)''',
+    '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_sanidade
+       ON local_sanidade (id_sanidade)''',
+    '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_pesagem
+       ON local_historico_pesagens (idRebanho, dataPesagem, tipo)''',
+  ];
+
+  for (final indexSql in indexes) {
+    try {
+      await db.execute(indexSql);
+    } catch (e) {
+      debugPrint('[SQLite] Erro ao criar índice UNIQUE: $e');
+    }
+  }
+  debugPrint('[SQLite] Índices UNIQUE de negócio verificados/criados.');
 }

@@ -11,6 +11,8 @@ import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:flutter/material.dart';
 
+import 'package:sqflite/sqflite.dart';
+
 void _syncLog(String flow, String message) {
   debugPrint('[SYNC][$flow] $message');
 }
@@ -70,11 +72,31 @@ int _safeTotalFromContentRange(Map<String, String> headers) {
   return int.tryParse(parts.last.trim()) ?? 0;
 }
 
+/// Verifica se uma tabela local está vazia ou quase vazia.
+Future<bool> _isLocalTableEmpty(String tableName) async {
+  try {
+    final db = SQLiteManager.instance.database;
+    final result = await db.rawQuery('SELECT COUNT(*) as cnt FROM $tableName LIMIT 1');
+    final count = Sqflite.firstIntValue(result) ?? 0;
+    return count <= 5;
+  } catch (e) {
+    _syncLog('helper', 'Erro ao verificar tabela $tableName: $e');
+    return true;
+  }
+}
+
+/// Verifica se o localLastChange indica que nunca houve sync real.
+bool _isFirstSync(DateTime? localLastChange) {
+  if (localLastChange == null) return true;
+  return localLastChange.isBefore(DateTime(2025, 1, 1));
+}
+
 Future<ApiCallResponse> _buscarPesagensDireto({
   required List<String> propertyIds,
   required int limit,
   required int offset,
   bool includeCount = false,
+  String? updatedAfter,
 }) {
   final headers = <String, dynamic>{
     ...SupabaseFunctionsGroup.headers,
@@ -90,6 +112,7 @@ Future<ApiCallResponse> _buscarPesagensDireto({
     params: {
       'select': '*',
       'id_propriedade': 'in.${_buildSupabaseInFilter(propertyIds)}',
+      if (updatedAfter != null) 'updated_at': 'gt.$updatedAfter',
       'order': 'id.asc',
       'limit': limit,
       'offset': offset,
@@ -200,10 +223,22 @@ Future refreshPropriedades(BuildContext context) async {
     _syncLog('propriedades',
         'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
     if (shouldSync) {
-      propriedade =
-          await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
-        pUserId: currentUserUid,
-      );
+      // Sync incremental: se já sincronizou antes, busca apenas atualizados
+      final localEmpty = await _isLocalTableEmpty('local_propriedades');
+      final firstSync = _isFirstSync(localLastChange);
+      if (localLastChange != null && !localEmpty && !firstSync) {
+        final updatedAfter = localLastChange.toUtc().toIso8601String();
+        propriedade =
+            await SupabaseFunctionsGroup.buscarPropriedadesUserIncCall.call(
+          pUserId: currentUserUid,
+          pUpdatedAfter: updatedAfter,
+        );
+      } else {
+        propriedade =
+            await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+          pUserId: currentUserUid,
+        );
+      }
 
       final propriedadesList = ((propriedade.jsonBody ?? '')
               .toList()
@@ -214,6 +249,8 @@ Future refreshPropriedades(BuildContext context) async {
       if (propriedadesList.isEmpty) {
         _syncLog(
             'propriedades', 'Download retornou vazio. Mantendo dados locais.');
+        FFAppState().propriedadesChangeDateTime =
+            remoteLastChange ?? DateTime.now();
         return;
       }
 
@@ -873,6 +910,9 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
               'deletado': localHistPesPUT
                   .elementAtOrNull(FFAppState().pesagensIndex)
                   ?.deletado,
+              'id_propriedade': localHistPesPUT
+                  ?.elementAtOrNull(FFAppState().pesagensIndex)
+                  ?.idPropriedade,
             });
           } catch (e) {
             allSuccess = false;

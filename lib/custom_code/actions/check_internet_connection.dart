@@ -23,5 +23,14 @@ Future<bool> checkInternetConnection() async {
     return false;
   }
 }
+/// Retorna um stream de mudanças de conectividade.
+Stream<List<ConnectivityResult>> watchConnectivity() {
+  return Connectivity().onConnectivityChanged.map((event) => [event]);
+}
+
+/// Verifica se os resultados de conectividade indicam que há conexão.
+bool hasConnection(List<ConnectivityResult> results) {
+  return results.isNotEmpty && !results.contains(ConnectivityResult.none);
+}
 // Set your action name, define your arguments and return parameter,
 // and then add the boilerplate code using the green button on the right!

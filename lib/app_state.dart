@@ -249,6 +249,31 @@ class FFAppState extends ChangeNotifier {
     _syncProgressLabel = value;
   }
 
+  /// Estado de conectividade (runtime only, não persistido).
+  bool _isOnline = false;
+  bool get isOnline => _isOnline;
+  set isOnline(bool value) {
+    if (_isOnline != value) {
+      _isOnline = value;
+      notifyListeners();
+    }
+  }
+
+  /// Timestamp da última auto-sync (runtime only).
+  DateTime? _lastAutoSync;
+  DateTime? get lastAutoSync => _lastAutoSync;
+  set lastAutoSync(DateTime? value) {
+    _lastAutoSync = value;
+  }
+
+  /// Se já existe uma sincronização em andamento.
+  bool _isSyncing = false;
+  bool get isSyncing => _isSyncing;
+  set isSyncing(bool value) {
+    _isSyncing = value;
+    notifyListeners();
+  }
+
   PropriedadeSelecionadaStruct _propriedadeSelecionada =
       PropriedadeSelecionadaStruct();
   PropriedadeSelecionadaStruct get propriedadeSelecionada =>

@@ -520,10 +520,11 @@ Future performAddPesagem(
   double? peso,
   String? deletado,
   String? createdat,
+  String? idPropriedade,
 }) {
   final query = '''
-INSERT INTO local_historico_pesagens (idRebanho, dataPesagem, tipo, peso, deletado, created_at)
-VALUES ('$idRebanho', '$dataPesagem', '$tipo', $peso, '$deletado', '$createdat')
+INSERT INTO local_historico_pesagens (idRebanho, dataPesagem, tipo, peso, deletado, created_at, id_propriedade)
+VALUES ('$idRebanho', '$dataPesagem', '$tipo', $peso, '$deletado', '$createdat', '$idPropriedade')
 ''';
   return database.rawQuery(query);
 }

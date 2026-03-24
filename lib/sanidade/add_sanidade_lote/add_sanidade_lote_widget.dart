@@ -2772,6 +2772,27 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                   );
                                   _model.index = 0;
                                   safeSetState(() {});
+                                  if (_model.loteSelecionado == null ||
+                                      _model.loteSelecionado!.isEmpty) {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (alertDialogContext) {
+                                        return AlertDialog(
+                                          title: const Text('Atenção'),
+                                          content: const Text(
+                                              'O lote selecionado não possui nenhum animal.'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(
+                                                  alertDialogContext),
+                                              child: const Text('Ok'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                    return;
+                                  }
                                   if (_model.loteSelecionado!.isNotEmpty) {
                                     while (_model.index <
                                         _model.loteSelecionado!.length) {
@@ -2945,6 +2966,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                       await action_blocks.qTDSanidades(context);
                                     }(),
                                   );
+                                  FFAppState().update(() {});
                                   Navigator.pop(context);
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(

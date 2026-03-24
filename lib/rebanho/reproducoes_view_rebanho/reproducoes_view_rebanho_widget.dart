@@ -137,6 +137,8 @@ class _ReproducoesViewRebanhoWidgetState
                                             reproducaoItem.nascimentoReprodutor,
                                         racaAnimal:
                                             reproducaoItem.racaReprodutor,
+                                        idRebanho:
+                                            reproducaoItem.idRebanhoReprodutor,
                                       );
                                       FFAppState().matrizSelecionada =
                                           AnimalSelecionadoStruct(
@@ -145,6 +147,8 @@ class _ReproducoesViewRebanhoWidgetState
                                         dataNascAnimal:
                                             reproducaoItem.nascimentoMatriz,
                                         racaAnimal: reproducaoItem.racaMatriz,
+                                        idRebanho:
+                                            reproducaoItem.idRebanhoMatriz,
                                       );
                                       await showDialog(
                                         barrierColor: Colors.transparent,

@@ -161,15 +161,43 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             await action_blocks.animaisRegistrados(context);
           }),
           Future(() async {
-            _model.instantTimer = InstantTimer.periodic(
-              duration: const Duration(milliseconds: 250),
-              callback: (timer) async {
-                _model.temNet = await actions.checkInternetConnection();
+            // Monitoramento de conectividade baseado em stream
+            try {
+              _model.temNet = await actions.checkInternetConnection();
+              FFAppState().isOnline = _model.temNet ?? false;
+              safeSetState(() {});
 
-                safeSetState(() {});
-              },
-              startImmediately: true,
-            );
+              _model.connectivitySubscription =
+                  actions.watchConnectivity().listen((results) async {
+                try {
+                  final hadConnection = _model.temNet ?? false;
+                  final hasConn = actions.hasConnection(results);
+
+                  if (hasConn) {
+                    _model.temNet = await actions.checkInternetConnection();
+                  } else {
+                    _model.temNet = false;
+                  }
+                  FFAppState().isOnline = _model.temNet ?? false;
+                  safeSetState(() {});
+
+                  // Auto-sync quando reconecta: offline → online
+                  if (!hadConnection && (_model.temNet == true)) {
+                    debugPrint('[SYNC][auto] Conectividade restaurada. Aguardando debounce...');
+                    await Future.delayed(const Duration(seconds: 5));
+                    final stillOnline = await actions.checkInternetConnection();
+                    if (stillOnline && context.mounted) {
+                      await actions.performAutoSync(context);
+                      safeSetState(() {});
+                    }
+                  }
+                } catch (e) {
+                  debugPrint('[CONNECTIVITY] Erro no listener: $e');
+                }
+              });
+            } catch (e) {
+              debugPrint('[CONNECTIVITY] Erro ao iniciar monitoramento: $e');
+            }
           }),
           Future(() async {
             await action_blocks.animaisRegistrados(context);

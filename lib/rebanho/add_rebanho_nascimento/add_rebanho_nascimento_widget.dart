@@ -3933,6 +3933,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         .languageCode,
                                                   ),
                                                   idRebanho: _model.idRebanho,
+                                                  idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
                                                 );
                                               }
                                               if (_model.dPLoteValue != null &&
@@ -3993,9 +3994,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           .secondary,
                                                 ),
                                               );
+                                              FFAppState().update(() {});
                                               Navigator.pop(context);
-
-                                              safeSetState(() {});
                                             },
                                             text: 'Salvar',
                                             options: FFButtonOptions(

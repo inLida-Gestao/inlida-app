@@ -1118,7 +1118,9 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                         if (sanidadesItem.idRebanho !=
                                                                                 null &&
                                                                             sanidadesItem.idRebanho !=
-                                                                                '')
+                                                                                '' &&
+                                                                            (sanidadesItem.idLote == null ||
+                                                                                sanidadesItem.idLote == ''))
                                                                           Row(
                                                                             mainAxisSize:
                                                                                 MainAxisSize.max,
@@ -2146,7 +2148,7 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                     ),
                                                                                   ].divide(const SizedBox(width: 8.0)),
                                                                                 ),
-                                                                              if (sanidadesItem.idRebanho != null && sanidadesItem.idRebanho != '')
+                                                                              if (sanidadesItem.idRebanho != null && sanidadesItem.idRebanho != '' && (sanidadesItem.idLote == null || sanidadesItem.idLote == ''))
                                                                                 Row(
                                                                                   mainAxisSize: MainAxisSize.max,
                                                                                   children: [

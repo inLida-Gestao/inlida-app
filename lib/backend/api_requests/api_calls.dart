@@ -84,6 +84,18 @@ class SupabaseFunctionsGroup {
   static QTDSanidadeCall qTDSanidadeCall = QTDSanidadeCall();
   static BuscarPropriedadesUserCall buscarPropriedadesUserCall =
       BuscarPropriedadesUserCall();
+  // Incremental sync calls
+  static BuscarRebanhosIncCall buscarRebanhosIncCall = BuscarRebanhosIncCall();
+  static BuscarReproducoesIncCall buscarReproducoesIncCall =
+      BuscarReproducoesIncCall();
+  static BuscarSanidadesIncCall buscarSanidadesIncCall =
+      BuscarSanidadesIncCall();
+  static QTDRebanhosIncCall qTDRebanhosIncCall = QTDRebanhosIncCall();
+  static QTDReproducoesIncCall qTDReproducoesIncCall =
+      QTDReproducoesIncCall();
+  static QTDSanidadeIncCall qTDSanidadeIncCall = QTDSanidadeIncCall();
+  static BuscarPropriedadesUserIncCall buscarPropriedadesUserIncCall =
+      BuscarPropriedadesUserIncCall();
 }
 
 class BuscarRebanhosCall {
@@ -457,6 +469,231 @@ class BuscarPropriedadesUserCall {
 }
 
 /// End Supabase Functions Group Code
+
+/// Incremental Sync API Calls
+
+class BuscarRebanhosIncCall {
+  Future<ApiCallResponse> call({
+    List<String>? pIdPropriedadeList,
+    int? pLimite = 999,
+    int? pOffset = 0,
+    String? pUpdatedAfter = '1970-01-01T00:00:00',
+  }) async {
+    final baseUrl = SupabaseFunctionsGroup.getBaseUrl();
+    final pIdPropriedade = _serializeList(pIdPropriedadeList);
+    final ffApiRequestBody = '''
+{
+  "p_id_propriedade": [$pIdPropriedade],
+  "p_limite": $pLimite,
+  "p_offset": $pOffset,
+  "p_updated_after": "${escapeStringForJson(pUpdatedAfter)}"
+}''';
+    return ApiManager.instance.makeApiCall(
+      callName: 'Buscar Rebanhos Inc',
+      apiUrl: '$baseUrl/rebanho_propriedade_mobile_inc',
+      callType: ApiCallType.POST,
+      headers: SupabaseFunctionsGroup.headers,
+      params: {},
+      body: ffApiRequestBody,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class BuscarReproducoesIncCall {
+  Future<ApiCallResponse> call({
+    List<String>? pIdPropriedadeList,
+    int? pLimite = 999,
+    int? pOffset = 0,
+    String? pUpdatedAfter = '1970-01-01T00:00:00',
+  }) async {
+    final baseUrl = SupabaseFunctionsGroup.getBaseUrl();
+    final pIdPropriedade = _serializeList(pIdPropriedadeList);
+    final ffApiRequestBody = '''
+{
+  "p_id_propriedade": [$pIdPropriedade],
+  "p_limite": $pLimite,
+  "p_offset": $pOffset,
+  "p_updated_after": "${escapeStringForJson(pUpdatedAfter)}"
+}''';
+    return ApiManager.instance.makeApiCall(
+      callName: 'Buscar Reproducoes Inc',
+      apiUrl: '$baseUrl/reproducao_mobile_inc',
+      callType: ApiCallType.POST,
+      headers: SupabaseFunctionsGroup.headers,
+      params: {},
+      body: ffApiRequestBody,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class BuscarSanidadesIncCall {
+  Future<ApiCallResponse> call({
+    List<String>? pIdPropriedadeList,
+    int? pLimite = 999,
+    int? pOffset = 0,
+    String? pUpdatedAfter = '1970-01-01T00:00:00',
+  }) async {
+    final baseUrl = SupabaseFunctionsGroup.getBaseUrl();
+    final pIdPropriedade = _serializeList(pIdPropriedadeList);
+    final ffApiRequestBody = '''
+{
+  "p_id_propriedade": [$pIdPropriedade],
+  "p_limite": $pLimite,
+  "p_offset": $pOffset,
+  "p_updated_after": "${escapeStringForJson(pUpdatedAfter)}"
+}''';
+    return ApiManager.instance.makeApiCall(
+      callName: 'Buscar Sanidades Inc',
+      apiUrl: '$baseUrl/sanidade_mobile_inc',
+      callType: ApiCallType.POST,
+      headers: SupabaseFunctionsGroup.headers,
+      params: {},
+      body: ffApiRequestBody,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class QTDRebanhosIncCall {
+  Future<ApiCallResponse> call({
+    List<String>? pIdsPropriedadesList,
+    String? pUpdatedAfter = '1970-01-01T00:00:00',
+  }) async {
+    final baseUrl = SupabaseFunctionsGroup.getBaseUrl();
+    final pIdsPropriedades = _serializeList(pIdsPropriedadesList);
+    final ffApiRequestBody = '''
+{
+  "p_ids_propriedades": [$pIdsPropriedades],
+  "p_updated_after": "${escapeStringForJson(pUpdatedAfter)}"
+}''';
+    return ApiManager.instance.makeApiCall(
+      callName: 'QTD Rebanhos Inc',
+      apiUrl: '$baseUrl/contar_rebanho_prop_mob_inc',
+      callType: ApiCallType.POST,
+      headers: SupabaseFunctionsGroup.headers,
+      params: {},
+      body: ffApiRequestBody,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class QTDReproducoesIncCall {
+  Future<ApiCallResponse> call({
+    List<String>? pIdsPropriedadesList,
+    String? pUpdatedAfter = '1970-01-01T00:00:00',
+  }) async {
+    final baseUrl = SupabaseFunctionsGroup.getBaseUrl();
+    final pIdsPropriedades = _serializeList(pIdsPropriedadesList);
+    final ffApiRequestBody = '''
+{
+  "p_ids_propriedades": [$pIdsPropriedades],
+  "p_updated_after": "${escapeStringForJson(pUpdatedAfter)}"
+}''';
+    return ApiManager.instance.makeApiCall(
+      callName: 'QTD Reproducoes Inc',
+      apiUrl: '$baseUrl/contar_reproducao_prop_mob_inc',
+      callType: ApiCallType.POST,
+      headers: SupabaseFunctionsGroup.headers,
+      params: {},
+      body: ffApiRequestBody,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class QTDSanidadeIncCall {
+  Future<ApiCallResponse> call({
+    List<String>? pIdsPropriedadesList,
+    String? pUpdatedAfter = '1970-01-01T00:00:00',
+  }) async {
+    final baseUrl = SupabaseFunctionsGroup.getBaseUrl();
+    final pIdsPropriedades = _serializeList(pIdsPropriedadesList);
+    final ffApiRequestBody = '''
+{
+  "p_ids_propriedades": [$pIdsPropriedades],
+  "p_updated_after": "${escapeStringForJson(pUpdatedAfter)}"
+}''';
+    return ApiManager.instance.makeApiCall(
+      callName: 'QTD Sanidade Inc',
+      apiUrl: '$baseUrl/contar_sanidade_prop_mob_inc',
+      callType: ApiCallType.POST,
+      headers: SupabaseFunctionsGroup.headers,
+      params: {},
+      body: ffApiRequestBody,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+class BuscarPropriedadesUserIncCall {
+  Future<ApiCallResponse> call({
+    String? pUserId = '',
+    String? pUpdatedAfter = '1970-01-01T00:00:00',
+  }) async {
+    final baseUrl = SupabaseFunctionsGroup.getBaseUrl();
+    final ffApiRequestBody = '''
+{
+  "p_user_id": "${escapeStringForJson(pUserId)}",
+  "p_updated_after": "${escapeStringForJson(pUpdatedAfter)}"
+}''';
+    return ApiManager.instance.makeApiCall(
+      callName: 'Buscar Propriedades User Inc',
+      apiUrl: '$baseUrl/propriedades_by_user_inc',
+      callType: ApiCallType.POST,
+      headers: SupabaseFunctionsGroup.headers,
+      params: {},
+      body: ffApiRequestBody,
+      bodyType: BodyType.JSON,
+      returnBody: true,
+      encodeBodyUtf8: false,
+      decodeUtf8: false,
+      cache: false,
+      isStreamingApi: false,
+      alwaysAllowBody: false,
+    );
+  }
+}
+
+/// End Incremental Sync API Calls
 
 class CidadesCall {
   static Future<ApiCallResponse> call({

@@ -2628,6 +2628,7 @@ class _AddSanidadeAnimalWidgetState extends State<AddSanidadeAnimalWidget> {
                               FFAppState().antiParasitarioCount = 0;
                               FFAppState().protocolosReproCount = 0;
                               safeSetState(() {});
+                              FFAppState().update(() {});
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

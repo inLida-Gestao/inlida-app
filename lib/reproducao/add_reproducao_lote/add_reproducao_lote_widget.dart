@@ -3850,6 +3850,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                   }
                                                   await action_blocks
                                                       .qTDReproducoes(context);
+                                                  FFAppState().update(() {});
                                                   Navigator.pop(context);
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(

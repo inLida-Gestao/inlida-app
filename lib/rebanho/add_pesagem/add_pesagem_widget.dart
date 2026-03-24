@@ -417,6 +417,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                     getCurrentTimestamp,
                     locale: FFLocalizations.of(context).languageCode,
                   ),
+                  idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
                 );
                 FFAppState().addToHistPesagens(HistoricoPesagensStruct(
                   idRebanho: widget.idRebanho,
