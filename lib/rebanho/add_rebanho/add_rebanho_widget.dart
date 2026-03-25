@@ -5216,7 +5216,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   'PREDADOR',
                                                   'DESCONHECIDA',
                                                   'MANTIMENTO',
-                                                  'NATMORTO'
+                                                  'NATIMORTO'
                                                 ],
                                                 onChanged: (val) =>
                                                     safeSetState(() => _model
