@@ -63,7 +63,9 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
       ),
       child: Container(
         width: double.infinity,
-        height: 680.0,
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.90,
+        ),
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
@@ -177,7 +179,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
               thickness: 1.0,
               color: Color(0xFFBEBEBE),
             ),
-            Container(
+            Flexible(
+              child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 color: FlutterFlowTheme.of(context).secondaryBackground,
@@ -1727,6 +1730,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                   ],
                 ),
               ),
+            ),
             ),
             const Divider(
               thickness: 1.0,

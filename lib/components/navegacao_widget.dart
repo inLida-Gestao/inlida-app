@@ -484,6 +484,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       }
                                     } else {
                                       FFAppState().isSyncing = false;
+                                      FFAppState().clearUserData();
                                       GoRouter.of(context).prepareAuthEvent();
                                       await authManager.signOut();
                                       GoRouter.of(context)
@@ -1704,6 +1705,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                               );
                               Navigator.pop(context);
                             } else {
+                              FFAppState().clearUserData();
                               GoRouter.of(context).prepareAuthEvent();
                               await authManager.signOut();
                               GoRouter.of(context).clearRedirectLocation();
@@ -1812,6 +1814,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       hoverColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () async {
+                        FFAppState().clearUserData();
                         GoRouter.of(context).prepareAuthEvent();
                         await authManager.signOut();
                         GoRouter.of(context).clearRedirectLocation();

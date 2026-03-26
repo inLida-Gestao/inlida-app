@@ -147,6 +147,7 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
                         );
 
                         if ((_model.apiResultrak?.succeeded ?? true)) {
+                          FFAppState().clearUserData();
                           GoRouter.of(context).prepareAuthEvent();
                           await authManager.signOut();
                           GoRouter.of(context).clearRedirectLocation();

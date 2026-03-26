@@ -121,7 +121,12 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: CadastroWidget.routeName,
           path: CadastroWidget.routePath,
           builder: (context, params) => const CadastroWidget(),
-        )
+        ),
+        FFRoute(
+          name: CadastroConcluidoWidget.routeName,
+          path: CadastroConcluidoWidget.routePath,
+          builder: (context, params) => const CadastroConcluidoWidget(),
+        ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
 

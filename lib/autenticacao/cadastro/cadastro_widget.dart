@@ -1398,6 +1398,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                               return;
                                             }
 
+                                            FFAppState().clearUserData();
                                             final user = await authManager
                                                 .createAccountWithEmail(
                                               context,
@@ -1421,9 +1422,19 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                               'acesso': 'Gratis',
                                             });
 
-                                            context.goNamedAuth(
-                                                HomePageWidget.routeName,
-                                                context.mounted);
+                                            // Deslogar e exibir tela de confirmação
+                                            // aguardando contato do time comercial.
+                                            GoRouter.of(context)
+                                                .prepareAuthEvent();
+                                            await authManager.signOut();
+                                            GoRouter.of(context)
+                                                .clearRedirectLocation();
+
+                                            if (context.mounted) {
+                                              context.goNamed(
+                                                  CadastroConcluidoWidget
+                                                      .routeName);
+                                            }
                                           },
                                           text: 'Criar Conta',
                                           options: FFButtonOptions(

@@ -240,6 +240,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         );
         await action_blocks.countLotesCadastrados(context);
       } else {
+        FFAppState().clearUserData();
         GoRouter.of(context).prepareAuthEvent();
         await authManager.signOut();
         GoRouter.of(context).clearRedirectLocation();

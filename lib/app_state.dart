@@ -217,6 +217,44 @@ class FFAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Limpa todos os dados persistidos e em memória específicos do usuário.
+  /// Deve ser chamado ao fazer logout ou antes de criar uma nova conta.
+  void clearUserData() {
+    _ultimaSincronizacao = null;
+    _propriedadeSelecionada = PropriedadeSelecionadaStruct();
+    _rebanhoOFF = [];
+    _propriedadesChangeDateTime = null;
+    _dataDadosNaoSyncProp = null;
+    _userLogado = UserStruct();
+    _rebanhosChangeDateTime = null;
+    _rebanhosPesagemChangeDateTime = null;
+    _lotesCadastrados = 0;
+    _rebanhoLotesSelecionar = [];
+    _dataDadosNaoSyncRebanho = null;
+    _dataDadosNaoSyncLotes = null;
+    _dataDadosNaoSyncRepro = null;
+    _dataDadosNaoSyncSanidade = null;
+    _propriedadesOFF = [];
+    _firstRunUserEmail = '';
+
+    prefs.remove('ff_ultimaSincronizacao');
+    prefs.remove('ff_propriedadeSelecionada');
+    prefs.remove('ff_rebanhoOFF');
+    prefs.remove('ff_propriedadesChangeDateTime');
+    prefs.remove('ff_dataDadosNaoSyncProp');
+    prefs.remove('ff_userLogado');
+    prefs.remove('ff_rebanhosChangeDateTime');
+    prefs.remove('ff_rebanhosPesagemChangeDateTime');
+    prefs.remove('ff_lotesCadastrados');
+    prefs.remove('ff_rebanhoLotesSelecionar');
+    prefs.remove('ff_dataDadosNaoSyncRebanho');
+    prefs.remove('ff_dataDadosNaoSyncLotes');
+    prefs.remove('ff_dataDadosNaoSyncRepro');
+    prefs.remove('ff_dataDadosNaoSyncSanidade');
+    prefs.remove('ff_propriedadesOFF');
+    prefs.remove('ff_firstRunUserEmail');
+  }
+
   late SharedPreferences prefs;
 
   String _navegacaoDashboard = 'painel';

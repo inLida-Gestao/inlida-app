@@ -119,6 +119,14 @@ class ViewRebanhoModel extends FlutterFlowModel<ViewRebanhoWidget> {
   FocusNode? nAnimalFocusNode15;
   TextEditingController? nAnimalTextController15;
   String? Function(BuildContext, String?)? nAnimalTextController15Validator;
+  // State field(s) for DataVenda widget.
+  FocusNode? dataVendaFocusNode;
+  TextEditingController? dataVendaTextController;
+  String? Function(BuildContext, String?)? dataVendaTextControllerValidator;
+  // State field(s) for ValorVenda widget.
+  FocusNode? valorVendaFocusNode;
+  TextEditingController? valorVendaTextController;
+  String? Function(BuildContext, String?)? valorVendaTextControllerValidator;
   // State field(s) for Anotacoes widget.
   FocusNode? anotacoesFocusNode;
   TextEditingController? anotacoesTextController;
@@ -209,6 +217,12 @@ class ViewRebanhoModel extends FlutterFlowModel<ViewRebanhoWidget> {
 
     nAnimalFocusNode15?.dispose();
     nAnimalTextController15?.dispose();
+
+    dataVendaFocusNode?.dispose();
+    dataVendaTextController?.dispose();
+
+    valorVendaFocusNode?.dispose();
+    valorVendaTextController?.dispose();
 
     anotacoesFocusNode?.dispose();
     anotacoesTextController?.dispose();
