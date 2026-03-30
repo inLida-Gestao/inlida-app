@@ -126,6 +126,54 @@ Future<ApiCallResponse> _buscarPesagensDireto({
   );
 }
 
+/// Busca pesagens onde id_propriedade é NULL, filtrando por idRebanho do
+/// usuário para evitar trazer registros de outros usuários.
+Future<ApiCallResponse> _buscarPesagensSemPropriedade({
+  required List<String> rebanhoIds,
+  required int limit,
+  required int offset,
+}) {
+  return ApiManager.instance.makeApiCall(
+    callName: 'Buscar Pesagens sem Propriedade',
+    apiUrl:
+        '${SupabaseFunctionsGroup.getBaseUrl().replaceFirst('/rpc', '')}/historico_pesagens',
+    callType: ApiCallType.GET,
+    headers: SupabaseFunctionsGroup.headers,
+    params: {
+      'select': '*',
+      'id_propriedade': 'is.null',
+      'idRebanho': 'in.${_buildSupabaseInFilter(rebanhoIds)}',
+      'order': 'id.asc',
+      'limit': limit,
+      'offset': offset,
+    },
+    returnBody: true,
+    encodeBodyUtf8: false,
+    decodeUtf8: false,
+    cache: false,
+    isStreamingApi: false,
+    alwaysAllowBody: false,
+  );
+}
+
+/// Retorna os idRebanho de todos os animais locais não deletados.
+Future<List<String>> _getLocalRebanhoIds() async {
+  try {
+    final db = SQLiteManager.instance.database;
+    final rows = await db.rawQuery(
+      "SELECT idRebanho FROM local_rebanho WHERE deletado = 'NAO' OR deletado IS NULL OR deletado = ''",
+    );
+    return rows
+        .map((r) => r['idRebanho']?.toString())
+        .whereType<String>()
+        .where((id) => id.isNotEmpty)
+        .toList();
+  } catch (e) {
+    _syncLog('pesagens', 'Erro ao buscar rebanho IDs locais: $e');
+    return <String>[];
+  }
+}
+
 /// Exibe um popup com a lista de registros que falharam durante a sincronização.
 Future<void> _showSyncErrorsDialog(
   BuildContext context,
@@ -287,8 +335,14 @@ Future refreshPropriedades(BuildContext context) async {
         });
       }
 
-      // Só deleta dados locais DEPOIS de confirmar download com sucesso
-      await SQLiteManager.instance.deletarTodasPropriedades();
+      // Só deleta dados locais na primeira sync / tabela vazia
+      if (firstSync || localEmpty) {
+        await SQLiteManager.instance.deletarTodasPropriedades();
+        _syncLog('propriedades', 'Tabela local limpa (primeiro sync).');
+      } else {
+        _syncLog('propriedades',
+            'Sync incremental — mantendo dados locais (UPSERT).');
+      }
       await actions.batchInsertLocalPropriedades(records);
 
       FFAppState().propriedadesChangeDateTime =
@@ -1930,13 +1984,21 @@ Future refreshRebanhoOtimizada(BuildContext context) async {
         'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
 
     if (shouldSync) {
-      _syncLog('rebanho', 'Iniciando sincronização otimizada.');
+      final isFirst = _isFirstSync(localLastChange) ||
+          await _isLocalTableEmpty('local_rebanho');
+      _syncLog('rebanho',
+          'Iniciando sincronização ${isFirst ? "COMPLETA (primeiro sync)" : "INCREMENTAL"}.');
       var syncOk = true;
       final List<Map<String, String>> syncErrors = [];
       int totalInserted = 0;
       FFAppState().indexRebPaginacao = 0;
       FFAppState().visibleProgressBar = true;
       FFAppState().update(() {});
+
+      final String? updatedAfter =
+          (!isFirst && localLastChange != null)
+              ? localLastChange.toUtc().toIso8601String()
+              : null;
 
       try {
         propriedadessO =
@@ -1954,26 +2016,59 @@ Future refreshRebanhoOtimizada(BuildContext context) async {
           return;
         }
 
-        qtdRebanhosO = await SupabaseFunctionsGroup.qTDRebanhosCall.call(
-          pIdsPropriedadesList: propertyIds,
-        );
+        if (updatedAfter != null) {
+          qtdRebanhosO =
+              await SupabaseFunctionsGroup.qTDRebanhosIncCall.call(
+            pIdsPropriedadesList: propertyIds,
+            pUpdatedAfter: updatedAfter,
+          );
+        } else {
+          qtdRebanhosO = await SupabaseFunctionsGroup.qTDRebanhosCall.call(
+            pIdsPropriedadesList: propertyIds,
+          );
+        }
         _syncLog(
             'rebanho', 'Resposta qtdRebanhos raw: ${qtdRebanhosO.jsonBody}');
 
         final totalRebanhos = _safeTotalFromApi(qtdRebanhosO.jsonBody);
         FFAppState().totalRebanhos = totalRebanhos;
-        _syncLog('rebanho', 'Total remoto informado: $totalRebanhos.');
+        _syncLog('rebanho',
+            'Total remoto informado: $totalRebanhos (${updatedAfter != null ? "incremental desde $updatedAfter" : "completo"}).');
 
-        await SQLiteManager.instance.deletarTodosRebanhos();
-        _syncLog('rebanho', 'Tabela local limpa. Iniciando paginação...');
+        if (totalRebanhos == 0 && updatedAfter != null) {
+          _syncLog('rebanho',
+              'Nenhuma alteração remota desde último sync. Atualizando timestamp.');
+          FFAppState().rebanhosChangeDateTime =
+              remoteLastChange ?? DateTime.now();
+          return;
+        }
+
+        if (isFirst) {
+          await SQLiteManager.instance.deletarTodosRebanhos();
+          _syncLog('rebanho', 'Tabela local limpa (primeiro sync). Iniciando paginação...');
+        } else {
+          _syncLog('rebanho',
+              'Sync incremental — mantendo dados locais. Iniciando paginação (UPSERT)...');
+        }
         while (FFAppState().indexRebPaginacao < totalRebanhos) {
           final offsetAtual = FFAppState().indexRebPaginacao;
           try {
-            rebanhosAPIO = await SupabaseFunctionsGroup.buscarRebanhosCall.call(
-              pIdPropriedadeList: propertyIds,
-              pLimite: 999,
-              pOffset: offsetAtual,
-            );
+            if (updatedAfter != null) {
+              rebanhosAPIO =
+                  await SupabaseFunctionsGroup.buscarRebanhosIncCall.call(
+                pIdPropriedadeList: propertyIds,
+                pLimite: 999,
+                pOffset: offsetAtual,
+                pUpdatedAfter: updatedAfter,
+              );
+            } else {
+              rebanhosAPIO =
+                  await SupabaseFunctionsGroup.buscarRebanhosCall.call(
+                pIdPropriedadeList: propertyIds,
+                pLimite: 999,
+                pOffset: offsetAtual,
+              );
+            }
 
             final pageRecords = _safeRecordsFromApi(rebanhosAPIO.jsonBody);
             _syncLog('rebanho',
@@ -2082,13 +2177,21 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
         'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
 
     if (shouldSync) {
-      _syncLog('reproducao', 'Iniciando sincronização otimizada.');
+      final isFirst = _isFirstSync(localLastChange) ||
+          await _isLocalTableEmpty('local_reproducao');
+      _syncLog('reproducao',
+          'Iniciando sincronização ${isFirst ? "COMPLETA (primeiro sync)" : "INCREMENTAL"}.');
       var syncOk = true;
       final List<Map<String, String>> syncErrors = [];
       int totalInserted = 0;
       FFAppState().indexReproPaginacao = 0;
       FFAppState().visibilidadeProgressBarRepro = true;
       FFAppState().update(() {});
+
+      final String? updatedAfter =
+          (!isFirst && localLastChange != null)
+              ? localLastChange.toUtc().toIso8601String()
+              : null;
 
       try {
         propriedades =
@@ -2106,27 +2209,60 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
           return;
         }
 
-        qtdReproducoes = await SupabaseFunctionsGroup.qTDReproducoesCall.call(
-          pIdsPropriedadesList: propertyIds,
-        );
+        if (updatedAfter != null) {
+          qtdReproducoes =
+              await SupabaseFunctionsGroup.qTDReproducoesIncCall.call(
+            pIdsPropriedadesList: propertyIds,
+            pUpdatedAfter: updatedAfter,
+          );
+        } else {
+          qtdReproducoes =
+              await SupabaseFunctionsGroup.qTDReproducoesCall.call(
+            pIdsPropriedadesList: propertyIds,
+          );
+        }
         _syncLog('reproducao',
             'Resposta qtdReproducoes raw: ${qtdReproducoes.jsonBody}');
 
         final totalReproducoes = _safeTotalFromApi(qtdReproducoes.jsonBody);
         FFAppState().totalReproducoes = totalReproducoes;
-        _syncLog('reproducao', 'Total remoto informado: $totalReproducoes.');
+        _syncLog('reproducao',
+            'Total remoto informado: $totalReproducoes (${updatedAfter != null ? "incremental desde $updatedAfter" : "completo"}).');
 
-        await SQLiteManager.instance.deleteAllReproducao();
-        _syncLog('reproducao', 'Tabela local limpa. Iniciando paginação...');
+        if (totalReproducoes == 0 && updatedAfter != null) {
+          _syncLog('reproducao',
+              'Nenhuma alteração remota desde último sync. Atualizando timestamp.');
+          FFAppState().reproducaoChangeDateTime =
+              remoteLastChange ?? DateTime.now();
+          return;
+        }
+
+        if (isFirst) {
+          await SQLiteManager.instance.deleteAllReproducao();
+          _syncLog('reproducao', 'Tabela local limpa (primeiro sync). Iniciando paginação...');
+        } else {
+          _syncLog('reproducao',
+              'Sync incremental — mantendo dados locais. Iniciando paginação (UPSERT)...');
+        }
         while (FFAppState().indexReproPaginacao < totalReproducoes) {
           final offsetAtual = FFAppState().indexReproPaginacao;
           try {
-            reproducaoAPI =
-                await SupabaseFunctionsGroup.buscarReproducoesCall.call(
-              pIdPropriedadeList: propertyIds,
-              pLimite: 999,
-              pOffset: offsetAtual,
-            );
+            if (updatedAfter != null) {
+              reproducaoAPI =
+                  await SupabaseFunctionsGroup.buscarReproducoesIncCall.call(
+                pIdPropriedadeList: propertyIds,
+                pLimite: 999,
+                pOffset: offsetAtual,
+                pUpdatedAfter: updatedAfter,
+              );
+            } else {
+              reproducaoAPI =
+                  await SupabaseFunctionsGroup.buscarReproducoesCall.call(
+                pIdPropriedadeList: propertyIds,
+                pLimite: 999,
+                pOffset: offsetAtual,
+              );
+            }
 
             final pageRecords = _safeRecordsFromApi(reproducaoAPI.jsonBody);
             _syncLog('reproducao',
@@ -2208,11 +2344,20 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
 
 Future refreshPesagens(BuildContext context) async {
   try {
-    _syncLog('pesagens', 'Iniciando sincronização (sem change tracker)...');
+    _syncLog('pesagens', 'Iniciando sincronização...');
     ApiCallResponse? propriedadessO;
     ApiCallResponse? pesagensAPI;
 
-    _syncLog('pesagens', 'Iniciando sincronização otimizada.');
+    final localLastChange = FFAppState().pesagensChangeDateTime;
+    final isFirst = _isFirstSync(localLastChange) ||
+        await _isLocalTableEmpty('local_historico_pesagens');
+    final String? updatedAfter =
+        (!isFirst && localLastChange != null)
+            ? localLastChange.toUtc().toIso8601String()
+            : null;
+
+    _syncLog('pesagens',
+        'Iniciando sincronização ${isFirst ? "COMPLETA (primeiro sync)" : "INCREMENTAL desde $updatedAfter"}.');
     var syncOk = true;
     final List<Map<String, String>> syncErrors = [];
     int totalInserted = 0;
@@ -2239,6 +2384,7 @@ Future refreshPesagens(BuildContext context) async {
         limit: 999,
         offset: 0,
         includeCount: true,
+        updatedAfter: updatedAfter,
       );
 
       final firstPageRecords = _safeRecordsFromApi(pesagensAPI.jsonBody);
@@ -2252,14 +2398,24 @@ Future refreshPesagens(BuildContext context) async {
           'Primeira página parseada: ${firstPageRecords.length} registros.');
 
       if (firstPageRecords.isEmpty) {
-        _syncLog('pesagens',
-            'Primeira página vazia apesar de total=$totalPesagens. Não apagando dados locais. Abortando sync.');
+        if (updatedAfter != null) {
+          _syncLog('pesagens',
+              'Nenhuma alteração remota desde último sync. Atualizando timestamp.');
+          FFAppState().pesagensChangeDateTime = DateTime.now();
+        } else {
+          _syncLog('pesagens',
+              'Primeira página vazia apesar de total=$totalPesagens. Não apagando dados locais. Abortando sync.');
+        }
         return;
       }
 
-      // Agora sim, apagar dados locais pois confirmamos que a API retorna dados
-      await SQLiteManager.instance.deletarTodasPesagens();
-      _syncLog('pesagens', 'Tabela local limpa. Inserindo primeira página...');
+      if (isFirst) {
+        await SQLiteManager.instance.deletarTodasPesagens();
+        _syncLog('pesagens', 'Tabela local limpa (primeiro sync). Inserindo primeira página...');
+      } else {
+        _syncLog('pesagens',
+            'Sync incremental — mantendo dados locais (UPSERT). Inserindo primeira página...');
+      }
 
       // Inserir a primeira página já obtida
       final firstResult =
@@ -2284,6 +2440,7 @@ Future refreshPesagens(BuildContext context) async {
               propertyIds: propertyIds,
               limit: 999,
               offset: offsetAtual,
+              updatedAfter: updatedAfter,
             );
 
             final pageRecords = _safeRecordsFromApi(pesagensAPI.jsonBody);
@@ -2325,6 +2482,51 @@ Future refreshPesagens(BuildContext context) async {
           }
         }
       }
+
+      // ── Catch-up: buscar pesagens com id_propriedade NULL ──────────
+      // Registros criados pela web podem não ter id_propriedade preenchido,
+      // o que faz com que o filtro principal (in.props) os ignore.
+      // Aqui buscamos esses registros usando os idRebanho locais do usuário.
+      try {
+        final localRebIds = await _getLocalRebanhoIds();
+        if (localRebIds.isNotEmpty) {
+          _syncLog('pesagens',
+              'Catch-up: verificando pesagens com id_propriedade NULL para ${localRebIds.length} animais.');
+          const batchSize = 200;
+          for (var i = 0; i < localRebIds.length; i += batchSize) {
+            final batch = localRebIds.sublist(
+                i,
+                i + batchSize > localRebIds.length
+                    ? localRebIds.length
+                    : i + batchSize);
+            var catchupOffset = 0;
+            while (true) {
+              final resp = await _buscarPesagensSemPropriedade(
+                rebanhoIds: batch,
+                limit: 999,
+                offset: catchupOffset,
+              );
+              final recs = _safeRecordsFromApi(resp.jsonBody);
+              if (recs.isEmpty) break;
+
+              final result = await actions.batchInsertLocalPesagens(recs);
+              final cnt = result['inserted'] as int? ?? 0;
+              totalInserted += cnt;
+              final errs =
+                  result['errors'] as List<Map<String, String>>? ?? [];
+              if (errs.isNotEmpty) syncErrors.addAll(errs);
+              _syncLog('pesagens',
+                  'Catch-up: $cnt registros inseridos (batch ${i ~/ batchSize}, offset=$catchupOffset).');
+
+              if (recs.length < 999) break;
+              catchupOffset += recs.length;
+            }
+          }
+        }
+      } catch (e, s) {
+        _syncLog('pesagens', 'Erro no catch-up de pesagens sem propriedade: $e\n$s');
+      }
+      // ── Fim catch-up ──────────────────────────────────────────────
 
       if (syncErrors.isNotEmpty) {
         syncOk = false;
@@ -2383,7 +2585,10 @@ Future refresSanidadeOtimizada(BuildContext context) async {
         'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
 
     if (shouldSync) {
-      _syncLog('sanidade', 'Iniciando sincronização otimizada.');
+      final isFirst = _isFirstSync(localLastChange) ||
+          await _isLocalTableEmpty('local_sanidade');
+      _syncLog('sanidade',
+          'Iniciando sincronização ${isFirst ? "COMPLETA (primeiro sync)" : "INCREMENTAL"}.');
       var syncOk = true;
       final List<Map<String, String>> syncErrors = [];
       int totalInserted = 0;
@@ -2391,6 +2596,11 @@ Future refresSanidadeOtimizada(BuildContext context) async {
       FFAppState().indexSanidadePaginacao = 0;
       FFAppState().visbilidadeProgressBarSan = true;
       FFAppState().update(() {});
+
+      final String? updatedAfter =
+          (!isFirst && localLastChange != null)
+              ? localLastChange.toUtc().toIso8601String()
+              : null;
 
       try {
         propriedades =
@@ -2408,27 +2618,59 @@ Future refresSanidadeOtimizada(BuildContext context) async {
           return;
         }
 
-        qtdSanidades = await SupabaseFunctionsGroup.qTDSanidadeCall.call(
-          pIdsPropriedadesList: propertyIds,
-        );
+        if (updatedAfter != null) {
+          qtdSanidades =
+              await SupabaseFunctionsGroup.qTDSanidadeIncCall.call(
+            pIdsPropriedadesList: propertyIds,
+            pUpdatedAfter: updatedAfter,
+          );
+        } else {
+          qtdSanidades = await SupabaseFunctionsGroup.qTDSanidadeCall.call(
+            pIdsPropriedadesList: propertyIds,
+          );
+        }
         _syncLog(
             'sanidade', 'Resposta qtdSanidades raw: ${qtdSanidades.jsonBody}');
 
         final totalSanidades = _safeTotalFromApi(qtdSanidades.jsonBody);
         FFAppState().totalSanidades = totalSanidades;
-        _syncLog('sanidade', 'Total remoto informado: $totalSanidades.');
+        _syncLog('sanidade',
+            'Total remoto informado: $totalSanidades (${updatedAfter != null ? "incremental desde $updatedAfter" : "completo"}).');
 
-        await SQLiteManager.instance.deleteAllSanidades();
-        _syncLog('sanidade', 'Tabela local limpa. Iniciando paginação...');
+        if (totalSanidades == 0 && updatedAfter != null) {
+          _syncLog('sanidade',
+              'Nenhuma alteração remota desde último sync. Atualizando timestamp.');
+          FFAppState().sanidadeChangeDateTime =
+              remoteLastChange ?? DateTime.now();
+          return;
+        }
+
+        if (isFirst) {
+          await SQLiteManager.instance.deleteAllSanidades();
+          _syncLog('sanidade', 'Tabela local limpa (primeiro sync). Iniciando paginação...');
+        } else {
+          _syncLog('sanidade',
+              'Sync incremental — mantendo dados locais. Iniciando paginação (UPSERT)...');
+        }
         while (FFAppState().indexSanidadePaginacao < totalSanidades) {
           final offsetAtual = FFAppState().indexSanidadePaginacao;
           try {
-            sanidadesAPI =
-                await SupabaseFunctionsGroup.buscarSanidadesCall.call(
-              pIdPropriedadeList: propertyIds,
-              pLimite: 999,
-              pOffset: offsetAtual,
-            );
+            if (updatedAfter != null) {
+              sanidadesAPI =
+                  await SupabaseFunctionsGroup.buscarSanidadesIncCall.call(
+                pIdPropriedadeList: propertyIds,
+                pLimite: 999,
+                pOffset: offsetAtual,
+                pUpdatedAfter: updatedAfter,
+              );
+            } else {
+              sanidadesAPI =
+                  await SupabaseFunctionsGroup.buscarSanidadesCall.call(
+                pIdPropriedadeList: propertyIds,
+                pLimite: 999,
+                pOffset: offsetAtual,
+              );
+            }
 
             final pageRecords = _safeRecordsFromApi(sanidadesAPI.jsonBody);
             _syncLog('sanidade',

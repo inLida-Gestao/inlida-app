@@ -37,6 +37,9 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
     super.initState();
     _model = createModel(context, () => SelecaoPropriedadeModel());
 
+    _model.searchTextController ??= TextEditingController();
+    _model.searchFocusNode ??= FocusNode();
+
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
@@ -85,7 +88,7 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
           ),
           child: Container(
             width: double.infinity,
-            height: 400.0,
+            height: 550.0,
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
@@ -205,6 +208,60 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                       ),
                     ),
                   ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                      24.0, 8.0, 24.0, 8.0),
+                  child: TextField(
+                    controller: _model.searchTextController,
+                    focusNode: _model.searchFocusNode,
+                    onChanged: (_) => safeSetState(() {}),
+                    decoration: InputDecoration(
+                      hintText: 'Pesquisar propriedade...',
+                      hintStyle: FlutterFlowTheme.of(context)
+                          .bodyMedium
+                          .override(
+                            fontFamily:
+                                FlutterFlowTheme.of(context).bodyMediumFamily,
+                            color: const Color(0xFF9E9E9E),
+                            letterSpacing: 0.0,
+                            useGoogleFonts: !FlutterFlowTheme.of(context)
+                                .bodyMediumIsCustom,
+                          ),
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: Color(0xFF9E9E9E),
+                        size: 22.0,
+                      ),
+                      filled: true,
+                      fillColor: const Color(0xFFF5F5F5),
+                      contentPadding: const EdgeInsetsDirectional.fromSTEB(
+                          12.0, 10.0, 12.0, 10.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: const BorderSide(
+                          color: Color(0xFF2F7B3E),
+                          width: 1.0,
+                        ),
+                      ),
+                    ),
+                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily:
+                              FlutterFlowTheme.of(context).bodyMediumFamily,
+                          color: const Color(0xFF2F2F2F),
+                          letterSpacing: 0.0,
+                          useGoogleFonts: !FlutterFlowTheme.of(context)
+                              .bodyMediumIsCustom,
+                        ),
+                  ),
+                ),
                 if (optionsListarPropriedadesRowList.isNotEmpty)
                   Expanded(
                     child: Container(
@@ -218,7 +275,9 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                             24.0, 24.0, 24.0, 24.0),
                         child: Builder(
                           builder: (context) {
+                            final searchQuery = (_model.searchTextController?.text ?? '').toLowerCase();
                             final propriedade = optionsListarPropriedadesRowList
+                                .where((e) => searchQuery.isEmpty || (e.nome ?? '').toLowerCase().contains(searchQuery))
                                 .sortedList(
                                     keyOf: (e) => e.createdAt!, desc: true)
                                 .toList();

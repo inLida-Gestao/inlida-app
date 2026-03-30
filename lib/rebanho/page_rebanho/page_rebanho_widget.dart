@@ -708,7 +708,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                           child: const FiltrosOrdenacaoRebanhoWidget(),
                         );
                       },
-                    ).then((value) => safeSetState(() {}));
+                    ).then((value) {
+                      _model.pageNum = 1;
+                      _model.offset = 0;
+                      safeSetState(() {});
+                    });
                   },
                   child: Container(
                     width: double.infinity,
@@ -781,7 +785,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                 .primaryText,
                                         FlutterFlowTheme.of(context).accent3,
                                       ),
-                                      fontSize: 15.0,
+                                      fontSize: 13.0,
                                       letterSpacing: 0.0,
                                       fontWeight: FontWeight.w500,
                                       useGoogleFonts:
@@ -789,7 +793,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                               .bodyMediumIsCustom,
                                     ),
                               ),
-                            ].divide(const SizedBox(width: 8.0)),
+                            ].divide(const SizedBox(width: 6.0)),
                           ),
                           if ((FFAppState().ordenacaoRebanho != '') &&
                               (FFAppState().ordenacaoRebanhoTipo != ''))
@@ -832,7 +836,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                             .bodyMediumFamily,
                                         color: FlutterFlowTheme.of(context)
                                             .secondary,
-                                        fontSize: 15.0,
+                                        fontSize: 13.0,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
                                         useGoogleFonts:
@@ -869,6 +873,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                     return Visibility(
                       visible: FFAppState().propriedadeSelecionada != null,
                       child: FutureBuilder<List<BuscaRebanhoPaginadaRow>>(
+                        key: const ValueKey('sem_ord'),
                         future: SQLiteManager.instance.buscaRebanhoPaginada(
                           idPropriedade:
                               FFAppState().propriedadeSelecionada.idPropriedade,
@@ -1734,6 +1739,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                       (FFAppState().ordenacaoRebanho == 'crescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'numero')) {
                     return FutureBuilder<List<RebanhoPagOrdNumCresRow>>(
+                      key: const ValueKey('ord_num_cres'),
                       future: SQLiteManager.instance.rebanhoPagOrdNumCres(
                         idPropriedade:
                             FFAppState().propriedadeSelecionada.idPropriedade,
@@ -2666,6 +2672,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                       (FFAppState().ordenacaoRebanho == 'decrescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'numero')) {
                     return FutureBuilder<List<RebanhoPagOrdNumDescRow>>(
+                      key: const ValueKey('ord_num_desc'),
                       future: SQLiteManager.instance.rebanhoPagOrdNumDesc(
                         idPropriedade:
                             FFAppState().propriedadeSelecionada.idPropriedade,
@@ -3598,6 +3605,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                       (FFAppState().ordenacaoRebanho == 'crescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'nome')) {
                     return FutureBuilder<List<RebanhoPagOrdNomCresRow>>(
+                      key: const ValueKey('ord_nom_cres'),
                       future: SQLiteManager.instance.rebanhoPagOrdNomCres(
                         idPropriedade:
                             FFAppState().propriedadeSelecionada.idPropriedade,
@@ -4530,6 +4538,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                       (FFAppState().ordenacaoRebanho == 'decrescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'nome')) {
                     return FutureBuilder<List<RebanhoPagOrdNomDescRow>>(
+                      key: const ValueKey('ord_nom_desc'),
                       future: SQLiteManager.instance.rebanhoPagOrdNomDesc(
                         idPropriedade:
                             FFAppState().propriedadeSelecionada.idPropriedade,
@@ -5462,6 +5471,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                       (FFAppState().ordenacaoRebanho == 'crescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'nascimento')) {
                     return FutureBuilder<List<RebanhoPagOrdDataCresRow>>(
+                      key: const ValueKey('ord_data_cres'),
                       future: SQLiteManager.instance.rebanhoPagOrdDataCres(
                         idPropriedade:
                             FFAppState().propriedadeSelecionada.idPropriedade,
@@ -6394,6 +6404,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                       (FFAppState().ordenacaoRebanho == 'decrescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'nascimento')) {
                     return FutureBuilder<List<RebanhoPagOrdDataDescRow>>(
+                      key: const ValueKey('ord_data_desc'),
                       future: SQLiteManager.instance.rebanhoPagOrdDataDesc(
                         idPropriedade:
                             FFAppState().propriedadeSelecionada.idPropriedade,
@@ -7324,6 +7335,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                     );
                   } else {
                     return FutureBuilder<List<BuscaRebanhoPaginadaPesquisaRow>>(
+                      key: const ValueKey('pesquisa'),
                       future:
                           SQLiteManager.instance.buscaRebanhoPaginadaPesquisa(
                         idPropriedade:

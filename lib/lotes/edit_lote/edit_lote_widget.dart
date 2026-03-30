@@ -7,7 +7,6 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/rebanho/filtros_rebanho/filtros_rebanho_widget.dart';
-import 'dart:async';
 import 'dart:ui';
 import '/actions/actions.dart' as action_blocks;
 import '/custom_code/widgets/index.dart' as custom_widgets;
@@ -4153,7 +4152,10 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                                 FFLocalizations.of(context).languageCode,
                                                                           ),
                                                                         );
-                                                                      } else {
+                                                                      } else if (_model.dropDownMotivoValue != null &&
+                                                                          _model.dropDownMotivoValue != '' &&
+                                                                          _model.datePicked != null &&
+                                                                          FFAppState().valueDouble2 > 0) {
                                                                         await SQLiteManager
                                                                             .instance
                                                                             .uPDTRebanhoLoteVenda(
@@ -4188,6 +4190,33 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                           ),
                                                                           valorVenda:
                                                                               FFAppState().valueDouble2,
+                                                                        );
+                                                                      } else {
+                                                                        await SQLiteManager
+                                                                            .instance
+                                                                            .uPDTRebanhoLote(
+                                                                          loteNome: _model
+                                                                              .nomeloteTextController
+                                                                              .text,
+                                                                          loteID:
+                                                                              widget.idLote,
+                                                                          updatedat:
+                                                                              dateTimeFormat(
+                                                                            "yyyy-MM-dd HH:mm:ss",
+                                                                            getCurrentTimestamp,
+                                                                            locale:
+                                                                                FFLocalizations.of(context).languageCode,
+                                                                          ),
+                                                                          idRebanho: _model
+                                                                              .rebanhoIdAplicados
+                                                                              .elementAtOrNull(_model.index),
+                                                                          dataEntradaLote:
+                                                                              dateTimeFormat(
+                                                                            "yyyy-MM-dd HH:mm:ss",
+                                                                            getCurrentTimestamp,
+                                                                            locale:
+                                                                                FFLocalizations.of(context).languageCode,
+                                                                          ),
                                                                         );
                                                                       }
                                                                     } else {
@@ -4262,7 +4291,10 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                                 FFLocalizations.of(context).languageCode,
                                                                           ),
                                                                         );
-                                                                      } else {
+                                                                      } else if (_model.dropDownMotivoValue != null &&
+                                                                          _model.dropDownMotivoValue != '' &&
+                                                                          _model.datePicked != null &&
+                                                                          FFAppState().valueDouble2 > 0) {
                                                                         await SQLiteManager
                                                                             .instance
                                                                             .uPDTRebanhoLoteVenda(
@@ -4297,6 +4329,33 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                           ),
                                                                           valorVenda:
                                                                               FFAppState().valueDouble2,
+                                                                        );
+                                                                      } else {
+                                                                        await SQLiteManager
+                                                                            .instance
+                                                                            .uPDTRebanhoLote(
+                                                                          loteNome: _model
+                                                                              .nomeloteTextController
+                                                                              .text,
+                                                                          loteID:
+                                                                              widget.idLote,
+                                                                          updatedat:
+                                                                              dateTimeFormat(
+                                                                            "yyyy-MM-dd HH:mm:ss",
+                                                                            getCurrentTimestamp,
+                                                                            locale:
+                                                                                FFLocalizations.of(context).languageCode,
+                                                                          ),
+                                                                          idRebanho: _model
+                                                                              .rebanhoIdAplicados
+                                                                              .elementAtOrNull(_model.index),
+                                                                          dataEntradaLote:
+                                                                              dateTimeFormat(
+                                                                            "yyyy-MM-dd HH:mm:ss",
+                                                                            getCurrentTimestamp,
+                                                                            locale:
+                                                                                FFLocalizations.of(context).languageCode,
+                                                                          ),
                                                                         );
                                                                       }
                                                                     }
@@ -4352,7 +4411,10 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                         dataEntradaLote:
                                                                             ' ',
                                                                       );
-                                                                    } else {
+                                                                    } else if (_model.dropDownMotivoValue != null &&
+                                                                        _model.dropDownMotivoValue != '' &&
+                                                                        _model.datePicked != null &&
+                                                                        FFAppState().valueDouble2 > 0) {
                                                                       await SQLiteManager
                                                                           .instance
                                                                           .uPDTRebanhoLoteVenda(
@@ -4376,6 +4438,27 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                             ' ',
                                                                         valorVenda:
                                                                             0.0,
+                                                                      );
+                                                                    } else {
+                                                                      await SQLiteManager
+                                                                          .instance
+                                                                          .uPDTRebanhoLote(
+                                                                        loteNome:
+                                                                            ' ',
+                                                                        loteID:
+                                                                            ' ',
+                                                                        updatedat:
+                                                                            dateTimeFormat(
+                                                                          "yyyy-MM-dd HH:mm:ss",
+                                                                          getCurrentTimestamp,
+                                                                          locale:
+                                                                              FFLocalizations.of(context).languageCode,
+                                                                        ),
+                                                                        idRebanho: _model
+                                                                            .rebanhosIDAux
+                                                                            .elementAtOrNull(_model.index),
+                                                                        dataEntradaLote:
+                                                                            ' ',
                                                                       );
                                                                     }
 
@@ -4439,13 +4522,9 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                     [];
                                                                 safeSetState(
                                                                     () {});
-                                                                unawaited(
-                                                                  () async {
-                                                                    await action_blocks
-                                                                        .countLotesAtivoInativo(
-                                                                            context);
-                                                                  }(),
-                                                                );
+                                                                await action_blocks
+                                                                    .countLotesAtivoInativo(
+                                                                        context);
                                                                 Navigator.pop(
                                                                     context);
                                                                 ScaffoldMessenger.of(

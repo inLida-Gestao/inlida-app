@@ -874,6 +874,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                                             idLote:
                                                                                 loteItem.idLote!,
                                                                           );
+                                                                          safeSetState(() {});
                                                                         },
                                                                         child:
                                                                             const Icon(

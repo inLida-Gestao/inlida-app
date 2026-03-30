@@ -313,6 +313,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
                                   FFAppState().ordenacaoRebanhoTipo = '';
+                                  FFAppState().ordenacaoRebanho = '';
                                   safeSetState(() {});
                                 },
                                 child: ClipRRect(
@@ -335,6 +336,9 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
                                   FFAppState().ordenacaoRebanhoTipo = 'numero';
+                                  if (FFAppState().ordenacaoRebanho == '') {
+                                    FFAppState().ordenacaoRebanho = 'decrescente';
+                                  }
                                   safeSetState(() {});
                                 },
                                 child: ClipRRect(
@@ -398,6 +402,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
                                   FFAppState().ordenacaoRebanhoTipo = '';
+                                  FFAppState().ordenacaoRebanho = '';
                                   safeSetState(() {});
                                 },
                                 child: ClipRRect(
@@ -419,6 +424,9 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
                                   FFAppState().ordenacaoRebanhoTipo = 'nome';
+                                  if (FFAppState().ordenacaoRebanho == '') {
+                                    FFAppState().ordenacaoRebanho = 'decrescente';
+                                  }
                                   safeSetState(() {});
                                 },
                                 child: ClipRRect(
@@ -484,6 +492,7 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
                                   FFAppState().ordenacaoRebanhoTipo = '';
+                                  FFAppState().ordenacaoRebanho = '';
                                   safeSetState(() {});
                                 },
                                 child: ClipRRect(
@@ -507,6 +516,9 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                                 onTap: () async {
                                   FFAppState().ordenacaoRebanhoTipo =
                                       'nascimento';
+                                  if (FFAppState().ordenacaoRebanho == '') {
+                                    FFAppState().ordenacaoRebanho = 'decrescente';
+                                  }
                                   safeSetState(() {});
                                 },
                                 child: ClipRRect(

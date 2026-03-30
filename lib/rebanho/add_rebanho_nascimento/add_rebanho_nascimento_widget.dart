@@ -766,6 +766,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               focusNode:
                                                   _model.nomeAnimalFocusNode,
                                               autofocus: true,
+                                              textCapitalization:
+                                                  TextCapitalization.characters,
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Nome do animal',
@@ -3758,7 +3760,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                     .text,
                                                 nome: _model
                                                     .nomeAnimalTextController
-                                                    .text,
+                                                    .text
+                                                    .toUpperCase(),
                                                 sexo: _model.dropDownSexoValue,
                                                 categoria:
                                                     valueOrDefault<String>(

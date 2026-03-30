@@ -3191,7 +3191,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               (_model.dropDownAntiparasitarioNullValue)!
                                                   .isNotEmpty)) {
                                         return functions.converterListaParaJSON(
-                                            _model.dropDownAntiparasitarioValue
+                                            _model.dropDownAntiparasitarioNullValue
                                                 ?.toList());
                                       } else {
                                         return 'null';

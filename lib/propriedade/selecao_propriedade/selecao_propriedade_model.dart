@@ -4,9 +4,16 @@ import 'package:flutter/material.dart';
 
 class SelecaoPropriedadeModel
     extends FlutterFlowModel<SelecaoPropriedadeWidget> {
+  // State field(s) for search.
+  FocusNode? searchFocusNode;
+  TextEditingController? searchTextController;
+
   @override
   void initState(BuildContext context) {}
 
   @override
-  void dispose() {}
+  void dispose() {
+    searchFocusNode?.dispose();
+    searchTextController?.dispose();
+  }
 }

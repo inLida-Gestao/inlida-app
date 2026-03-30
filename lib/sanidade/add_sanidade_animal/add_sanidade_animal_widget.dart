@@ -2441,7 +2441,7 @@ class _AddSanidadeAnimalWidgetState extends State<AddSanidadeAnimalWidget> {
                                       false)) ||
                               (FFAppState()
                                       .sanidade
-                                      .contains('Antiraparasitário') &&
+                                      .contains('Antiparasitário') &&
                                   !(_model.dropDownAntiparasitarioValue
                                           ?.isNotEmpty ??
                                       false)) ||
@@ -2515,7 +2515,7 @@ class _AddSanidadeAnimalWidgetState extends State<AddSanidadeAnimalWidget> {
                                                     ?.firstOrNull !=
                                                 '') &&
                                         (FFAppState().sanidade.contains(
-                                                'Antiraparasitário') ==
+                                                'Antiparasitário') ==
                                             true)
                                     ? functions.converterListaParaJSON(_model
                                         .dropDownAntiparasitarioValue
@@ -2571,16 +2571,8 @@ class _AddSanidadeAnimalWidgetState extends State<AddSanidadeAnimalWidget> {
                                 protocoloretirada: _model.dropDownRetiradaValue,
                                 protocoloiatf: _model.dropDownIATFValue,
                               );
-                              unawaited(
-                                () async {
-                                  await action_blocks.countSanidades(context);
-                                }(),
-                              );
-                              unawaited(
-                                () async {
-                                  await action_blocks.qTDSanidades(context);
-                                }(),
-                              );
+                              await action_blocks.countSanidades(context);
+                              await action_blocks.qTDSanidades(context);
                               safeSetState(() {
                                 _model.dropDownVacinaValueController?.reset();
                                 _model.dropDownVacinaValue = null;

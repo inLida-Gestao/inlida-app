@@ -3026,11 +3026,15 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               [];
                                                                           safeSetState(
                                                                               () {});
+                                                                          _model.indexCrias =
+                                                                              0;
+                                                                          safeSetState(
+                                                                              () {});
                                                                           _model.criasFemea = await SQLiteManager
                                                                               .instance
                                                                               .buscarCriasRebanhoMatriz(
                                                                             idRebanho:
-                                                                                containerBuscarRebanhoRowList.firstOrNull?.idRebanho,
+                                                                                containerBuscarRebanhoRowList.firstOrNull?.rebanhoIdMatriz,
                                                                           );
                                                                           if (_model.criasFemea != null &&
                                                                               (_model.criasFemea)!.isNotEmpty) {
@@ -3055,6 +3059,48 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                 nomeReprodutor: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.nomeReprodutor,
                                                                                 dataNascReprodutor: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.dataNascReprodutor,
                                                                                 racaReprodutor: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.racaReprodutor,
+                                                                              ));
+                                                                              safeSetState(() {});
+                                                                              _model.indexCrias = _model.indexCrias + 1;
+                                                                              safeSetState(() {});
+                                                                            }
+                                                                            _model.indexCrias =
+                                                                                0;
+                                                                            safeSetState(() {});
+                                                                          }
+                                                                          _model.criasMacho = await SQLiteManager
+                                                                              .instance
+                                                                              .buscarCriasRebanhoReprodutor(
+                                                                            idRebanho:
+                                                                                containerBuscarRebanhoRowList.firstOrNull?.rebanhoIdMatriz,
+                                                                          );
+                                                                          _model.indexCrias =
+                                                                              0;
+                                                                          safeSetState(
+                                                                              () {});
+                                                                          if (_model.criasMacho != null &&
+                                                                              (_model.criasMacho)!.isNotEmpty) {
+                                                                            while (_model.indexCrias <
+                                                                                _model.criasMacho!.length) {
+                                                                              FFAppState().addToCrias(AnimaisStruct(
+                                                                                idRebanho: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.idRebanho,
+                                                                                sexo: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.sexo,
+                                                                                numeroAnimal: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.numeroAnimal,
+                                                                                nome: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.nome,
+                                                                                dataNascimento: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.dataNascimento,
+                                                                                categoria: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.categoria,
+                                                                                raca: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.raca,
+                                                                                loteNome: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.loteNome,
+                                                                                rebanhoIdMatriz: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.rebanhoIdMatriz,
+                                                                                rebanhoIdReprodutor: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.rebanhoIdReprodutor,
+                                                                                numeroMatriz: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.numeroMatriz,
+                                                                                nomeMatriz: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.nomeMatriz,
+                                                                                dataNascMatriz: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.dataNascMatriz,
+                                                                                racaMatriz: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.racaMatriz,
+                                                                                numeroReprodutor: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.numeroReprodutor,
+                                                                                nomeReprodutor: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.nomeReprodutor,
+                                                                                dataNascReprodutor: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.dataNascReprodutor,
+                                                                                racaReprodutor: _model.criasMacho?.elementAtOrNull(_model.indexCrias)?.racaReprodutor,
                                                                               ));
                                                                               safeSetState(() {});
                                                                               _model.indexCrias = _model.indexCrias + 1;
@@ -3461,12 +3507,58 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               [];
                                                                           safeSetState(
                                                                               () {});
+                                                                          _model.indexCrias =
+                                                                              0;
+                                                                          safeSetState(
+                                                                              () {});
+                                                                          _model.criasFemea = await SQLiteManager
+                                                                              .instance
+                                                                              .buscarCriasRebanhoMatriz(
+                                                                            idRebanho:
+                                                                                containerBuscarRebanhoRowList.firstOrNull?.rebanhoIdReprodutor,
+                                                                          );
+                                                                          if (_model.criasFemea != null &&
+                                                                              (_model.criasFemea)!.isNotEmpty) {
+                                                                            while (_model.indexCrias <
+                                                                                _model.criasFemea!.length) {
+                                                                              FFAppState().addToCrias(AnimaisStruct(
+                                                                                idRebanho: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.idRebanho,
+                                                                                sexo: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.sexo,
+                                                                                numeroAnimal: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.numeroAnimal,
+                                                                                nome: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.nome,
+                                                                                dataNascimento: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.dataNascimento,
+                                                                                categoria: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.categoria,
+                                                                                raca: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.raca,
+                                                                                loteNome: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.loteNome,
+                                                                                rebanhoIdMatriz: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.rebanhoIdMatriz,
+                                                                                rebanhoIdReprodutor: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.rebanhoIdReprodutor,
+                                                                                numeroMatriz: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.numeroMatriz,
+                                                                                nomeMatriz: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.nomeMatriz,
+                                                                                dataNascMatriz: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.dataNascMatriz,
+                                                                                racaMatriz: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.racaMatriz,
+                                                                                numeroReprodutor: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.numeroReprodutor,
+                                                                                nomeReprodutor: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.nomeReprodutor,
+                                                                                dataNascReprodutor: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.dataNascReprodutor,
+                                                                                racaReprodutor: _model.criasFemea?.elementAtOrNull(_model.indexCrias)?.racaReprodutor,
+                                                                              ));
+                                                                              safeSetState(() {});
+                                                                              _model.indexCrias = _model.indexCrias + 1;
+                                                                              safeSetState(() {});
+                                                                            }
+                                                                            _model.indexCrias =
+                                                                                0;
+                                                                            safeSetState(() {});
+                                                                          }
                                                                           _model.criasMacho = await SQLiteManager
                                                                               .instance
                                                                               .buscarCriasRebanhoReprodutor(
                                                                             idRebanho:
-                                                                                containerBuscarRebanhoRowList.firstOrNull?.idRebanho,
+                                                                                containerBuscarRebanhoRowList.firstOrNull?.rebanhoIdReprodutor,
                                                                           );
+                                                                          _model.indexCrias =
+                                                                              0;
+                                                                          safeSetState(
+                                                                              () {});
                                                                           if (_model.criasMacho != null &&
                                                                               (_model.criasMacho)!.isNotEmpty) {
                                                                             while (_model.indexCrias <

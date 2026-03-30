@@ -2740,7 +2740,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                           false)) ||
                                   (FFAppState()
                                           .sanidade
-                                          .contains('Antiraparasitário') &&
+                                          .contains('Antiparasitário') &&
                                       !(_model.dropDownAntiparasitarioValue
                                               ?.isNotEmpty ??
                                           false)) ||
@@ -2955,17 +2955,8 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                   FFAppState().antiParasitarioCount = 0;
                                   FFAppState().protocolosReproCount = 0;
                                   safeSetState(() {});
-                                  unawaited(
-                                    () async {
-                                      await action_blocks
-                                          .countSanidades(context);
-                                    }(),
-                                  );
-                                  unawaited(
-                                    () async {
-                                      await action_blocks.qTDSanidades(context);
-                                    }(),
-                                  );
+                                  await action_blocks.countSanidades(context);
+                                  await action_blocks.qTDSanidades(context);
                                   FFAppState().update(() {});
                                   Navigator.pop(context);
                                   ScaffoldMessenger.of(context).showSnackBar(
