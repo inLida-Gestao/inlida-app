@@ -8,16 +8,12 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/instant_timer.dart';
 import '/rebanho/popup_rebanhos/popup_rebanhos_widget.dart';
-import 'dart:ui';
 import '/actions/actions.dart' as action_blocks;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:aligned_dialog/aligned_dialog.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'edit_reproducao_rebanho_model.dart';
 export 'edit_reproducao_rebanho_model.dart';
@@ -91,6 +87,57 @@ class _EditReproducaoRebanhoWidgetState
     );
   }
 
+  String _normalizeInputText(String? value) {
+    if (value == null) return '';
+    final normalized = value.trim();
+    if (normalized.isEmpty) return '';
+
+    final lowercase = normalized.toLowerCase();
+    if (lowercase == 'null' || lowercase == 'n/a' || normalized == '-') {
+      return '';
+    }
+
+    return normalized;
+  }
+
+  DateTime? _parseEditableDate(String? value) {
+    final normalized = _normalizeInputText(value);
+    if (normalized.isEmpty) {
+      return null;
+    }
+
+    return functions.converterParaData(normalized);
+  }
+
+  String _formatEditableDate(
+    BuildContext context, {
+    DateTime? selectedDate,
+    String? storedValue,
+    String placeholder = 'Selecione uma data',
+  }) {
+    final effectiveDate = selectedDate ?? _parseEditableDate(storedValue);
+    if (effectiveDate == null) {
+      return placeholder;
+    }
+
+    return dateTimeFormat(
+      "d/M/y",
+      effectiveDate,
+      locale: FFLocalizations.of(context).languageCode,
+    );
+  }
+
+  Color _editableDateColor(
+    BuildContext context, {
+    DateTime? selectedDate,
+    String? storedValue,
+  }) {
+    final hasValue = selectedDate != null || _parseEditableDate(storedValue) != null;
+    return hasValue
+        ? FlutterFlowTheme.of(context).secondaryText
+        : const Color(0xFFBEBEBE);
+  }
+
   String _buildReprodutorLabel(
       BuildContext context, BuscarReproducaoRow? reproducao) {
     final appStateNum = FFAppState().reprodutorSelecionado.numAnimal;
@@ -112,6 +159,41 @@ class _EditReproducaoRebanhoWidgetState
         : _formatDisplayDate(context, reproducao?.nascimentoReprodutor);
 
     return '$numero • $nome • $nascimento';
+  }
+
+  DateTime? _resolveDataInseminacao(BuscarReproducaoRow? reproducao) {
+    return _model.datePicked1 ??
+        functions.converterParaData(reproducao?.dataInseminacao);
+  }
+
+  DateTime? _resolveDataParto(BuscarReproducaoRow? reproducao) {
+    return _model.datePicked7 ??
+        functions.converterParaData(reproducao?.dataParto);
+  }
+
+  bool _isPartoConfirmado(BuscarReproducaoRow? reproducao) {
+    if (_model.checkboxParidaValue != null) {
+      return _model.checkboxParidaValue!;
+    }
+
+    final parida = reproducao?.parida?.trim().toLowerCase();
+    if (parida == 'sim') {
+      return true;
+    }
+
+    final dataParto = reproducao?.dataParto?.trim().toLowerCase();
+    return dataParto != null && dataParto.isNotEmpty && dataParto != '-';
+  }
+
+  int? _resolveDiasEntreInseminacaoEParto(BuscarReproducaoRow? reproducao) {
+    final dataInseminacao = _resolveDataInseminacao(reproducao);
+    final dataParto = _resolveDataParto(reproducao);
+
+    if (dataInseminacao == null || dataParto == null) {
+      return null;
+    }
+
+    return functions.diasEntreDatas(dataInseminacao, dataParto);
   }
 
   @override
@@ -227,6 +309,13 @@ class _EditReproducaoRebanhoWidgetState
                   );
                 }
                 final containerBuscarReproducaoRowList = snapshot.data!;
+                final reproducao = containerBuscarReproducaoRowList.firstOrNull;
+                final dataInseminacao = _resolveDataInseminacao(reproducao);
+                final dataParto = _resolveDataParto(reproducao);
+                final partoConfirmado = _isPartoConfirmado(reproducao);
+                final diasEntreInseminacaoEParto = partoConfirmado
+                  ? _resolveDiasEntreInseminacaoEParto(reproducao)
+                    : null;
 
                 return Container(
                   decoration: const BoxDecoration(),
@@ -1099,27 +1188,15 @@ class _EditReproducaoRebanhoWidgetState
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  _model.datePicked1 != null
-                                                      ? dateTimeFormat(
-                                                          "d/M/y",
-                                                          _model.datePicked1,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        )
-                                                      : dateTimeFormat(
-                                                          "d/M/y",
-                                                          functions.converterParaData(
-                                                              _model
-                                                                  .editReproducao
-                                                                  ?.firstOrNull
-                                                                  ?.dataInseminacao),
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
+                                                  _formatEditableDate(
+                                                  context,
+                                                  selectedDate:
+                                                    _model.datePicked1,
+                                                  storedValue: _model
+                                                    .editReproducao
+                                                    ?.firstOrNull
+                                                    ?.dataInseminacao,
+                                                  ),
                                                   style:
                                                       FlutterFlowTheme.of(
                                                               context)
@@ -1129,19 +1206,16 @@ class _EditReproducaoRebanhoWidgetState
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                            color:
-                                                                valueOrDefault<
-                                                                    Color>(
-                                                              _model.datePicked1 !=
-                                                                      null
-                                                                  ? FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .secondaryText
-                                                                  : const Color(
-                                                                      0xFFBEBEBE),
-                                                              const Color(
-                                                                  0xFFBEBEBE),
-                                                            ),
+                                                      color: _editableDateColor(
+                                                        context,
+                                                        selectedDate:
+                                                          _model
+                                                            .datePicked1,
+                                                        storedValue: _model
+                                                          .editReproducao
+                                                          ?.firstOrNull
+                                                          ?.dataInseminacao,
+                                                      ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
@@ -1582,29 +1656,15 @@ class _EditReproducaoRebanhoWidgetState
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  _model.datePicked2 != null
-                                                      ? valueOrDefault<String>(
-                                                          dateTimeFormat(
-                                                            "d/M/y",
-                                                            _model.datePicked2,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          ),
-                                                          'Selecione uma data',
-                                                        )
-                                                      : dateTimeFormat(
-                                                          "d/M/y",
-                                                          functions.converterParaData(
-                                                              _model
-                                                                  .editReproducao
-                                                                  ?.firstOrNull
-                                                                  ?.dataPartidaSemen),
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
+                                                  _formatEditableDate(
+                                                  context,
+                                                  selectedDate:
+                                                    _model.datePicked2,
+                                                  storedValue: _model
+                                                    .editReproducao
+                                                    ?.firstOrNull
+                                                    ?.dataPartidaSemen,
+                                                  ),
                                                   style:
                                                       FlutterFlowTheme.of(
                                                               context)
@@ -1614,19 +1674,16 @@ class _EditReproducaoRebanhoWidgetState
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                            color:
-                                                                valueOrDefault<
-                                                                    Color>(
-                                                              _model.datePicked2 !=
-                                                                      null
-                                                                  ? FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .secondaryText
-                                                                  : const Color(
-                                                                      0xFFBEBEBE),
-                                                              const Color(
-                                                                  0xFFBEBEBE),
-                                                            ),
+                                                      color: _editableDateColor(
+                                                        context,
+                                                        selectedDate:
+                                                          _model
+                                                            .datePicked2,
+                                                        storedValue: _model
+                                                          .editReproducao
+                                                          ?.firstOrNull
+                                                          ?.dataPartidaSemen,
+                                                      ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
@@ -2000,29 +2057,15 @@ class _EditReproducaoRebanhoWidgetState
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  _model.datePicked3 != null
-                                                      ? valueOrDefault<String>(
-                                                          dateTimeFormat(
-                                                            "d/M/y",
-                                                            _model.datePicked3,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          ),
-                                                          'Selecione uma data',
-                                                        )
-                                                      : dateTimeFormat(
-                                                          "d/M/y",
-                                                          functions.converterParaData(
-                                                              _model
-                                                                  .editReproducao
-                                                                  ?.firstOrNull
-                                                                  ?.dataInicial),
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
+                                                  _formatEditableDate(
+                                                  context,
+                                                  selectedDate:
+                                                    _model.datePicked3,
+                                                  storedValue: _model
+                                                    .editReproducao
+                                                    ?.firstOrNull
+                                                    ?.dataInicial,
+                                                  ),
                                                   style:
                                                       FlutterFlowTheme.of(
                                                               context)
@@ -2032,19 +2075,16 @@ class _EditReproducaoRebanhoWidgetState
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                            color:
-                                                                valueOrDefault<
-                                                                    Color>(
-                                                              _model.datePicked3 !=
-                                                                      null
-                                                                  ? FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .secondaryText
-                                                                  : const Color(
-                                                                      0xFFBEBEBE),
-                                                              const Color(
-                                                                  0xFFBEBEBE),
-                                                            ),
+                                                      color: _editableDateColor(
+                                                        context,
+                                                        selectedDate:
+                                                          _model
+                                                            .datePicked3,
+                                                        storedValue: _model
+                                                          .editReproducao
+                                                          ?.firstOrNull
+                                                          ?.dataInicial,
+                                                      ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
@@ -2205,29 +2245,15 @@ class _EditReproducaoRebanhoWidgetState
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  _model.datePicked4 != null
-                                                      ? valueOrDefault<String>(
-                                                          dateTimeFormat(
-                                                            "d/M/y",
-                                                            _model.datePicked4,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          ),
-                                                          'Selecione uma data',
-                                                        )
-                                                      : dateTimeFormat(
-                                                          "d/M/y",
-                                                          functions.converterParaData(
-                                                              _model
-                                                                  .editReproducao
-                                                                  ?.firstOrNull
-                                                                  ?.dataFinal),
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
+                                                  _formatEditableDate(
+                                                  context,
+                                                  selectedDate:
+                                                    _model.datePicked4,
+                                                  storedValue: _model
+                                                    .editReproducao
+                                                    ?.firstOrNull
+                                                    ?.dataFinal,
+                                                  ),
                                                   style:
                                                       FlutterFlowTheme.of(
                                                               context)
@@ -2237,19 +2263,16 @@ class _EditReproducaoRebanhoWidgetState
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                            color:
-                                                                valueOrDefault<
-                                                                    Color>(
-                                                              _model.datePicked4 !=
-                                                                      null
-                                                                  ? FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .secondaryText
-                                                                  : const Color(
-                                                                      0xFFBEBEBE),
-                                                              const Color(
-                                                                  0xFFBEBEBE),
-                                                            ),
+                                                      color: _editableDateColor(
+                                                        context,
+                                                        selectedDate:
+                                                          _model
+                                                            .datePicked4,
+                                                        storedValue: _model
+                                                          .editReproducao
+                                                          ?.firstOrNull
+                                                          ?.dataFinal,
+                                                      ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
@@ -2345,11 +2368,12 @@ class _EditReproducaoRebanhoWidgetState
                                             width: double.infinity,
                                             child: Autocomplete<String>(
                                               initialValue: TextEditingValue(
-                                                  text:
-                                                      containerBuscarReproducaoRowList
-                                                              .firstOrNull
-                                                              ?.inseminador ??
-                                                          ''),
+                                                text: _normalizeInputText(
+                                                  containerBuscarReproducaoRowList
+                                                      .firstOrNull
+                                                      ?.inseminador,
+                                                ),
+                                              ),
                                               optionsBuilder:
                                                   (textEditingValue) {
                                                 if (textEditingValue.text ==
@@ -2602,16 +2626,11 @@ class _EditReproducaoRebanhoWidgetState
                                           safeSetState(() =>
                                               _model.checkboxValue = newValue!);
                                         },
-                                        side: (FlutterFlowTheme.of(context)
-                                                    .alternate !=
-                                                null)
-                                            ? BorderSide(
-                                                width: 2,
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .alternate,
-                                              )
-                                            : null,
+                                        side: BorderSide(
+                                          width: 2,
+                                          color: FlutterFlowTheme.of(context)
+                                            .alternate,
+                                        ),
                                         activeColor:
                                             FlutterFlowTheme.of(context)
                                                 .primary,
@@ -2907,30 +2926,15 @@ class _EditReproducaoRebanhoWidgetState
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          _model.datePicked5 !=
-                                                                  null
-                                                              ? valueOrDefault<
-                                                                  String>(
-                                                                  dateTimeFormat(
-                                                                    "d/M/y",
-                                                                    _model
-                                                                        .datePicked5,
-                                                                    locale: FFLocalizations.of(
-                                                                            context)
-                                                                        .languageCode,
-                                                                  ),
-                                                                  'Data',
-                                                                )
-                                                              : dateTimeFormat(
-                                                                  "d/M/y",
-                                                                  functions.converterParaData(_model
-                                                                      .editReproducao
-                                                                      ?.firstOrNull
-                                                                      ?.dataStatus),
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                ),
+                                                          _formatEditableDate(
+                                                          context,
+                                                          selectedDate: _model
+                                                            .datePicked5,
+                                                          storedValue: _model
+                                                            .editReproducao
+                                                            ?.firstOrNull
+                                                            ?.dataStatus,
+                                                          ),
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyMedium
@@ -2938,9 +2942,16 @@ class _EditReproducaoRebanhoWidgetState
                                                                 fontFamily: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .secondaryText,
+                                                            color: _editableDateColor(
+                                                              context,
+                                                              selectedDate:
+                                                                _model
+                                                                  .datePicked5,
+                                                              storedValue: _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataStatus,
+                                                            ),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
                                                                     0.0,
@@ -3215,15 +3226,14 @@ class _EditReproducaoRebanhoWidgetState
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                valueOrDefault<String>(
-                                                  dateTimeFormat(
-                                                    "d/M/y",
-                                                    _model.datePicked6,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  'Selecione uma data',
+                                                _formatEditableDate(
+                                                  context,
+                                                  selectedDate:
+                                                      _model.datePicked6,
+                                                  storedValue: _model
+                                                      .editReproducao
+                                                      ?.firstOrNull
+                                                      ?.previsaoParto,
                                                 ),
                                                 style: FlutterFlowTheme.of(
                                                         context)
@@ -3233,10 +3243,15 @@ class _EditReproducaoRebanhoWidgetState
                                                           FlutterFlowTheme.of(
                                                                   context)
                                                               .bodyMediumFamily,
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .secondaryText,
+                                                      color: _editableDateColor(
+                                                        context,
+                                                        selectedDate: _model
+                                                            .datePicked6,
+                                                        storedValue: _model
+                                                            .editReproducao
+                                                            ?.firstOrNull
+                                                            ?.previsaoParto,
+                                                      ),
                                                       fontSize: 16.0,
                                                       letterSpacing: 0.0,
                                                       fontWeight:
@@ -3287,16 +3302,11 @@ class _EditReproducaoRebanhoWidgetState
                                         safeSetState(() => _model
                                             .checkboxParidaValue = newValue!);
                                       },
-                                      side: (FlutterFlowTheme.of(context)
-                                                  .accent4 !=
-                                              null)
-                                          ? BorderSide(
-                                              width: 2,
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .accent4,
-                                            )
-                                          : null,
+                                        side: BorderSide(
+                                        width: 2,
+                                        color: FlutterFlowTheme.of(context)
+                                          .accent4,
+                                        ),
                                       activeColor:
                                           FlutterFlowTheme.of(context).primary,
                                       checkColor:
@@ -3444,31 +3454,15 @@ class _EditReproducaoRebanhoWidgetState
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              _model.datePicked7 != null
-                                                  ? valueOrDefault<String>(
-                                                      dateTimeFormat(
-                                                        "d/M/y",
-                                                        _model.datePicked7,
-                                                        locale:
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      ),
-                                                      'Data',
-                                                    )
-                                                  : dateTimeFormat(
-                                                      "d/M/y",
-                                                      functions
-                                                          .converterParaData(
-                                                              _model
-                                                                  .editReproducao
-                                                                  ?.firstOrNull
-                                                                  ?.dataParto),
-                                                      locale:
-                                                          FFLocalizations.of(
-                                                                  context)
-                                                              .languageCode,
-                                                    ),
+                                              _formatEditableDate(
+                                              context,
+                                              selectedDate:
+                                                _model.datePicked7,
+                                              storedValue: _model
+                                                .editReproducao
+                                                ?.firstOrNull
+                                                ?.dataParto,
+                                              ),
                                               style: FlutterFlowTheme.of(
                                                       context)
                                                   .bodyMedium
@@ -3477,9 +3471,15 @@ class _EditReproducaoRebanhoWidgetState
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .secondaryText,
+                                                color: _editableDateColor(
+                                                  context,
+                                                  selectedDate:
+                                                    _model.datePicked7,
+                                                  storedValue: _model
+                                                    .editReproducao
+                                                    ?.firstOrNull
+                                                    ?.dataParto,
+                                                ),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -3502,16 +3502,10 @@ class _EditReproducaoRebanhoWidgetState
                                 ].divide(const SizedBox(height: 8.0)),
                               ),
                             ),
-                            if ((functions.converterParaData(_model
-                                        .editReproducao
-                                        ?.firstOrNull
-                                        ?.dataInseminacao) !=
-                                    null) &&
-                                (functions.converterParaData(_model
-                                        .editReproducao
-                                        ?.firstOrNull
-                                        ?.dataParto) !=
-                                    null))
+                            if (partoConfirmado &&
+                                dataInseminacao != null &&
+                                dataParto != null &&
+                                diasEntreInseminacaoEParto != null)
                               Padding(
                                 padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 0.0, 0.0),
@@ -3521,7 +3515,7 @@ class _EditReproducaoRebanhoWidgetState
                                     children: [
                                       TextSpan(
                                         text:
-                                            'Dias entre inseminação e parto: ',
+                                          'Dias entre inseminação e parto: ',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -3538,32 +3532,7 @@ class _EditReproducaoRebanhoWidgetState
                                       ),
                                       TextSpan(
                                         text: valueOrDefault<String>(
-                                          functions.converterParaData(_model
-                                                          .editReproducao
-                                                          ?.firstOrNull
-                                                          ?.dataInseminacao) !=
-                                                      null &&
-                                                  functions.converterParaData(
-                                                          _model
-                                                              .editReproducao
-                                                              ?.firstOrNull
-                                                              ?.dataParto) !=
-                                                      null
-                                              ? functions
-                                                  .diasEntreDatas(
-                                                      functions.converterParaData(
-                                                          _model
-                                                              .editReproducao
-                                                              ?.firstOrNull
-                                                              ?.dataInseminacao)!,
-                                                      functions
-                                                          .converterParaData(
-                                                              _model
-                                                                  .editReproducao
-                                                                  ?.firstOrNull
-                                                                  ?.dataParto)!)
-                                                  .toString()
-                                              : '-',
+                                          diasEntreInseminacaoEParto.toString(),
                                           '-',
                                         ),
                                         style: const TextStyle(
@@ -3642,9 +3611,10 @@ class _EditReproducaoRebanhoWidgetState
                                           controller: _model
                                                   .textFieldAnotacoesTextController ??=
                                               TextEditingController(
-                                            text:
-                                                containerBuscarReproducaoRowList
-                                                    .firstOrNull?.anotacoes,
+                                            text: _normalizeInputText(
+                                              containerBuscarReproducaoRowList
+                                                  .firstOrNull?.anotacoes,
+                                            ),
                                           ),
                                           focusNode: _model
                                               .textFieldAnotacoesFocusNode,

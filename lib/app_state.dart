@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import '/backend/schema/structs/index.dart';
-import '/backend/api_requests/api_manager.dart';
-import 'backend/supabase/supabase.dart';
-import '/backend/sqlite/sqlite_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
@@ -1035,6 +1032,18 @@ class FFAppState extends ChangeNotifier {
   String get filtroLoteRebanhoNome => _filtroLoteRebanhoNome;
   set filtroLoteRebanhoNome(String value) {
     _filtroLoteRebanhoNome = value;
+  }
+
+  DateTime? _filtroDataNascimentoInicio;
+  DateTime? get filtroDataNascimentoInicio => _filtroDataNascimentoInicio;
+  set filtroDataNascimentoInicio(DateTime? value) {
+    _filtroDataNascimentoInicio = value;
+  }
+
+  DateTime? _filtroDataNascimentoFim;
+  DateTime? get filtroDataNascimentoFim => _filtroDataNascimentoFim;
+  set filtroDataNascimentoFim(DateTime? value) {
+    _filtroDataNascimentoFim = value;
   }
 
   List<String> _origemRebanho = ['Compra', 'Movimentação', 'Nascimento'];

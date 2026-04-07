@@ -3,12 +3,10 @@ import '/components/empty_lote_widget.dart';
 import '/components/empty_prop_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/lotes/filtro_lotes/filtro_lotes_widget.dart';
 import '/lotes/edit_lote/edit_lote_widget.dart';
 import '/lotes/view_lote/view_lote_widget.dart';
 import '/propriedade/selecionar_propriedade/selecionar_propriedade_widget.dart';
-import 'dart:ui';
 import '/actions/actions.dart' as action_blocks;
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
@@ -665,11 +663,11 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                   desc: true)
                                               .toList();
                                           if (lote.isEmpty) {
-                                            return Center(
+                                            return const Center(
                                               child: SizedBox(
                                                 width: double.infinity,
                                                 height: 230.0,
-                                                child: const EmptyLoteWidget(),
+                                                child: EmptyLoteWidget(),
                                               ),
                                             );
                                           }

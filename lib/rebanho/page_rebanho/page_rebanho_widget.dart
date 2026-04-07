@@ -3,19 +3,15 @@ import '/backend/sqlite/sqlite_manager.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/propriedade/selecionar_propriedade/selecionar_propriedade_widget.dart';
 import '/rebanho/filtros_ordenacao_rebanho/filtros_ordenacao_rebanho_widget.dart';
 import '/rebanho/filtros_rebanho/filtros_rebanho_widget.dart';
 import '/rebanho/view_rebanho/view_rebanho_widget.dart';
 import '/rebanho/edit_rebanho/edit_rebanho_widget.dart';
-import 'dart:ui';
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/actions/actions.dart' as action_blocks;
 import 'package:easy_debounce/easy_debounce.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'page_rebanho_model.dart';
@@ -89,6 +85,18 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
     }
 
     return FFAppState().filtroStatusRebanho;
+  }
+
+  String _dataNascInicioFilterValue() {
+    final d = FFAppState().filtroDataNascimentoInicio;
+    if (d == null) return '';
+    return dateTimeFormat('yyyy-MM-dd', d);
+  }
+
+  String _dataNascFimFilterValue() {
+    final d = FFAppState().filtroDataNascimentoFim;
+    if (d == null) return '';
+    return dateTimeFormat('yyyy-MM-dd', d);
   }
 
   Future<void> _openEditRebanho(BuildContext ctx, String? idRebanho) async {
@@ -678,6 +686,43 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                               );
                             },
                           ),
+                          if (FFAppState().filtroDataNascimentoInicio != null ||
+                              FFAppState().filtroDataNascimentoFim != null)
+                            Container(
+                              decoration: BoxDecoration(
+                                color: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                                borderRadius: BorderRadius.circular(24.0),
+                                shape: BoxShape.rectangle,
+                                border: Border.all(
+                                  color: const Color(0xFFBEBEBE),
+                                ),
+                              ),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsetsDirectional.fromSTEB(
+                                        16.0, 8.0, 16.0, 8.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Nascimento: ${FFAppState().filtroDataNascimentoInicio != null ? dateTimeFormat('d/M/y', FFAppState().filtroDataNascimentoInicio!, locale: FFLocalizations.of(context).languageCode) : '...'} - ${FFAppState().filtroDataNascimentoFim != null ? dateTimeFormat('d/M/y', FFAppState().filtroDataNascimentoFim!, locale: FFLocalizations.of(context).languageCode) : '...'}',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                         ].divide(const SizedBox(width: 8.0)),
                       ),
                     ),
@@ -884,6 +929,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                           raca: FFAppState().filtroRaca,
                           origem: FFAppState().filtroOrigemRebanho,
                           statusReb: _statusFilterValue(),
+                          dataNascInicio: _dataNascInicioFilterValue(),
+                          dataNascFim: _dataNascFimFilterValue(),
                         ),
                         builder: (context, snapshot) {
                           // Customize what your widget looks like when it's loading.
@@ -1750,6 +1797,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         raca: FFAppState().filtroRaca,
                         origem: FFAppState().filtroOrigemRebanho,
                         statusReb: _statusFilterValue(),
+                        dataNascInicio: _dataNascInicioFilterValue(),
+                        dataNascFim: _dataNascFimFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -2683,6 +2732,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         raca: FFAppState().filtroRaca,
                         origem: FFAppState().filtroOrigemRebanho,
                         statusReb: _statusFilterValue(),
+                        dataNascInicio: _dataNascInicioFilterValue(),
+                        dataNascFim: _dataNascFimFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -3616,6 +3667,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         raca: FFAppState().filtroRaca,
                         origem: FFAppState().filtroOrigemRebanho,
                         statusReb: _statusFilterValue(),
+                        dataNascInicio: _dataNascInicioFilterValue(),
+                        dataNascFim: _dataNascFimFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -4549,6 +4602,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         raca: FFAppState().filtroRaca,
                         origem: FFAppState().filtroOrigemRebanho,
                         statusReb: _statusFilterValue(),
+                        dataNascInicio: _dataNascInicioFilterValue(),
+                        dataNascFim: _dataNascFimFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -5482,6 +5537,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         raca: FFAppState().filtroRaca,
                         origem: FFAppState().filtroOrigemRebanho,
                         statusReb: _statusFilterValue(),
+                        dataNascInicio: _dataNascInicioFilterValue(),
+                        dataNascFim: _dataNascFimFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -6415,6 +6472,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         raca: FFAppState().filtroRaca,
                         origem: FFAppState().filtroOrigemRebanho,
                         statusReb: _statusFilterValue(),
+                        dataNascInicio: _dataNascInicioFilterValue(),
+                        dataNascFim: _dataNascFimFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -7347,6 +7406,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         loteId: FFAppState().filtroLoteRebanho,
                         pesquisa: _model.pesquisarTextController.text,
                         statusReb: _statusFilterValue(),
+                        dataNascInicio: _dataNascInicioFilterValue(),
+                        dataNascFim: _dataNascFimFilterValue(),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.

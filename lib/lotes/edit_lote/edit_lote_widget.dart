@@ -7,12 +7,10 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/rebanho/filtros_rebanho/filtros_rebanho_widget.dart';
-import 'dart:ui';
 import '/actions/actions.dart' as action_blocks;
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:easy_debounce/easy_debounce.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -37,6 +35,107 @@ class EditLoteWidget extends StatefulWidget {
 class _EditLoteWidgetState extends State<EditLoteWidget>
     with TickerProviderStateMixin {
   late EditLoteModel _model;
+
+  String _normalizeLoteNome(String? loteNome) {
+    final normalized = loteNome?.trim();
+    if (normalized == null ||
+        normalized.isEmpty ||
+        normalized.toLowerCase() == 'null') {
+      return 'Sem lote';
+    }
+
+    return normalized;
+  }
+
+  List<RebanhoStruct> _animalsInOtherLots() {
+    return _model.rebanhosSelecionados.where((animal) {
+      final loteId = animal.loteId.trim();
+      final loteNome = animal.loteNome.trim();
+      final isCurrentLote = loteId == widget.idLote;
+
+      if (isCurrentLote) {
+        return false;
+      }
+
+      return loteNome.isNotEmpty &&
+          loteNome.toLowerCase() != 'null';
+    }).toList();
+  }
+
+  void _applySelectedAnimalsToLot() {
+    _model.rebanhosAplicados = _model.rebanhosSelecionados
+        .toList()
+        .cast<RebanhoStruct>();
+    _model.rebanhoIdAplicados = _model.rebanhoIdSelecionados
+        .toList()
+        .cast<String>();
+    safeSetState(() {});
+    _model.rebanhosSelecionados = [];
+    safeSetState(() {});
+  }
+
+  void _confirmAnimalsAlreadyInLot(
+    List<RebanhoStruct> animais,
+  ) {
+    if (animais.isEmpty) {
+      _applySelectedAnimalsToLot();
+      return;
+    }
+
+    showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Animais já estão em outro lote'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Os animais abaixo já estão vinculados a outro lote. Deseja adicioná-los mesmo assim?',
+                  ),
+                  const SizedBox(height: 16.0),
+                  ...animais.map(
+                    (animal) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        '${animal.numeroAnimal} • ${animal.nome} • Lote atual: ${_normalizeLoteNome(animal.loteNome)}',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                _applySelectedAnimalsToLot();
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFF28A365),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    16.0, 0.0, 16.0, 0.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              child: const Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   void setState(VoidCallback callback) {
@@ -2512,13 +2611,11 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                               () {});
                                                                         }
                                                                       },
-                                                                      side: (FlutterFlowTheme.of(context).alternate !=
-                                                                              null)
-                                                                          ? BorderSide(
-                                                                              width: 2,
-                                                                              color: FlutterFlowTheme.of(context).alternate,
-                                                                            )
-                                                                          : null,
+                                                                      side: BorderSide(
+                                                                        width: 2,
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .alternate,
+                                                                      ),
                                                                       activeColor:
                                                                           FlutterFlowTheme.of(context)
                                                                               .secondary,
@@ -2558,22 +2655,10 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                               FFButtonWidget(
                                                                 onPressed:
                                                                     () async {
-                                                                  _model.rebanhosAplicados = _model
-                                                                      .rebanhosSelecionados
-                                                                      .toList()
-                                                                      .cast<
-                                                                          RebanhoStruct>();
-                                                                  _model.rebanhoIdAplicados = _model
-                                                                      .rebanhoIdSelecionados
-                                                                      .toList()
-                                                                      .cast<
-                                                                          String>();
-                                                                  safeSetState(
-                                                                      () {});
-                                                                  _model.rebanhosSelecionados =
-                                                                      [];
-                                                                  safeSetState(
-                                                                      () {});
+                                                                  final animaisEmOutrosLotes =
+                                                                      _animalsInOtherLots();
+                                                                  _confirmAnimalsAlreadyInLot(
+                                                                      animaisEmOutrosLotes);
                                                                 },
                                                                 text:
                                                                     'Adicionar',
@@ -2778,12 +2863,11 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                                         safeSetState(() {});
                                                                                       }
                                                                                     },
-                                                                              side: (FlutterFlowTheme.of(context).alternate != null)
-                                                                                  ? BorderSide(
-                                                                                      width: 2,
-                                                                                      color: FlutterFlowTheme.of(context).alternate,
-                                                                                    )
-                                                                                  : null,
+                                                                              side: BorderSide(
+                                                                                width: 2,
+                                                                                color: FlutterFlowTheme.of(context)
+                                                                                    .alternate,
+                                                                              ),
                                                                               activeColor: FlutterFlowTheme.of(context).secondary,
                                                                               checkColor: _model.rebanhoIdAplicados.contains(rebanhosSelectItem.idRebanho) ? null : FlutterFlowTheme.of(context).info,
                                                                             ),
@@ -3597,12 +3681,11 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                               safeSetState(() {});
                                                                             }
                                                                           },
-                                                                          side: (FlutterFlowTheme.of(context).alternate != null)
-                                                                              ? BorderSide(
-                                                                                  width: 2,
-                                                                                  color: FlutterFlowTheme.of(context).alternate,
-                                                                                )
-                                                                              : null,
+                                                                          side: BorderSide(
+                                                                            width: 2,
+                                                                            color: FlutterFlowTheme.of(context)
+                                                                                .alternate,
+                                                                          ),
                                                                           activeColor:
                                                                               FlutterFlowTheme.of(context).secondary,
                                                                           checkColor:

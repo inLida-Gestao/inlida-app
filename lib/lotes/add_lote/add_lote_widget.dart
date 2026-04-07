@@ -5,13 +5,11 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/rebanho/filtros_rebanho/filtros_rebanho_widget.dart';
-import 'dart:ui';
 import '/actions/actions.dart' as action_blocks;
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:easy_debounce/easy_debounce.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -29,6 +27,109 @@ class AddLoteWidget extends StatefulWidget {
 class _AddLoteWidgetState extends State<AddLoteWidget>
     with TickerProviderStateMixin {
   late AddLoteModel _model;
+
+  String _normalizeLoteNome(String? loteNome) {
+    final normalized = loteNome?.trim();
+    if (normalized == null ||
+        normalized.isEmpty ||
+        normalized.toLowerCase() == 'null') {
+      return 'Sem lote';
+    }
+
+    return normalized;
+  }
+
+  List<BuscaRebanhoPaginadaPesquisaRow> _animalsInOtherLots() {
+    return _model.rebanhosSelecionados.where((animal) {
+      final loteNome = animal.loteNome?.trim();
+      return loteNome != null &&
+          loteNome.isNotEmpty &&
+          loteNome.toLowerCase() != 'null';
+    }).toList();
+  }
+
+  void _applySelectedAnimalsToLot() {
+    FFAppState().rebanhosLoteIndex = 0;
+    safeSetState(() {});
+    while (FFAppState().rebanhosLoteIndex <
+        _model.rebanhosSelecionados.length) {
+      _model.addToRebanhosAplicados(_model.rebanhosSelecionados
+          .elementAtOrNull(FFAppState().rebanhosLoteIndex)!);
+      safeSetState(() {});
+      _model.addToRebanhoIAplicados(_model.rebanhosSelecionados
+          .elementAtOrNull(FFAppState().rebanhosLoteIndex)!
+          .idRebanho!);
+      safeSetState(() {});
+      FFAppState().rebanhosLoteIndex =
+          FFAppState().rebanhosLoteIndex + 1;
+      safeSetState(() {});
+    }
+    _model.rebanhosSelecionados = [];
+    safeSetState(() {});
+  }
+
+  void _confirmAnimalsAlreadyInLot(
+    List<BuscaRebanhoPaginadaPesquisaRow> animais,
+  ) {
+    if (animais.isEmpty) {
+      _applySelectedAnimalsToLot();
+      return;
+    }
+
+    showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Animais já estão em outro lote'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Os animais abaixo já estão vinculados a outro lote. Deseja adicioná-los mesmo assim?',
+                  ),
+                  const SizedBox(height: 16.0),
+                  ...animais.map(
+                    (animal) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        '${animal.numeroAnimal ?? 'S/N'} • ${animal.nome ?? 'Sem nome'} • Lote atual: ${_normalizeLoteNome(animal.loteNome)}',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                _applySelectedAnimalsToLot();
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: const Color(0xFF28A365),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                    16.0, 0.0, 16.0, 0.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              child: const Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   void setState(VoidCallback callback) {
@@ -1981,16 +2082,11 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                         () {});
                                                                   }
                                                                 },
-                                                                side: (FlutterFlowTheme.of(context)
-                                                                            .alternate !=
-                                                                        null)
-                                                                    ? BorderSide(
-                                                                        width:
-                                                                            2,
-                                                                        color: FlutterFlowTheme.of(context)
-                                                                            .alternate,
-                                                                      )
-                                                                    : null,
+                                                                side: BorderSide(
+                                                                  width: 2,
+                                                                  color: FlutterFlowTheme.of(context)
+                                                                    .alternate,
+                                                                ),
                                                                 activeColor:
                                                                     FlutterFlowTheme.of(
                                                                             context)
@@ -2034,40 +2130,10 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                         ),
                                                         FFButtonWidget(
                                                           onPressed: () async {
-                                                            FFAppState()
-                                                                .rebanhosLoteIndex = 0;
-                                                            safeSetState(() {});
-                                                            while (FFAppState()
-                                                                    .rebanhosLoteIndex <
-                                                                _model
-                                                                    .rebanhosSelecionados
-                                                                    .length) {
-                                                              _model.addToRebanhosAplicados(_model
-                                                                  .rebanhosSelecionados
-                                                                  .elementAtOrNull(
-                                                                      FFAppState()
-                                                                          .rebanhosLoteIndex)!);
-                                                              safeSetState(
-                                                                  () {});
-                                                              _model.addToRebanhoIAplicados(_model
-                                                                  .rebanhosSelecionados
-                                                                  .elementAtOrNull(
-                                                                      FFAppState()
-                                                                          .rebanhosLoteIndex)!
-                                                                  .idRebanho!);
-                                                              safeSetState(
-                                                                  () {});
-                                                              FFAppState()
-                                                                      .rebanhosLoteIndex =
-                                                                  FFAppState()
-                                                                          .rebanhosLoteIndex +
-                                                                      1;
-                                                              safeSetState(
-                                                                  () {});
-                                                            }
-                                                            _model.rebanhosSelecionados =
-                                                                [];
-                                                            safeSetState(() {});
+                                                            final animaisEmOutrosLotes =
+                                                                _animalsInOtherLots();
+                                                            _confirmAnimalsAlreadyInLot(
+                                                                animaisEmOutrosLotes);
                                                           },
                                                           text: 'Adicionar',
                                                           options:
@@ -2221,13 +2287,11 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                   safeSetState(() {});
                                                                                 }
                                                                               },
-                                                                        side: (FlutterFlowTheme.of(context).alternate !=
-                                                                                null)
-                                                                            ? BorderSide(
-                                                                                width: 2,
-                                                                                color: FlutterFlowTheme.of(context).alternate,
-                                                                              )
-                                                                            : null,
+                                                                        side: BorderSide(
+                                                                          width: 2,
+                                                                          color: FlutterFlowTheme.of(context)
+                                                                              .alternate,
+                                                                        ),
                                                                         activeColor:
                                                                             FlutterFlowTheme.of(context).secondary,
                                                                         checkColor: _model.rebanhoIAplicados.contains(rebanhosSelectItem.idRebanho)
@@ -2803,17 +2867,11 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                     _model.checkboxValue3 =
                                                                         newValue!);
                                                               },
-                                                              side: (FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .secondaryText !=
-                                                                      null)
-                                                                  ? BorderSide(
-                                                                      width: 2,
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .secondaryText,
-                                                                    )
-                                                                  : null,
+                                                                side: BorderSide(
+                                                                width: 2,
+                                                                color: FlutterFlowTheme.of(context)
+                                                                  .secondaryText,
+                                                                ),
                                                               activeColor:
                                                                   const Color(
                                                                       0xFF1E7A4C),
@@ -3014,15 +3072,11 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                             () {});
                                                                       }
                                                                     },
-                                                                    side: (FlutterFlowTheme.of(context).alternate !=
-                                                                            null)
-                                                                        ? BorderSide(
-                                                                            width:
-                                                                                2,
-                                                                            color:
-                                                                                FlutterFlowTheme.of(context).alternate,
-                                                                          )
-                                                                        : null,
+                                                                    side: BorderSide(
+                                                                      width: 2,
+                                                                      color: FlutterFlowTheme.of(context)
+                                                                        .alternate,
+                                                                    ),
                                                                     activeColor:
                                                                         FlutterFlowTheme.of(context)
                                                                             .secondary,

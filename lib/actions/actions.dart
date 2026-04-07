@@ -4,7 +4,6 @@ import '/backend/api_requests/api_manager.dart';
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
 import '/backend/supabase/supabase.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/actions/actions.dart' as action_blocks;
 import '/custom_code/actions/index.dart' as actions;
@@ -372,7 +371,7 @@ Future<bool> putUpdtPropriedades(BuildContext context) async {
           locale: FFLocalizations.of(context).languageCode,
         ),
       );
-      if (localPropriedades!.isNotEmpty) {
+      if (localPropriedades.isNotEmpty) {
         while (FFAppState().propriedadesIndex < localPropriedades.length) {
           try {
             await PropriedadesTable().insert({
@@ -439,7 +438,7 @@ Future<bool> putUpdtPropriedades(BuildContext context) async {
           locale: FFLocalizations.of(context).languageCode,
         ),
       );
-      if (localPropriedadesUPT!.isNotEmpty) {
+      if (localPropriedadesUPT.isNotEmpty) {
         while (FFAppState().propriedadesIndex < localPropriedadesUPT.length) {
           try {
             await PropriedadesTable().update(
@@ -608,7 +607,7 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
           locale: FFLocalizations.of(context).languageCode,
         ),
       );
-      if (localRebanhos!.isNotEmpty) {
+      if (localRebanhos.isNotEmpty) {
         FFAppState().rebanhosIndex = 0;
         while (FFAppState().rebanhosIndex < localRebanhos.length) {
           animalExiste = await RebanhoTable().queryRows(
@@ -783,7 +782,7 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
           locale: FFLocalizations.of(context).languageCode,
         ),
       );
-      if (localRebanhosUPDT!.isNotEmpty) {
+      if (localRebanhosUPDT.isNotEmpty) {
         while (FFAppState().rebanhosIndex < localRebanhosUPDT.length) {
           try {
             await RebanhoTable().update(
@@ -944,7 +943,7 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
         ),
       );
       FFAppState().pesagensIndex = 0;
-      if (localHistPesPUT!.isNotEmpty) {
+      if (localHistPesPUT.isNotEmpty) {
         while (FFAppState().pesagensIndex < localHistPesPUT.length) {
           try {
             await HistoricoPesagensTable().insert({
@@ -965,7 +964,7 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
                   .elementAtOrNull(FFAppState().pesagensIndex)
                   ?.deletado,
               'id_propriedade': localHistPesPUT
-                  ?.elementAtOrNull(FFAppState().pesagensIndex)
+                  .elementAtOrNull(FFAppState().pesagensIndex)
                   ?.idPropriedade,
             });
           } catch (e) {
@@ -978,7 +977,7 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
       }
       FFAppState().pesagensIndex = 0;
       localPesagensUPDT = await SQLiteManager.instance.buscaHistPesagensUPDT();
-      if (localPesagensUPDT!.isNotEmpty) {
+      if (localPesagensUPDT.isNotEmpty) {
         while (FFAppState().pesagensIndex < localPesagensUPDT.length) {
           try {
             await HistoricoPesagensTable().update(
@@ -1220,7 +1219,7 @@ Future<bool> putUpdtLotes(BuildContext context) async {
         ),
       );
       FFAppState().lotesIndex = 0;
-      if (localLotes!.isNotEmpty) {
+      if (localLotes.isNotEmpty) {
         while (FFAppState().lotesIndex < localLotes.length) {
           try {
             await LotesTable().insert({
@@ -1274,7 +1273,7 @@ Future<bool> putUpdtLotes(BuildContext context) async {
           locale: FFLocalizations.of(context).languageCode,
         ),
       );
-      if (localLotesUPT!.isNotEmpty) {
+      if (localLotesUPT.isNotEmpty) {
         while (FFAppState().lotesIndex < localLotesUPT.length) {
           try {
             await LotesTable().update(
@@ -1398,7 +1397,7 @@ Future<bool> putUpdtReproducao(BuildContext context) async {
         ),
       );
       FFAppState().reproducaoIndex = 0;
-      if (localReproducao!.isNotEmpty) {
+      if (localReproducao.isNotEmpty) {
         while (FFAppState().reproducaoIndex < localReproducao.length) {
           try {
             await ReproducaoTable().insert({
@@ -1569,7 +1568,7 @@ Future<bool> putUpdtReproducao(BuildContext context) async {
           locale: FFLocalizations.of(context).languageCode,
         ),
       );
-      if (localReproducaoUPDT!.isNotEmpty) {
+      if (localReproducaoUPDT.isNotEmpty) {
         while (FFAppState().reproducaoIndex < localReproducaoUPDT.length) {
           try {
             await ReproducaoTable().update(
@@ -1762,7 +1761,7 @@ Future<bool> putUpdtSanidades(BuildContext context) async {
           locale: FFLocalizations.of(context).languageCode,
         ),
       );
-      if (localSanidade!.isNotEmpty) {
+      if (localSanidade.isNotEmpty) {
         while (FFAppState().sanidadeIndex < localSanidade.length) {
           try {
             await SanidadeTable().insert({
@@ -1858,7 +1857,7 @@ Future<bool> putUpdtSanidades(BuildContext context) async {
           locale: FFLocalizations.of(context).languageCode,
         ),
       );
-      if (localSanidadeUPDT!.isNotEmpty) {
+      if (localSanidadeUPDT.isNotEmpty) {
         while (FFAppState().sanidadeIndex < localSanidadeUPDT.length) {
           try {
             await SanidadeTable().update(

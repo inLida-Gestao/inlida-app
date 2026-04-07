@@ -10,18 +10,14 @@ import '/flutter_flow/instant_timer.dart';
 import '/rebanho/popup_rebanhos/popup_rebanhos_widget.dart';
 import '/sanidade/legenda_sanidade/legenda_sanidade_widget.dart';
 import '/sanidade/selecionar_sanidade/selecionar_sanidade_widget.dart';
-import 'dart:async';
-import 'dart:ui';
 import '/actions/actions.dart' as action_blocks;
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:easy_debounce/easy_debounce.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'add_sanidade_animal_model.dart';
 export 'add_sanidade_animal_model.dart';
@@ -254,13 +250,13 @@ class _AddSanidadeAnimalWidgetState extends State<AddSanidadeAnimalWidget> {
                                                   .resolve(Directionality.of(
                                                       context)),
                                           builder: (dialogContext) {
-                                            return Material(
+                                            return const Material(
                                               color: Colors.transparent,
                                               child: SizedBox(
                                                 height: 450.0,
                                                 width: double.infinity,
                                                 child:
-                                                    const PopupRebanhosWidget(
+                                                    PopupRebanhosWidget(
                                                   sanidade: true,
                                                 ),
                                               ),

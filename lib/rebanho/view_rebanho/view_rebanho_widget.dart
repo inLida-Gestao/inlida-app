@@ -11,7 +11,6 @@ import '/rebanho/add_pesagem/add_pesagem_widget.dart';
 import '/rebanho/edit_rebanho/edit_rebanho_widget.dart';
 import '/rebanho/reproducoes_view_rebanho/reproducoes_view_rebanho_widget.dart';
 import '/sanidade/edit_sanidade_animal/edit_sanidade_animal_widget.dart';
-import 'dart:ui';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -5850,11 +5849,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                         .firstOrNull?.idRebanho)
                                                 .toList();
                                             if (animais.isEmpty) {
-                                              return Center(
+                                              return const Center(
                                                 child: SizedBox(
                                                   height: 250.0,
                                                   child:
-                                                      const EmptyCriasWidget(),
+                                                      EmptyCriasWidget(),
                                                 ),
                                               );
                                             }
@@ -6927,11 +6926,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           desc: true)
                                                       .toList();
                                               if (sanidades.isEmpty) {
-                                                return Center(
+                                                return const Center(
                                                   child: SizedBox(
                                                     height: 200.0,
                                                     child:
-                                                        const EmptySanidadeWidget(),
+                                                        EmptySanidadeWidget(),
                                                   ),
                                                 );
                                               }
@@ -7069,9 +7068,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               .start,
                                                                       children:
                                                                           [
-                                                                        if ((sanidadesItem.vacinacao == null || sanidadesItem.vacinacao == '') &&
-                                                                            ((sanidadesItem.vacinacao != 'null') &&
-                                                                                (sanidadesItem.vacinacao != null && sanidadesItem.vacinacao != '')))
+                                                                        if (sanidadesItem.vacinacao != null &&
+                                                                            sanidadesItem.vacinacao != '' &&
+                                                                            sanidadesItem.vacinacao != 'null')
                                                                           SingleChildScrollView(
                                                                             scrollDirection:
                                                                                 Axis.horizontal,
@@ -7138,9 +7137,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
-                                                                        if ((sanidadesItem.antiparasitario == null || sanidadesItem.antiparasitario == '') &&
-                                                                            ((sanidadesItem.antiparasitario != 'null') &&
-                                                                                (sanidadesItem.antiparasitario != null && sanidadesItem.antiparasitario != '')))
+                                                                        if (sanidadesItem.antiparasitario != null &&
+                                                                            sanidadesItem.antiparasitario != '' &&
+                                                                            sanidadesItem.antiparasitario != 'null')
                                                                           SingleChildScrollView(
                                                                             scrollDirection:
                                                                                 Axis.horizontal,
@@ -7207,8 +7206,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
-                                                                        if (((sanidadesItem.protocoloReprodutivo == null || sanidadesItem.protocoloReprodutivo == '') &&
-                                                                                ((sanidadesItem.protocoloReprodutivo != 'null') && (sanidadesItem.protocoloReprodutivo != null && sanidadesItem.protocoloReprodutivo != ''))) &&
+                                                                        if (sanidadesItem.protocoloReprodutivo != null &&
+                                                                            sanidadesItem.protocoloReprodutivo != '' &&
+                                                                            sanidadesItem.protocoloReprodutivo != 'null' &&
                                                                             responsiveVisibility(
                                                                               context: context,
                                                                               phone: false,
@@ -7279,9 +7279,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
-                                                                        if ((sanidadesItem.tratamento == null || sanidadesItem.tratamento == '') &&
-                                                                            ((sanidadesItem.tratamento != 'null') &&
-                                                                                (sanidadesItem.tratamento != null && sanidadesItem.tratamento != '')))
+                                                                        if (sanidadesItem.tratamento != null &&
+                                                                            sanidadesItem.tratamento != '' &&
+                                                                            sanidadesItem.tratamento != 'null')
                                                                           SingleChildScrollView(
                                                                             scrollDirection:
                                                                                 Axis.horizontal,
@@ -7348,9 +7348,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
-                                                                        if ((sanidadesItem.protocoloReprodutivo == null || sanidadesItem.protocoloReprodutivo == '') &&
-                                                                            ((sanidadesItem.protocoloReprodutivo != 'null') &&
-                                                                                (sanidadesItem.protocoloReprodutivo != null && sanidadesItem.protocoloReprodutivo != '')))
+                                                                        if (sanidadesItem.protocoloReprodutivo != null &&
+                                                                            sanidadesItem.protocoloReprodutivo != '' &&
+                                                                            sanidadesItem.protocoloReprodutivo != 'null')
                                                                           SingleChildScrollView(
                                                                             scrollDirection:
                                                                                 Axis.horizontal,

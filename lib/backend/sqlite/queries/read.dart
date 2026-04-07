@@ -1142,7 +1142,7 @@ Future<List<QTDReproducoesRow>> performQTDReproducoes(
   final query = '''
 SELECT * FROM local_reproducao
 WHERE id_propriedade = '$idPropriedade'
-AND ('$tipoRepro0' = '' OR tipo_reproducao = '$tipoRepro0')
+AND ('$tipoRepro0' = '' OR tipo_reproducao = '$tipoRepro0' COLLATE NOCASE)
 AND ('$inseminador0' = '' OR inseminador = '$inseminador0')
 AND ('$loteNome0' = '' OR loteNome = '$loteNome0')
 AND ('$dataRepro0' = '' OR date(data_inseminacao) >= date('$dataRepro0'))
@@ -1173,7 +1173,7 @@ Future<List<QTDInseminacaoRow>> performQTDInseminacao(
   final query = '''
 SELECT * FROM local_reproducao
 WHERE id_propriedade = '$idPropriedade'
-AND tipo_reproducao = 'Inseminação'
+AND tipo_reproducao = 'Inseminação' COLLATE NOCASE
 AND deletado = 'NAO'
 
 ''';
@@ -1196,7 +1196,7 @@ Future<List<QTDMontaNaturalRow>> performQTDMontaNatural(
   final query = '''
 SELECT * FROM local_reproducao
 WHERE id_propriedade = '$idPropriedade'
-AND tipo_reproducao = 'Monta Natural'
+AND tipo_reproducao = 'Monta Natural' COLLATE NOCASE
 AND deletado = 'NAO'
 
 ''';
@@ -1626,7 +1626,11 @@ Future<List<BuscaRebanhoPaginadaRow>> performBuscaRebanhoPaginada(
   String? raca,
   String? origem,
   String? statusReb,
+  String? dataNascInicio,
+  String? dataNascFim,
 }) {
+  final dataNascInicioValue = dataNascInicio ?? '';
+  final dataNascFimValue = dataNascFim ?? '';
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
@@ -1636,6 +1640,8 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
+AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY created_at DESC
@@ -1838,7 +1844,7 @@ Future<List<ListarReproducoesPaginadaRow>> performListarReproducoesPaginada(
   final query = '''
 SELECT * FROM local_reproducao
 WHERE id_propriedade = '$idPropriedade'
-AND ('$tipoRepro' = '' OR tipo_reproducao = '$tipoRepro')
+AND ('$tipoRepro' = '' OR tipo_reproducao = '$tipoRepro' COLLATE NOCASE)
 AND ('$inseminador' = '' OR inseminador = '$inseminador')
 AND ('$loteNome' = '' OR loteNome = '$loteNome')
 AND ('$dataRepro' = '' OR date(data_inseminacao) >= date('$dataRepro'))
@@ -1992,7 +1998,11 @@ Future<List<BuscaRebanhoPaginadaPesquisaRow>>
   String? loteId,
   String? pesquisa,
   String? statusReb,
+  String? dataNascInicio,
+  String? dataNascFim,
 }) {
+  final dataNascInicioValue = dataNascInicio ?? '';
+  final dataNascFimValue = dataNascFim ?? '';
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
@@ -2005,6 +2015,8 @@ AND ('$origem' = '' OR origem = '$origem')
 AND ('$loteId' = '' OR loteID = '$loteId')
 AND ('$pesquisa' = '' OR numeroAnimal LIKE '%$pesquisa%' OR nome LIKE '%$pesquisa%' 
 OR chip LIKE '%$pesquisa%')
+AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
+AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY created_at DESC
@@ -2079,7 +2091,7 @@ Future<List<ListarReproducoesPesqRow>> performListarReproducoesPesq(
   final query = '''
 SELECT * FROM local_reproducao a
 WHERE a.id_propriedade = '$idPropriedade'
-AND ('$tipoRepro' = '' OR a.tipo_reproducao = '$tipoRepro')
+AND ('$tipoRepro' = '' OR a.tipo_reproducao = '$tipoRepro' COLLATE NOCASE)
 AND ('$inseminador' = '' OR a.inseminador = '$inseminador')
 AND ('$loteNome' = '' OR a.loteNome = '$loteNome')
 AND ('$pesquisa' = '' OR a.numMatriz LIKE '%$pesquisa%' OR a.nomeMatriz LIKE '%$pesquisa%' OR 
@@ -2376,7 +2388,11 @@ Future<List<RebanhoPagOrdNumCresRow>> performRebanhoPagOrdNumCres(
   String? raca,
   String? origem,
   String? statusReb,
+  String? dataNascInicio,
+  String? dataNascFim,
 }) {
+  final dataNascInicioValue = dataNascInicio ?? '';
+  final dataNascFimValue = dataNascFim ?? '';
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
@@ -2386,6 +2402,8 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
+AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY numeroAnimal ASC
@@ -2453,7 +2471,11 @@ Future<List<RebanhoPagOrdNumDescRow>> performRebanhoPagOrdNumDesc(
   String? raca,
   String? origem,
   String? statusReb,
+  String? dataNascInicio,
+  String? dataNascFim,
 }) {
+  final dataNascInicioValue = dataNascInicio ?? '';
+  final dataNascFimValue = dataNascFim ?? '';
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
@@ -2463,6 +2485,8 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
+AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY numeroAnimal DESC
@@ -2530,7 +2554,11 @@ Future<List<RebanhoPagOrdNomCresRow>> performRebanhoPagOrdNomCres(
   String? raca,
   String? origem,
   String? statusReb,
+  String? dataNascInicio,
+  String? dataNascFim,
 }) {
+  final dataNascInicioValue = dataNascInicio ?? '';
+  final dataNascFimValue = dataNascFim ?? '';
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
@@ -2540,6 +2568,8 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
+AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY nome ASC
@@ -2607,7 +2637,11 @@ Future<List<RebanhoPagOrdNomDescRow>> performRebanhoPagOrdNomDesc(
   String? raca,
   String? origem,
   String? statusReb,
+  String? dataNascInicio,
+  String? dataNascFim,
 }) {
+  final dataNascInicioValue = dataNascInicio ?? '';
+  final dataNascFimValue = dataNascFim ?? '';
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
@@ -2617,6 +2651,8 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
+AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY nome DESC
@@ -2684,7 +2720,11 @@ Future<List<RebanhoPagOrdDataCresRow>> performRebanhoPagOrdDataCres(
   String? raca,
   String? origem,
   String? statusReb,
+  String? dataNascInicio,
+  String? dataNascFim,
 }) {
+  final dataNascInicioValue = dataNascInicio ?? '';
+  final dataNascFimValue = dataNascFim ?? '';
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
@@ -2694,6 +2734,8 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
+AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY 
@@ -2763,7 +2805,11 @@ Future<List<RebanhoPagOrdDataDescRow>> performRebanhoPagOrdDataDesc(
   String? raca,
   String? origem,
   String? statusReb,
+  String? dataNascInicio,
+  String? dataNascFim,
 }) {
+  final dataNascInicioValue = dataNascInicio ?? '';
+  final dataNascFimValue = dataNascFim ?? '';
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
@@ -2773,6 +2819,8 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
+AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
 AND deletado = 'NAO'
 ORDER BY 

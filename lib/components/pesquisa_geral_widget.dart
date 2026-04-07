@@ -8,7 +8,6 @@ import '/components/empty_sanidade_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/lotes/filtro_lotes/filtro_lotes_widget.dart';
 import '/lotes/view_lote/view_lote_widget.dart';
 import '/propriedade/add_propriedade/add_propriedade_widget.dart';
@@ -23,11 +22,9 @@ import '/reproducao/view_reproducao_rebanho/view_reproducao_rebanho_widget.dart'
 import '/sanidade/edit_sanidade_animal/edit_sanidade_animal_widget.dart';
 import '/sanidade/edit_sanidade_lote/edit_sanidade_lote_widget.dart';
 import '/sanidade/filtro_sanidades/filtro_sanidades_widget.dart';
-import 'dart:ui';
 import '/actions/actions.dart' as action_blocks;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:easy_debounce/easy_debounce.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -2099,13 +2096,13 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                               desc: true)
                                                           .toList();
                                                       if (lote.isEmpty) {
-                                                        return Center(
+                                                        return const Center(
                                                           child: SizedBox(
                                                             width:
                                                                 double.infinity,
                                                             height: 230.0,
                                                             child:
-                                                                const EmptyLoteWidget(),
+                                                                EmptyLoteWidget(),
                                                           ),
                                                         );
                                                       }
@@ -2864,11 +2861,11 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                 .toList();
                                                             if (reproducao
                                                                 .isEmpty) {
-                                                              return Center(
+                                                              return const Center(
                                                                 child: SizedBox(
                                                                   height: 200.0,
                                                                   child:
-                                                                      const EmptyReproducaoWidget(),
+                                                                      EmptyReproducaoWidget(),
                                                                 ),
                                                               );
                                                             }
@@ -3390,11 +3387,11 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                 .toList();
                                                             if (reproducao
                                                                 .isEmpty) {
-                                                              return Center(
+                                                              return const Center(
                                                                 child: SizedBox(
                                                                   height: 200.0,
                                                                   child:
-                                                                      const EmptyReproducaoWidget(),
+                                                                      EmptyReproducaoWidget(),
                                                                 ),
                                                               );
                                                             }
@@ -3911,11 +3908,11 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                 .toList();
                                                             if (reproducao
                                                                 .isEmpty) {
-                                                              return Center(
+                                                              return const Center(
                                                                 child: SizedBox(
                                                                   height: 200.0,
                                                                   child:
-                                                                      const EmptyReproducaoWidget(),
+                                                                      EmptyReproducaoWidget(),
                                                                 ),
                                                               );
                                                             }
@@ -4820,11 +4817,11 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                 .toList();
                                                             if (sanidades
                                                                 .isEmpty) {
-                                                              return Center(
+                                                              return const Center(
                                                                 child: SizedBox(
                                                                   height: 200.0,
                                                                   child:
-                                                                      const EmptySanidadeWidget(),
+                                                                      EmptySanidadeWidget(),
                                                                 ),
                                                               );
                                                             }
@@ -5621,11 +5618,11 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                 .toList();
                                                             if (sanidades
                                                                 .isEmpty) {
-                                                              return Center(
+                                                              return const Center(
                                                                 child: SizedBox(
                                                                   height: 200.0,
                                                                   child:
-                                                                      const EmptySanidadeWidget(),
+                                                                      EmptySanidadeWidget(),
                                                                 ),
                                                               );
                                                             }

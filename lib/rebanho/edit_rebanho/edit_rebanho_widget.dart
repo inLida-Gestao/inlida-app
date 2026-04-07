@@ -1,4 +1,3 @@
-import '/backend/api_requests/api_calls.dart';
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
 import '/components/saiba_mais_b_t_widget.dart';
@@ -16,10 +15,8 @@ import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'edit_rebanho_model.dart';
 export 'edit_rebanho_model.dart';
@@ -34,6 +31,67 @@ class EditRebanhoWidget extends StatefulWidget {
 class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     with TickerProviderStateMixin {
   late EditRebanhoModel _model;
+
+  String _normalizeInputText(String? value) {
+    if (value == null) return '';
+    final normalized = value.trim();
+    if (normalized.isEmpty) return '';
+
+    final lowercase = normalized.toLowerCase();
+    if (lowercase == 'null' || lowercase == 'n/a' || normalized == '-') {
+      return '';
+    }
+
+    return normalized;
+  }
+
+  String? _normalizeDropdownValue(String? value) {
+    final normalized = _normalizeInputText(value);
+    if (normalized.isEmpty) {
+      return null;
+    }
+
+    return normalized;
+  }
+
+  DateTime? _parseStoredDate(String? value) {
+    final normalized = _normalizeInputText(value);
+    if (normalized.isEmpty) {
+      return null;
+    }
+
+    return functions.converterParaData(normalized);
+  }
+
+  String _formatEditableDate(
+    BuildContext context, {
+    DateTime? selectedDate,
+    String? storedValue,
+    String placeholder = 'Selecionar',
+  }) {
+    final effectiveDate = selectedDate ?? _parseStoredDate(storedValue);
+    if (effectiveDate == null) {
+      return placeholder;
+    }
+
+    return dateTimeFormat(
+      'dd/MM/yyyy',
+      effectiveDate,
+      locale: FFLocalizations.of(context).languageCode,
+    );
+  }
+
+  Color _editableDateColor(
+    BuildContext context, {
+    DateTime? selectedDate,
+    String? storedValue,
+  }) {
+    final hasValue =
+        selectedDate != null || _parseStoredDate(storedValue) != null;
+    return hasValue
+        ? FlutterFlowTheme.of(context).secondaryText
+        : const Color(0xFFBEBEBE);
+  }
 
   Future<void> _refreshPesoAtualEDataUltimaPesagem() async {
     final idRebanho = FFAppState().rebanhoSelecionado.idRebanho;
@@ -59,8 +117,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
         (rebanhoAtual.pesoAtual == null || rebanhoAtual.pesoAtual == 0.0)
             ? ''
             : rebanhoAtual.pesoAtual.toString();
-    _model.datePicked4 =
-        functions.converterParaData(rebanhoAtual.dataUltimaPesagem);
+    _model.datePicked4 = _parseStoredDate(rebanhoAtual.dataUltimaPesagem);
 
     if (mounted) {
       safeSetState(() {});
@@ -116,34 +173,24 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
       initialIndex: 0,
     )..addListener(() => safeSetState(() {}));
 
-    _model.nAnimalTextController ??= TextEditingController(text: () {
-      final val = FFAppState().rebanhoSelecionado.numeroAnimal;
-      if (val == 'null' || val.trim().isEmpty) return '';
-      return val;
-    }());
+    _model.nAnimalTextController ??= TextEditingController(
+      text: _normalizeInputText(FFAppState().rebanhoSelecionado.numeroAnimal),
+    );
     _model.nAnimalFocusNode ??= FocusNode();
 
-    _model.nChipTextController ??= TextEditingController(text: () {
-      final chip = FFAppState().rebanhoSelecionado.chip;
-      if (chip == 'null' || chip.trim().isEmpty) {
-        return '';
-      }
-      return chip;
-    }());
+    _model.nChipTextController ??= TextEditingController(
+      text: _normalizeInputText(FFAppState().rebanhoSelecionado.chip),
+    );
     _model.nChipFocusNode ??= FocusNode();
 
-    _model.cdigoregistroTextController ??= TextEditingController(text: () {
-      final val = FFAppState().rebanhoSelecionado.codRegistro;
-      if (val == 'null' || val.trim().isEmpty) return '';
-      return val;
-    }());
+    _model.cdigoregistroTextController ??= TextEditingController(
+      text: _normalizeInputText(FFAppState().rebanhoSelecionado.codRegistro),
+    );
     _model.cdigoregistroFocusNode ??= FocusNode();
 
-    _model.nomeAnimalTextController ??= TextEditingController(text: () {
-      final val = FFAppState().rebanhoSelecionado.nome;
-      if (val == 'null' || val.trim().isEmpty) return '';
-      return val;
-    }());
+    _model.nomeAnimalTextController ??= TextEditingController(
+      text: _normalizeInputText(FFAppState().rebanhoSelecionado.nome),
+    );
     _model.nomeAnimalFocusNode ??= FocusNode();
 
     _model.pesonascimentoTextController ??= TextEditingController(text: () {
@@ -167,20 +214,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     }());
     _model.pesoAtualFocusNode ??= FocusNode();
 
-    _model.anotacoesTextController ??= TextEditingController(text: () {
-      final val = FFAppState().rebanhoSelecionado.anotacoes;
-      if (val == 'null' || val.trim().isEmpty) return '';
-      return val;
-    }());
+    _model.anotacoesTextController ??= TextEditingController(
+      text: _normalizeInputText(FFAppState().rebanhoSelecionado.anotacoes),
+    );
     _model.anotacoesFocusNode ??= FocusNode();
 
-    _model.dPLoteValue = () {
-      final loteId = FFAppState().rebanhoSelecionado.loteId;
-      if (loteId == 'null' || loteId.trim().isEmpty) {
-        return null;
-      }
-      return loteId;
-    }();
+    _model.dPLoteValue =
+        _normalizeDropdownValue(FFAppState().rebanhoSelecionado.loteId);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _refreshHistPesagens();
@@ -1141,9 +1181,11 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   .dropDownSexoValueController ??=
                                               FormFieldController<String>(
                                             _model.dropDownSexoValue ??=
-                                                FFAppState()
-                                                    .rebanhoSelecionado
-                                                    .sexo,
+                                                _normalizeDropdownValue(
+                                              FFAppState()
+                                                  .rebanhoSelecionado
+                                                  .sexo,
+                                            ),
                                           ),
                                           options: const ['Macho', 'Fêmea'],
                                           onChanged: (val) => safeSetState(() =>
@@ -1225,9 +1267,11 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     .dPCategoriaFemeaValueController ??=
                                                 FormFieldController<String>(
                                               _model.dPCategoriaFemeaValue ??=
-                                                  FFAppState()
-                                                      .rebanhoSelecionado
-                                                      .categoria,
+                                                  _normalizeDropdownValue(
+                                                FFAppState()
+                                                    .rebanhoSelecionado
+                                                    .categoria,
+                                              ),
                                             ),
                                             options: FFAppState()
                                                 .categoriasRebanhoFemea,
@@ -1283,9 +1327,11 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     .dPCategoriaMachoValueController ??=
                                                 FormFieldController<String>(
                                               _model.dPCategoriaMachoValue ??=
-                                                  FFAppState()
-                                                      .rebanhoSelecionado
-                                                      .categoria,
+                                                  _normalizeDropdownValue(
+                                                FFAppState()
+                                                    .rebanhoSelecionado
+                                                    .categoria,
+                                              ),
                                             ),
                                             options: FFAppState()
                                                 .categoriasRebanhoMacho,
@@ -1553,26 +1599,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   children: [
                                                     Expanded(
                                                       child: Text(
-                                                        _model.datePicked1 !=
-                                                                null
-                                                            ? dateTimeFormat(
-                                                                "dd/MM/yyyy",
-                                                                _model
-                                                                    .datePicked1,
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              )
-                                                            : dateTimeFormat(
-                                                                "dd/MM/yyyy",
-                                                                functions.converterParaData(
-                                                                    FFAppState()
-                                                                        .rebanhoSelecionado
-                                                                        .dataNascimento),
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              ),
+                                                      _formatEditableDate(
+                                                        context,
+                                                        selectedDate:
+                                                          _model.datePicked1,
+                                                        storedValue: FFAppState()
+                                                          .rebanhoSelecionado
+                                                          .dataNascimento,
+                                                      ),
                                                         style:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -1581,18 +1615,16 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color:
-                                                                      valueOrDefault<
-                                                                          Color>(
-                                                                    _model.datePicked1 ==
-                                                                            null
-                                                                        ? const Color(
-                                                                            0xFFBEBEBE)
-                                                                        : FlutterFlowTheme.of(context)
-                                                                            .secondaryText,
-                                                                    const Color(
-                                                                        0xFFBEBEBE),
-                                                                  ),
+                                                                    color:
+                                                                      _editableDateColor(
+                                                                    context,
+                                                                    selectedDate:
+                                                                      _model
+                                                                        .datePicked1,
+                                                                    storedValue: FFAppState()
+                                                                      .rebanhoSelecionado
+                                                                      .dataNascimento,
+                                                                    ),
                                                                   fontSize:
                                                                       16.0,
                                                                   letterSpacing:
@@ -1798,9 +1830,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                           controller:
                                               _model.dPPorteValueController ??=
                                                   FormFieldController<String>(
-                                            _model.dPPorteValue ??= FFAppState()
+                                            _model.dPPorteValue ??=
+                                              _normalizeDropdownValue(
+                                              FFAppState()
                                                 .rebanhoSelecionado
                                                 .porte,
+                                            ),
                                           ),
                                           options: const ['P', 'M', 'G'],
                                           onChanged: (val) => safeSetState(
@@ -1881,9 +1916,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                           controller:
                                               _model.dPRacaValueController ??=
                                                   FormFieldController<String>(
-                                            _model.dPRacaValue ??= FFAppState()
+                                            _model.dPRacaValue ??=
+                                              _normalizeDropdownValue(
+                                              FFAppState()
                                                 .rebanhoSelecionado
                                                 .raca,
+                                            ),
                                           ),
                                           options: FFAppState().raca,
                                           onChanged: (val) => safeSetState(
@@ -2208,26 +2246,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   children: [
                                                     Expanded(
                                                       child: Text(
-                                                        _model.datePicked2 !=
-                                                                null
-                                                            ? dateTimeFormat(
-                                                                "dd/MM/yyyy",
-                                                                _model
-                                                                    .datePicked2,
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              )
-                                                            : dateTimeFormat(
-                                                                "dd/MM/yyyy",
-                                                                functions.converterParaData(
-                                                                    FFAppState()
-                                                                        .rebanhoSelecionado
-                                                                        .dataEntradaLote),
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              ),
+                                                      _formatEditableDate(
+                                                        context,
+                                                        selectedDate:
+                                                          _model.datePicked2,
+                                                        storedValue: FFAppState()
+                                                          .rebanhoSelecionado
+                                                          .dataEntradaLote,
+                                                      ),
                                                         style:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -2236,18 +2262,16 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                   fontFamily: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMediumFamily,
-                                                                  color:
-                                                                      valueOrDefault<
-                                                                          Color>(
-                                                                    _model.datePicked2 ==
-                                                                            null
-                                                                        ? const Color(
-                                                                            0xFFBEBEBE)
-                                                                        : FlutterFlowTheme.of(context)
-                                                                            .secondaryText,
-                                                                    const Color(
-                                                                        0xFFBEBEBE),
-                                                                  ),
+                                                                    color:
+                                                                      _editableDateColor(
+                                                                    context,
+                                                                    selectedDate:
+                                                                      _model
+                                                                        .datePicked2,
+                                                                    storedValue: FFAppState()
+                                                                      .rebanhoSelecionado
+                                                                      .dataEntradaLote,
+                                                                    ),
                                                                   fontSize:
                                                                       16.0,
                                                                   letterSpacing:
@@ -2629,7 +2653,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         context)),
                                                         builder:
                                                             (dialogContext) {
-                                                          return Material(
+                                                          return const Material(
                                                             color: Colors
                                                                 .transparent,
                                                             child: SizedBox(
@@ -2637,7 +2661,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                               width: double
                                                                   .infinity,
                                                               child:
-                                                                  const PopupRebanhosWidget(
+                                                                  PopupRebanhosWidget(
                                                                 sexo: 'Fêmea',
                                                                 sanidade: false,
                                                                 reproducao:
@@ -2871,7 +2895,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         context)),
                                                         builder:
                                                             (dialogContext) {
-                                                          return Material(
+                                                          return const Material(
                                                             color: Colors
                                                                 .transparent,
                                                             child: SizedBox(
@@ -2879,7 +2903,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                               width: double
                                                                   .infinity,
                                                               child:
-                                                                  const PopupRebanhosWidget(
+                                                                  PopupRebanhosWidget(
                                                                 sexo: 'Macho',
                                                                 sanidade: false,
                                                                 reproducao:
@@ -3302,26 +3326,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     children: [
                                                       Expanded(
                                                         child: Text(
-                                                          _model.datePicked3 !=
-                                                                  null
-                                                              ? dateTimeFormat(
-                                                                  "dd/MM/yyyy",
-                                                                  _model
-                                                                      .datePicked3,
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                )
-                                                              : dateTimeFormat(
-                                                                  "dd/MM/yyyy",
-                                                                  functions.converterParaData(
-                                                                      FFAppState()
-                                                                          .rebanhoSelecionado
-                                                                          .dataDesmama),
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                ),
+                                                          _formatEditableDate(
+                                                          context,
+                                                          selectedDate:
+                                                            _model.datePicked3,
+                                                          storedValue: FFAppState()
+                                                            .rebanhoSelecionado
+                                                            .dataDesmama,
+                                                          ),
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyMedium
@@ -3330,17 +3342,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         context)
                                                                     .bodyMediumFamily,
                                                                 color:
-                                                                    valueOrDefault<
-                                                                        Color>(
-                                                                  _model.datePicked3 ==
-                                                                          null
-                                                                      ? const Color(
-                                                                          0xFFBEBEBE)
-                                                                      : FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .secondaryText,
-                                                                  const Color(
-                                                                      0xFFBEBEBE),
+                                                                  _editableDateColor(
+                                                                  context,
+                                                                  selectedDate:
+                                                                    _model
+                                                                      .datePicked3,
+                                                                  storedValue: FFAppState()
+                                                                    .rebanhoSelecionado
+                                                                    .dataDesmama,
                                                                 ),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
@@ -3648,25 +3657,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 children: [
                                                   Expanded(
                                                     child: Text(
-                                                      _model.datePicked4 != null
-                                                          ? dateTimeFormat(
-                                                              "dd/MM/yyyy",
-                                                              _model
-                                                                  .datePicked4,
-                                                              locale: FFLocalizations
-                                                                      .of(context)
-                                                                  .languageCode,
-                                                            )
-                                                          : dateTimeFormat(
-                                                              "dd/MM/yyyy",
-                                                              functions.converterParaData(
-                                                                  FFAppState()
-                                                                      .rebanhoSelecionado
-                                                                      .dataUltimaPesagem),
-                                                              locale: FFLocalizations
-                                                                      .of(context)
-                                                                  .languageCode,
-                                                            ),
+                                                      _formatEditableDate(
+                                                      context,
+                                                      selectedDate:
+                                                        _model.datePicked4,
+                                                      storedValue: FFAppState()
+                                                        .rebanhoSelecionado
+                                                        .dataUltimaPesagem,
+                                                      ),
                                                       style: FlutterFlowTheme
                                                               .of(context)
                                                           .bodyMedium
@@ -3676,17 +3674,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         context)
                                                                     .bodyMediumFamily,
                                                             color:
-                                                                valueOrDefault<
-                                                                    Color>(
-                                                              _model.datePicked4 ==
-                                                                      null
-                                                                  ? const Color(
-                                                                      0xFFBEBEBE)
-                                                                  : FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .secondaryText,
-                                                              const Color(
-                                                                  0xFFBEBEBE),
+                                                              _editableDateColor(
+                                                              context,
+                                                              selectedDate:
+                                                                _model
+                                                                  .datePicked4,
+                                                              storedValue: FFAppState()
+                                                                .rebanhoSelecionado
+                                                                .dataUltimaPesagem,
                                                             ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -3890,9 +3885,11 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               _model.dPStatusValueController ??=
                                                   FormFieldController<String>(
                                             _model.dPStatusValue ??=
-                                                FFAppState()
-                                                    .rebanhoSelecionado
-                                                    .status,
+                                              _normalizeDropdownValue(
+                                              FFAppState()
+                                                .rebanhoSelecionado
+                                                .status,
+                                            ),
                                           ),
                                           options: FFAppState().statusRebanho,
                                           onChanged: (val) => safeSetState(
@@ -3973,9 +3970,11 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               _model.dPOrigemValueController ??=
                                                   FormFieldController<String>(
                                             _model.dPOrigemValue ??=
-                                                FFAppState()
-                                                    .rebanhoSelecionado
-                                                    .origem,
+                                              _normalizeDropdownValue(
+                                              FFAppState()
+                                                .rebanhoSelecionado
+                                                .origem,
+                                            ),
                                           ),
                                           options: FFAppState().origemRebanho,
                                           onChanged: (val) => safeSetState(
@@ -4171,26 +4170,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     children: [
                                                       Expanded(
                                                         child: Text(
-                                                          _model.datePicked5 !=
-                                                                  null
-                                                              ? dateTimeFormat(
-                                                                  "dd/MM/yyyy",
-                                                                  _model
-                                                                      .datePicked5,
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                )
-                                                              : dateTimeFormat(
-                                                                  "dd/MM/yyyy",
-                                                                  functions.converterParaData(
-                                                                      FFAppState()
-                                                                          .rebanhoSelecionado
-                                                                          .dataAcao),
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                ),
+                                                          _formatEditableDate(
+                                                          context,
+                                                          selectedDate:
+                                                            _model.datePicked5,
+                                                          storedValue: FFAppState()
+                                                            .rebanhoSelecionado
+                                                            .dataAcao,
+                                                          ),
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyMedium
@@ -4199,17 +4186,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         context)
                                                                     .bodyMediumFamily,
                                                                 color:
-                                                                    valueOrDefault<
-                                                                        Color>(
-                                                                  _model.datePicked5 ==
-                                                                          null
-                                                                      ? const Color(
-                                                                          0xFFBEBEBE)
-                                                                      : FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .secondaryText,
-                                                                  const Color(
-                                                                      0xFFBEBEBE),
+                                                                  _editableDateColor(
+                                                                  context,
+                                                                  selectedDate:
+                                                                    _model
+                                                                      .datePicked5,
+                                                                  storedValue: FFAppState()
+                                                                    .rebanhoSelecionado
+                                                                    .dataAcao,
                                                                 ),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
@@ -4454,26 +4438,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     children: [
                                                       Expanded(
                                                         child: Text(
-                                                          _model.datePicked6 !=
-                                                                  null
-                                                              ? dateTimeFormat(
-                                                                  "dd/MM/yyyy",
-                                                                  _model
-                                                                      .datePicked6,
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                )
-                                                              : dateTimeFormat(
-                                                                  "dd/MM/yyyy",
-                                                                  functions.converterParaData(
-                                                                      FFAppState()
-                                                                          .rebanhoSelecionado
-                                                                          .dataVenda),
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                ),
+                                                          _formatEditableDate(
+                                                          context,
+                                                          selectedDate:
+                                                            _model.datePicked6,
+                                                          storedValue: FFAppState()
+                                                            .rebanhoSelecionado
+                                                            .dataVenda,
+                                                          ),
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyMedium
@@ -4482,17 +4454,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         context)
                                                                     .bodyMediumFamily,
                                                                 color:
-                                                                    valueOrDefault<
-                                                                        Color>(
-                                                                  _model.datePicked6 ==
-                                                                          null
-                                                                      ? const Color(
-                                                                          0xFFBEBEBE)
-                                                                      : FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .secondaryText,
-                                                                  const Color(
-                                                                      0xFFBEBEBE),
+                                                                  _editableDateColor(
+                                                                  context,
+                                                                  selectedDate:
+                                                                    _model
+                                                                      .datePicked6,
+                                                                  storedValue: FFAppState()
+                                                                    .rebanhoSelecionado
+                                                                    .dataVenda,
                                                                 ),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
@@ -4737,26 +4706,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     children: [
                                                       Expanded(
                                                         child: Text(
-                                                          _model.datePicked7 !=
-                                                                  null
-                                                              ? dateTimeFormat(
-                                                                  "dd/MM/yyyy",
-                                                                  _model
-                                                                      .datePicked7,
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                )
-                                                              : dateTimeFormat(
-                                                                  "dd/MM/yyyy",
-                                                                  functions.converterParaData(
-                                                                      FFAppState()
-                                                                          .rebanhoSelecionado
-                                                                          .movimentacaoentrada),
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                ),
+                                                          _formatEditableDate(
+                                                          context,
+                                                          selectedDate:
+                                                            _model.datePicked7,
+                                                          storedValue: FFAppState()
+                                                            .rebanhoSelecionado
+                                                            .movimentacaoentrada,
+                                                          ),
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyMedium
@@ -4765,17 +4722,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         context)
                                                                     .bodyMediumFamily,
                                                                 color:
-                                                                    valueOrDefault<
-                                                                        Color>(
-                                                                  _model.datePicked7 ==
-                                                                          null
-                                                                      ? const Color(
-                                                                          0xFFBEBEBE)
-                                                                      : FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .secondaryText,
-                                                                  const Color(
-                                                                      0xFFBEBEBE),
+                                                                  _editableDateColor(
+                                                                  context,
+                                                                  selectedDate:
+                                                                    _model
+                                                                      .datePicked7,
+                                                                  storedValue: FFAppState()
+                                                                    .rebanhoSelecionado
+                                                                    .movimentacaoentrada,
                                                                 ),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
@@ -4957,26 +4911,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     children: [
                                                       Expanded(
                                                         child: Text(
-                                                          _model.datePicked8 !=
-                                                                  null
-                                                              ? dateTimeFormat(
-                                                                  "dd/MM/yyyy",
-                                                                  _model
-                                                                      .datePicked8,
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                )
-                                                              : dateTimeFormat(
-                                                                  "dd/MM/yyyy",
-                                                                  functions.converterParaData(
-                                                                      FFAppState()
-                                                                          .rebanhoSelecionado
-                                                                          .movimentacaosaida),
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                ),
+                                                          _formatEditableDate(
+                                                          context,
+                                                          selectedDate:
+                                                            _model.datePicked8,
+                                                          storedValue: FFAppState()
+                                                            .rebanhoSelecionado
+                                                            .movimentacaosaida,
+                                                          ),
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyMedium
@@ -4985,17 +4927,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         context)
                                                                     .bodyMediumFamily,
                                                                 color:
-                                                                    valueOrDefault<
-                                                                        Color>(
-                                                                  _model.datePicked8 ==
-                                                                          null
-                                                                      ? const Color(
-                                                                          0xFFBEBEBE)
-                                                                      : FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .secondaryText,
-                                                                  const Color(
-                                                                      0xFFBEBEBE),
+                                                                  _editableDateColor(
+                                                                  context,
+                                                                  selectedDate:
+                                                                    _model
+                                                                      .datePicked8,
+                                                                  storedValue: FFAppState()
+                                                                    .rebanhoSelecionado
+                                                                    .movimentacaosaida,
                                                                 ),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
@@ -5177,26 +5116,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     children: [
                                                       Expanded(
                                                         child: Text(
-                                                          _model.datePicked9 !=
-                                                                  null
-                                                              ? dateTimeFormat(
-                                                                  "dd/MM/yyyy",
-                                                                  _model
-                                                                      .datePicked9,
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                )
-                                                              : dateTimeFormat(
-                                                                  "dd/MM/yyyy",
-                                                                  functions.converterParaData(
-                                                                      FFAppState()
-                                                                          .rebanhoSelecionado
-                                                                          .datamorte),
-                                                                  locale: FFLocalizations.of(
-                                                                          context)
-                                                                      .languageCode,
-                                                                ),
+                                                          _formatEditableDate(
+                                                          context,
+                                                          selectedDate:
+                                                            _model.datePicked9,
+                                                          storedValue: FFAppState()
+                                                            .rebanhoSelecionado
+                                                            .datamorte,
+                                                          ),
                                                           style: FlutterFlowTheme
                                                                   .of(context)
                                                               .bodyMedium
@@ -5205,17 +5132,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         context)
                                                                     .bodyMediumFamily,
                                                                 color:
-                                                                    valueOrDefault<
-                                                                        Color>(
-                                                                  _model.datePicked9 ==
-                                                                          null
-                                                                      ? const Color(
-                                                                          0xFFBEBEBE)
-                                                                      : FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .secondaryText,
-                                                                  const Color(
-                                                                      0xFFBEBEBE),
+                                                                  _editableDateColor(
+                                                                  context,
+                                                                  selectedDate:
+                                                                    _model
+                                                                      .datePicked9,
+                                                                  storedValue: FFAppState()
+                                                                    .rebanhoSelecionado
+                                                                    .datamorte,
                                                                 ),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
@@ -5286,9 +5210,11 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     .dPMotivoMorteValueController ??=
                                                 FormFieldController<String>(
                                               _model.dPMotivoMorteValue ??=
-                                                  FFAppState()
-                                                      .rebanhoSelecionado
-                                                      .status,
+                                                  _normalizeDropdownValue(
+                                                FFAppState()
+                                                    .rebanhoSelecionado
+                                                    .status,
+                                              ),
                                             ),
                                             options: const [
                                               'ACIDENTE',

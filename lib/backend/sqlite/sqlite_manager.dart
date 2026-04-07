@@ -385,6 +385,8 @@ class SQLiteManager {
     String? raca,
     String? origem,
     String? statusReb,
+    String? dataNascInicio,
+    String? dataNascFim,
   }) =>
       performBuscaRebanhoPaginada(
         _database,
@@ -396,6 +398,8 @@ class SQLiteManager {
         raca: raca,
         origem: origem,
         statusReb: statusReb,
+        dataNascInicio: dataNascInicio,
+        dataNascFim: dataNascFim,
       );
 
   Future<List<QTDAnimaisTotalPropriedadeRow>> qTDAnimaisTotalPropriedade({
@@ -477,6 +481,8 @@ class SQLiteManager {
     String? loteId,
     String? pesquisa,
     String? statusReb,
+    String? dataNascInicio,
+    String? dataNascFim,
   }) =>
       performBuscaRebanhoPaginadaPesquisa(
         _database,
@@ -488,6 +494,8 @@ class SQLiteManager {
         loteId: loteId,
         pesquisa: pesquisa,
         statusReb: statusReb,
+        dataNascInicio: dataNascInicio,
+        dataNascFim: dataNascFim,
       );
 
   Future<List<ListarReproducoesPesqRow>> listarReproducoesPesq({
@@ -609,6 +617,8 @@ class SQLiteManager {
     String? raca,
     String? origem,
     String? statusReb,
+    String? dataNascInicio,
+    String? dataNascFim,
   }) =>
       performRebanhoPagOrdNumCres(
         _database,
@@ -620,6 +630,8 @@ class SQLiteManager {
         raca: raca,
         origem: origem,
         statusReb: statusReb,
+        dataNascInicio: dataNascInicio,
+        dataNascFim: dataNascFim,
       );
 
   Future<List<RebanhoPagOrdNumDescRow>> rebanhoPagOrdNumDesc({
@@ -631,6 +643,8 @@ class SQLiteManager {
     String? raca,
     String? origem,
     String? statusReb,
+    String? dataNascInicio,
+    String? dataNascFim,
   }) =>
       performRebanhoPagOrdNumDesc(
         _database,
@@ -642,6 +656,8 @@ class SQLiteManager {
         raca: raca,
         origem: origem,
         statusReb: statusReb,
+        dataNascInicio: dataNascInicio,
+        dataNascFim: dataNascFim,
       );
 
   Future<List<RebanhoPagOrdNomCresRow>> rebanhoPagOrdNomCres({
@@ -653,6 +669,8 @@ class SQLiteManager {
     String? raca,
     String? origem,
     String? statusReb,
+    String? dataNascInicio,
+    String? dataNascFim,
   }) =>
       performRebanhoPagOrdNomCres(
         _database,
@@ -664,6 +682,8 @@ class SQLiteManager {
         raca: raca,
         origem: origem,
         statusReb: statusReb,
+        dataNascInicio: dataNascInicio,
+        dataNascFim: dataNascFim,
       );
 
   Future<List<RebanhoPagOrdNomDescRow>> rebanhoPagOrdNomDesc({
@@ -675,6 +695,8 @@ class SQLiteManager {
     String? raca,
     String? origem,
     String? statusReb,
+    String? dataNascInicio,
+    String? dataNascFim,
   }) =>
       performRebanhoPagOrdNomDesc(
         _database,
@@ -686,6 +708,8 @@ class SQLiteManager {
         raca: raca,
         origem: origem,
         statusReb: statusReb,
+        dataNascInicio: dataNascInicio,
+        dataNascFim: dataNascFim,
       );
 
   Future<List<RebanhoPagOrdDataCresRow>> rebanhoPagOrdDataCres({
@@ -697,6 +721,8 @@ class SQLiteManager {
     String? raca,
     String? origem,
     String? statusReb,
+    String? dataNascInicio,
+    String? dataNascFim,
   }) =>
       performRebanhoPagOrdDataCres(
         _database,
@@ -708,6 +734,8 @@ class SQLiteManager {
         raca: raca,
         origem: origem,
         statusReb: statusReb,
+        dataNascInicio: dataNascInicio,
+        dataNascFim: dataNascFim,
       );
 
   Future<List<RebanhoPagOrdDataDescRow>> rebanhoPagOrdDataDesc({
@@ -719,6 +747,8 @@ class SQLiteManager {
     String? raca,
     String? origem,
     String? statusReb,
+    String? dataNascInicio,
+    String? dataNascFim,
   }) =>
       performRebanhoPagOrdDataDesc(
         _database,
@@ -730,6 +760,8 @@ class SQLiteManager {
         raca: raca,
         origem: origem,
         statusReb: statusReb,
+        dataNascInicio: dataNascInicio,
+        dataNascFim: dataNascFim,
       );
 
   Future<List<ListarPropriedadesCrescNomeRow>> listarPropriedadesCrescNome({

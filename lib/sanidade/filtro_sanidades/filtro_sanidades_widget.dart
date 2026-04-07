@@ -6,7 +6,6 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/rebanho/popup_rebanhos/popup_rebanhos_widget.dart';
-import 'dart:ui';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
@@ -1568,7 +1567,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                                 Directionality.of(
                                                                     context)),
                                                     builder: (dialogContext) {
-                                                      return Material(
+                                                      return const Material(
                                                         color:
                                                             Colors.transparent,
                                                         child: SizedBox(
@@ -1576,7 +1575,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                                           width:
                                                               double.infinity,
                                                           child:
-                                                              const PopupRebanhosWidget(
+                                                              PopupRebanhosWidget(
                                                             sanidade: true,
                                                           ),
                                                         ),

@@ -8,17 +8,13 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/instant_timer.dart';
 import '/rebanho/popup_rebanhos/popup_rebanhos_widget.dart';
-import 'dart:ui';
 import '/actions/actions.dart' as action_blocks;
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:aligned_dialog/aligned_dialog.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'add_rebanho_nascimento_model.dart';
 export 'add_rebanho_nascimento_model.dart';
@@ -2150,7 +2146,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                         context)),
                                                         builder:
                                                             (dialogContext) {
-                                                          return Material(
+                                                          return const Material(
                                                             color: Colors
                                                                 .transparent,
                                                             child: SizedBox(
@@ -2158,7 +2154,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                               width: double
                                                                   .infinity,
                                                               child:
-                                                                  const PopupRebanhosWidget(
+                                                                  PopupRebanhosWidget(
                                                                 sexo: 'Fêmea',
                                                               ),
                                                             ),
@@ -2359,7 +2355,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                         context)),
                                                         builder:
                                                             (dialogContext) {
-                                                          return Material(
+                                                          return const Material(
                                                             color: Colors
                                                                 .transparent,
                                                             child: SizedBox(
@@ -2367,7 +2363,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                               width: double
                                                                   .infinity,
                                                               child:
-                                                                  const PopupRebanhosWidget(
+                                                                  PopupRebanhosWidget(
                                                                 sexo: 'Macho',
                                                               ),
                                                             ),

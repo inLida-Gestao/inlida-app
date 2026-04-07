@@ -3,13 +3,10 @@ import '/backend/sqlite/sqlite_manager.dart';
 import '/components/empty_reproducao_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/reproducao/view_reproducao_rebanho/view_reproducao_rebanho_widget.dart';
-import 'dart:ui';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'reproducoes_view_rebanho_model.dart';
 export 'reproducoes_view_rebanho_model.dart';
 
@@ -90,10 +87,10 @@ class _ReproducoesViewRebanhoWidgetState
                         .sortedList(keyOf: (e) => e.createdAt!, desc: true)
                         .toList();
                     if (reproducao.isEmpty) {
-                      return Center(
+                      return const Center(
                         child: SizedBox(
                           height: 200.0,
-                          child: const EmptyReproducaoWidget(),
+                          child: EmptyReproducaoWidget(),
                         ),
                       );
                     }

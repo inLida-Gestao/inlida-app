@@ -12,7 +12,6 @@ import '/backend/supabase/supabase.dart';
 import '/backend/sqlite/sqlite_manager.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 import 'flutter_flow/internationalization.dart';
-import 'flutter_flow/nav/nav.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,12 +30,12 @@ void main() async {
       builder: (context) {
         return MediaQuery(
           data: MediaQuery.maybeOf(context)?.copyWith(
-                textScaler: TextScaler.linear(1.0),
+                textScaler: const TextScaler.linear(1.0),
               ) ??
               const MediaQueryData(),
           child: ChangeNotifierProvider(
             create: (context) => appState,
-            child: MyApp(),
+            child: const MyApp(),
           ),
         );
       },
