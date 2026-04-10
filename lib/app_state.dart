@@ -949,6 +949,7 @@ class FFAppState extends ChangeNotifier {
     'Angus Black',
     'Angus Red',
     'Bonsmara',
+    'Boran',
     'Braford',
     'Brahman',
     'Brangus',
@@ -974,6 +975,7 @@ class FFAppState extends ChangeNotifier {
     'Sindi',
     'Sindinel',
     'Tabapuã',
+    'Ultrablack',
     'Wagyu'
   ];
   List<String> get raca => _raca;

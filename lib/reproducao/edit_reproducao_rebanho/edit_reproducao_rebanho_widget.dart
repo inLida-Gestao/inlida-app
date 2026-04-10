@@ -2715,6 +2715,7 @@ class _EditReproducaoRebanhoWidgetState
                                                 'Não diagnosticado',
                                                 'Absorção',
                                                 'Aborto',
+                                                'Natimorto',
                                                 'Prenhez',
                                                 'Vazio'
                                               ],

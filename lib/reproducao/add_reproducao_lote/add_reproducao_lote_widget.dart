@@ -2357,6 +2357,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               'Não diagnosticado',
                                               'Absorção',
                                               'Aborto',
+                                              'Natimorto',
                                               'Prenhez',
                                               'Vazio'
                                             ],
