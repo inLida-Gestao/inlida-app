@@ -5211,7 +5211,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   _normalizeDropdownValue(
                                                 FFAppState()
                                                     .rebanhoSelecionado
-                                                    .status,
+                                                    .motivoMorte,
                                               ),
                                             ),
                                             options: const [

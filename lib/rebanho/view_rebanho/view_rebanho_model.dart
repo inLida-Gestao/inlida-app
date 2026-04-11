@@ -127,6 +127,14 @@ class ViewRebanhoModel extends FlutterFlowModel<ViewRebanhoWidget> {
   FocusNode? valorVendaFocusNode;
   TextEditingController? valorVendaTextController;
   String? Function(BuildContext, String?)? valorVendaTextControllerValidator;
+  // State field(s) for DataMorte widget.
+  FocusNode? dataMorteFocusNode;
+  TextEditingController? dataMorteTextController;
+  String? Function(BuildContext, String?)? dataMorteTextControllerValidator;
+  // State field(s) for MotivoMorte widget.
+  FocusNode? motivoMorteFocusNode;
+  TextEditingController? motivoMorteTextController;
+  String? Function(BuildContext, String?)? motivoMorteTextControllerValidator;
   // State field(s) for Anotacoes widget.
   FocusNode? anotacoesFocusNode;
   TextEditingController? anotacoesTextController;
@@ -223,6 +231,12 @@ class ViewRebanhoModel extends FlutterFlowModel<ViewRebanhoWidget> {
 
     valorVendaFocusNode?.dispose();
     valorVendaTextController?.dispose();
+
+    dataMorteFocusNode?.dispose();
+    dataMorteTextController?.dispose();
+
+    motivoMorteFocusNode?.dispose();
+    motivoMorteTextController?.dispose();
 
     anotacoesFocusNode?.dispose();
     anotacoesTextController?.dispose();

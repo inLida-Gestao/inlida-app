@@ -156,7 +156,7 @@ String _extractSanidadeId(dynamic record) {
 }
 
 dynamic _cleanNull(dynamic value) {
-  if (value == "null") return null;
+  if (value == "null" || value == '') return null;
   // Se o valor for uma List ou Map (ex: campo jsonb do Supabase),
   // converte para JSON string para armazenar corretamente no SQLite
   if (value is List || value is Map) {

@@ -84,7 +84,7 @@ class _ReproducoesViewRebanhoWidgetState
                 child: Builder(
                   builder: (context) {
                     final reproducao = containerBuscarReproducoesRebanhoRowList
-                        .sortedList(keyOf: (e) => e.createdAt!, desc: true)
+                        .sortedList(keyOf: (e) => e.createdAt ?? '', desc: true)
                         .toList();
                     if (reproducao.isEmpty) {
                       return const Center(

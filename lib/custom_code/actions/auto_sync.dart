@@ -101,20 +101,21 @@ Future<void> performAutoSync(BuildContext context) async {
     }
 
     // PULL fase: baixar dados remotos APENAS para módulos cujo PUSH funcionou
+    // (ou que não tinham dados pendentes)
     final pullFutures = <Future>[];
-    if (propOk || !hasPendingProp) {
+    if (propOk && hasPendingProp || !hasPendingProp) {
       pullFutures.add(action_blocks.refreshPropriedades(context));
     }
-    if (lotesOk || !hasPendingLotes) {
+    if (lotesOk && hasPendingLotes || !hasPendingLotes) {
       pullFutures.add(action_blocks.refreshLotes(context));
     }
-    if (rebanhoOk || !hasPendingRebanho) {
+    if (rebanhoOk && hasPendingRebanho || !hasPendingRebanho) {
       pullFutures.add(action_blocks.refreshRebanhoOtimizada(context));
     }
-    if (reproOk || !hasPendingRepro) {
+    if (reproOk && hasPendingRepro || !hasPendingRepro) {
       pullFutures.add(action_blocks.refreshReproducaoOtimizada(context));
     }
-    if (sanidadeOk || !hasPendingSanidade) {
+    if (sanidadeOk && hasPendingSanidade || !hasPendingSanidade) {
       pullFutures.add(action_blocks.refresSanidadeOtimizada(context));
     }
 

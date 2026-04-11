@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
 String? _cleanNull(dynamic value) {
-  if (value == null || value == 'null') return null;
+  if (value == null || value == 'null' || value == '') return null;
   return value.toString();
 }
 

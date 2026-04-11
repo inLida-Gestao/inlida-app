@@ -262,6 +262,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                             0.0, 8.0, 0.0, 0.0),
                         child: LinearPercentIndicator(
                           percent: (int total, int indexPag) {
+                            if (total <= 0) return 0.0;
                             return indexPag / total.ceil() > 1.0
                                 ? 1.0
                                 : indexPag / total.ceil();
@@ -276,6 +277,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                           center: Text(
                             formatNumber(
                               (int ctrl, int total, int indexPag) {
+                                if (total <= 0) return 0.0;
                                 return (indexPag - ctrl) / total.ceil() > 1.0
                                     ? 1.0
                                     : (indexPag - ctrl) / total.ceil();

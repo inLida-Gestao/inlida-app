@@ -5162,6 +5162,421 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                 ].divide(
                                                     const SizedBox(height: 8.0)),
                                               ),
+                                            if (containerBuscarRebanhoRowList
+                                                    .firstOrNull
+                                                    ?.statusRebanho ==
+                                                'Morto')
+                                              Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Data da morte',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .tertiary,
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
+                                                  ),
+                                                  Container(
+                                                    width: double.infinity,
+                                                    height: 56.0,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      color: Color(0xFFF1F1F1),
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        bottomLeft:
+                                                            Radius.circular(
+                                                                6.0),
+                                                        bottomRight:
+                                                            Radius.circular(
+                                                                6.0),
+                                                        topLeft:
+                                                            Radius.circular(
+                                                                6.0),
+                                                        topRight:
+                                                            Radius.circular(
+                                                                6.0),
+                                                      ),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      children: [
+                                                        Expanded(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                    8.0,
+                                                                    0.0,
+                                                                    0.0,
+                                                                    0.0),
+                                                            child: SizedBox(
+                                                              width:
+                                                                  double.infinity,
+                                                              child:
+                                                                  TextFormField(
+                                                                controller: _model
+                                                                        .dataMorteTextController ??=
+                                                                    TextEditingController(
+                                                                  text: containerBuscarRebanhoRowList
+                                                                              .firstOrNull
+                                                                              ?.dataMorte !=
+                                                                          null
+                                                                      ? (dateTimeFormat(
+                                                                              'dd/MM/yyyy',
+                                                                              functions.converterParaData(
+                                                                                  containerBuscarRebanhoRowList
+                                                                                      .firstOrNull
+                                                                                      ?.dataMorte),
+                                                                              locale: FFLocalizations.of(context).languageCode,
+                                                                            ))
+                                                                      : 'N/A',
+                                                                ),
+                                                                focusNode: _model
+                                                                        .dataMorteFocusNode ??=
+                                                                    FocusNode(),
+                                                                autofocus:
+                                                                    false,
+                                                                readOnly: true,
+                                                                obscureText:
+                                                                    false,
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  hintText:
+                                                                      'Data da morte',
+                                                                  hintStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                        color: const Color(
+                                                                            0xFFBEBEBE),
+                                                                        fontSize:
+                                                                            16.0,
+                                                                        letterSpacing:
+                                                                            0.0,
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                        useGoogleFonts:
+                                                                            !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                      ),
+                                                                  enabledBorder:
+                                                                      UnderlineInputBorder(
+                                                                    borderSide:
+                                                                        const BorderSide(
+                                                                      color: Color(
+                                                                          0x00E0E3E7),
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                  ),
+                                                                  focusedBorder:
+                                                                      UnderlineInputBorder(
+                                                                    borderSide:
+                                                                        const BorderSide(
+                                                                      color: Color(
+                                                                          0x004B39EF),
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                  ),
+                                                                  errorBorder:
+                                                                      UnderlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .error,
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                  ),
+                                                                  focusedErrorBorder:
+                                                                      UnderlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .error,
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                  ),
+                                                                ),
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          FlutterFlowTheme.of(context)
+                                                                              .bodyMediumFamily,
+                                                                      fontSize:
+                                                                          16.0,
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      useGoogleFonts:
+                                                                          !FlutterFlowTheme.of(context)
+                                                                              .bodyMediumIsCustom,
+                                                                    ),
+                                                                validator: _model
+                                                                    .dataMorteTextControllerValidator
+                                                                    .asValidator(
+                                                                        context),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ].divide(
+                                                    const SizedBox(height: 8.0)),
+                                              ),
+                                            if (containerBuscarRebanhoRowList
+                                                    .firstOrNull
+                                                    ?.statusRebanho ==
+                                                'Morto')
+                                              Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Motivo da morte',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .tertiary,
+                                                          fontSize: 16.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
+                                                  ),
+                                                  Container(
+                                                    width: double.infinity,
+                                                    height: 56.0,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      color: Color(0xFFF1F1F1),
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        bottomLeft:
+                                                            Radius.circular(
+                                                                6.0),
+                                                        bottomRight:
+                                                            Radius.circular(
+                                                                6.0),
+                                                        topLeft:
+                                                            Radius.circular(
+                                                                6.0),
+                                                        topRight:
+                                                            Radius.circular(
+                                                                6.0),
+                                                      ),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      children: [
+                                                        Expanded(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                    8.0,
+                                                                    0.0,
+                                                                    0.0,
+                                                                    0.0),
+                                                            child: SizedBox(
+                                                              width:
+                                                                  double.infinity,
+                                                              child:
+                                                                  TextFormField(
+                                                                controller: _model
+                                                                        .motivoMorteTextController ??=
+                                                                    TextEditingController(
+                                                                  text: valueOrDefault<
+                                                                              String>(
+                                                                            containerBuscarRebanhoRowList
+                                                                                .firstOrNull
+                                                                                ?.motivoMorte,
+                                                                            'N/A',
+                                                                          ) ==
+                                                                          'null'
+                                                                      ? 'N/A'
+                                                                      : valueOrDefault<
+                                                                          String>(
+                                                                          containerBuscarRebanhoRowList
+                                                                              .firstOrNull
+                                                                              ?.motivoMorte,
+                                                                          'N/A',
+                                                                        ),
+                                                                ),
+                                                                focusNode: _model
+                                                                        .motivoMorteFocusNode ??=
+                                                                    FocusNode(),
+                                                                autofocus:
+                                                                    false,
+                                                                readOnly: true,
+                                                                obscureText:
+                                                                    false,
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  hintText:
+                                                                      'Motivo da morte',
+                                                                  hintStyle: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium
+                                                                      .override(
+                                                                        fontFamily:
+                                                                            FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                        color: const Color(
+                                                                            0xFFBEBEBE),
+                                                                        fontSize:
+                                                                            16.0,
+                                                                        letterSpacing:
+                                                                            0.0,
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                        useGoogleFonts:
+                                                                            !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                      ),
+                                                                  enabledBorder:
+                                                                      UnderlineInputBorder(
+                                                                    borderSide:
+                                                                        const BorderSide(
+                                                                      color: Color(
+                                                                          0x00E0E3E7),
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                  ),
+                                                                  focusedBorder:
+                                                                      UnderlineInputBorder(
+                                                                    borderSide:
+                                                                        const BorderSide(
+                                                                      color: Color(
+                                                                          0x004B39EF),
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                  ),
+                                                                  errorBorder:
+                                                                      UnderlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .error,
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                  ),
+                                                                  focusedErrorBorder:
+                                                                      UnderlineInputBorder(
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .error,
+                                                                      width:
+                                                                          2.0,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                  ),
+                                                                ),
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          FlutterFlowTheme.of(context)
+                                                                              .bodyMediumFamily,
+                                                                      fontSize:
+                                                                          16.0,
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      useGoogleFonts:
+                                                                          !FlutterFlowTheme.of(context)
+                                                                              .bodyMediumIsCustom,
+                                                                    ),
+                                                                validator: _model
+                                                                    .motivoMorteTextControllerValidator
+                                                                    .asValidator(
+                                                                        context),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ].divide(
+                                                    const SizedBox(height: 8.0)),
+                                              ),
                                             Column(
                                               mainAxisSize: MainAxisSize.max,
                                               crossAxisAlignment:
@@ -6878,7 +7293,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                   numAnimal: containerBuscarRebanhoRowList
                                       .firstOrNull?.numeroAnimal,
                                   createdAt: containerBuscarRebanhoRowList
-                                      .firstOrNull!.createdAt!,
+                                      .firstOrNull!.createdAt ?? '',
                                   idRebanho: widget.idRebanho,
                                 ),
                               ),
@@ -6922,7 +7337,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                       .toList()
                                                       .sortedList(
                                                           keyOf: (e) =>
-                                                              e.createdAt!,
+                                                              e.createdAt ?? '',
                                                           desc: true)
                                                       .toList();
                                               if (sanidades.isEmpty) {

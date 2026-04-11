@@ -10,18 +10,21 @@ import 'dart:convert';
 
 import 'package:sqflite/sqflite.dart';
 
-Future<bool> batchInsertLocalPropriedades(List<dynamic> records) async {
-  if (records.isEmpty) return true;
+Future<Map<String, dynamic>> batchInsertLocalPropriedades(
+    List<dynamic> records) async {
+  if (records.isEmpty) {
+    return {'inserted': 0, 'errors': <Map<String, String>>[]};
+  }
 
-  try {
-    final db = SQLiteManager.instance.database;
+  final List<Map<String, dynamic>> mappedRecords = [];
+  final List<Map<String, String>> errors = [];
 
-    await db.transaction((txn) async {
-      final batch = txn.batch();
-
-      for (final record in records) {
-        final Map<String, dynamic> source = Map<String, dynamic>.from(record);
-        final Map<String, dynamic> mapped = {};
+  // Fase 1: Mapear todos os registros
+  for (int i = 0; i < records.length; i++) {
+    try {
+      final Map<String, dynamic> source =
+          Map<String, dynamic>.from(records[i]);
+      final Map<String, dynamic> mapped = {};
 
         if (source['userID'] != null) {
           mapped['userID'] = _cleanNull(source['userID']);
@@ -78,22 +81,48 @@ Future<bool> batchInsertLocalPropriedades(List<dynamic> records) async {
           mapped['deletado'] = _cleanNull(source['deletado']);
         }
 
+      mappedRecords.add(mapped);
+    } catch (e) {
+      final id = (records[i] is Map ? records[i]['idPropriedade']?.toString() : null) ?? 'desconhecido';
+      errors.add({'id': id, 'error': 'Erro ao mapear: $e'});
+    }
+  }
+
+  // Fase 2: Tentar batch insert
+  try {
+    final db = SQLiteManager.instance.database;
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+      for (final mapped in mappedRecords) {
         batch.insert('local_propriedades', mapped,
             conflictAlgorithm: ConflictAlgorithm.replace);
       }
-
       await batch.commit(noResult: true);
     });
+    return {'inserted': mappedRecords.length, 'errors': errors};
+  } catch (batchError) {
+    debugPrint(
+        '[SYNC][propriedades] Batch falhou ($batchError). Inserindo individualmente...');
+    final db = SQLiteManager.instance.database;
+    int insertedCount = 0;
 
-    return true;
-  } catch (e) {
-    debugPrint('Erro batch insert propriedades: $e');
-    return false;
+    for (final mapped in mappedRecords) {
+      try {
+        await db.insert('local_propriedades', mapped,
+            conflictAlgorithm: ConflictAlgorithm.replace);
+        insertedCount++;
+      } catch (e) {
+        final id = mapped['idPropriedade']?.toString() ?? 'desconhecido';
+        errors.add({'id': id, 'error': e.toString()});
+      }
+    }
+
+    return {'inserted': insertedCount, 'errors': errors};
   }
 }
 
 dynamic _cleanNull(dynamic value) {
-  if (value == "null") return null;
+  if (value == "null" || value == '') return null;
   if (value is List || value is Map) {
     return jsonEncode(value);
   }

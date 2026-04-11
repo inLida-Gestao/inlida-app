@@ -106,6 +106,7 @@ AS $$
   INNER JOIN users_propriedades up
     ON p."idPropriedade" = up."idPropriedade"
   WHERE up.user_id = p_user_id
+    AND p_user_id = auth.uid()::TEXT
     AND up.deletado = 'NAO'
     AND p.deletado = 'NAO'
     AND p.updated_at > p_updated_after

@@ -1648,7 +1648,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                             .toList()
                                                             .sortedList(
                                                                 keyOf: (e) =>
-                                                                    e.createdAt!,
+                                                                    e.createdAt ?? '',
                                                                 desc: true)
                                                             .toList();
 
@@ -2092,7 +2092,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                           .toList()
                                                           .sortedList(
                                                               keyOf: (e) =>
-                                                                  e.createdAt!,
+                                                                  e.createdAt ?? '',
                                                               desc: true)
                                                           .toList();
                                                       if (lote.isEmpty) {
@@ -2857,7 +2857,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                         (((functions.converterParaData(e.createdAt)! >= FFAppState().filtroDataReproducao!) && (functions.converterParaData(e.createdAt)! <= getCurrentTimestamp)) || (FFAppState().filtroDataReproducao == null)) &&
                                                                         ((e.dataInseminacao!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()) || (e.dataInicial!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()) || (e.dataFinal!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()))))
                                                                 .toList()
-                                                                .sortedList(keyOf: (e) => e.createdAt!, desc: true)
+                                                                .sortedList(keyOf: (e) => e.createdAt ?? '', desc: true)
                                                                 .toList();
                                                             if (reproducao
                                                                 .isEmpty) {
@@ -3383,7 +3383,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                         (((functions.converterParaData(e.previsaoParto)! >= getCurrentTimestamp) && (functions.converterParaData(e.previsaoParto)! <= FFAppState().filtroDataParto!)) || (FFAppState().filtroDataParto == null)) &&
                                                                         ((e.dataInseminacao!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()) || (e.dataInicial!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()) || (e.dataFinal!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()))))
                                                                 .toList()
-                                                                .sortedList(keyOf: (e) => e.createdAt!, desc: true)
+                                                                .sortedList(keyOf: (e) => e.createdAt ?? '', desc: true)
                                                                 .toList();
                                                             if (reproducao
                                                                 .isEmpty) {
@@ -3904,7 +3904,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                         (e.deletado == 'NAO') &&
                                                                         ((e.dataInseminacao!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()) || (e.dataInicial!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()) || (e.dataFinal!).toLowerCase().contains(_model.pesquisarRepTextController.text.toLowerCase()))))
                                                                 .toList()
-                                                                .sortedList(keyOf: (e) => e.createdAt!, desc: true)
+                                                                .sortedList(keyOf: (e) => e.createdAt ?? '', desc: true)
                                                                 .toList();
                                                             if (reproducao
                                                                 .isEmpty) {
@@ -4813,7 +4813,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                         (e.deletado == 'NAO') &&
                                                                         ((e.vacinacao!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) || (e.antiparasitario!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) || (e.tratamento!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) || (e.protocoloReprodutivo!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()))))
                                                                 .toList()
-                                                                .sortedList(keyOf: (e) => e.createdAt!, desc: true)
+                                                                .sortedList(keyOf: (e) => e.createdAt ?? '', desc: true)
                                                                 .toList();
                                                             if (sanidades
                                                                 .isEmpty) {
@@ -5614,7 +5614,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                         (((functions.converterParaData(e.dataSanidade)! >= FFAppState().filtroDataSanidade!) && (functions.converterParaData(e.dataSanidade)! <= getCurrentTimestamp)) || (FFAppState().filtroDataSanidade == null)) &&
                                                                         ((e.vacinacao!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) || (e.antiparasitario!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) || (e.tratamento!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) || (e.protocoloReprodutivo!).toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()))))
                                                                 .toList()
-                                                                .sortedList(keyOf: (e) => e.createdAt!, desc: true)
+                                                                .sortedList(keyOf: (e) => e.createdAt ?? '', desc: true)
                                                                 .toList();
                                                             if (sanidades
                                                                 .isEmpty) {

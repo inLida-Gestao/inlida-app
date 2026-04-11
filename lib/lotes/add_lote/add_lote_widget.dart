@@ -2201,7 +2201,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                 .toList()
                                                                 .sortedList(
                                                                     keyOf: (e) =>
-                                                                        e.createdAt!,
+                                                                        e.createdAt ?? '',
                                                                     desc: true)
                                                                 .toList()
                                                                 .take(20)
@@ -2469,7 +2469,16 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                             children:
                                                                                 [
                                                                               Text(
-                                                                                'Raça: ${(valueOrDefault<String>(
+                                                                                '${(valueOrDefault<String>(
+                                                                                      rebanhosSelectItem.categoria,
+                                                                                      'N/A',
+                                                                                    ) == 'null') || (valueOrDefault<String>(
+                                                                                      rebanhosSelectItem.categoria,
+                                                                                      'N/A',
+                                                                                    ) == '') ? 'N/A' : valueOrDefault<String>(
+                                                                                    rebanhosSelectItem.categoria,
+                                                                                    'N/A',
+                                                                                  )} • Raça: ${(valueOrDefault<String>(
                                                                                       rebanhosSelectItem.raca,
                                                                                       'N/A',
                                                                                     ) == 'null') || (valueOrDefault<String>(
@@ -3247,7 +3256,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                         children:
                                                                             [
                                                                           Text(
-                                                                            'Raça: ${(rebanhoAplicadoItem.raca == 'null') || (rebanhoAplicadoItem.raca == null || rebanhoAplicadoItem.raca == '') ? 'N/A' : rebanhoAplicadoItem.raca}',
+                                                                            '${(rebanhoAplicadoItem.categoria == 'null') || (rebanhoAplicadoItem.categoria == null || rebanhoAplicadoItem.categoria == '') ? 'N/A' : rebanhoAplicadoItem.categoria} • Raça: ${(rebanhoAplicadoItem.raca == 'null') || (rebanhoAplicadoItem.raca == null || rebanhoAplicadoItem.raca == '') ? 'N/A' : rebanhoAplicadoItem.raca}',
                                                                             style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                                   font: GoogleFonts.plusJakartaSans(
                                                                                     fontWeight: FontWeight.normal,

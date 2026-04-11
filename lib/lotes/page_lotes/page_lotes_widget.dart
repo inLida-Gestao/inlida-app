@@ -659,7 +659,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                                                               .toLowerCase()))))
                                               .toList()
                                               .sortedList(
-                                                  keyOf: (e) => e.createdAt!,
+                                                  keyOf: (e) => e.createdAt ?? '',
                                                   desc: true)
                                               .toList();
                                           if (lote.isEmpty) {

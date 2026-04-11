@@ -73,7 +73,6 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                 idPropriedade:
                     FFAppState().propriedadeSelecionada.idPropriedade,
                 pesquisa: _model.pesquisarTextController1.text,
-                excludeIdRebanho: FFAppState().rebanhoSelecionado.idRebanho,
               ),
               builder: (context, snapshot) {
                 // Customize what your widget looks like when it's loading.

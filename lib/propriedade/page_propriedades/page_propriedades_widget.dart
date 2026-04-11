@@ -1741,7 +1741,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                   .toLowerCase())) &&
                                                           (e.deletado == 'NAO')))
                                                   .toList()
-                                                  .sortedList(keyOf: (e) => e.createdAt!, desc: true)
+                                                  .sortedList(keyOf: (e) => e.createdAt ?? '', desc: true)
                                                   .toList();
 
                                           return SingleChildScrollView(

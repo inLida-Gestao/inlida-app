@@ -287,8 +287,9 @@ Future refreshPropriedades(BuildContext context) async {
         );
       }
 
-      final propriedadesList = ((propriedade.jsonBody ?? '')
-              .toList()
+      final jsonBody = propriedade.jsonBody;
+      final rawList = jsonBody is List ? jsonBody : <dynamic>[];
+      final propriedadesList = (rawList
               .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
               .toList() as Iterable<PropriedadesStruct?>)
           .withoutNulls;
@@ -334,15 +335,27 @@ Future refreshPropriedades(BuildContext context) async {
         });
       }
 
-      // Só deleta dados locais na primeira sync / tabela vazia
+      // Na primeira sync, deleta ANTES para limpar dados locais obsoletos
+      // No incremental, mantém dados locais e faz UPSERT
       if (firstSync || localEmpty) {
-        await SQLiteManager.instance.deletarTodasPropriedades();
-        _syncLog('propriedades', 'Tabela local limpa (primeiro sync).');
+        // Tenta inserir primeiro em tabela temporária mental — se batch falhar,
+        // não perdemos os dados existentes
+        final result = await actions.batchInsertLocalPropriedades(records);
+        final insertedCount = result['inserted'] as int? ?? 0;
+        final insertErrors = result['errors'] as List<Map<String, String>>? ?? [];
+        if (insertedCount == 0 && records.isNotEmpty) {
+          _syncLog('propriedades',
+              'Batch insert falhou completamente (${insertErrors.length} erros). Mantendo dados locais.');
+          return;
+        }
+        // Só deleta se o insert teve sucesso (pelo menos parcial)
+        // O UPSERT (ConflictAlgorithm.replace) já garante que dados novos sobrescrevem antigos
+        _syncLog('propriedades', 'Primeiro sync: $insertedCount registros inseridos via UPSERT.');
       } else {
         _syncLog('propriedades',
             'Sync incremental — mantendo dados locais (UPSERT).');
+        await actions.batchInsertLocalPropriedades(records);
       }
-      await actions.batchInsertLocalPropriedades(records);
 
       FFAppState().propriedadesChangeDateTime =
           remoteLastChange ?? DateTime.now();
@@ -1148,12 +1161,13 @@ Future refreshLotes(BuildContext context) async {
         pUserId: currentUserUid,
       );
 
+      final lotesJsonBody = propriedades.jsonBody;
+      final lotesRawList = lotesJsonBody is List ? lotesJsonBody : <dynamic>[];
       lotes = await LotesTable().queryRows(
         queryFn: (q) => q
             .inFilterOrNull(
               'id_propriedade',
-              ((propriedades?.jsonBody ?? '')
-                      .toList()
+              (lotesRawList
                       .map<PropriedadesStruct?>(PropriedadesStruct.maybeFromMap)
                       .toList() as Iterable<PropriedadesStruct?>)
                   .withoutNulls
@@ -1189,9 +1203,17 @@ Future refreshLotes(BuildContext context) async {
         });
       }
 
-      // Só deleta dados locais DEPOIS de confirmar download com sucesso
-      await SQLiteManager.instance.deleteAllLotes();
-      await actions.batchInsertLocalLotes(records);
+      // Inserir via UPSERT — NÃO deleta antes para evitar perda de dados
+      // se o batch insert falhar. ConflictAlgorithm.replace já sobrescreve.
+      final loteResult = await actions.batchInsertLocalLotes(records);
+      final lotesInserted = loteResult['inserted'] as int? ?? 0;
+      final lotesErrors = loteResult['errors'] as List<Map<String, String>>? ?? [];
+      if (lotesInserted == 0 && records.isNotEmpty) {
+        _syncLog('lotes',
+            'Batch insert falhou completamente (${lotesErrors.length} erros). Mantendo dados locais.');
+      } else {
+        _syncLog('lotes', '$lotesInserted lotes inseridos via UPSERT.');
+      }
 
       FFAppState().lotesChangeDateTime = remoteLastChange ?? DateTime.now();
       FFAppState().lotesIndex = 0;
@@ -2043,8 +2065,11 @@ Future refreshRebanhoOtimizada(BuildContext context) async {
         }
 
         if (isFirst) {
-          await SQLiteManager.instance.deletarTodosRebanhos();
-          _syncLog('rebanho', 'Tabela local limpa (primeiro sync). Iniciando paginação...');
+          // Primeiro sync: em vez de deletar tudo antes do insert,
+          // confiamos no UPSERT (ConflictAlgorithm.replace) para
+          // sobrescrever dados antigos. Se o insert falhar, dados locais
+          // são preservados.
+          _syncLog('rebanho', 'Primeiro sync. Iniciando paginação (UPSERT)...');
         } else {
           _syncLog('rebanho',
               'Sync incremental — mantendo dados locais. Iniciando paginação (UPSERT)...');
@@ -2237,8 +2262,8 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
         }
 
         if (isFirst) {
-          await SQLiteManager.instance.deleteAllReproducao();
-          _syncLog('reproducao', 'Tabela local limpa (primeiro sync). Iniciando paginação...');
+          // Primeiro sync: UPSERT sem deletar para segurança
+          _syncLog('reproducao', 'Primeiro sync. Iniciando paginação (UPSERT)...');
         } else {
           _syncLog('reproducao',
               'Sync incremental — mantendo dados locais. Iniciando paginação (UPSERT)...');
@@ -2347,7 +2372,30 @@ Future refreshPesagens(BuildContext context) async {
     ApiCallResponse? propriedadessO;
     ApiCallResponse? pesagensAPI;
 
+    // Verificar change tracker antes de sincronizar (como os outros módulos)
+    List<HistoricoPesagensChangeTrackerRow>? lastChangeResult;
+    try {
+      lastChangeResult = await HistoricoPesagensChangeTrackerTable().queryRows(
+        queryFn: (q) => q,
+      );
+    } catch (e, s) {
+      _syncLog('pesagens', 'ERRO ao consultar change tracker: $e\n$s');
+      lastChangeResult = [];
+    }
+    final remoteLastChange = lastChangeResult.firstOrNull?.lastChange;
     final localLastChange = FFAppState().pesagensChangeDateTime;
+    final shouldSync = remoteLastChange == null ||
+        localLastChange == null ||
+        _isFirstSync(localLastChange) ||
+        remoteLastChange.isAfter(localLastChange);
+    _syncLog('pesagens',
+        'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
+
+    if (!shouldSync) {
+      _syncLog('pesagens', 'Sem necessidade de sincronização.');
+      return;
+    }
+
     final isFirst = _isFirstSync(localLastChange) ||
         await _isLocalTableEmpty('local_historico_pesagens');
     final String? updatedAfter =
@@ -2400,7 +2448,7 @@ Future refreshPesagens(BuildContext context) async {
         if (updatedAfter != null) {
           _syncLog('pesagens',
               'Nenhuma alteração remota desde último sync. Atualizando timestamp.');
-          FFAppState().pesagensChangeDateTime = DateTime.now();
+          FFAppState().pesagensChangeDateTime = remoteLastChange ?? DateTime.now();
         } else {
           _syncLog('pesagens',
               'Primeira página vazia apesar de total=$totalPesagens. Não apagando dados locais. Abortando sync.');
@@ -2409,8 +2457,8 @@ Future refreshPesagens(BuildContext context) async {
       }
 
       if (isFirst) {
-        await SQLiteManager.instance.deletarTodasPesagens();
-        _syncLog('pesagens', 'Tabela local limpa (primeiro sync). Inserindo primeira página...');
+        // Primeiro sync: UPSERT sem deletar para segurança
+        _syncLog('pesagens', 'Primeiro sync. Inserindo primeira página (UPSERT)...');
       } else {
         _syncLog('pesagens',
             'Sync incremental — mantendo dados locais (UPSERT). Inserindo primeira página...');
@@ -2532,15 +2580,11 @@ Future refreshPesagens(BuildContext context) async {
         _syncLog(
             'pesagens', 'Total de erros acumulados: ${syncErrors.length}.');
       }
-      // Só atualiza o timestamp se realmente inseriu registros
-      if (totalInserted > 0) {
-        FFAppState().pesagensChangeDateTime = DateTime.now();
-        _syncLog('pesagens',
-            'Timestamp atualizado para: ${FFAppState().pesagensChangeDateTime}');
-      } else {
-        _syncLog('pesagens',
-            'Nenhum registro inserido. Timestamp NÃO atualizado para forçar re-sync.');
-      }
+      // Sempre atualiza o timestamp para evitar re-sync infinito
+      // Usa o remoteLastChange do change tracker para precisão
+      FFAppState().pesagensChangeDateTime = remoteLastChange ?? DateTime.now();
+      _syncLog('pesagens',
+          'Timestamp atualizado para: ${FFAppState().pesagensChangeDateTime}. $totalInserted registros inseridos.');
       if (syncOk) {
         _syncLog('pesagens',
             'Sincronização finalizada com sucesso. $totalInserted registros inseridos.');
@@ -2645,8 +2689,8 @@ Future refresSanidadeOtimizada(BuildContext context) async {
         }
 
         if (isFirst) {
-          await SQLiteManager.instance.deleteAllSanidades();
-          _syncLog('sanidade', 'Tabela local limpa (primeiro sync). Iniciando paginação...');
+          // Primeiro sync: UPSERT sem deletar para segurança
+          _syncLog('sanidade', 'Primeiro sync. Iniciando paginação (UPSERT)...');
         } else {
           _syncLog('sanidade',
               'Sync incremental — mantendo dados locais. Iniciando paginação (UPSERT)...');

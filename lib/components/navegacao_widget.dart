@@ -364,10 +364,6 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         FFAppState().syncProgressLabel =
                                             'Baixando dados...';
                                         safeSetState(() {});
-                                        // Forçar re-sync de pesagens resetando o timestamp
-                                        FFAppState().pesagensChangeDateTime =
-                                            DateTime.fromMillisecondsSinceEpoch(
-                                                1505578800000);
                                         // Download parallel - 35% to 95%
                                         await Future.wait([
                                           action_blocks

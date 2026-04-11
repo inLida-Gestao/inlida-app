@@ -213,7 +213,7 @@ String _extractRebanhoId(dynamic record) {
 }
 
 dynamic _cleanNull(dynamic value) {
-  if (value == "null") return null;
+  if (value == "null" || value == '') return null;
   if (value is List || value is Map) {
     return jsonEncode(value);
   }

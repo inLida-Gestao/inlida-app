@@ -276,7 +276,7 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                             final propriedade = optionsListarPropriedadesRowList
                                 .where((e) => searchQuery.isEmpty || (e.nome ?? '').toLowerCase().contains(searchQuery))
                                 .sortedList(
-                                    keyOf: (e) => e.createdAt!, desc: true)
+                                    keyOf: (e) => e.createdAt ?? '', desc: true)
                                 .toList();
 
                             return SingleChildScrollView(
@@ -339,7 +339,7 @@ class _SelecaoPropriedadeWidgetState extends State<SelecaoPropriedadeWidget> {
                                             child: Image.network(
                                               valueOrDefault<String>(
                                                 functions.stringToImgPath(
-                                                    propriedadeItem.icone!),
+                                                    propriedadeItem.icone ?? ''),
                                                 'https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/in-lida-ki7iwq/assets/zdkcvi82omdl/mdi_farm6556.png',
                                               ),
                                               width: 24.0,

@@ -296,6 +296,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                         if (FFAppState().visibilidadeProgressBarRepro == true)
                           LinearPercentIndicator(
                             percent: (int total, int indexPag) {
+                              if (total <= 0) return 0.0;
                               return indexPag / total.ceil() > 1.0
                                   ? 1.0
                                   : indexPag / total.ceil();
@@ -311,6 +312,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                             center: Text(
                               formatNumber(
                                 (int total, int indexPag) {
+                                  if (total <= 0) return 0.0;
                                   return indexPag / total.ceil() > 1.0
                                       ? 1.0
                                       : indexPag / total.ceil();
@@ -1089,7 +1091,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                               reproducaoPaginadaListarReproducoesPaginadaRowList
                                                   .sortedList(
                                                       keyOf: (e) =>
-                                                          e.createdAt!,
+                                                          e.createdAt ?? '',
                                                       desc: true)
                                                   .toList();
                                           if (reproducao.isEmpty) {

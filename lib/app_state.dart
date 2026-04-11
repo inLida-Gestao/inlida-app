@@ -128,6 +128,13 @@ class FFAppState extends ChangeNotifier {
               : _rebanhosPesagemChangeDateTime;
     });
     _safeInit(() {
+      _pesagensChangeDateTime =
+          prefs.containsKey('ff_pesagensChangeDateTime')
+              ? DateTime.fromMillisecondsSinceEpoch(
+                  prefs.getInt('ff_pesagensChangeDateTime')!)
+              : _pesagensChangeDateTime;
+    });
+    _safeInit(() {
       _lotesCadastrados =
           prefs.getInt('ff_lotesCadastrados') ?? _lotesCadastrados;
     });
@@ -233,6 +240,7 @@ class FFAppState extends ChangeNotifier {
     _dataDadosNaoSyncSanidade = null;
     _propriedadesOFF = [];
     _firstRunUserEmail = '';
+    _pesagensChangeDateTime = null;
 
     prefs.remove('ff_ultimaSincronizacao');
     prefs.remove('ff_propriedadeSelecionada');
@@ -250,6 +258,7 @@ class FFAppState extends ChangeNotifier {
     prefs.remove('ff_dataDadosNaoSyncSanidade');
     prefs.remove('ff_propriedadesOFF');
     prefs.remove('ff_firstRunUserEmail');
+    prefs.remove('ff_pesagensChangeDateTime');
   }
 
   late SharedPreferences prefs;
@@ -2232,6 +2241,10 @@ class FFAppState extends ChangeNotifier {
   DateTime? get pesagensChangeDateTime => _pesagensChangeDateTime;
   set pesagensChangeDateTime(DateTime? value) {
     _pesagensChangeDateTime = value;
+    value != null
+        ? prefs.setInt(
+            'ff_pesagensChangeDateTime', value.millisecondsSinceEpoch)
+        : prefs.remove('ff_pesagensChangeDateTime');
   }
 
   int _totalPesagens = 0;
