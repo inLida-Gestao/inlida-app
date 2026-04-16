@@ -2008,12 +2008,23 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   _model.dPLoteValue,
                                                 ),
                                                 options: List<String>.from(
-                                                    FFAppState()
-                                                        .rebanhoLotesSelecionar
+                                                    (FFAppState()
+                                                            .rebanhoLotesSelecionar
+                                                            .toList()
+                                                          ..sort((a, b) => a
+                                                              .nome
+                                                              .toLowerCase()
+                                                              .compareTo(b.nome
+                                                                  .toLowerCase())))
                                                         .map((e) => e.idLote)
                                                         .toList()),
-                                                optionLabels: FFAppState()
-                                                    .rebanhoLotesSelecionar
+                                                optionLabels: (FFAppState()
+                                                        .rebanhoLotesSelecionar
+                                                        .toList()
+                                                      ..sort((a, b) => a.nome
+                                                          .toLowerCase()
+                                                          .compareTo(b.nome
+                                                              .toLowerCase())))
                                                     .map((e) => e.nome)
                                                     .toList(),
                                                 onChanged: (val) =>

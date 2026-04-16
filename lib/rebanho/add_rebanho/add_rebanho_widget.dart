@@ -1822,13 +1822,24 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       _model.dPLoteValue ??= '',
                                                     ),
                                                     options: List<String>.from(
-                                                        FFAppState()
-                                                            .rebanhoLotesSelecionar
+                                                        (FFAppState()
+                                                                .rebanhoLotesSelecionar
+                                                                .toList()
+                                                              ..sort((a, b) => a
+                                                                  .nome
+                                                                  .toLowerCase()
+                                                                  .compareTo(b.nome
+                                                                      .toLowerCase())))
                                                             .map(
                                                                 (e) => e.idLote)
                                                             .toList()),
-                                                    optionLabels: FFAppState()
-                                                        .rebanhoLotesSelecionar
+                                                    optionLabels: (FFAppState()
+                                                            .rebanhoLotesSelecionar
+                                                            .toList()
+                                                          ..sort((a, b) => a.nome
+                                                              .toLowerCase()
+                                                              .compareTo(b.nome
+                                                                  .toLowerCase())))
                                                         .map((e) => e.nome)
                                                         .toList(),
                                                     onChanged: (val) =>
@@ -5500,6 +5511,68 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     !_model
                                                         .formKey2.currentState!
                                                         .validate()) {
+                                                  return;
+                                                }
+                                                if (_model.dropDownSexoValue ==
+                                                    null ||
+                                                    _model.dropDownSexoValue ==
+                                                        '') {
+                                                  await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (alertDialogContext) {
+                                                      return AlertDialog(
+                                                        title: const Text(
+                                                            'Sexo'),
+                                                        content: const Text(
+                                                            'Selecione o sexo do animal.'),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    alertDialogContext),
+                                                            child: const Text(
+                                                                'Ok'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                  return;
+                                                }
+                                                if ((_model.dropDownSexoValue ==
+                                                            'Fêmea' &&
+                                                        (_model.dPCategoriaFemeaValue ==
+                                                                null ||
+                                                            _model.dPCategoriaFemeaValue ==
+                                                                '')) ||
+                                                    (_model.dropDownSexoValue ==
+                                                            'Macho' &&
+                                                        (_model.dPCategoriaMachoValue ==
+                                                                null ||
+                                                            _model.dPCategoriaMachoValue ==
+                                                                ''))) {
+                                                  await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (alertDialogContext) {
+                                                      return AlertDialog(
+                                                        title: const Text(
+                                                            'Categoria'),
+                                                        content: const Text(
+                                                            'Selecione a categoria do animal.'),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    alertDialogContext),
+                                                            child: const Text(
+                                                                'Ok'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
                                                   return;
                                                 }
                                                 if (_model.dPStatusValue ==

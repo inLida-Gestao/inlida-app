@@ -24,7 +24,7 @@ class AddPesagemWidget extends StatefulWidget {
 class _AddPesagemWidgetState extends State<AddPesagemWidget> {
   late AddPesagemModel _model;
 
-  double? _parsePesoInteiro(String? rawValue) {
+  double? _parsePeso(String? rawValue) {
     final normalized = rawValue?.trim().replaceAll(',', '.');
     if (normalized == null || normalized.isEmpty) {
       return null;
@@ -35,7 +35,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
       return null;
     }
 
-    return parsed.truncateToDouble();
+    return parsed;
   }
 
   @override
@@ -397,48 +397,78 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                 const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
             child: FFButtonWidget(
               onPressed: () async {
-                final pesoInteiro =
-                    _parsePesoInteiro(_model.pesoTextController.text);
-
-                await SQLiteManager.instance.addPesagem(
-                  idRebanho: widget.idRebanho,
-                  dataPesagem: dateTimeFormat(
-                    "yyyy-MM-dd",
-                    _model.datePicked,
-                    locale: FFLocalizations.of(context).languageCode,
-                  ),
-                  tipo: 'Atual',
-                  peso: pesoInteiro,
-                  deletado: 'NAO',
-                  createdat: dateTimeFormat(
-                    "yyyy-MM-dd HH:mm:ss",
-                    getCurrentTimestamp,
-                    locale: FFLocalizations.of(context).languageCode,
-                  ),
-                  idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
-                );
-                FFAppState().addToHistPesagens(HistoricoPesagensStruct(
-                  idRebanho: widget.idRebanho,
-                  dataPesagem: dateTimeFormat(
-                    "yyyy-MM-dd",
-                    _model.datePicked,
-                    locale: FFLocalizations.of(context).languageCode,
-                  ),
-                  tipo: 'Atual',
-                  peso: pesoInteiro,
-                  deletado: 'NAO',
-                  createdAt: dateTimeFormat(
-                    "yyyy-MM-dd HH:mm:ss",
-                    getCurrentTimestamp,
-                    locale: FFLocalizations.of(context).languageCode,
-                  ),
-                ));
-                safeSetState(() {});
-                if (!(FFAppState().dataDadosNaoSyncRebanho != null)) {
-                  FFAppState().dataDadosNaoSyncRebanho = getCurrentTimestamp;
-                  safeSetState(() {});
+                if (_model.datePicked == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Selecione a data da pesagem.'),
+                      backgroundColor: Color(0xFFE53935),
+                    ),
+                  );
+                  return;
                 }
-                Navigator.pop(context);
+                final peso =
+                    _parsePeso(_model.pesoTextController.text);
+                if (peso == null || peso <= 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Informe um peso válido.'),
+                      backgroundColor: Color(0xFFE53935),
+                    ),
+                  );
+                  return;
+                }
+
+                try {
+                  await SQLiteManager.instance.addPesagem(
+                    idRebanho: widget.idRebanho,
+                    dataPesagem: dateTimeFormat(
+                      "yyyy-MM-dd",
+                      _model.datePicked,
+                      locale: FFLocalizations.of(context).languageCode,
+                    ),
+                    tipo: 'Atual',
+                    peso: peso,
+                    deletado: 'NAO',
+                    createdat: dateTimeFormat(
+                      "yyyy-MM-dd HH:mm:ss",
+                      getCurrentTimestamp,
+                      locale: FFLocalizations.of(context).languageCode,
+                    ),
+                    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+                  );
+                  FFAppState().addToHistPesagens(HistoricoPesagensStruct(
+                    idRebanho: widget.idRebanho,
+                    dataPesagem: dateTimeFormat(
+                      "yyyy-MM-dd",
+                      _model.datePicked,
+                      locale: FFLocalizations.of(context).languageCode,
+                    ),
+                    tipo: 'Atual',
+                    peso: peso,
+                    deletado: 'NAO',
+                    createdAt: dateTimeFormat(
+                      "yyyy-MM-dd HH:mm:ss",
+                      getCurrentTimestamp,
+                      locale: FFLocalizations.of(context).languageCode,
+                    ),
+                  ));
+                  safeSetState(() {});
+                  if (!(FFAppState().dataDadosNaoSyncRebanho != null)) {
+                    FFAppState().dataDadosNaoSyncRebanho = getCurrentTimestamp;
+                    safeSetState(() {});
+                  }
+                  Navigator.pop(context);
+                } catch (e) {
+                  debugPrint('[AddPesagem] Erro ao inserir pesagem: $e');
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Erro ao salvar pesagem. Tente novamente.'),
+                        backgroundColor: Color(0xFFE53935),
+                      ),
+                    );
+                  }
+                }
               },
               text: 'Adicionar',
               options: FFButtonOptions(

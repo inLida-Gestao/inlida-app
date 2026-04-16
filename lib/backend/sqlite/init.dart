@@ -201,8 +201,22 @@ Future<void> _ensureUniqueBusinessKeys(Database db) async {
     '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_sanidade
        ON local_sanidade (id_sanidade)''',
     '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_pesagem
-       ON local_historico_pesagens (idRebanho, dataPesagem, tipo)''',
+       ON local_historico_pesagens (idRebanho, dataPesagem, tipo, created_at)''',
   ];
+
+  // Dropar índice antigo de pesagem (sem created_at) se existir,
+  // para permitir múltiplas pesagens no mesmo dia.
+  try {
+    // Verifica se o índice antigo existe e se tem apenas 3 colunas
+    final idxInfo = await db.rawQuery(
+        "PRAGMA index_info(idx_unique_pesagem)");
+    if (idxInfo.isNotEmpty && idxInfo.length <= 3) {
+      await db.execute('DROP INDEX IF EXISTS idx_unique_pesagem');
+      debugPrint('[SQLite] Índice antigo idx_unique_pesagem (3 cols) removido.');
+    }
+  } catch (e) {
+    debugPrint('[SQLite] Erro ao verificar/dropar índice antigo: $e');
+  }
 
   for (final indexSql in indexes) {
     try {

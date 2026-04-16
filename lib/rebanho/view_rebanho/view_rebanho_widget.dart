@@ -68,6 +68,41 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
     }
   }
 
+  Future<void> _refreshPesoAtualEDataUltimaPesagem() async {
+    final idRebanho = widget.idRebanho;
+    if (idRebanho == null || idRebanho.isEmpty) {
+      return;
+    }
+
+    final rebanho = await SQLiteManager.instance.buscarRebanho(
+      idRebanho: idRebanho,
+    );
+    final rebanhoAtual = rebanho.firstOrNull;
+    if (rebanhoAtual == null) {
+      return;
+    }
+
+    _model.nAnimalTextController14?.text =
+        (rebanhoAtual.pesoAtual == null || rebanhoAtual.pesoAtual == 0.0)
+            ? 'N/A'
+            : rebanhoAtual.pesoAtual.toString();
+
+    _model.nAnimalOlocoTextController?.text =
+        rebanhoAtual.dataUltimaPesagem == null ||
+                rebanhoAtual.dataUltimaPesagem == 'null' ||
+                rebanhoAtual.dataUltimaPesagem!.isEmpty
+            ? 'N/A'
+            : dateTimeFormat(
+                "d/M/y",
+                functions.converterParaData(rebanhoAtual.dataUltimaPesagem),
+                locale: FFLocalizations.of(context).languageCode,
+              );
+
+    if (mounted) {
+      safeSetState(() {});
+    }
+  }
+
   @override
   void setState(VoidCallback callback) {
     super.setState(callback);
@@ -7168,6 +7203,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                     deletado: pesagemItem.deletado,
                                                                                     createdAt: pesagemItem.createdAt,
                                                                                   ));
+                                                                                  await _refreshPesoAtualEDataUltimaPesagem();
                                                                                   safeSetState(() {});
                                                                                   if (!(FFAppState().dataDadosNaoSyncProp == null)) {
                                                                                     FFAppState().dataDadosNaoSyncProp = getCurrentTimestamp;
@@ -7232,6 +7268,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                     },
                                                   );
                                                   await _refreshHistPesagensAtual();
+                                                  await _refreshPesoAtualEDataUltimaPesagem();
                                                 },
                                                 text: 'Adicionar pesagem',
                                                 icon: const Icon(

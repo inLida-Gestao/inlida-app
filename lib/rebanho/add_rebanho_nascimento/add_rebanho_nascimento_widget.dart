@@ -1605,12 +1605,23 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   _model.dPLoteValue ??= '',
                                                 ),
                                                 options: List<String>.from(
-                                                    FFAppState()
-                                                        .rebanhoLotesSelecionar
+                                                    (FFAppState()
+                                                            .rebanhoLotesSelecionar
+                                                            .toList()
+                                                          ..sort((a, b) => a
+                                                              .nome
+                                                              .toLowerCase()
+                                                              .compareTo(b.nome
+                                                                  .toLowerCase())))
                                                         .map((e) => e.idLote)
                                                         .toList()),
-                                                optionLabels: FFAppState()
-                                                    .rebanhoLotesSelecionar
+                                                optionLabels: (FFAppState()
+                                                        .rebanhoLotesSelecionar
+                                                        .toList()
+                                                      ..sort((a, b) => a.nome
+                                                          .toLowerCase()
+                                                          .compareTo(b.nome
+                                                              .toLowerCase())))
                                                     .map((e) => e.nome)
                                                     .toList(),
                                                 onChanged: (val) =>
@@ -3723,6 +3734,59 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                         Expanded(
                                           child: FFButtonWidget(
                                             onPressed: () async {
+                                              if (_model.dropDownSexoValue ==
+                                                      null ||
+                                                  _model.dropDownSexoValue ==
+                                                      '') {
+                                                await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (alertDialogContext) {
+                                                    return AlertDialog(
+                                                      title:
+                                                          const Text('Sexo'),
+                                                      content: const Text(
+                                                          'Selecione o sexo do animal.'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  alertDialogContext),
+                                                          child: const Text(
+                                                              'Ok'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                                return;
+                                              }
+                                              if (_model.dPStatusValue ==
+                                                      null ||
+                                                  _model.dPStatusValue == '') {
+                                                await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (alertDialogContext) {
+                                                    return AlertDialog(
+                                                      title: const Text(
+                                                          'Status'),
+                                                      content: const Text(
+                                                          'Selecione o status do animal.'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  alertDialogContext),
+                                                          child: const Text(
+                                                              'Ok'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                                return;
+                                              }
                                               _model.idRebanho = null;
                                               safeSetState(() {});
                                               _model.idRebanho =

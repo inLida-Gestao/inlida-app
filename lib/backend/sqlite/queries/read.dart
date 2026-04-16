@@ -1625,6 +1625,7 @@ Future<List<BuscaRebanhoPaginadaRow>> performBuscaRebanhoPaginada(
   String? categoria,
   String? raca,
   String? origem,
+  String? loteId,
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
@@ -1640,6 +1641,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$loteId' = '' OR loteID = '$loteId')
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
@@ -2387,6 +2389,7 @@ Future<List<RebanhoPagOrdNumCresRow>> performRebanhoPagOrdNumCres(
   String? categoria,
   String? raca,
   String? origem,
+  String? loteId,
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
@@ -2402,6 +2405,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$loteId' = '' OR loteID = '$loteId')
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
@@ -2470,6 +2474,7 @@ Future<List<RebanhoPagOrdNumDescRow>> performRebanhoPagOrdNumDesc(
   String? categoria,
   String? raca,
   String? origem,
+  String? loteId,
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
@@ -2485,6 +2490,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$loteId' = '' OR loteID = '$loteId')
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
@@ -2553,6 +2559,7 @@ Future<List<RebanhoPagOrdNomCresRow>> performRebanhoPagOrdNomCres(
   String? categoria,
   String? raca,
   String? origem,
+  String? loteId,
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
@@ -2568,6 +2575,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$loteId' = '' OR loteID = '$loteId')
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
@@ -2636,6 +2644,7 @@ Future<List<RebanhoPagOrdNomDescRow>> performRebanhoPagOrdNomDesc(
   String? categoria,
   String? raca,
   String? origem,
+  String? loteId,
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
@@ -2651,6 +2660,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$loteId' = '' OR loteID = '$loteId')
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
@@ -2719,6 +2729,7 @@ Future<List<RebanhoPagOrdDataCresRow>> performRebanhoPagOrdDataCres(
   String? categoria,
   String? raca,
   String? origem,
+  String? loteId,
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
@@ -2734,6 +2745,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$loteId' = '' OR loteID = '$loteId')
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
@@ -2804,6 +2816,7 @@ Future<List<RebanhoPagOrdDataDescRow>> performRebanhoPagOrdDataDesc(
   String? categoria,
   String? raca,
   String? origem,
+  String? loteId,
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
@@ -2819,6 +2832,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
+AND ('$loteId' = '' OR loteID = '$loteId')
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition

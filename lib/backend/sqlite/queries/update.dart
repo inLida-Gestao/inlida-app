@@ -522,11 +522,19 @@ Future performAddPesagem(
   String? createdat,
   String? idPropriedade,
 }) {
-  final query = '''
+  const query = '''
 INSERT INTO local_historico_pesagens (idRebanho, dataPesagem, tipo, peso, deletado, created_at, id_propriedade)
-VALUES ('$idRebanho', '$dataPesagem', '$tipo', $peso, '$deletado', '$createdat', '$idPropriedade')
+VALUES (?, ?, ?, ?, ?, ?, ?)
 ''';
-  return database.rawQuery(query);
+  return database.rawInsert(query, [
+    idRebanho,
+    dataPesagem,
+    tipo,
+    peso,
+    deletado,
+    createdat,
+    idPropriedade,
+  ]);
 }
 
 /// END ADD PESAGEM
