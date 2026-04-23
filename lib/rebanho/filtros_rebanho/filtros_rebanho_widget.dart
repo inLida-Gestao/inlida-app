@@ -1585,25 +1585,34 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                               FormFieldController<String>(
                                             _model.dropDownLoteValue,
                                           ),
-                                          options: lotesDisponiveis
-                                              .map((e) => e.idLote!)
-                                              .toList(),
-                                          optionLabels: lotesDisponiveis
-                                              .map(
-                                                  (e) => valueOrDefault<String>(
-                                                        e.nome,
-                                                        'Sem nome',
-                                                      ))
-                                              .toList(),
+                                          options: [
+                                              'SEM_LOTE',
+                                              ...lotesDisponiveis
+                                                  .map((e) => e.idLote!)
+                                            ],
+                                          optionLabels: [
+                                              'Sem lote',
+                                              ...lotesDisponiveis
+                                                  .map(
+                                                      (e) => valueOrDefault<String>(
+                                                            e.nome,
+                                                            'Sem nome',
+                                                          ))
+                                            ],
                                           onChanged: (value) async {
-                                            final loteSelecionado =
-                                                lotesDisponiveis
-                                                    .where((e) =>
-                                                        e.idLote == value)
-                                                    .toList()
-                                                    .firstOrNull;
-                                            final nomeLoteSelecionado =
-                                                loteSelecionado?.nome ?? '';
+                                            final String nomeLoteSelecionado;
+                                            if (value == 'SEM_LOTE') {
+                                              nomeLoteSelecionado = 'Sem lote';
+                                            } else {
+                                              final loteSelecionado =
+                                                  lotesDisponiveis
+                                                      .where((e) =>
+                                                          e.idLote == value)
+                                                      .toList()
+                                                      .firstOrNull;
+                                              nomeLoteSelecionado =
+                                                  loteSelecionado?.nome ?? '';
+                                            }
 
                                             if (FFAppState()
                                                 .filtroLoteRebanhoNome
@@ -1771,6 +1780,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
                                         final datePicked = await showDatePicker(
+                                          initialEntryMode: DatePickerEntryMode.calendarOnly,
                                           context: context,
                                           initialDate: FFAppState().filtroDataNascimentoInicio ?? DateTime.now(),
                                           firstDate: DateTime(1900),
@@ -1871,6 +1881,7 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                       highlightColor: Colors.transparent,
                                       onTap: () async {
                                         final datePicked = await showDatePicker(
+                                          initialEntryMode: DatePickerEntryMode.calendarOnly,
                                           context: context,
                                           initialDate: FFAppState().filtroDataNascimentoFim ?? DateTime.now(),
                                           firstDate: DateTime(1900),

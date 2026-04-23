@@ -947,6 +947,7 @@ class _AddReproducaoRebanhoWidgetState
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
                                   final datePicked1Date = await showDatePicker(
+                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
                                     context: context,
                                     initialDate: getCurrentTimestamp,
                                     firstDate: DateTime(1900),
@@ -1357,6 +1358,7 @@ class _AddReproducaoRebanhoWidgetState
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
                                   final datePicked2Date = await showDatePicker(
+                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
                                     context: context,
                                     initialDate: getCurrentTimestamp,
                                     firstDate: DateTime(1900),
@@ -1700,6 +1702,7 @@ class _AddReproducaoRebanhoWidgetState
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
                                   final datePicked3Date = await showDatePicker(
+                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
                                     context: context,
                                     initialDate: getCurrentTimestamp,
                                     firstDate: DateTime(1900),
@@ -1872,6 +1875,7 @@ class _AddReproducaoRebanhoWidgetState
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
                                   final datePicked4Date = await showDatePicker(
+                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
                                     context: context,
                                     initialDate: getCurrentTimestamp,
                                     firstDate: DateTime(1900),
@@ -2430,6 +2434,7 @@ class _AddReproducaoRebanhoWidgetState
                                   onTap: () async {
                                     final datePicked5Date =
                                         await showDatePicker(
+                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
                                       context: context,
                                       initialDate: getCurrentTimestamp,
                                       firstDate: DateTime(1900),
@@ -2603,6 +2608,7 @@ class _AddReproducaoRebanhoWidgetState
                                     onTap: () async {
                                       final datePicked6Date =
                                           await showDatePicker(
+                                        initialEntryMode: DatePickerEntryMode.calendarOnly,
                                         context: context,
                                         initialDate: getCurrentTimestamp,
                                         firstDate: DateTime(1900),
@@ -2768,72 +2774,144 @@ class _AddReproducaoRebanhoWidgetState
                                         ),
                                   ),
                                 ),
-                                Container(
-                                  width: double.infinity,
-                                  height: 56.0,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFF1F1F1),
-                                    borderRadius: const BorderRadius.only(
-                                      bottomLeft: Radius.circular(6.0),
-                                      bottomRight: Radius.circular(6.0),
-                                      topLeft: Radius.circular(6.0),
-                                      topRight: Radius.circular(6.0),
+                                InkWell(
+                                  splashColor: Colors.transparent,
+                                  focusColor: Colors.transparent,
+                                  hoverColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onTap: () async {
+                                    final datePicked6Date =
+                                        await showDatePicker(
+                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                      context: context,
+                                      initialDate: _model.datePicked6 ??
+                                          functions.dataMais295(
+                                              _model.datePicked1!),
+                                      firstDate: DateTime(1900),
+                                      lastDate: DateTime(2050),
+                                      builder: (context, child) {
+                                        return wrapInMaterialDatePickerTheme(
+                                          context,
+                                          child!,
+                                          headerBackgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .primary,
+                                          headerForegroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .info,
+                                          headerTextStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .headlineLarge
+                                                  .override(
+                                                    fontFamily:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .headlineLargeFamily,
+                                                    fontSize: 32.0,
+                                                    letterSpacing: 0.0,
+                                                    fontWeight:
+                                                        FontWeight.w600,
+                                                    useGoogleFonts:
+                                                        !FlutterFlowTheme.of(
+                                                                context)
+                                                            .headlineLargeIsCustom,
+                                                  ),
+                                          pickerBackgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .secondaryBackground,
+                                          pickerForegroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .primaryText,
+                                          selectedDateTimeBackgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .primary,
+                                          selectedDateTimeForegroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .info,
+                                          actionButtonForegroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .primaryText,
+                                          iconSize: 24.0,
+                                        );
+                                      },
+                                    );
+
+                                    if (datePicked6Date != null) {
+                                      safeSetState(() {
+                                        _model.datePicked6 = DateTime(
+                                          datePicked6Date.year,
+                                          datePicked6Date.month,
+                                          datePicked6Date.day,
+                                        );
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 56.0,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF1F1F1),
+                                      borderRadius: const BorderRadius.only(
+                                        bottomLeft: Radius.circular(6.0),
+                                        bottomRight: Radius.circular(6.0),
+                                        topLeft: Radius.circular(6.0),
+                                        topRight: Radius.circular(6.0),
+                                      ),
+                                      border: Border.all(
+                                        color: const Color(0x001E7A4C),
+                                      ),
                                     ),
-                                    border: Border.all(
-                                      color: const Color(0x001E7A4C),
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            8.0, 0.0, 8.0, 0.0),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          valueOrDefault<String>(
-                                            dateTimeFormat(
-                                              "d/M/y",
-                                              functions.dataMais295(
-                                                  _model.datePicked1!),
-                                              locale:
-                                                  FFLocalizations.of(context)
-                                                      .languageCode,
-                                            ),
-                                            'Data da inseminação + 295 dias',
-                                          ),
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                color: valueOrDefault<Color>(
-                                                  _model.datePicked1 != null
-                                                      ? FlutterFlowTheme.of(
-                                                              context)
-                                                          .secondaryText
-                                                      : const Color(0xFFBEBEBE),
-                                                  const Color(0xFFBEBEBE),
-                                                ),
-                                                fontSize: 16.0,
-                                                letterSpacing: 0.0,
-                                                fontWeight: FontWeight.w600,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMediumIsCustom,
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              8.0, 0.0, 8.0, 0.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            valueOrDefault<String>(
+                                              dateTimeFormat(
+                                                "d/M/y",
+                                                _model.datePicked6 ??
+                                                    functions.dataMais295(
+                                                        _model.datePicked1!),
+                                                locale:
+                                                    FFLocalizations.of(context)
+                                                        .languageCode,
                                               ),
-                                        ),
-                                        Icon(
-                                          Icons.calendar_month_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
-                                        ),
-                                      ],
+                                              'Data da inseminação + 295 dias',
+                                            ),
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumFamily,
+                                                  color:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .secondaryText,
+                                                  fontSize: 16.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  useGoogleFonts:
+                                                      !FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMediumIsCustom,
+                                                ),
+                                          ),
+                                          Icon(
+                                            Icons.calendar_month_rounded,
+                                            color:
+                                                FlutterFlowTheme.of(context)
+                                                    .secondaryText,
+                                            size: 24.0,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -2919,6 +2997,7 @@ class _AddReproducaoRebanhoWidgetState
                                 highlightColor: Colors.transparent,
                                 onTap: () async {
                                   final datePicked7Date = await showDatePicker(
+                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
                                     context: context,
                                     initialDate: getCurrentTimestamp,
                                     firstDate: DateTime(1900),
@@ -3300,8 +3379,9 @@ class _AddReproducaoRebanhoWidgetState
                                         previsaoParto: valueOrDefault<String>(
                                           dateTimeFormat(
                                             "yyyy-MM-dd",
-                                            functions.dataMais295(
-                                                _model.datePicked1!),
+                                            _model.datePicked6 ??
+                                                functions.dataMais295(
+                                                    _model.datePicked1!),
                                             locale: FFLocalizations.of(context)
                                                 .languageCode,
                                           ),

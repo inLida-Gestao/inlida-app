@@ -11,9 +11,11 @@ import '/rebanho/add_pesagem/add_pesagem_widget.dart';
 import '/rebanho/popup_rebanhos/popup_rebanhos_widget.dart';
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
+import '/actions/actions.dart' as action_blocks;
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'edit_rebanho_model.dart';
@@ -29,6 +31,14 @@ class EditRebanhoWidget extends StatefulWidget {
 class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     with TickerProviderStateMixin {
   late EditRebanhoModel _model;
+
+  double? _parsePeso(String? rawValue) {
+    final normalized = rawValue?.trim().replaceAll(',', '.');
+    if (normalized == null || normalized.isEmpty) {
+      return null;
+    }
+    return double.tryParse(normalized);
+  }
 
   String _normalizeInputText(String? value) {
     if (value == null) return '';
@@ -114,7 +124,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     _model.pesoAtualTextController?.text =
         (rebanhoAtual.pesoAtual == null || rebanhoAtual.pesoAtual == 0.0)
             ? ''
-            : rebanhoAtual.pesoAtual.toString();
+            : (rebanhoAtual.pesoAtual == rebanhoAtual.pesoAtual!.truncateToDouble()
+                ? rebanhoAtual.pesoAtual!.toInt().toString()
+                : rebanhoAtual.pesoAtual.toString());
     _model.datePicked4 = _parseStoredDate(rebanhoAtual.dataUltimaPesagem);
 
     if (mounted) {
@@ -194,21 +206,21 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     _model.pesonascimentoTextController ??= TextEditingController(text: () {
       final val = FFAppState().rebanhoSelecionado.pesoNascimento;
       if (val == 0.0) return '';
-      return val.toString();
+      return val == val.truncateToDouble() ? val.toInt().toString() : val.toString();
     }());
     _model.pesonascimentoFocusNode ??= FocusNode();
 
     _model.pesodadesmamaTextController ??= TextEditingController(text: () {
       final val = FFAppState().rebanhoSelecionado.pesoDesmama;
       if (val == 0.0) return '';
-      return val.toString();
+      return val == val.truncateToDouble() ? val.toInt().toString() : val.toString();
     }());
     _model.pesodadesmamaFocusNode ??= FocusNode();
 
     _model.pesoAtualTextController ??= TextEditingController(text: () {
       final val = FFAppState().rebanhoSelecionado.pesoAtual;
       if (val == 0.0) return '';
-      return val.toString();
+      return val == val.truncateToDouble() ? val.toInt().toString() : val.toString();
     }());
     _model.pesoAtualFocusNode ??= FocusNode();
 
@@ -335,7 +347,15 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                           ),
                         );
                         FFAppState().update(() {});
-                        Navigator.pop(context);
+                        if (context.mounted) {
+                          await action_blocks.animaisRegistrados(context);
+                        }
+                        if (context.mounted) {
+                          await action_blocks.animaisPropriedade(context);
+                        }
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
                       }
                     },
                   ),
@@ -1495,6 +1515,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             onTap: () async {
                                               final datePicked1Date =
                                                   await showDatePicker(
+                                                initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                 context: context,
                                                 initialDate:
                                                     getCurrentTimestamp,
@@ -1784,7 +1805,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                               keyboardType: const TextInputType
                                                   .numberWithOptions(
-                                                  decimal: true),
+                                                  decimal: true,
+                                                  signed: true),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter.allow(
+                                                    RegExp(r'[0-9.,]')),
+                                              ],
                                               validator: _model
                                                   .pesonascimentoTextControllerValidator
                                                   .asValidator(context),
@@ -2153,6 +2179,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             onTap: () async {
                                               final datePicked2Date =
                                                   await showDatePicker(
+                                                initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                 context: context,
                                                 initialDate:
                                                     getCurrentTimestamp,
@@ -3230,6 +3257,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               onTap: () async {
                                                 final datePicked3Date =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       getCurrentTimestamp,
@@ -3522,7 +3550,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                               keyboardType: const TextInputType
                                                   .numberWithOptions(
-                                                  decimal: true),
+                                                  decimal: true,
+                                                  signed: true),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter.allow(
+                                                    RegExp(r'[0-9.,]')),
+                                              ],
                                               validator: _model
                                                   .pesodadesmamaTextControllerValidator
                                                   .asValidator(context),
@@ -3569,6 +3602,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                           onTap: () async {
                                             final datePicked4Date =
                                                 await showDatePicker(
+                                              initialEntryMode: DatePickerEntryMode.calendarOnly,
                                               context: context,
                                               initialDate: getCurrentTimestamp,
                                               firstDate: DateTime(1900),
@@ -3849,7 +3883,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                               keyboardType: const TextInputType
                                                   .numberWithOptions(
-                                                  decimal: true),
+                                                  decimal: true,
+                                                  signed: true),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter.allow(
+                                                    RegExp(r'[0-9.,]')),
+                                              ],
                                               validator: _model
                                                   .pesoAtualTextControllerValidator
                                                   .asValidator(context),
@@ -4075,6 +4114,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               onTap: () async {
                                                 final datePicked5Date =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       getCurrentTimestamp,
@@ -4343,6 +4383,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               onTap: () async {
                                                 final datePicked6Date =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       getCurrentTimestamp,
@@ -4611,6 +4652,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               onTap: () async {
                                                 final datePicked7Date =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       getCurrentTimestamp,
@@ -4816,6 +4858,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               onTap: () async {
                                                 final datePicked8Date =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       getCurrentTimestamp,
@@ -5021,6 +5064,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               onTap: () async {
                                                 final datePicked9Date =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       getCurrentTimestamp,
@@ -5594,7 +5638,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                     .of(context)
                                                                 .languageCode,
                                                           ),
-                                                pesoNascimento: double.tryParse(
+                                                pesoNascimento: _parsePeso(
                                                     _model
                                                         .pesonascimentoTextController
                                                         .text),
@@ -5641,10 +5685,10 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                     .of(context)
                                                                 .languageCode,
                                                           ),
-                                                pesoDesmama: double.tryParse(_model
+                                                pesoDesmama: _parsePeso(_model
                                                     .pesodadesmamaTextController
                                                     .text),
-                                                pesoAtual: double.tryParse(
+                                                pesoAtual: _parsePeso(
                                                     _model
                                                         .pesoAtualTextController
                                                         .text),
@@ -5871,7 +5915,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         .rebanhoIdReprodutor,
                                               );
                                               final novoPesoNascimento =
-                                                  double.tryParse(_model
+                                                  _parsePeso(_model
                                                       .pesonascimentoTextController
                                                       .text);
                                               if (novoPesoNascimento != null &&
@@ -5880,7 +5924,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           .pesoNascimento !=
                                                       novoPesoNascimento) {
                                                 await SQLiteManager.instance
-                                                    .addPesagem(
+                                                    .updatePesagemByTipo(
+                                                  idRebanho: FFAppState()
+                                                      .rebanhoSelecionado
+                                                      .idRebanho,
+                                                  tipo: 'Nascimento',
+                                                  peso: novoPesoNascimento,
                                                   dataPesagem: _model
                                                               .datePicked1 !=
                                                           null
@@ -5892,37 +5941,11 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                       context)
                                                                   .languageCode,
                                                         )
-                                                      : dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          functions.converterParaData(
-                                                              FFAppState()
-                                                                  .rebanhoSelecionado
-                                                                  .dataNascimento),
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                  tipo: 'Nascimento',
-                                                  peso: double.tryParse(_model
-                                                      .pesonascimentoTextController
-                                                      .text),
-                                                  deletado: 'NAO',
-                                                  createdat: dateTimeFormat(
-                                                    "yyyy-MM-dd HH:mm:ss",
-                                                    getCurrentTimestamp,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  idRebanho: FFAppState()
-                                                      .rebanhoSelecionado
-                                                      .idRebanho,
-                                                  idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+                                                      : null,
                                                 );
                                               }
                                               final novoPesoDesmama =
-                                                  double.tryParse(_model
+                                                  _parsePeso(_model
                                                       .pesodadesmamaTextController
                                                       .text);
                                               if (novoPesoDesmama != null &&
@@ -5931,7 +5954,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           .pesoDesmama !=
                                                       novoPesoDesmama) {
                                                 await SQLiteManager.instance
-                                                    .addPesagem(
+                                                    .updatePesagemByTipo(
+                                                  idRebanho: FFAppState()
+                                                      .rebanhoSelecionado
+                                                      .idRebanho,
+                                                  tipo: 'Desmama',
+                                                  peso: novoPesoDesmama,
                                                   dataPesagem: _model
                                                               .datePicked3 !=
                                                           null
@@ -5943,37 +5971,34 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                       context)
                                                                   .languageCode,
                                                         )
-                                                      : dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          functions.converterParaData(
-                                                              FFAppState()
-                                                                  .rebanhoSelecionado
-                                                                  .dataDesmama),
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                  tipo: 'Desmama',
-                                                  peso: double.tryParse(_model
-                                                      .pesodadesmamaTextController
-                                                      .text),
-                                                  deletado: 'NAO',
-                                                  createdat: dateTimeFormat(
-                                                    "yyyy-MM-dd HH:mm:ss",
-                                                    getCurrentTimestamp,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  idRebanho: FFAppState()
-                                                      .rebanhoSelecionado
-                                                      .idRebanho,
-                                                  idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+                                                      : null,
                                                 );
                                               }
+
+                                              // Se peso atual estava vazio e peso desmama foi adicionado,
+                                              // atualizar peso atual com peso desmama
+                                              final pesoAtualOriginal =
+                                                  FFAppState()
+                                                      .rebanhoSelecionado
+                                                      .pesoAtual;
+                                              if ((pesoAtualOriginal ==
+                                                          0.0) &&
+                                                  novoPesoDesmama != null &&
+                                                  novoPesoDesmama > 0) {
+                                                _model.pesoAtualTextController
+                                                        .text =
+                                                    novoPesoDesmama ==
+                                                            novoPesoDesmama
+                                                                .truncateToDouble()
+                                                        ? novoPesoDesmama
+                                                            .toInt()
+                                                            .toString()
+                                                        : novoPesoDesmama
+                                                            .toString();
+                                              }
+
                                               final novoPesoAtual =
-                                                  double.tryParse(_model
+                                                  _parsePeso(_model
                                                       .pesoAtualTextController
                                                       .text);
                                               if (novoPesoAtual != null &&
@@ -5994,20 +6019,32 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                       context)
                                                                   .languageCode,
                                                         )
-                                                      : dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          functions.converterParaData(
-                                                              FFAppState()
+                                                      : (FFAppState()
                                                                   .rebanhoSelecionado
-                                                                  .dataUltimaPesagem),
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
+                                                                  .dataUltimaPesagem
+                                                                  .isNotEmpty
+                                                              ? dateTimeFormat(
+                                                                  "yyyy-MM-dd",
+                                                                  functions.converterParaData(
+                                                                      FFAppState()
+                                                                          .rebanhoSelecionado
+                                                                          .dataUltimaPesagem),
+                                                                  locale:
+                                                                      FFLocalizations.of(
+                                                                              context)
+                                                                          .languageCode,
+                                                                )
+                                                              : dateTimeFormat(
+                                                                  "yyyy-MM-dd",
+                                                                  getCurrentTimestamp,
+                                                                  locale:
+                                                                      FFLocalizations.of(
+                                                                              context)
+                                                                          .languageCode,
+                                                                )),
                                                   tipo: 'Atual',
                                                   peso: valueOrDefault<double>(
-                                                    double.tryParse(_model
+                                                    _parsePeso(_model
                                                         .pesoAtualTextController
                                                         .text),
                                                     0.0,
@@ -6308,7 +6345,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           .sortedList(
                                                               keyOf: (e) => functions
                                                                   .converterParaData(
-                                                                      e.dataPesagem)!,
+                                                                      e.dataPesagem) ??
+                                                                  DateTime(1900),
                                                               desc: false)
                                                           .toList();
 
@@ -6368,7 +6406,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                                         children: [
                                                                           Text(
                                                                             '${valueOrDefault<String>(
-                                                                              pesagemItem.peso.toString(),
+                                                                              pesagemItem.peso == pesagemItem.peso.truncateToDouble() ? pesagemItem.peso.toInt().toString() : pesagemItem.peso.toString(),
                                                                               '0',
                                                                             )} KG',
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(

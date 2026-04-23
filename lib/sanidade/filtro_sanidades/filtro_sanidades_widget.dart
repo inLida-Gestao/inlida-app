@@ -1,10 +1,8 @@
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
-import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
-import '/flutter_flow/form_field_controller.dart';
 import '/rebanho/popup_rebanhos/popup_rebanhos_widget.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:aligned_dialog/aligned_dialog.dart';
@@ -36,6 +34,23 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
     _model = createModel(context, () => FiltroSanidadesModel());
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
+  }
+
+  void _updateDateFilterText() {
+    final inicio = _model.dataInicio ?? FFAppState().filtroDataSanidade;
+    final fim = _model.dataFim ?? FFAppState().filtroDataSanidadeFim;
+    if (inicio != null && fim != null) {
+      FFAppState().filtroDataSanidadeTxt =
+          '${dateTimeFormat("dd/MM/yyyy", inicio, locale: "pt")} - ${dateTimeFormat("dd/MM/yyyy", fim, locale: "pt")}';
+    } else if (inicio != null) {
+      FFAppState().filtroDataSanidadeTxt =
+          'A partir de ${dateTimeFormat("dd/MM/yyyy", inicio, locale: "pt")}';
+    } else if (fim != null) {
+      FFAppState().filtroDataSanidadeTxt =
+          'Até ${dateTimeFormat("dd/MM/yyyy", fim, locale: "pt")}';
+    } else {
+      FFAppState().filtroDataSanidadeTxt = '';
+    }
   }
 
   @override
@@ -147,6 +162,7 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                             FFAppState().filtroLoteSanidade = '';
                             FFAppState().filtroLoteSanidadeNome = '';
                             FFAppState().filtroDataSanidade = null;
+                            FFAppState().filtroDataSanidadeFim = null;
                             FFAppState().filtroDataSanidadeTxt = '';
                             safeSetState(() {});
                             Navigator.pop(context);
@@ -225,136 +241,239 @@ class _FiltroSanidadesWidgetState extends State<FiltroSanidadesWidget> {
                                   ),
                                   Row(
                                     mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      FlutterFlowDropDown<String>(
-                                        controller: _model
-                                                .dropDownValueController ??=
-                                            FormFieldController<String>(null),
-                                        options: const [
-                                          'Últimos 30 dias',
-                                          'Últimos 60 dias',
-                                          'Últimos 90 dias'
-                                        ],
-                                        onChanged: (val) async {
-                                          safeSetState(
-                                              () => _model.dropDownValue = val);
-                                          FFAppState().filtroDataSanidade = () {
-                                            if (_model.dropDownValue ==
-                                                'Últimos 30 dias') {
-                                              return functions.hojeMenos30();
-                                            } else if (_model.dropDownValue ==
-                                                'Últimos 60 dias') {
-                                              return functions.hojeMenos60();
-                                            } else if (_model.dropDownValue ==
-                                                'Últimos 90 dias') {
-                                              return functions.hojeMenos90();
-                                            } else {
-                                              return getCurrentTimestamp;
+                                      Expanded(
+                                        child: InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () async {
+                                            final pickedDate =
+                                                await showDatePicker(
+                                              initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                              context: context,
+                                              initialDate:
+                                                  _model.dataInicio ??
+                                                      getCurrentTimestamp,
+                                              firstDate: DateTime(2000),
+                                              lastDate: getCurrentTimestamp,
+                                              locale: Locale(
+                                                  FFLocalizations.of(context)
+                                                      .languageCode),
+                                              builder: (context, child) {
+                                                return Theme(
+                                                  data: Theme.of(context)
+                                                      .copyWith(
+                                                    colorScheme:
+                                                        const ColorScheme
+                                                            .light(
+                                                      primary:
+                                                          Color(0xFF28A365),
+                                                      onPrimary: Colors.white,
+                                                      onSurface:
+                                                          Color(0xFF2F2F2F),
+                                                    ),
+                                                  ),
+                                                  child: child!,
+                                                );
+                                              },
+                                            );
+                                            if (pickedDate != null) {
+                                              safeSetState(() {
+                                                _model.dataInicio = pickedDate;
+                                              });
+                                              FFAppState().filtroDataSanidade =
+                                                  pickedDate;
+                                              _updateDateFilterText();
+                                              safeSetState(() {});
                                             }
-                                          }();
-                                          FFAppState().filtroDataSanidadeTxt =
-                                              _model.dropDownValue!;
-                                          safeSetState(() {});
-                                        },
-                                        width: 200.0,
-                                        height: 56.0,
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
+                                          },
+                                          child: Container(
+                                            height: 48.0,
+                                            decoration: BoxDecoration(
+                                              color:
                                                   FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
+                                                      .customColor3,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
                                             ),
-                                        hintText: 'Selecionar período...',
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          size: 24.0,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      12.0, 0.0, 12.0, 0.0),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    _model.dataInicio != null
+                                                        ? dateTimeFormat(
+                                                            "dd/MM/yyyy",
+                                                            _model.dataInicio!,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          )
+                                                        : 'Data inicial',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: _model
+                                                                      .dataInicio !=
+                                                                  null
+                                                              ? const Color(
+                                                                  0xFF2F2F2F)
+                                                              : FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .secondaryText,
+                                                          letterSpacing: 0.0,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
+                                                  ),
+                                                  Icon(
+                                                    Icons.calendar_today,
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryText,
+                                                    size: 20.0,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .customColor3,
-                                        elevation: 2.0,
-                                        borderColor: Colors.transparent,
-                                        borderWidth: 0.0,
-                                        borderRadius: 8.0,
-                                        margin: const EdgeInsetsDirectional
-                                            .fromSTEB(12.0, 0.0, 12.0, 0.0),
-                                        hidesUnderline: true,
-                                        isOverButton: false,
-                                        isSearchable: false,
-                                        isMultiSelect: false,
                                       ),
-                                      Text(
-                                        () {
-                                          if (_model.dropDownValue ==
-                                              'Últimos 30 dias') {
-                                            return '${dateTimeFormat(
-                                              "dMMM",
-                                              functions.hojeMenos30(),
-                                              locale:
+                                      const Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            8.0, 0.0, 8.0, 0.0),
+                                        child: Text('até'),
+                                      ),
+                                      Expanded(
+                                        child: InkWell(
+                                          splashColor: Colors.transparent,
+                                          focusColor: Colors.transparent,
+                                          hoverColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () async {
+                                            final pickedDate =
+                                                await showDatePicker(
+                                              initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                              context: context,
+                                              initialDate: _model.dataFim ??
+                                                  getCurrentTimestamp,
+                                              firstDate: DateTime(2000),
+                                              lastDate: DateTime(2100),
+                                              locale: Locale(
                                                   FFLocalizations.of(context)
-                                                      .languageCode,
-                                            )} - ${dateTimeFormat(
-                                              "dMMM",
-                                              getCurrentTimestamp,
-                                              locale:
-                                                  FFLocalizations.of(context)
-                                                      .languageCode,
-                                            )}';
-                                          } else if (_model.dropDownValue ==
-                                              'Últimos 60 dias') {
-                                            return '${dateTimeFormat(
-                                              "dMMM",
-                                              functions.hojeMenos60(),
-                                              locale:
-                                                  FFLocalizations.of(context)
-                                                      .languageCode,
-                                            )} - ${dateTimeFormat(
-                                              "dMMM",
-                                              getCurrentTimestamp,
-                                              locale:
-                                                  FFLocalizations.of(context)
-                                                      .languageCode,
-                                            )}';
-                                          } else if (_model.dropDownValue ==
-                                              'Últimos 90 dias') {
-                                            return '${dateTimeFormat(
-                                              "dMMM",
-                                              functions.hojeMenos90(),
-                                              locale:
-                                                  FFLocalizations.of(context)
-                                                      .languageCode,
-                                            )} - ${dateTimeFormat(
-                                              "dMMM",
-                                              getCurrentTimestamp,
-                                              locale:
-                                                  FFLocalizations.of(context)
-                                                      .languageCode,
-                                            )}';
-                                          } else {
-                                            return ' ';
-                                          }
-                                        }(),
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
+                                                      .languageCode),
+                                              builder: (context, child) {
+                                                return Theme(
+                                                  data: Theme.of(context)
+                                                      .copyWith(
+                                                    colorScheme:
+                                                        const ColorScheme
+                                                            .light(
+                                                      primary:
+                                                          Color(0xFF28A365),
+                                                      onPrimary: Colors.white,
+                                                      onSurface:
+                                                          Color(0xFF2F2F2F),
+                                                    ),
+                                                  ),
+                                                  child: child!,
+                                                );
+                                              },
+                                            );
+                                            if (pickedDate != null) {
+                                              safeSetState(() {
+                                                _model.dataFim = pickedDate;
+                                              });
+                                              FFAppState()
+                                                      .filtroDataSanidadeFim =
+                                                  pickedDate;
+                                              _updateDateFilterText();
+                                              safeSetState(() {});
+                                            }
+                                          },
+                                          child: Container(
+                                            height: 48.0,
+                                            decoration: BoxDecoration(
+                                              color:
                                                   FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
+                                                      .customColor3,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
                                             ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                      12.0, 0.0, 12.0, 0.0),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    _model.dataFim != null
+                                                        ? dateTimeFormat(
+                                                            "dd/MM/yyyy",
+                                                            _model.dataFim!,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          )
+                                                        : 'Data final',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          color: _model
+                                                                      .dataFim !=
+                                                                  null
+                                                              ? const Color(
+                                                                  0xFF2F2F2F)
+                                                              : FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .secondaryText,
+                                                          letterSpacing: 0.0,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
+                                                  ),
+                                                  Icon(
+                                                    Icons.calendar_today,
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryText,
+                                                    size: 20.0,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ].divide(const SizedBox(width: 8.0)),
+                                    ],
                                   ),
                                 ].divide(const SizedBox(height: 8.0)),
                               ),

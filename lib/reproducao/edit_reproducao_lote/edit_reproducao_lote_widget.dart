@@ -1263,6 +1263,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 onTap: () async {
                                                   final datePicked1Date =
                                                       await showDatePicker(
+                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -1779,6 +1780,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 onTap: () async {
                                                   final datePicked2Date =
                                                       await showDatePicker(
+                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -2381,6 +2383,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 onTap: () async {
                                                   final datePicked3Date =
                                                       await showDatePicker(
+                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -2603,6 +2606,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 onTap: () async {
                                                   final datePicked4Date =
                                                       await showDatePicker(
+                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -2842,6 +2846,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 onTap: () async {
                                                   final datePicked5Date =
                                                       await showDatePicker(
+                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -3390,6 +3395,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                           onTap: () async {
                                                             final datePicked6Date =
                                                                 await showDatePicker(
+                                                              initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                               context: context,
                                                               initialDate:
                                                                   getCurrentTimestamp,
@@ -3697,6 +3703,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             onTap: () async {
                                               final datePicked7Date =
                                                   await showDatePicker(
+                                                initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                 context: context,
                                                 initialDate:
                                                     getCurrentTimestamp,

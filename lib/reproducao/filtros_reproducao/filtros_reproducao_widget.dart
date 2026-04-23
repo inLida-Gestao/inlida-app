@@ -577,6 +577,7 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                               onTap: () async {
                                                 final picked =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate: _model
                                                           .dataReproducaoInicio ??
@@ -747,6 +748,7 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                               onTap: () async {
                                                 final picked =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate: _model
                                                           .dataReproducaoFim ??
@@ -941,6 +943,7 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                               onTap: () async {
                                                 final picked =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       _model.dataPartoInicio ??
@@ -1109,6 +1112,7 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                               onTap: () async {
                                                 final picked =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       _model.dataPartoFim ??

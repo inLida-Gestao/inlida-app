@@ -10,6 +10,7 @@ import '/sanidade/selecionar_sanidade/selecionar_sanidade_widget.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'edit_sanidade_lote_model.dart';
@@ -198,6 +199,30 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                               size: 20.0,
                             ),
                             onPressed: () async {
+                              var confirmDialogResponse = await showDialog<bool>(
+                                    context: context,
+                                    builder: (alertDialogContext) {
+                                      return AlertDialog(
+                                        title: const Text('Deletar sanidade'),
+                                        content: const Text(
+                                            'Deseja realmente apagar esse registro de sanidade? Esta ação não pode ser desfeita.'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(
+                                                alertDialogContext, false),
+                                            child: const Text('Não'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(alertDialogContext, true),
+                                            child: const Text('Sim'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ) ??
+                                  false;
+                              if (confirmDialogResponse) {
                               if (!(FFAppState().dataDadosNaoSyncProp !=
                                   null)) {
                                 FFAppState().dataDadosNaoSyncProp =
@@ -215,6 +240,7 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                                 ),
                               );
                               Navigator.pop(context);
+                              }
                             },
                           ),
                       ].divide(const SizedBox(width: 16.0)),
@@ -477,7 +503,11 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                                         ),
                                     keyboardType:
                                         const TextInputType.numberWithOptions(
-                                            decimal: true),
+                                            decimal: true, signed: true),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'[0-9.,]')),
+                                    ],
                                     validator: _model
                                         .textFieldPorcentagemLoteTextControllerValidator
                                         .asValidator(context),
@@ -523,6 +553,7 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                                   highlightColor: Colors.transparent,
                                   onTap: () async {
                                     final datePickedDate = await showDatePicker(
+                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
                                       context: context,
                                       initialDate: getCurrentTimestamp,
                                       firstDate: DateTime(1900),

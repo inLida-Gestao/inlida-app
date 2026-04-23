@@ -136,6 +136,30 @@ class _EditPropriedadeWidgetState extends State<EditPropriedadeWidget> {
                         size: 20.0,
                       ),
                       onPressed: () async {
+                        var confirmDialogResponse = await showDialog<bool>(
+                              context: context,
+                              builder: (alertDialogContext) {
+                                return AlertDialog(
+                                  title: const Text('Deletar propriedade'),
+                                  content: const Text(
+                                      'Deseja realmente apagar essa propriedade? Esta ação não pode ser desfeita.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(
+                                          alertDialogContext, false),
+                                      child: const Text('Não'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(alertDialogContext, true),
+                                      child: const Text('Sim'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ) ??
+                            false;
+                        if (confirmDialogResponse) {
                         if (!(FFAppState().dataDadosNaoSyncProp != null)) {
                           FFAppState().dataDadosNaoSyncProp =
                               getCurrentTimestamp;
@@ -151,6 +175,7 @@ class _EditPropriedadeWidgetState extends State<EditPropriedadeWidget> {
                           ),
                         );
                         Navigator.pop(context);
+                        }
                       },
                     ),
                 ],

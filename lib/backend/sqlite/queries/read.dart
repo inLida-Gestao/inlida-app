@@ -544,6 +544,7 @@ Future<List<QTDAnimaisPropriedadeRow>> performQTDAnimaisPropriedade(
 SELECT * FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
 AND statusRebanho = 'Na propriedade'
+AND deletado = 'NAO'
 ''';
   return _readQuery(database, query, (d) => QTDAnimaisPropriedadeRow(d));
 }
@@ -1641,7 +1642,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR loteID = '$loteId')
+AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
@@ -1708,7 +1709,7 @@ Future<List<QTDAnimaisTotalPropriedadeRow>> performQTDAnimaisTotalPropriedade(
   final query = '''
 SELECT * FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
-
+AND deletado = 'NAO'
 ''';
   return _readQuery(database, query, (d) => QTDAnimaisTotalPropriedadeRow(d));
 }
@@ -2014,7 +2015,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR loteID = '$loteId')
+AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
 AND ('$pesquisa' = '' OR numeroAnimal LIKE '%$pesquisa%' OR nome LIKE '%$pesquisa%' 
 OR chip LIKE '%$pesquisa%')
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
@@ -2166,6 +2167,7 @@ Future<List<BuscaSanidadesPesqRow>> performBuscaSanidadesPesq(
   String? idRebanho,
   String? idLote,
   String? dataSanidade,
+  String? dataSanidadeFim,
 }) {
   final query = '''
 SELECT ls.* 
@@ -2186,6 +2188,7 @@ AND ('$tratamentos' = '' OR ls.tratamento LIKE '%$tratamentos%')
 AND ('$protocolo' = '' OR ls.protocolo_reprodutivo LIKE '%$protocolo%')
 AND ('$idRebanho' = '' OR ls.id_rebanho = '$idRebanho')
 AND ('$dataSanidade' = '' OR ls.data_sanidade >= '$dataSanidade')
+AND ('$dataSanidadeFim' = '' OR ls.data_sanidade <= '$dataSanidadeFim')
 AND ls.deletado = 'NAO'
 ORDER BY ls.created_at DESC
 ''';
@@ -2237,6 +2240,7 @@ Future<List<BuscaSanidadesPaginadaRow>> performBuscaSanidadesPaginada(
   String? idRebanho,
   String? idLote,
   String? dataSanidade,
+  String? dataSanidadeFim,
   int? limitRows,
   int? offsetRows,
 }) {
@@ -2250,6 +2254,7 @@ AND ('$tratamentos' = ''OR tratamento LIKE '%$tratamentos%')
 AND ('$protocolo' = '' OR protocolo_reprodutivo LIKE '%$protocolo%')
 AND ('$idRebanho' = '' OR id_rebanho = '$idRebanho')
 AND ('$dataSanidade' = '' OR data_sanidade >= '$dataSanidade')
+AND ('$dataSanidadeFim' = '' OR data_sanidade <= '$dataSanidadeFim')
 AND deletado = 'NAO'
 ORDER BY created_at DESC
 LIMIT $limitRows OFFSET $offsetRows
@@ -2405,7 +2410,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR loteID = '$loteId')
+AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
@@ -2490,7 +2495,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR loteID = '$loteId')
+AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
@@ -2575,7 +2580,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR loteID = '$loteId')
+AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
@@ -2660,7 +2665,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR loteID = '$loteId')
+AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
@@ -2745,7 +2750,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR loteID = '$loteId')
+AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
@@ -2832,7 +2837,7 @@ AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR loteID = '$loteId')
+AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition

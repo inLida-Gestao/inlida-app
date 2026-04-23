@@ -15,6 +15,7 @@ import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'add_rebanho_nascimento_model.dart';
 export 'add_rebanho_nascimento_model.dart';
@@ -1074,6 +1075,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             onTap: () async {
                                               final datePicked1Date =
                                                   await showDatePicker(
+                                                initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                 context: context,
                                                 initialDate:
                                                     getCurrentTimestamp,
@@ -1366,7 +1368,12 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   ),
                                               keyboardType: const TextInputType
                                                   .numberWithOptions(
-                                                  decimal: true),
+                                                  decimal: true,
+                                                  signed: true),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter.allow(
+                                                    RegExp(r'[0-9.,]')),
+                                              ],
                                               validator: _model
                                                   .pesonascimentoTextControllerValidator
                                                   .asValidator(context),
@@ -1750,6 +1757,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                             onTap: () async {
                                               final datePicked2Date =
                                                   await showDatePicker(
+                                                initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                 context: context,
                                                 initialDate:
                                                     getCurrentTimestamp,
@@ -2765,6 +2773,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               onTap: () async {
                                                 final datePicked3Date =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       getCurrentTimestamp,
@@ -2977,6 +2986,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               onTap: () async {
                                                 final datePicked4Date =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       getCurrentTimestamp,
@@ -3289,6 +3299,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               onTap: () async {
                                                 final datePicked5Date =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       getCurrentTimestamp,

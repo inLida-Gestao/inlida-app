@@ -21,6 +21,50 @@ void _syncLog(String flow, String message) {
   debugPrint('[SYNC][$flow] $message');
 }
 
+String? _descreverRebanhoBy(String? numero) {
+  if (numero == null || numero.isEmpty) return null;
+  return 'Animal nº $numero';
+}
+
+String? _descreverReproducaoBy(String? data) {
+  if (data == null || data.isEmpty) return null;
+  return 'Inseminação em $data';
+}
+
+/// Marca como resolvidos os erros pendentes de um registro específico
+/// quando seu PUT/UPDATE volta a funcionar.
+void _markSyncOk(String modulo, String? registroId) {
+  if (registroId == null) return;
+  // ignore: discarded_futures
+  actions.SyncErrorLog.autoResolverPorRegistro(modulo, registroId);
+}
+
+/// Registra erro tanto no log textual (debugPrint) quanto na auditoria
+/// persistente (SyncErrorLog) para que o usuário veja na UI.
+/// Use em qualquer catch de PUT/UPDATE/INSERT remoto.
+void _recordSyncError({
+  required String flow,
+  required String modulo,
+  required String operacao,
+  required Object erro,
+  String? registroId,
+  String? registroDescricao,
+  Map<String, dynamic>? payload,
+}) {
+  _syncLog(flow,
+      'ERRO ${operacao} ${modulo} id=${registroId ?? "?"}: $erro');
+  // Fire-and-forget — não awaita pra não atrasar o loop principal.
+  // ignore: discarded_futures
+  actions.SyncErrorLog.registrar(
+    modulo: modulo,
+    operacao: operacao,
+    registroId: registroId,
+    registroDescricao: registroDescricao,
+    erro: erro,
+    payload: payload,
+  );
+}
+
 /// Lança SyncCancelledException se o usuário pediu cancelamento.
 /// Chamar antes de cada round-trip em loops longos.
 class SyncCancelledException implements Exception {
@@ -669,10 +713,25 @@ Future<bool> putUpdtPropriedades(BuildContext context) async {
                   .elementAtOrNull(FFAppState().propriedadesIndex)
                   ?.atividades,
             });
+            _markSyncOk(
+                'propriedade',
+                localPropriedades
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.idPropriedade);
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtPropriedades',
-                'ERRO insert propriedade idx=${FFAppState().propriedadesIndex}: $e');
+            _recordSyncError(
+              flow: 'putUpdtPropriedades',
+              modulo: 'propriedade',
+              operacao: 'insert',
+              erro: e,
+              registroId: localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.idPropriedade,
+              registroDescricao: localPropriedades
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.nome,
+            );
           }
           FFAppState().propriedadesIndex = FFAppState().propriedadesIndex + 1;
         }
@@ -753,10 +812,25 @@ Future<bool> putUpdtPropriedades(BuildContext context) async {
                     ?.idPropriedade,
               ),
             );
+            _markSyncOk(
+                'propriedade',
+                localPropriedadesUPT
+                    .elementAtOrNull(FFAppState().propriedadesIndex)
+                    ?.idPropriedade);
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtPropriedades',
-                'ERRO update propriedade idx=${FFAppState().propriedadesIndex}: $e');
+            _recordSyncError(
+              flow: 'putUpdtPropriedades',
+              modulo: 'propriedade',
+              operacao: 'update',
+              erro: e,
+              registroId: localPropriedadesUPT
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.idPropriedade,
+              registroDescricao: localPropriedadesUPT
+                  .elementAtOrNull(FFAppState().propriedadesIndex)
+                  ?.nome,
+            );
           }
           FFAppState().propriedadesIndex = FFAppState().propriedadesIndex + 1;
         }
@@ -1031,10 +1105,25 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
                     .elementAtOrNull(FFAppState().rebanhosIndex)
                     ?.categoriaMatriz,
               });
+              _markSyncOk(
+                  'rebanho',
+                  localRebanhos
+                      .elementAtOrNull(FFAppState().rebanhosIndex)
+                      ?.idRebanho);
             } catch (e) {
               allSuccess = false;
-              _syncLog('putUpdtRebanhos',
-                  'ERRO insert rebanho idx=${FFAppState().rebanhosIndex}: $e');
+              _recordSyncError(
+                flow: 'putUpdtRebanhos',
+                modulo: 'rebanho',
+                operacao: 'insert',
+                erro: e,
+                registroId: localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.idRebanho,
+                registroDescricao: _descreverRebanhoBy(localRebanhos
+                    .elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.numeroAnimal),
+              );
             }
           }
           FFAppState().rebanhosIndex = FFAppState().rebanhosIndex + 1;
@@ -1203,10 +1292,25 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
                     ?.idRebanho,
               ),
             );
+            _markSyncOk(
+                'rebanho',
+                localRebanhosUPDT
+                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                    ?.idRebanho);
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtRebanhos',
-                'ERRO update rebanho idx=${FFAppState().rebanhosIndex}: $e');
+            _recordSyncError(
+              flow: 'putUpdtRebanhos',
+              modulo: 'rebanho',
+              operacao: 'update',
+              erro: e,
+              registroId: localRebanhosUPDT
+                  ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                  ?.idRebanho,
+              registroDescricao: _descreverRebanhoBy(localRebanhosUPDT
+                  ?.elementAtOrNull(FFAppState().rebanhosIndex)
+                  ?.numeroAnimal),
+            );
           }
           FFAppState().rebanhosIndex = FFAppState().rebanhosIndex + 1;
         }
@@ -1245,10 +1349,23 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
                   .elementAtOrNull(FFAppState().pesagensIndex)
                   ?.idPropriedade,
             });
+            _markSyncOk(
+                'pesagem',
+                localHistPesPUT
+                    .elementAtOrNull(FFAppState().pesagensIndex)
+                    ?.idRebanho);
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtRebanhos',
-                'ERRO insert pesagem idx=${FFAppState().pesagensIndex}: $e');
+            _recordSyncError(
+              flow: 'putUpdtRebanhos',
+              modulo: 'pesagem',
+              operacao: 'insert',
+              erro: e,
+              registroId: localHistPesPUT
+                  .elementAtOrNull(FFAppState().pesagensIndex)
+                  ?.idRebanho,
+              registroDescricao: 'Pesagem ${localHistPesPUT.elementAtOrNull(FFAppState().pesagensIndex)?.peso ?? "?"}kg',
+            );
           }
           FFAppState().pesagensIndex = FFAppState().pesagensIndex + 1;
         }
@@ -1272,10 +1389,25 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
                     ?.id,
               ),
             );
+            _markSyncOk(
+                'pesagem',
+                localPesagensUPDT
+                    .elementAtOrNull(FFAppState().pesagensIndex)
+                    ?.id
+                    ?.toString());
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtRebanhos',
-                'ERRO update pesagem idx=${FFAppState().pesagensIndex}: $e');
+            _recordSyncError(
+              flow: 'putUpdtRebanhos',
+              modulo: 'pesagem',
+              operacao: 'update',
+              erro: e,
+              registroId: localPesagensUPDT
+                  .elementAtOrNull(FFAppState().pesagensIndex)
+                  ?.id
+                  ?.toString(),
+              registroDescricao: 'Pesagem id=${localPesagensUPDT.elementAtOrNull(FFAppState().pesagensIndex)?.id ?? "?"}',
+            );
           }
           FFAppState().pesagensIndex = FFAppState().pesagensIndex + 1;
         }
@@ -1546,10 +1678,20 @@ Future<bool> putUpdtLotes(BuildContext context) async {
                   .elementAtOrNull(FFAppState().lotesIndex)
                   ?.valorVenda,
             });
+            _markSyncOk('lote',
+                localLotes.elementAtOrNull(FFAppState().lotesIndex)?.idLote);
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtLotes',
-                'ERRO insert lote idx=${FFAppState().lotesIndex}: $e');
+            _recordSyncError(
+              flow: 'putUpdtLotes',
+              modulo: 'lote',
+              operacao: 'insert',
+              erro: e,
+              registroId:
+                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
+              registroDescricao:
+                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.nome,
+            );
           }
           FFAppState().lotesIndex = FFAppState().lotesIndex + 1;
         }
@@ -1626,10 +1768,20 @@ Future<bool> putUpdtLotes(BuildContext context) async {
                 localLotesUPT?.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
               ),
             );
+            _markSyncOk('lote',
+                localLotesUPT.elementAtOrNull(FFAppState().lotesIndex)?.idLote);
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtLotes',
-                'ERRO update lote idx=${FFAppState().lotesIndex}: $e');
+            _recordSyncError(
+              flow: 'putUpdtLotes',
+              modulo: 'lote',
+              operacao: 'update',
+              erro: e,
+              registroId:
+                  localLotesUPT.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
+              registroDescricao:
+                  localLotesUPT.elementAtOrNull(FFAppState().lotesIndex)?.nome,
+            );
           }
           FFAppState().lotesIndex = FFAppState().lotesIndex + 1;
         }
@@ -1686,6 +1838,9 @@ Future<bool> putUpdtReproducao(BuildContext context) async {
   final dataPendente = FFAppState().dataDadosNaoSyncRepro;
   if (dataPendente == null) return true;
 
+  List<BuscarReproducaoPUTRow> localReproducao = const [];
+  List<BuscarReproducaoUPDTRow> localReproducaoUPDT = const [];
+
   try {
     _throwIfCancelled('putUpdtReproducao');
     final dateFilter = dateTimeFormat(
@@ -1694,9 +1849,9 @@ Future<bool> putUpdtReproducao(BuildContext context) async {
       locale: FFLocalizations.of(context).languageCode,
     );
 
-    final localReproducao =
+    localReproducao =
         await SQLiteManager.instance.buscarReproducaoPUT(datePUT: dateFilter);
-    var localReproducaoUPDT =
+    localReproducaoUPDT =
         await SQLiteManager.instance.buscarReproducaoUPDT(datePUT: dateFilter);
 
     // A4 dedupe PUT/UPDT: registros recém-inseridos (created_at ≈ updated_at)
@@ -1749,6 +1904,16 @@ Future<bool> putUpdtReproducao(BuildContext context) async {
       maxAttempts: 3,
     );
 
+    // Auto-resolve erros pendentes dos registros que acabaram de subir.
+    for (final row in localReproducao) {
+      // ignore: discarded_futures
+      actions.SyncErrorLog.autoResolverPorRegistro('reproducao', row.idReproducao);
+    }
+    for (final row in localReproducaoUPDT) {
+      // ignore: discarded_futures
+      actions.SyncErrorLog.autoResolverPorRegistro('reproducao', row.idReproducao);
+    }
+
     _syncLog('putUpdtReproducao', 'Upload concluído com sucesso.');
   } on SyncCancelledException catch (e) {
     allSuccess = false;
@@ -1756,9 +1921,49 @@ Future<bool> putUpdtReproducao(BuildContext context) async {
   } on TimeoutException catch (e, s) {
     allSuccess = false;
     _syncLog('putUpdtReproducao', 'TIMEOUT no upload de reprodução: $e\n$s');
+    for (final row in localReproducao) {
+      _recordSyncError(
+        flow: 'putUpdtReproducao',
+        modulo: 'reproducao',
+        operacao: 'insert',
+        erro: e,
+        registroId: row.idReproducao,
+        registroDescricao: _descreverReproducaoBy(row.dataInseminacao),
+      );
+    }
+    for (final row in localReproducaoUPDT) {
+      _recordSyncError(
+        flow: 'putUpdtReproducao',
+        modulo: 'reproducao',
+        operacao: 'update',
+        erro: e,
+        registroId: row.idReproducao,
+        registroDescricao: _descreverReproducaoBy(row.dataInseminacao),
+      );
+    }
   } catch (e, s) {
     allSuccess = false;
     _syncLog('putUpdtReproducao', 'ERRO no upload de reprodução: $e\n$s');
+    for (final row in localReproducao) {
+      _recordSyncError(
+        flow: 'putUpdtReproducao',
+        modulo: 'reproducao',
+        operacao: 'insert',
+        erro: e,
+        registroId: row.idReproducao,
+        registroDescricao: _descreverReproducaoBy(row.dataInseminacao),
+      );
+    }
+    for (final row in localReproducaoUPDT) {
+      _recordSyncError(
+        flow: 'putUpdtReproducao',
+        modulo: 'reproducao',
+        operacao: 'update',
+        erro: e,
+        registroId: row.idReproducao,
+        registroDescricao: _descreverReproducaoBy(row.dataInseminacao),
+      );
+    }
   } finally {
     FFAppState().reproducaoIndex = 0;
   }
@@ -1995,10 +2200,27 @@ Future<bool> putUpdtSanidades(BuildContext context) async {
                   .elementAtOrNull(FFAppState().sanidadeIndex)
                   ?.protocoloIatf,
             });
+            _markSyncOk(
+                'sanidade',
+                localSanidade
+                    .elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.idSanidade);
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtSanidades',
-                'ERRO insert sanidade idx=${FFAppState().sanidadeIndex}: $e');
+            _recordSyncError(
+              flow: 'putUpdtSanidades',
+              modulo: 'sanidade',
+              operacao: 'insert',
+              erro: e,
+              registroId: localSanidade
+                  .elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.idSanidade,
+              registroDescricao: 'Sanidade ' +
+                  (localSanidade
+                          .elementAtOrNull(FFAppState().sanidadeIndex)
+                          ?.dataSanidade ??
+                      ''),
+            );
           }
           FFAppState().sanidadeIndex = FFAppState().sanidadeIndex + 1;
         }
@@ -2093,10 +2315,27 @@ Future<bool> putUpdtSanidades(BuildContext context) async {
                     ?.idSanidade,
               ),
             );
+            _markSyncOk(
+                'sanidade',
+                localSanidadeUPDT
+                    ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                    ?.idSanidade);
           } catch (e) {
             allSuccess = false;
-            _syncLog('putUpdtSanidades',
-                'ERRO update sanidade idx=${FFAppState().sanidadeIndex}: $e');
+            _recordSyncError(
+              flow: 'putUpdtSanidades',
+              modulo: 'sanidade',
+              operacao: 'update',
+              erro: e,
+              registroId: localSanidadeUPDT
+                  ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                  ?.idSanidade,
+              registroDescricao: 'Sanidade ' +
+                  (localSanidadeUPDT
+                          ?.elementAtOrNull(FFAppState().sanidadeIndex)
+                          ?.dataSanidade ??
+                      ''),
+            );
           }
           FFAppState().sanidadeIndex = FFAppState().sanidadeIndex + 1;
         }

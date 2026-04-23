@@ -15,6 +15,7 @@ import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'add_rebanho_model.dart';
 export 'add_rebanho_model.dart';
@@ -34,6 +35,14 @@ class AddRebanhoWidget extends StatefulWidget {
 class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
     with TickerProviderStateMixin {
   late AddRebanhoModel _model;
+
+  double? _parsePeso(String? rawValue) {
+    final normalized = rawValue?.trim().replaceAll(',', '.');
+    if (normalized == null || normalized.isEmpty) {
+      return null;
+    }
+    return double.tryParse(normalized);
+  }
 
   @override
   void setState(VoidCallback callback) {
@@ -1244,6 +1253,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 onTap: () async {
                                                   final datePicked1Date =
                                                       await showDatePicker(
+                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -1554,7 +1564,13 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   keyboardType:
                                                       const TextInputType
                                                           .numberWithOptions(
-                                                          decimal: true),
+                                                          decimal: true,
+                                                          signed: true),
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .allow(RegExp(
+                                                            r'[0-9.,]')),
+                                                  ],
                                                   validator: _model
                                                       .pesonascimentoTextControllerValidator
                                                       .asValidator(context),
@@ -1980,6 +1996,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 onTap: () async {
                                                   final datePicked2Date =
                                                       await showDatePicker(
+                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -3059,6 +3076,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   onTap: () async {
                                                     final datePicked3Date =
                                                         await showDatePicker(
+                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                       context: context,
                                                       initialDate:
                                                           getCurrentTimestamp,
@@ -3373,7 +3391,13 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   keyboardType:
                                                       const TextInputType
                                                           .numberWithOptions(
-                                                          decimal: true),
+                                                          decimal: true,
+                                                          signed: true),
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .allow(RegExp(
+                                                            r'[0-9.,]')),
+                                                  ],
                                                   validator: _model
                                                       .pesodadesmamaTextControllerValidator
                                                       .asValidator(context),
@@ -3424,6 +3448,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               onTap: () async {
                                                 final datePicked4Date =
                                                     await showDatePicker(
+                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       getCurrentTimestamp,
@@ -3731,7 +3756,13 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   keyboardType:
                                                       const TextInputType
                                                           .numberWithOptions(
-                                                          decimal: true),
+                                                          decimal: true,
+                                                          signed: true),
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .allow(RegExp(
+                                                            r'[0-9.,]')),
+                                                  ],
                                                   validator: _model
                                                       .pesoAtualTextControllerValidator
                                                       .asValidator(context),
@@ -3976,6 +4007,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   onTap: () async {
                                                     final datePicked5Date =
                                                         await showDatePicker(
+                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                       context: context,
                                                       initialDate:
                                                           getCurrentTimestamp,
@@ -4264,6 +4296,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   onTap: () async {
                                                     final datePicked6Date =
                                                         await showDatePicker(
+                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                       context: context,
                                                       initialDate:
                                                           getCurrentTimestamp,
@@ -4553,6 +4586,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   onTap: () async {
                                                     final datePicked7Date =
                                                         await showDatePicker(
+                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                       context: context,
                                                       initialDate:
                                                           getCurrentTimestamp,
@@ -4776,6 +4810,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   onTap: () async {
                                                     final datePicked8Date =
                                                         await showDatePicker(
+                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                       context: context,
                                                       initialDate:
                                                           getCurrentTimestamp,
@@ -4998,6 +5033,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   onTap: () async {
                                                     final datePicked9Date =
                                                         await showDatePicker(
+                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                       context: context,
                                                       initialDate:
                                                           getCurrentTimestamp,
@@ -5663,11 +5699,10 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                             context)
                                                         .languageCode,
                                                   ),
-                                                  pesoNascimento: functions
-                                                      .convertIntToDouble(
-                                                          int.tryParse(_model
-                                                              .pesonascimentoTextController
-                                                              .text)),
+                                                  pesoNascimento: _parsePeso(
+                                                      _model
+                                                          .pesonascimentoTextController
+                                                          .text),
                                                   porte: _model.dPPorteValue,
                                                   raca: valueOrDefault<String>(
                                                     _model.dPRacaValue,
@@ -5688,20 +5723,14 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                             context)
                                                         .languageCode,
                                                   ),
-                                                  pesoDesmama:
-                                                      valueOrDefault<double>(
-                                                    double.tryParse(_model
-                                                        .pesodadesmamaTextController
-                                                        .text),
-                                                    0.0,
-                                                  ),
-                                                  pesoAtual:
-                                                      valueOrDefault<double>(
-                                                    double.tryParse(_model
-                                                        .pesoAtualTextController
-                                                        .text),
-                                                    0.0,
-                                                  ),
+                                                  pesoDesmama: _parsePeso(
+                                                      _model
+                                                          .pesodadesmamaTextController
+                                                          .text),
+                                                  pesoAtual: _parsePeso(
+                                                      _model
+                                                          .pesoAtualTextController
+                                                          .text),
                                                   statusRebanho:
                                                       valueOrDefault<String>(
                                                     _model.dPStatusValue,
@@ -5847,14 +5876,15 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       .addPesagem(
                                                     dataPesagem: dateTimeFormat(
                                                       "yyyy-MM-dd",
-                                                      _model.datePicked1,
+                                                      _model.datePicked1 ??
+                                                          getCurrentTimestamp,
                                                       locale:
                                                           FFLocalizations.of(
                                                                   context)
                                                               .languageCode,
                                                     ),
                                                     tipo: 'Nascimento',
-                                                    peso: double.tryParse(_model
+                                                    peso: _parsePeso(_model
                                                         .pesonascimentoTextController
                                                         .text),
                                                     deletado: 'NAO',
@@ -5878,14 +5908,15 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       .addPesagem(
                                                     dataPesagem: dateTimeFormat(
                                                       "yyyy-MM-dd",
-                                                      _model.datePicked3,
+                                                      _model.datePicked3 ??
+                                                          getCurrentTimestamp,
                                                       locale:
                                                           FFLocalizations.of(
                                                                   context)
                                                               .languageCode,
                                                     ),
                                                     tipo: 'Desmama',
-                                                    peso: double.tryParse(_model
+                                                    peso: _parsePeso(_model
                                                         .pesodadesmamaTextController
                                                         .text),
                                                     deletado: 'NAO',
@@ -5909,20 +5940,17 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       .addPesagem(
                                                     dataPesagem: dateTimeFormat(
                                                       "yyyy-MM-dd",
-                                                      _model.datePicked4,
+                                                      _model.datePicked4 ??
+                                                          getCurrentTimestamp,
                                                       locale:
                                                           FFLocalizations.of(
                                                                   context)
                                                               .languageCode,
                                                     ),
                                                     tipo: 'Atual',
-                                                    peso:
-                                                        valueOrDefault<double>(
-                                                      double.tryParse(_model
-                                                          .pesoAtualTextController
-                                                          .text),
-                                                      0.0,
-                                                    ),
+                                                    peso: _parsePeso(_model
+                                                        .pesoAtualTextController
+                                                        .text),
                                                     deletado: 'NAO',
                                                     createdat: dateTimeFormat(
                                                       "yyyy-MM-dd HH:mm:ss",

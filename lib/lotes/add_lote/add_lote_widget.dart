@@ -1010,6 +1010,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                             onTap: () async {
                                                               final datePickedDate =
                                                                   await showDatePicker(
+                                                                initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                                 context:
                                                                     context,
                                                                 initialDate: (_model

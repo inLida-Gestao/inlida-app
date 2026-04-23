@@ -307,6 +307,61 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                       size: 20.0,
                                     ),
                                     onPressed: () async {
+                                      // Check if lote has animals
+                                      final animaisNoLote = await SQLiteManager
+                                          .instance
+                                          .qtdAnimaisNoLote(
+                                        loteID: widget.idLote,
+                                      );
+                                      final qtd = animaisNoLote.firstOrNull
+                                              ?.qtdAnimais ??
+                                          0;
+                                      if (qtd > 0) {
+                                        await showDialog(
+                                          context: context,
+                                          builder: (alertDialogContext) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Não é possível excluir'),
+                                              content: Text(
+                                                  'Este lote possui $qtd ${qtd == 1 ? 'animal' : 'animais'}. Remova os animais do lote antes de excluí-lo.'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          alertDialogContext),
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                        return;
+                                      }
+                                      var confirmDialogResponse = await showDialog<bool>(
+                                            context: context,
+                                            builder: (alertDialogContext) {
+                                              return AlertDialog(
+                                                title: const Text('Deletar lote'),
+                                                content: const Text(
+                                                    'Deseja realmente apagar esse lote? Esta ação não pode ser desfeita.'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () => Navigator.pop(
+                                                        alertDialogContext, false),
+                                                    child: const Text('Não'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(alertDialogContext, true),
+                                                    child: const Text('Sim'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          ) ??
+                                          false;
+                                      if (confirmDialogResponse) {
                                       if (!(FFAppState()
                                               .dataDadosNaoSyncLotes !=
                                           null)) {
@@ -325,6 +380,7 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                       );
                                       FFAppState().update(() {});
                                       Navigator.pop(context);
+                                      }
                                     },
                                   ),
                               ].divide(const SizedBox(width: 8.0)),
@@ -1186,6 +1242,7 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                       () async {
                                                                     final datePickedDate =
                                                                         await showDatePicker(
+                                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
                                                                       context:
                                                                           context,
                                                                       initialDate: (_model

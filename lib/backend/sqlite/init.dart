@@ -116,6 +116,9 @@ Future<Database> initializeDatabaseFromDbFile(
   // Criar índices UNIQUE para suportar UPSERT incremental
   await _ensureUniqueBusinessKeys(database);
 
+  // Criar tabela de auditoria de erros de sincronização
+  await _ensureSyncErrorLogTable(database);
+
   return database;
 }
 
@@ -226,4 +229,43 @@ Future<void> _ensureUniqueBusinessKeys(Database db) async {
     }
   }
   debugPrint('[SQLite] Índices UNIQUE de negócio verificados/criados.');
+}
+
+/// Garante a existência da tabela `sync_error_log` que persiste falhas de
+/// sincronização (registro + campo problemático + mensagem PG bruta).
+/// Idempotente — usa CREATE IF NOT EXISTS.
+Future<void> _ensureSyncErrorLogTable(Database db) async {
+  const ddl = <String>[
+    '''CREATE TABLE IF NOT EXISTS sync_error_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        modulo TEXT NOT NULL,
+        operacao TEXT NOT NULL,
+        registro_id TEXT,
+        registro_descricao TEXT,
+        campo_problema TEXT,
+        mensagem_erro TEXT NOT NULL,
+        mensagem_amigavel TEXT,
+        payload_json TEXT,
+        primeira_ocorrencia TEXT NOT NULL,
+        ultima_ocorrencia TEXT NOT NULL,
+        tentativas INTEGER NOT NULL DEFAULT 1,
+        resolvido INTEGER NOT NULL DEFAULT 0,
+        resolvido_em TEXT
+      )''',
+    '''CREATE INDEX IF NOT EXISTS idx_sync_error_modulo
+       ON sync_error_log (modulo, resolvido)''',
+    '''CREATE INDEX IF NOT EXISTS idx_sync_error_registro
+       ON sync_error_log (modulo, registro_id, resolvido)''',
+    '''CREATE INDEX IF NOT EXISTS idx_sync_error_ativo
+       ON sync_error_log (resolvido, ultima_ocorrencia)''',
+  ];
+
+  for (final stmt in ddl) {
+    try {
+      await db.execute(stmt);
+    } catch (e) {
+      debugPrint('[SQLite] Erro ao criar sync_error_log: $e');
+    }
+  }
+  debugPrint('[SQLite] Tabela sync_error_log verificada/criada.');
 }

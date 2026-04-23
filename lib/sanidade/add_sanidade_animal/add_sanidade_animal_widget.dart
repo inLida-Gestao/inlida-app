@@ -403,6 +403,7 @@ class _AddSanidadeAnimalWidgetState extends State<AddSanidadeAnimalWidget> {
                               highlightColor: Colors.transparent,
                               onTap: () async {
                                 final datePickedDate = await showDatePicker(
+                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
                                   context: context,
                                   initialDate: getCurrentTimestamp,
                                   firstDate: DateTime(1900),

@@ -654,20 +654,21 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                       locale: FFLocalizations.of(context)
                                           .languageCode,
                                     ),
+                                    dataSanidadeFim: dateTimeFormat(
+                                      "yyyy-MM-dd",
+                                      FFAppState().filtroDataSanidadeFim,
+                                      locale: FFLocalizations.of(context)
+                                          .languageCode,
+                                    ),
                                   ),
                                   builder: (context, snapshot) {
                                     // Customize what your widget looks like when it's loading.
                                     if (!snapshot.hasData) {
-                                      return Center(
+                                      return const Center(
                                         child: SizedBox(
                                           width: 50.0,
                                           height: 50.0,
                                           child: CircularProgressIndicator(
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                              FlutterFlowTheme.of(context)
-                                                  .primary,
-                                            ),
                                           ),
                                         ),
                                       );
@@ -1728,6 +1729,12 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                     dataSanidade: dateTimeFormat(
                                       "yyyy-MM-dd",
                                       FFAppState().filtroDataSanidade,
+                                      locale: FFLocalizations.of(context)
+                                          .languageCode,
+                                    ),
+                                    dataSanidadeFim: dateTimeFormat(
+                                      "yyyy-MM-dd",
+                                      FFAppState().filtroDataSanidadeFim,
                                       locale: FFLocalizations.of(context)
                                           .languageCode,
                                     ),

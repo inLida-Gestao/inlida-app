@@ -197,6 +197,30 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                               size: 20.0,
                             ),
                             onPressed: () async {
+                              var confirmDialogResponse = await showDialog<bool>(
+                                    context: context,
+                                    builder: (alertDialogContext) {
+                                      return AlertDialog(
+                                        title: const Text('Deletar sanidade'),
+                                        content: const Text(
+                                            'Deseja realmente apagar esse registro de sanidade? Esta ação não pode ser desfeita.'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(
+                                                alertDialogContext, false),
+                                            child: const Text('Não'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(alertDialogContext, true),
+                                            child: const Text('Sim'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ) ??
+                                  false;
+                              if (confirmDialogResponse) {
                               if (!(FFAppState().dataDadosNaoSyncSanidade !=
                                   null)) {
                                 FFAppState().dataDadosNaoSyncSanidade =
@@ -224,6 +248,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                 }(),
                               );
                               Navigator.pop(context);
+                              }
                             },
                           ),
                       ].divide(const SizedBox(width: 16.0)),
@@ -378,6 +403,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                     onTap: () async {
                                       final datePickedDate =
                                           await showDatePicker(
+                                        initialEntryMode: DatePickerEntryMode.calendarOnly,
                                         context: context,
                                         initialDate: getCurrentTimestamp,
                                         firstDate: DateTime(1900),

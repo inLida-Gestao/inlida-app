@@ -8,6 +8,7 @@ export 'sync_engine.dart'
         SyncResult,
         performAutoSync,
         performManualSync;
+export 'sync_error_log.dart' show SyncErrorLog, SyncErrorEntry;
 export 'check_internet_connection_debug.dart' show checkInternetConnectionDebug;
 export 'setup_s_q_lite_optimized.dart' show setupSQLiteOptimized;
 export 'batch_insert_local_rebanho.dart' show batchInsertLocalRebanho;

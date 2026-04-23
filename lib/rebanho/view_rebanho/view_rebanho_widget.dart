@@ -85,7 +85,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
     _model.nAnimalTextController14?.text =
         (rebanhoAtual.pesoAtual == null || rebanhoAtual.pesoAtual == 0.0)
             ? 'N/A'
-            : rebanhoAtual.pesoAtual.toString();
+            : (rebanhoAtual.pesoAtual == rebanhoAtual.pesoAtual!.truncateToDouble() ? rebanhoAtual.pesoAtual!.toInt().toString() : rebanhoAtual.pesoAtual.toString());
 
     _model.nAnimalOlocoTextController?.text =
         rebanhoAtual.dataUltimaPesagem == null ||
@@ -2085,7 +2085,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                 TextEditingController(
                                                                           text:
                                                                               valueOrDefault<String>(
-                                                                            containerBuscarRebanhoRowList.firstOrNull?.pesoNascimento?.toString(),
+                                                                            () { final v = containerBuscarRebanhoRowList.firstOrNull?.pesoNascimento; return v == null ? null : (v == v.truncateToDouble() ? v.toInt().toString() : v.toString()); }(),
                                                                             'N/A',
                                                                           ),
                                                                         ),
@@ -4066,10 +4066,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               TextEditingController(
                                                                         text: valueOrDefault<
                                                                             String>(
-                                                                          containerBuscarRebanhoRowList
-                                                                              .firstOrNull
-                                                                              ?.pesoDesmama
-                                                                              ?.toString(),
+                                                                          () { final v = containerBuscarRebanhoRowList.firstOrNull?.pesoDesmama; return v == null ? null : (v == v.truncateToDouble() ? v.toInt().toString() : v.toString()); }(),
                                                                           'N/A',
                                                                         ),
                                                                       ),
@@ -4477,10 +4474,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               TextEditingController(
                                                                         text: valueOrDefault<
                                                                             String>(
-                                                                          containerBuscarRebanhoRowList
-                                                                              .firstOrNull
-                                                                              ?.pesoAtual
-                                                                              ?.toString(),
+                                                                          () { final v = containerBuscarRebanhoRowList.firstOrNull?.pesoAtual; return v == null ? null : (v == v.truncateToDouble() ? v.toInt().toString() : v.toString()); }(),
                                                                           'N/A',
                                                                         ),
                                                                       ),
@@ -7027,7 +7021,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 .sortedList(
                                                                     keyOf: (e) =>
                                                                         functions
-                                                                            .converterParaData(e.dataPesagem)!,
+                                                                            .converterParaData(e.dataPesagem) ?? DateTime(1900),
                                                                     desc: true)
                                                                 .toList();
                                                             if (pesagem
@@ -7092,7 +7086,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               children: [
                                                                                 Text(
                                                                                   '${valueOrDefault<String>(
-                                                                                    pesagemItem.peso.toString(),
+                                                                                    pesagemItem.peso == pesagemItem.peso.truncateToDouble() ? pesagemItem.peso.toInt().toString() : pesagemItem.peso.toString(),
                                                                                     '0',
                                                                                   )} KG',
                                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(

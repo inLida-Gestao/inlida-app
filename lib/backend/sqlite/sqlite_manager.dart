@@ -538,6 +538,7 @@ class SQLiteManager {
     String? idRebanho,
     String? idLote,
     String? dataSanidade,
+    String? dataSanidadeFim,
   }) =>
       performBuscaSanidadesPesq(
         _database,
@@ -550,6 +551,7 @@ class SQLiteManager {
         idRebanho: idRebanho,
         idLote: idLote,
         dataSanidade: dataSanidade,
+        dataSanidadeFim: dataSanidadeFim,
       );
 
   Future<List<BuscaSanidadesPaginadaRow>> buscaSanidadesPaginada({
@@ -561,6 +563,7 @@ class SQLiteManager {
     String? idRebanho,
     String? idLote,
     String? dataSanidade,
+    String? dataSanidadeFim,
     int? limitRows,
     int? offsetRows,
   }) =>
@@ -574,6 +577,7 @@ class SQLiteManager {
         idRebanho: idRebanho,
         idLote: idLote,
         dataSanidade: dataSanidade,
+        dataSanidadeFim: dataSanidadeFim,
         limitRows: limitRows,
         offsetRows: offsetRows,
       );
@@ -1219,6 +1223,56 @@ class SQLiteManager {
     await _syncUltimaPesagemNoRebanho(idRebanho);
   }
 
+  /// Updates peso (and optionally dataPesagem) of an existing pesagem record
+  /// matching [idRebanho] + [tipo]. If no record exists, creates one.
+  Future<void> updatePesagemByTipo({
+    required String idRebanho,
+    required String tipo,
+    required double peso,
+    String? dataPesagem,
+  }) async {
+    // Check if a record already exists
+    final existing = await _database.rawQuery('''
+SELECT id FROM local_historico_pesagens
+WHERE idRebanho = '$idRebanho'
+AND tipo = '$tipo'
+AND deletado = 'NAO'
+LIMIT 1
+''');
+
+    if (existing.isNotEmpty) {
+      final setClause = dataPesagem != null
+          ? "peso = $peso, dataPesagem = '$dataPesagem'"
+          : "peso = $peso";
+      await _database.rawUpdate('''
+UPDATE local_historico_pesagens
+SET $setClause
+WHERE idRebanho = '$idRebanho'
+AND tipo = '$tipo'
+AND deletado = 'NAO'
+''');
+    } else {
+      // No record exists — get idPropriedade from rebanho and insert
+      final rebRows = await _database.rawQuery('''
+SELECT idPropriedade FROM local_rebanho WHERE idRebanho = '$idRebanho' LIMIT 1
+''');
+      final idPropriedade = rebRows.isNotEmpty
+          ? rebRows.first['idPropriedade'] as String?
+          : null;
+      final now = DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+      await performAddPesagem(
+        _database,
+        idRebanho: idRebanho,
+        dataPesagem: dataPesagem ?? DateTime.now().toIso8601String().substring(0, 10),
+        tipo: tipo,
+        peso: peso,
+        deletado: 'NAO',
+        createdat: now,
+        idPropriedade: idPropriedade,
+      );
+    }
+  }
+
   Future<void> _syncUltimaPesagemNoRebanho(String? idRebanho) async {
     if (idRebanho == null || idRebanho.isEmpty) {
       return;
@@ -1229,6 +1283,7 @@ SELECT peso, dataPesagem
 FROM local_historico_pesagens
 WHERE idRebanho = '$idRebanho'
 AND deletado = 'NAO'
+AND tipo = 'Atual'
 ORDER BY date(dataPesagem) DESC, datetime(created_at, 'localtime') DESC, id DESC
 LIMIT 1
 ''');

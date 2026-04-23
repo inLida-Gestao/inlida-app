@@ -4,6 +4,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'add_pesagem_model.dart';
@@ -182,6 +183,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                         highlightColor: Colors.transparent,
                         onTap: () async {
                           final datePickedDate = await showDatePicker(
+                            initialEntryMode: DatePickerEntryMode.calendarOnly,
                             context: context,
                             initialDate: getCurrentTimestamp,
                             firstDate: DateTime(1900),
@@ -378,7 +380,11 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                                   .bodyMediumIsCustom,
                             ),
                         keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
+                            decimal: true, signed: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'[0-9.,]')),
+                        ],
                         validator: _model.pesoTextControllerValidator
                             .asValidator(context),
                       ),
