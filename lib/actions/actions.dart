@@ -10,10 +10,107 @@ import '/custom_code/actions/index.dart' as actions;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:flutter/material.dart';
 
+import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 
 void _syncLog(String flow, String message) {
   debugPrint('[SYNC][$flow] $message');
+}
+
+// ============================================================================
+// Timeouts e retry para chamadas de rede do sync.
+//
+// Motivação: antes destes wrappers, qualquer request ao Supabase que travasse
+// (TCP stale após reconexão, token expirado, servidor lento) pendurava o loop
+// de sync indefinidamente — o usuário via o spinner rodar por 20+ minutos.
+// ============================================================================
+
+/// Timeout padrão para chamadas unitárias (1 registro, 1 query leve).
+const Duration kSyncUnitTimeout = Duration(seconds: 20);
+
+/// Timeout para chamadas de página / bulk (podem trazer muitos registros).
+const Duration kSyncPageTimeout = Duration(seconds: 45);
+
+/// Timeout para consultas ao change tracker / ping de conectividade.
+const Duration kSyncLightTimeout = Duration(seconds: 10);
+
+/// Tempo total máximo de uma sessão de sync (watchdog global).
+const Duration kSyncTotalBudget = Duration(minutes: 3);
+
+/// Envolve um Future em um timeout, registrando tempo decorrido e erro/label.
+/// Em caso de timeout, lança TimeoutException com uma mensagem informativa.
+Future<T> _withTimeout<T>(
+  Future<T> Function() action, {
+  required String label,
+  Duration timeout = kSyncUnitTimeout,
+}) {
+  final stopwatch = Stopwatch()..start();
+  return action().timeout(
+    timeout,
+    onTimeout: () {
+      stopwatch.stop();
+      _syncLog('timeout',
+          '$label estourou após ${stopwatch.elapsedMilliseconds}ms (limite ${timeout.inSeconds}s)');
+      throw TimeoutException(
+          'Timeout em "$label" após ${timeout.inSeconds}s');
+    },
+  ).then((value) {
+    stopwatch.stop();
+    // Apenas loga latências altas para não poluir logs normais.
+    if (stopwatch.elapsedMilliseconds > 3000) {
+      _syncLog('latency',
+          '$label ok em ${stopwatch.elapsedMilliseconds}ms');
+    }
+    return value;
+  });
+}
+
+/// Executa [action] com retry exponencial em erros transitórios.
+/// Não tenta novamente em TimeoutException quando [retryOnTimeout] é false
+/// (default true — timeouts no sync geralmente valem uma retry).
+Future<T> _retry<T>(
+  Future<T> Function() action, {
+  required String label,
+  int maxAttempts = 3,
+  Duration baseDelay = const Duration(seconds: 2),
+  bool retryOnTimeout = true,
+}) async {
+  var attempt = 0;
+  Object? lastError;
+  StackTrace? lastStack;
+  while (attempt < maxAttempts) {
+    attempt++;
+    try {
+      return await action();
+    } on TimeoutException catch (e, s) {
+      lastError = e;
+      lastStack = s;
+      if (!retryOnTimeout || attempt >= maxAttempts) break;
+    } catch (e, s) {
+      lastError = e;
+      lastStack = s;
+      // Heurística simples: 4xx ou erros de payload não devem ser retriados.
+      final msg = e.toString().toLowerCase();
+      final isClientError = msg.contains('status 4') ||
+          msg.contains('bad request') ||
+          msg.contains('foreign key') ||
+          msg.contains('unique constraint');
+      if (isClientError || attempt >= maxAttempts) break;
+    }
+    final delayMs =
+        baseDelay.inMilliseconds * (1 << (attempt - 1)); // 2s, 4s, 8s...
+    _syncLog('retry',
+        '$label tentativa $attempt falhou, aguardando ${delayMs}ms antes de nova tentativa.');
+    await Future.delayed(Duration(milliseconds: delayMs));
+  }
+  _syncLog('retry', '$label desistiu após $attempt tentativa(s): $lastError');
+  if (lastError is Error) {
+    throw lastError;
+  }
+  // Preserva stack se possível.
+  Error.throwWithStackTrace(
+      lastError ?? StateError('retry falhou em $label'),
+      lastStack ?? StackTrace.current);
 }
 
 int _safeTotalFromApi(dynamic body) {
@@ -1420,164 +1517,177 @@ Future<bool> putUpdtReproducao(BuildContext context) async {
       );
       FFAppState().reproducaoIndex = 0;
       if (localReproducao.isNotEmpty) {
-        while (FFAppState().reproducaoIndex < localReproducao.length) {
+        final localReproducaoSnap = localReproducao;
+        while (FFAppState().reproducaoIndex < localReproducaoSnap.length) {
+          final currentIdx = FFAppState().reproducaoIndex;
+          final currentId =
+              localReproducaoSnap.elementAtOrNull(currentIdx)?.idReproducao;
           try {
-            await ReproducaoTable().insert({
-              'id_propriedade': localReproducao
+            await _withTimeout(
+              () => ReproducaoTable().insert({
+              'id_propriedade': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.idPropriedade,
-              'tipo_reproducao': localReproducao
+              'tipo_reproducao': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.tipoReproducao,
               'score_corporal': valueOrDefault<double>(
-                localReproducao
+                localReproducaoSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.scoreCorporal,
                 0.5,
               ),
               'data_inseminacao': supaSerialize<DateTime>(
-                  functions.converterParaData(localReproducao
+                  functions.converterParaData(localReproducaoSnap
                       .elementAtOrNull(FFAppState().reproducaoIndex)
                       ?.dataInseminacao)),
-              'data_partida_semen': supaSerialize<DateTime>(localReproducao
+              'data_partida_semen': supaSerialize<DateTime>(localReproducaoSnap
                               .elementAtOrNull(FFAppState().reproducaoIndex)
                               ?.dataPartidaSemen !=
                           null &&
-                      localReproducao
+                      localReproducaoSnap
                               .elementAtOrNull(FFAppState().reproducaoIndex)
                               ?.dataPartidaSemen !=
                           ''
-                  ? functions.converterParaData(localReproducao
+                  ? functions.converterParaData(localReproducaoSnap
                       .elementAtOrNull(FFAppState().reproducaoIndex)
                       ?.dataPartidaSemen)
                   : FFAppState().dateDefault),
               'partida_semen': valueOrDefault<int>(
-                localReproducao
+                localReproducaoSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.partidaSemen,
                 1,
               ),
               'previsao_parto': supaSerialize<DateTime>(
-                  functions.converterParaData(localReproducao
+                  functions.converterParaData(localReproducaoSnap
                       .elementAtOrNull(FFAppState().reproducaoIndex)
                       ?.previsaoParto)),
-              'id_lote': localReproducao
+              'id_lote': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.idLote,
               'data_inicial': supaSerialize<DateTime>(
-                  functions.converterParaData(localReproducao
+                  functions.converterParaData(localReproducaoSnap
                       .elementAtOrNull(FFAppState().reproducaoIndex)
                       ?.dataInicial)),
               'data_final': supaSerialize<DateTime>(functions.converterParaData(
-                  localReproducao
+                  localReproducaoSnap
                       .elementAtOrNull(FFAppState().reproducaoIndex)
                       ?.dataFinal)),
-              'status_reproducao': localReproducao
+              'status_reproducao': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.statusReproducao,
-              'inseminador': localReproducao
+              'inseminador': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.inseminador,
-              'anotacoes': localReproducao
+              'anotacoes': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.anotacoes,
-              'deletado': localReproducao
+              'deletado': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.deletado,
               'updated_at': supaSerialize<DateTime>(functions.converterParaData(
-                  localReproducao
+                  localReproducaoSnap
                       .elementAtOrNull(FFAppState().reproducaoIndex)
                       ?.updatedAt)),
-              'categoria': localReproducao
+              'categoria': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.categoria,
-              'numMatriz': localReproducao
+              'numMatriz': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.numMatriz,
-              'nomeMatriz': localReproducao
+              'nomeMatriz': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.nomeMatriz,
               'nascimentoMatriz': supaSerialize<DateTime>(
-                  functions.converterParaData(localReproducao
+                  functions.converterParaData(localReproducaoSnap
                       .elementAtOrNull(FFAppState().reproducaoIndex)
                       ?.nascimentoMatriz)),
-              'numReprodutor': localReproducao
+              'numReprodutor': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.numReprodutor,
-              'nomeReprodutor': localReproducao
+              'nomeReprodutor': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.nomeReprodutor,
               'nascimentoReprodutor': supaSerialize<DateTime>(
-                  functions.converterParaData(localReproducao
+                  functions.converterParaData(localReproducaoSnap
                       .elementAtOrNull(FFAppState().reproducaoIndex)
                       ?.nascimentoReprodutor)),
-              'loteNome': localReproducao
+              'loteNome': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.loteNome,
               'data_status': supaSerialize<DateTime>(
-                  functions.converterParaData(localReproducao
+                  functions.converterParaData(localReproducaoSnap
                       .elementAtOrNull(FFAppState().reproducaoIndex)
                       ?.dataStatus)),
-              'chipReprodutor': localReproducao
+              'chipReprodutor': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.chipReprodutor,
-              'chipMatriz': localReproducao
+              'chipMatriz': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.chipMatriz,
-              'racaMatriz': localReproducao
+              'racaMatriz': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.racaMatriz,
-              'racaReprodutor': localReproducao
+              'racaReprodutor': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.racaReprodutor,
               'ressinc': valueOrDefault<String>(
-                localReproducao
+                localReproducaoSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.ressinc,
                 'NAO',
               ),
               'parida': valueOrDefault<String>(
-                localReproducao
+                localReproducaoSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.parida,
                 'NAO',
               ),
               'data_parto': supaSerialize<DateTime>(functions.converterParaData(
-                  localReproducao
+                  localReproducaoSnap
                       .elementAtOrNull(FFAppState().reproducaoIndex)
                       ?.dataParto)),
               'gnrh': valueOrDefault<String>(
-                localReproducao
+                localReproducaoSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.gnrh,
                 'Não',
               ),
               'cio': valueOrDefault<String>(
-                localReproducao
+                localReproducaoSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.cio,
                 'Não',
               ),
               'id_rebanho_matriz': valueOrDefault<String>(
-                localReproducao
+                localReproducaoSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.idRebanhoMatriz,
                 'Não',
               ),
               'id_rebanho_reprodutor': valueOrDefault<String>(
-                localReproducao
+                localReproducaoSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.idRebanhoReprodutor,
                 'Não',
               ),
-              'id_reproducao': localReproducao
+              'id_reproducao': localReproducaoSnap
                   .elementAtOrNull(FFAppState().reproducaoIndex)
                   ?.idReproducao,
-            });
+            }),
+              label: 'ReproducaoTable.insert(id=${currentId ?? "?"})',
+            );
+            // Inserção ok — dedupe do UPDT ocorre logo abaixo usando
+            // localReproducao diretamente.
+          } on TimeoutException catch (e) {
+            allSuccess = false;
+            _syncLog('putUpdtReproducao',
+                'TIMEOUT insert reproducao idx=$currentIdx id=$currentId: $e');
           } catch (e) {
             allSuccess = false;
             _syncLog('putUpdtReproducao',
-                'ERRO insert reproducao idx=${FFAppState().reproducaoIndex}: $e');
+                'ERRO insert reproducao idx=$currentIdx id=$currentId: $e');
           }
           FFAppState().reproducaoIndex = FFAppState().reproducaoIndex + 1;
         }
@@ -1590,138 +1700,173 @@ Future<bool> putUpdtReproducao(BuildContext context) async {
           locale: FFLocalizations.of(context).languageCode,
         ),
       );
+      // Remove da lista de UPDATE registros que acabaram de ser inseridos
+      // (mesmo created_at ≈ updated_at), evitando roundtrip duplicado.
+      final insertedIdsForDedupe = localReproducao.isNotEmpty
+          ? localReproducao
+              .map((r) => r.idReproducao)
+              .whereType<String>()
+              .toSet()
+          : <String>{};
+      if (insertedIdsForDedupe.isNotEmpty) {
+        final before = localReproducaoUPDT.length;
+        localReproducaoUPDT = localReproducaoUPDT
+            .where((r) => !insertedIdsForDedupe.contains(r.idReproducao))
+            .toList();
+        final removed = before - localReproducaoUPDT.length;
+        if (removed > 0) {
+          _syncLog('putUpdtReproducao',
+              'Dedupe PUT/UPDT: $removed registro(s) recém-inseridos removidos do UPDATE.');
+        }
+      }
       if (localReproducaoUPDT.isNotEmpty) {
-        while (FFAppState().reproducaoIndex < localReproducaoUPDT.length) {
+        final localReproducaoUPDTSnap = localReproducaoUPDT;
+        while (FFAppState().reproducaoIndex < localReproducaoUPDTSnap.length) {
+          final currentIdx = FFAppState().reproducaoIndex;
+          final currentId =
+              localReproducaoUPDTSnap.elementAtOrNull(currentIdx)?.idReproducao;
           try {
-            await ReproducaoTable().update(
+            await _withTimeout(
+              () => ReproducaoTable().update(
               data: {
-                'tipo_reproducao': localReproducaoUPDT
+                'tipo_reproducao': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.tipoReproducao,
-                'id_rebanho_matriz': localReproducaoUPDT
+                'id_rebanho_matriz': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.idRebanhoMatriz,
-                'score_corporal': localReproducaoUPDT
+                'score_corporal': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.scoreCorporal,
-                'id_rebanho_reprodutor': localReproducaoUPDT
+                'id_rebanho_reprodutor': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.idRebanhoReprodutor,
                 'data_inseminacao': supaSerialize<DateTime>(
-                    functions.converterParaData(localReproducaoUPDT
+                    functions.converterParaData(localReproducaoUPDTSnap
                         .elementAtOrNull(FFAppState().reproducaoIndex)
                         ?.dataInseminacao)),
                 'data_partida_semen': supaSerialize<DateTime>(
-                    functions.converterParaData(localReproducaoUPDT
+                    functions.converterParaData(localReproducaoUPDTSnap
                         .elementAtOrNull(FFAppState().reproducaoIndex)
                         ?.dataPartidaSemen)),
-                'partida_semen': localReproducaoUPDT
+                'partida_semen': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.partidaSemen,
                 'previsao_parto': supaSerialize<DateTime>(
-                    functions.converterParaData(localReproducaoUPDT
+                    functions.converterParaData(localReproducaoUPDTSnap
                         .elementAtOrNull(FFAppState().reproducaoIndex)
                         ?.previsaoParto)),
-                'id_lote': localReproducaoUPDT
+                'id_lote': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.idLote,
                 'data_inicial': supaSerialize<DateTime>(
-                    functions.converterParaData(localReproducaoUPDT
+                    functions.converterParaData(localReproducaoUPDTSnap
                         .elementAtOrNull(FFAppState().reproducaoIndex)
                         ?.dataInicial)),
                 'data_final': supaSerialize<DateTime>(
-                    functions.converterParaData(localReproducaoUPDT
+                    functions.converterParaData(localReproducaoUPDTSnap
                         .elementAtOrNull(FFAppState().reproducaoIndex)
                         ?.dataFinal)),
-                'inseminador': localReproducaoUPDT
+                'inseminador': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.inseminador,
-                'anotacoes': localReproducaoUPDT
+                'anotacoes': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.anotacoes,
-                'deletado': localReproducaoUPDT
+                'deletado': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.deletado,
                 'updated_at': supaSerialize<DateTime>(
-                    functions.converterParaData(localReproducaoUPDT
+                    functions.converterParaData(localReproducaoUPDTSnap
                         .elementAtOrNull(FFAppState().reproducaoIndex)
                         ?.updatedAt)),
-                'categoria': localReproducaoUPDT
+                'categoria': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.categoria,
-                'numMatriz': localReproducaoUPDT
+                'numMatriz': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.numMatriz,
-                'nomeMatriz': localReproducaoUPDT
+                'nomeMatriz': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.nomeMatriz,
                 'nascimentoMatriz': supaSerialize<DateTime>(
-                    functions.converterParaData(localReproducaoUPDT
+                    functions.converterParaData(localReproducaoUPDTSnap
                         .elementAtOrNull(FFAppState().reproducaoIndex)
                         ?.nascimentoMatriz)),
-                'status_reproducao': localReproducaoUPDT
+                'status_reproducao': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.statusReproducao,
-                'numReprodutor': localReproducaoUPDT
+                'numReprodutor': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.numReprodutor,
-                'nomeReprodutor': localReproducaoUPDT
+                'nomeReprodutor': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.nomeReprodutor,
                 'nascimentoReprodutor': supaSerialize<DateTime>(
-                    functions.converterParaData(localReproducaoUPDT
+                    functions.converterParaData(localReproducaoUPDTSnap
                         .elementAtOrNull(FFAppState().reproducaoIndex)
                         ?.nascimentoReprodutor)),
-                'loteNome': localReproducaoUPDT
+                'loteNome': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.loteNome,
                 'data_status': supaSerialize<DateTime>(
-                    functions.converterParaData(localReproducaoUPDT
+                    functions.converterParaData(localReproducaoUPDTSnap
                         .elementAtOrNull(FFAppState().reproducaoIndex)
                         ?.dataStatus)),
-                'ressinc': localReproducaoUPDT
+                'ressinc': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.ressinc,
-                'chipReprodutor': localReproducaoUPDT
+                'chipReprodutor': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.chipReprodutor,
-                'chipMatriz': localReproducaoUPDT
+                'chipMatriz': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.chipMatriz,
-                'parida': localReproducaoUPDT
+                'parida': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.parida,
                 'data_parto': supaSerialize<DateTime>(
-                    functions.converterParaData(localReproducaoUPDT
+                    functions.converterParaData(localReproducaoUPDTSnap
                         .elementAtOrNull(FFAppState().reproducaoIndex)
                         ?.dataParto)),
-                'gnrh': localReproducaoUPDT
+                'gnrh': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.gnrh,
-                'cio': localReproducaoUPDT
+                'cio': localReproducaoUPDTSnap
                     .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.cio,
               },
               matchingRows: (rows) => rows.eqOrNull(
                 'id_reproducao',
-                localReproducaoUPDT
-                    ?.elementAtOrNull(FFAppState().reproducaoIndex)
+                localReproducaoUPDTSnap
+                    .elementAtOrNull(FFAppState().reproducaoIndex)
                     ?.idReproducao,
               ),
+            ),
+              label: 'ReproducaoTable.update(id=${currentId ?? "?"})',
             );
+          } on TimeoutException catch (e) {
+            allSuccess = false;
+            _syncLog('putUpdtReproducao',
+                'TIMEOUT update reproducao idx=$currentIdx id=$currentId: $e');
           } catch (e) {
             allSuccess = false;
             _syncLog('putUpdtReproducao',
-                'ERRO update reproducao idx=${FFAppState().reproducaoIndex}: $e');
+                'ERRO update reproducao idx=$currentIdx id=$currentId: $e');
           }
           FFAppState().reproducaoIndex = FFAppState().reproducaoIndex + 1;
         }
       }
       FFAppState().reproducaoIndex = 0;
     }
+  } on TimeoutException catch (e, s) {
+    allSuccess = false;
+    _syncLog('putUpdtReproducao', 'TIMEOUT geral no upload de reprodução: $e\n$s');
   } catch (e, s) {
     allSuccess = false;
     _syncLog('putUpdtReproducao', 'ERRO no upload de reprodução: $e\n$s');
+  } finally {
+    FFAppState().reproducaoIndex = 0;
   }
   return allSuccess;
 }
@@ -2185,14 +2330,19 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
     ApiCallResponse? reproducaoAPI;
 
     try {
-      lastChangeResultO = await ReproducaoChangeTrackerTable().queryRows(
-        queryFn: (q) => q,
+      lastChangeResultO = await _withTimeout(
+        () => ReproducaoChangeTrackerTable().queryRows(queryFn: (q) => q),
+        label: 'reproducao.changeTracker.queryRows',
+        timeout: kSyncLightTimeout,
       );
+    } on TimeoutException catch (e, s) {
+      _syncLog('reproducao', 'TIMEOUT ao consultar change tracker: $e\n$s');
+      lastChangeResultO = [];
     } catch (e, s) {
       _syncLog('reproducao', 'ERRO ao consultar change tracker: $e\n$s');
       lastChangeResultO = [];
     }
-    final remoteLastChange = lastChangeResultO.firstOrNull?.lastChange;
+    final remoteLastChange = lastChangeResultO?.firstOrNull?.lastChange;
     final localLastChange = FFAppState().reproducaoChangeDateTime;
     final shouldSync = remoteLastChange == null ||
         localLastChange == null ||
@@ -2218,12 +2368,15 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
               : null;
 
       try {
-        propriedades =
-            await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
-          pUserId: currentUserUid,
+        propriedades = await _withTimeout(
+          () => SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+            pUserId: currentUserUid,
+          ),
+          label: 'reproducao.buscarPropriedadesUser',
+          timeout: kSyncPageTimeout,
         );
 
-        final propertyIds = _safePropertyIds(propriedades.jsonBody);
+        final propertyIds = _safePropertyIds(propriedades?.jsonBody);
         _syncLog('reproducao',
             'Propriedades encontradas: ${propertyIds.length}. IDs: $propertyIds');
 
@@ -2234,21 +2387,27 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
         }
 
         if (updatedAfter != null) {
-          qtdReproducoes =
-              await SupabaseFunctionsGroup.qTDReproducoesIncCall.call(
-            pIdsPropriedadesList: propertyIds,
-            pUpdatedAfter: updatedAfter,
+          qtdReproducoes = await _withTimeout(
+            () => SupabaseFunctionsGroup.qTDReproducoesIncCall.call(
+              pIdsPropriedadesList: propertyIds,
+              pUpdatedAfter: updatedAfter,
+            ),
+            label: 'reproducao.qTDReproducoesInc',
+            timeout: kSyncPageTimeout,
           );
         } else {
-          qtdReproducoes =
-              await SupabaseFunctionsGroup.qTDReproducoesCall.call(
-            pIdsPropriedadesList: propertyIds,
+          qtdReproducoes = await _withTimeout(
+            () => SupabaseFunctionsGroup.qTDReproducoesCall.call(
+              pIdsPropriedadesList: propertyIds,
+            ),
+            label: 'reproducao.qTDReproducoes',
+            timeout: kSyncPageTimeout,
           );
         }
         _syncLog('reproducao',
-            'Resposta qtdReproducoes raw: ${qtdReproducoes.jsonBody}');
+            'Resposta qtdReproducoes raw: ${qtdReproducoes?.jsonBody}');
 
-        final totalReproducoes = _safeTotalFromApi(qtdReproducoes.jsonBody);
+        final totalReproducoes = _safeTotalFromApi(qtdReproducoes?.jsonBody);
         FFAppState().totalReproducoes = totalReproducoes;
         _syncLog('reproducao',
             'Total remoto informado: $totalReproducoes (${updatedAfter != null ? "incremental desde $updatedAfter" : "completo"}).');
@@ -2272,23 +2431,29 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
           final offsetAtual = FFAppState().indexReproPaginacao;
           try {
             if (updatedAfter != null) {
-              reproducaoAPI =
-                  await SupabaseFunctionsGroup.buscarReproducoesIncCall.call(
-                pIdPropriedadeList: propertyIds,
-                pLimite: 999,
-                pOffset: offsetAtual,
-                pUpdatedAfter: updatedAfter,
+              reproducaoAPI = await _withTimeout(
+                () => SupabaseFunctionsGroup.buscarReproducoesIncCall.call(
+                  pIdPropriedadeList: propertyIds,
+                  pLimite: 999,
+                  pOffset: offsetAtual,
+                  pUpdatedAfter: updatedAfter,
+                ),
+                label: 'reproducao.buscarReproducoesInc(offset=$offsetAtual)',
+                timeout: kSyncPageTimeout,
               );
             } else {
-              reproducaoAPI =
-                  await SupabaseFunctionsGroup.buscarReproducoesCall.call(
-                pIdPropriedadeList: propertyIds,
-                pLimite: 999,
-                pOffset: offsetAtual,
+              reproducaoAPI = await _withTimeout(
+                () => SupabaseFunctionsGroup.buscarReproducoesCall.call(
+                  pIdPropriedadeList: propertyIds,
+                  pLimite: 999,
+                  pOffset: offsetAtual,
+                ),
+                label: 'reproducao.buscarReproducoes(offset=$offsetAtual)',
+                timeout: kSyncPageTimeout,
               );
             }
 
-            final pageRecords = _safeRecordsFromApi(reproducaoAPI.jsonBody);
+            final pageRecords = _safeRecordsFromApi(reproducaoAPI?.jsonBody);
             _syncLog('reproducao',
                 'Página recebida. offset=$offsetAtual, tamanho=${pageRecords.length}.');
             if (pageRecords.isEmpty) {
@@ -2317,6 +2482,16 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
                   'Última página detectada (tamanho < 999). Encerrando paginação.');
               break;
             }
+          } on TimeoutException catch (e) {
+            _syncLog('reproducao',
+                'TIMEOUT em página offset=$offsetAtual: $e. Abortando paginação.');
+            syncErrors.add({
+              'id': 'página offset=$offsetAtual',
+              'error': 'Timeout na requisição',
+            });
+            // A8: não avançamos offset cegamente; quebra o loop para não
+            // pular registros remotos que ainda não chegaram.
+            break;
           } catch (e, s) {
             _syncLog('reproducao',
                 'Erro ao processar página offset=$offsetAtual: $e\n$s');
@@ -2324,8 +2499,8 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
               'id': 'página offset=$offsetAtual',
               'error': 'Erro na requisição ou processamento: $e',
             });
-            FFAppState().indexReproPaginacao =
-                FFAppState().indexReproPaginacao + 999;
+            // A8: quebra em vez de incrementar 999 e mascarar erro.
+            break;
           }
         }
 

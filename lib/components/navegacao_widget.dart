@@ -274,6 +274,17 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                     return;
                                   }
                                   FFAppState().isSyncing = true;
+                                  // Watchdog: força liberar isSyncing após 3min
+                                  // para evitar flag-zumbi se algo travar
+                                  // (ex.: Supabase sem timeout interno).
+                                  Timer? syncWatchdog = Timer(
+                                      const Duration(minutes: 3), () {
+                                    debugPrint(
+                                        '[SYNC][manual][watchdog] 3min excedidos — forçando isSyncing=false.');
+                                    FFAppState().isSyncing = false;
+                                    FFAppState().syncProgressPercent = -1;
+                                    FFAppState().syncProgressLabel = '';
+                                  });
                                   _model.temInternet =
                                       await actions.checkInternetConnection();
                                   if (_model.temInternet == true) {
@@ -429,6 +440,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                             const Duration(milliseconds: 1500));
                                         FFAppState().syncProgressPercent = -1;
                                         FFAppState().syncProgressLabel = '';
+                                        syncWatchdog?.cancel();
                                         FFAppState().isSyncing = false;
                                         FFAppState().update(() {});
                                         ScaffoldMessenger.of(context)
@@ -455,6 +467,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                             '[SYNC] Erro geral na sincronização: $e');
                                         FFAppState().syncProgressPercent = -1;
                                         FFAppState().syncProgressLabel = '';
+                                        syncWatchdog?.cancel();
                                         FFAppState().isSyncing = false;
                                         safeSetState(() {});
                                         ScaffoldMessenger.of(context)
@@ -477,6 +490,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                         );
                                       }
                                     } else {
+                                      syncWatchdog?.cancel();
                                       FFAppState().isSyncing = false;
                                       FFAppState().clearUserData();
                                       GoRouter.of(context).prepareAuthEvent();
@@ -504,6 +518,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                       );
                                     }
                                   } else {
+                                    syncWatchdog?.cancel();
                                     FFAppState().isSyncing = false;
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(

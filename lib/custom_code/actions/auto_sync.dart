@@ -7,9 +7,41 @@ import 'package:flutter/material.dart';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
+import 'dart:async';
 
 /// Intervalo mínimo entre auto-syncs (60 segundos).
 const _minAutoSyncInterval = Duration(seconds: 60);
+
+/// Tempo máximo de PUSH por módulo antes de abortar (watchdog individual).
+const _pushModuleTimeout = Duration(seconds: 90);
+
+/// Tempo máximo de PULL por módulo antes de abortar.
+const _pullModuleTimeout = Duration(seconds: 120);
+
+/// Tempo máximo TOTAL de uma sessão de auto-sync (watchdog global).
+/// Se ultrapassar, o sync é abortado e o usuário pode tentar de novo.
+const _autoSyncTotalBudget = Duration(minutes: 3);
+
+/// Executa [future] com timeout; em caso de estouro loga e retorna [fallback].
+Future<T> _guardModule<T>(
+  Future<T> Function() future,
+  String label,
+  Duration timeout,
+  T fallback,
+) async {
+  try {
+    return await future().timeout(timeout, onTimeout: () {
+      debugPrint(
+          '[SYNC][auto][watchdog] $label estourou após ${timeout.inSeconds}s — abortando módulo.');
+      throw TimeoutException('$label timeout');
+    });
+  } on TimeoutException {
+    return fallback;
+  } catch (e, s) {
+    debugPrint('[SYNC][auto][watchdog] $label falhou: $e\n$s');
+    return fallback;
+  }
+}
 
 /// Executa auto-sync quando o usuário reconecta à internet.
 /// Faz PUSH dos módulos com dados pendentes e PULL dos que estão limpos.
@@ -52,8 +84,17 @@ Future<void> performAutoSync(BuildContext context) async {
   appState.isSyncing = true;
   appState.lastAutoSync = DateTime.now();
 
+  // Watchdog global: garante que o flag isSyncing sempre é liberado.
+  final globalStopwatch = Stopwatch()..start();
+  Timer? watchdogTimer;
+  watchdogTimer = Timer(_autoSyncTotalBudget, () {
+    debugPrint(
+        '[SYNC][auto][watchdog] Tempo total de ${_autoSyncTotalBudget.inSeconds}s excedido. Liberando flag isSyncing.');
+    appState.isSyncing = false;
+  });
+
   try {
-    // PUSH fase: enviar dados pendentes
+    // PUSH fase: enviar dados pendentes (cada módulo com watchdog individual)
     var propOk = true;
     var rebanhoOk = true;
     var lotesOk = true;
@@ -62,19 +103,39 @@ Future<void> performAutoSync(BuildContext context) async {
 
     if (hasPendingProp) {
       debugPrint('[SYNC][auto] PUSH propriedades...');
-      propOk = await action_blocks.putUpdtPropriedades(context);
+      propOk = await _guardModule(
+        () => action_blocks.putUpdtPropriedades(context),
+        'PUSH propriedades',
+        _pushModuleTimeout,
+        false,
+      );
     }
 
-    // PUSH paralelo
+    // PUSH paralelo com watchdog por módulo
     final futures = <Future<bool>>[];
     if (hasPendingRebanho) {
-      futures.add(action_blocks.putUpdtRebanhos(context));
+      futures.add(_guardModule(
+        () => action_blocks.putUpdtRebanhos(context),
+        'PUSH rebanhos',
+        _pushModuleTimeout,
+        false,
+      ));
     }
     if (hasPendingLotes) {
-      futures.add(action_blocks.putUpdtLotes(context));
+      futures.add(_guardModule(
+        () => action_blocks.putUpdtLotes(context),
+        'PUSH lotes',
+        _pushModuleTimeout,
+        false,
+      ));
     }
     if (hasPendingRepro) {
-      futures.add(action_blocks.putUpdtReproducao(context));
+      futures.add(_guardModule(
+        () => action_blocks.putUpdtReproducao(context),
+        'PUSH reproducao',
+        _pushModuleTimeout,
+        false,
+      ));
     }
     if (futures.isNotEmpty) {
       final results = await Future.wait(futures);
@@ -86,7 +147,12 @@ Future<void> performAutoSync(BuildContext context) async {
 
     if (hasPendingSanidade) {
       debugPrint('[SYNC][auto] PUSH sanidade...');
-      sanidadeOk = await action_blocks.putUpdtSanidades(context);
+      sanidadeOk = await _guardModule(
+        () => action_blocks.putUpdtSanidades(context),
+        'PUSH sanidade',
+        _pushModuleTimeout,
+        false,
+      );
     }
 
     // Limpar flags dos módulos que foram enviados com sucesso
@@ -101,22 +167,47 @@ Future<void> performAutoSync(BuildContext context) async {
     }
 
     // PULL fase: baixar dados remotos APENAS para módulos cujo PUSH funcionou
-    // (ou que não tinham dados pendentes)
+    // (ou que não tinham dados pendentes). Cada PULL também com watchdog.
     final pullFutures = <Future>[];
     if (propOk && hasPendingProp || !hasPendingProp) {
-      pullFutures.add(action_blocks.refreshPropriedades(context));
+      pullFutures.add(_guardModule(
+        () => action_blocks.refreshPropriedades(context),
+        'PULL propriedades',
+        _pullModuleTimeout,
+        null,
+      ));
     }
     if (lotesOk && hasPendingLotes || !hasPendingLotes) {
-      pullFutures.add(action_blocks.refreshLotes(context));
+      pullFutures.add(_guardModule(
+        () => action_blocks.refreshLotes(context),
+        'PULL lotes',
+        _pullModuleTimeout,
+        null,
+      ));
     }
     if (rebanhoOk && hasPendingRebanho || !hasPendingRebanho) {
-      pullFutures.add(action_blocks.refreshRebanhoOtimizada(context));
+      pullFutures.add(_guardModule(
+        () => action_blocks.refreshRebanhoOtimizada(context),
+        'PULL rebanho',
+        _pullModuleTimeout,
+        null,
+      ));
     }
     if (reproOk && hasPendingRepro || !hasPendingRepro) {
-      pullFutures.add(action_blocks.refreshReproducaoOtimizada(context));
+      pullFutures.add(_guardModule(
+        () => action_blocks.refreshReproducaoOtimizada(context),
+        'PULL reproducao',
+        _pullModuleTimeout,
+        null,
+      ));
     }
     if (sanidadeOk && hasPendingSanidade || !hasPendingSanidade) {
-      pullFutures.add(action_blocks.refresSanidadeOtimizada(context));
+      pullFutures.add(_guardModule(
+        () => action_blocks.refresSanidadeOtimizada(context),
+        'PULL sanidade',
+        _pullModuleTimeout,
+        null,
+      ));
     }
 
     if (pullFutures.isNotEmpty) {
@@ -126,18 +217,22 @@ Future<void> performAutoSync(BuildContext context) async {
       });
     }
 
-    // Pesagens separado
-    try {
-      await action_blocks.refreshPesagens(context);
-    } catch (e) {
-      debugPrint('[SYNC][auto] Erro refreshPesagens: $e');
-    }
+    // Pesagens separado, também com watchdog
+    await _guardModule(
+      () => action_blocks.refreshPesagens(context),
+      'PULL pesagens',
+      _pullModuleTimeout,
+      null,
+    );
 
     appState.ultimaSincronizacao = getCurrentTimestamp;
-    debugPrint('[SYNC][auto] Auto-sync concluída com sucesso.');
+    debugPrint(
+        '[SYNC][auto] Auto-sync concluída em ${globalStopwatch.elapsedMilliseconds}ms.');
   } catch (e, s) {
     debugPrint('[SYNC][auto] ERRO na auto-sync: $e\n$s');
   } finally {
+    watchdogTimer?.cancel();
     appState.isSyncing = false;
+    globalStopwatch.stop();
   }
 }
