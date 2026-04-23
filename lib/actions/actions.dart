@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 void _syncLog(String flow, String message) {
   // Atualiza heartbeat a cada log — permite watchdogs externos detectarem
@@ -84,6 +85,83 @@ const Duration kSyncLightTimeout = Duration(seconds: 10);
 /// Tempo total máximo de uma sessão de sync (watchdog global).
 const Duration kSyncTotalBudget = Duration(minutes: 3);
 
+/// B5 — Page size adaptativo por tipo de conexão.
+///
+/// Em rede WiFi/cabeada usamos 999 (mantém comportamento atual e
+/// minimiza round-trips). Em rede móvel reduzimos para 250: requests
+/// menores têm muito menos chance de timeout em 3G/4G instável.
+///
+/// Faz uma checagem síncrona via [Connectivity] (cacheada por 30s) e
+/// nunca lança — em qualquer dúvida retorna 999 (comportamento original).
+int _cachedPageSize = 999;
+DateTime? _cachedPageSizeAt;
+
+Future<int> _adaptivePageSize() async {
+  final now = DateTime.now();
+  if (_cachedPageSizeAt != null &&
+      now.difference(_cachedPageSizeAt!) < const Duration(seconds: 30)) {
+    return _cachedPageSize;
+  }
+  try {
+    final conn = await Connectivity().checkConnectivity();
+    final isMobile = (conn is List)
+        ? (conn as List).contains(ConnectivityResult.mobile)
+        : conn == ConnectivityResult.mobile;
+    _cachedPageSize = isMobile ? 250 : 999;
+    _cachedPageSizeAt = now;
+  } catch (_) {
+    _cachedPageSize = 999;
+    _cachedPageSizeAt = now;
+  }
+  return _cachedPageSize;
+}
+
+/// B6 — Telemetria leve em memória (acessível via tela de diagnóstico).
+///
+/// Mantém um buffer circular de eventos recentes para diagnóstico ao vivo.
+/// Não usa SQLite para evitar I/O extra durante o próprio sync.
+class SyncTelemetry {
+  static const int _maxEvents = 200;
+  static final List<SyncTelemetryEvent> _events = [];
+
+  static void log({
+    required String flow,
+    required String message,
+    int? elapsedMs,
+    bool isError = false,
+  }) {
+    if (_events.length >= _maxEvents) {
+      _events.removeAt(0);
+    }
+    _events.add(SyncTelemetryEvent(
+      timestamp: DateTime.now(),
+      flow: flow,
+      message: message,
+      elapsedMs: elapsedMs,
+      isError: isError,
+    ));
+  }
+
+  static List<SyncTelemetryEvent> snapshot() => List.unmodifiable(_events);
+  static void clear() => _events.clear();
+}
+
+class SyncTelemetryEvent {
+  final DateTime timestamp;
+  final String flow;
+  final String message;
+  final int? elapsedMs;
+  final bool isError;
+
+  SyncTelemetryEvent({
+    required this.timestamp,
+    required this.flow,
+    required this.message,
+    this.elapsedMs,
+    this.isError = false,
+  });
+}
+
 /// Envolve um Future em um timeout, registrando tempo decorrido e erro/label.
 /// Em caso de timeout, lança TimeoutException com uma mensagem informativa.
 Future<T> _withTimeout<T>(
@@ -98,11 +176,23 @@ Future<T> _withTimeout<T>(
       stopwatch.stop();
       _syncLog('timeout',
           '$label estourou após ${stopwatch.elapsedMilliseconds}ms (limite ${timeout.inSeconds}s)');
+      SyncTelemetry.log(
+        flow: 'timeout',
+        message: '$label estourou (limite ${timeout.inSeconds}s)',
+        elapsedMs: stopwatch.elapsedMilliseconds,
+        isError: true,
+      );
       throw TimeoutException(
           'Timeout em "$label" após ${timeout.inSeconds}s');
     },
   ).then((value) {
     stopwatch.stop();
+    // B6: registra cada operação na telemetria para a tela de diagnóstico.
+    SyncTelemetry.log(
+      flow: 'op',
+      message: label,
+      elapsedMs: stopwatch.elapsedMilliseconds,
+    );
     // Apenas loga latências altas para não poluir logs normais.
     if (stopwatch.elapsedMilliseconds > 3000) {
       _syncLog('latency',
@@ -2128,12 +2218,14 @@ Future refreshRebanhoOtimizada(BuildContext context) async {
         }
         while (FFAppState().indexRebPaginacao < totalRebanhos) {
           final offsetAtual = FFAppState().indexRebPaginacao;
+          // B5: page size adaptativo (mobile=250, demais=999)
+          final pageSize = await _adaptivePageSize();
           try {
             if (updatedAfter != null) {
               rebanhosAPIO =
                   await SupabaseFunctionsGroup.buscarRebanhosIncCall.call(
                 pIdPropriedadeList: propertyIds,
-                pLimite: 999,
+                pLimite: pageSize,
                 pOffset: offsetAtual,
                 pUpdatedAfter: updatedAfter,
               );
@@ -2141,7 +2233,7 @@ Future refreshRebanhoOtimizada(BuildContext context) async {
               rebanhosAPIO =
                   await SupabaseFunctionsGroup.buscarRebanhosCall.call(
                 pIdPropriedadeList: propertyIds,
-                pLimite: 999,
+                pLimite: pageSize,
                 pOffset: offsetAtual,
               );
             }
@@ -2336,12 +2428,14 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
         }
         while (FFAppState().indexReproPaginacao < totalReproducoes) {
           final offsetAtual = FFAppState().indexReproPaginacao;
+          // B5: page size adaptativo
+          final pageSize = await _adaptivePageSize();
           try {
             if (updatedAfter != null) {
               reproducaoAPI = await _withTimeout(
                 () => SupabaseFunctionsGroup.buscarReproducoesIncCall.call(
                   pIdPropriedadeList: propertyIds,
-                  pLimite: 999,
+                  pLimite: pageSize,
                   pOffset: offsetAtual,
                   pUpdatedAfter: updatedAfter,
                 ),
@@ -2352,7 +2446,7 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
               reproducaoAPI = await _withTimeout(
                 () => SupabaseFunctionsGroup.buscarReproducoesCall.call(
                   pIdPropriedadeList: propertyIds,
-                  pLimite: 999,
+                  pLimite: pageSize,
                   pOffset: offsetAtual,
                 ),
                 label: 'reproducao.buscarReproducoes(offset=$offsetAtual)',
@@ -2779,12 +2873,14 @@ Future refresSanidadeOtimizada(BuildContext context) async {
         }
         while (FFAppState().indexSanidadePaginacao < totalSanidades) {
           final offsetAtual = FFAppState().indexSanidadePaginacao;
+          // B5: page size adaptativo
+          final pageSize = await _adaptivePageSize();
           try {
             if (updatedAfter != null) {
               sanidadesAPI =
                   await SupabaseFunctionsGroup.buscarSanidadesIncCall.call(
                 pIdPropriedadeList: propertyIds,
-                pLimite: 999,
+                pLimite: pageSize,
                 pOffset: offsetAtual,
                 pUpdatedAfter: updatedAfter,
               );
@@ -2792,7 +2888,7 @@ Future refresSanidadeOtimizada(BuildContext context) async {
               sanidadesAPI =
                   await SupabaseFunctionsGroup.buscarSanidadesCall.call(
                 pIdPropriedadeList: propertyIds,
-                pLimite: 999,
+                pLimite: pageSize,
                 pOffset: offsetAtual,
               );
             }

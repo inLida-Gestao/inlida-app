@@ -4,6 +4,7 @@ import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/instant_timer.dart';
+import '/components/sync_diagnostic_dialog.dart';
 import 'dart:async';
 import '/actions/actions.dart' as action_blocks;
 import '/custom_code/actions/index.dart' as actions;
@@ -241,7 +242,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                           Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              FlutterFlowIconButton(
+                              GestureDetector(
+                                // B6: long-press abre tela de diagnóstico
+                                onLongPress: () {
+                                  SyncDiagnosticDialog.show(context);
+                                },
+                                child: FlutterFlowIconButton(
                                 borderRadius: 8.0,
                                 buttonSize: 40.0,
                                 fillColor: FlutterFlowTheme.of(context).primary,
@@ -545,6 +551,7 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                   safeSetState(() {});
                                 },
                               ),
+                              ), // GestureDetector wrap (B6 long-press abre diagnóstico)
                               if (FFAppState().syncProgressPercent >= 0)
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(
