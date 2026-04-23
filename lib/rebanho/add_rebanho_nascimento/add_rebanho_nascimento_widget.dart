@@ -3984,30 +3984,26 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       .pesonascimentoTextController
                                                       .text !=
                                                   '') {
-                                                await SQLiteManager.instance
-                                                    .addPesagem(
-                                                  dataPesagem: dateTimeFormat(
-                                                    "yyyy-MM-dd",
-                                                    _model.datePicked1,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  tipo: 'Nascimento',
-                                                  peso: parsePesoFormatado(_model
-                                                      .pesonascimentoTextController
-                                                      .text),
-                                                  deletado: 'NAO',
-                                                  createdat: dateTimeFormat(
-                                                    "yyyy-MM-dd HH:mm:ss",
-                                                    getCurrentTimestamp,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  idRebanho: _model.idRebanho,
-                                                  idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
-                                                );
+                                                final pesoNasc =
+                                                    parsePesoFormatado(_model
+                                                        .pesonascimentoTextController
+                                                        .text);
+                                                if (pesoNasc != null && (_model.idRebanho ?? "").isNotEmpty) {
+                                                  await SQLiteManager.instance
+                                                      .updatePesagemByTipo(
+                                                    idRebanho:
+                                                        _model.idRebanho!,
+                                                    tipo: 'Nascimento',
+                                                    peso: pesoNasc,
+                                                    dataPesagem: dateTimeFormat(
+                                                      "yyyy-MM-dd",
+                                                      _model.datePicked1,
+                                                      locale: FFLocalizations.of(
+                                                              context)
+                                                          .languageCode,
+                                                    ),
+                                                  );
+                                                }
                                               }
                                               if (_model.dPLoteValue != null &&
                                                   _model.dPLoteValue != '') {

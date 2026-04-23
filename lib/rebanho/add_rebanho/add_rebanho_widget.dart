@@ -5861,65 +5861,57 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         .pesonascimentoTextController
                                                         .text !=
                                                     '') {
-                                                  await SQLiteManager.instance
-                                                      .addPesagem(
-                                                    dataPesagem: dateTimeFormat(
-                                                      "yyyy-MM-dd",
-                                                      _model.datePicked1 ??
-                                                          getCurrentTimestamp,
-                                                      locale:
-                                                          FFLocalizations.of(
-                                                                  context)
-                                                              .languageCode,
-                                                    ),
-                                                    tipo: 'Nascimento',
-                                                    peso: _parsePeso(_model
-                                                        .pesonascimentoTextController
-                                                        .text),
-                                                    deletado: 'NAO',
-                                                    createdat: dateTimeFormat(
-                                                      "yyyy-MM-dd HH:mm:ss",
-                                                      getCurrentTimestamp,
-                                                      locale:
-                                                          FFLocalizations.of(
-                                                                  context)
-                                                              .languageCode,
-                                                    ),
-                                                    idRebanho: _model.idRebanho,
-                                                    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
-                                                  );
+                                                  final pesoNasc = _parsePeso(
+                                                      _model
+                                                          .pesonascimentoTextController
+                                                          .text);
+                                                  if (pesoNasc != null && (_model.idRebanho ?? "").isNotEmpty) {
+                                                    await SQLiteManager.instance
+                                                        .updatePesagemByTipo(
+                                                      idRebanho:
+                                                          _model.idRebanho!,
+                                                      tipo: 'Nascimento',
+                                                      peso: pesoNasc,
+                                                      dataPesagem:
+                                                          dateTimeFormat(
+                                                        "yyyy-MM-dd",
+                                                        _model.datePicked1 ??
+                                                            getCurrentTimestamp,
+                                                        locale:
+                                                            FFLocalizations.of(
+                                                                    context)
+                                                                .languageCode,
+                                                      ),
+                                                    );
+                                                  }
                                                 }
                                                 if (_model
                                                         .pesodadesmamaTextController
                                                         .text !=
                                                     '') {
-                                                  await SQLiteManager.instance
-                                                      .addPesagem(
-                                                    dataPesagem: dateTimeFormat(
-                                                      "yyyy-MM-dd",
-                                                      _model.datePicked3 ??
-                                                          getCurrentTimestamp,
-                                                      locale:
-                                                          FFLocalizations.of(
-                                                                  context)
-                                                              .languageCode,
-                                                    ),
-                                                    tipo: 'Desmama',
-                                                    peso: _parsePeso(_model
-                                                        .pesodadesmamaTextController
-                                                        .text),
-                                                    deletado: 'NAO',
-                                                    createdat: dateTimeFormat(
-                                                      "yyyy-MM-dd HH:mm:ss",
-                                                      getCurrentTimestamp,
-                                                      locale:
-                                                          FFLocalizations.of(
-                                                                  context)
-                                                              .languageCode,
-                                                    ),
-                                                    idRebanho: _model.idRebanho,
-                                                    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
-                                                  );
+                                                  final pesoDesm = _parsePeso(
+                                                      _model
+                                                          .pesodadesmamaTextController
+                                                          .text);
+                                                  if (pesoDesm != null && (_model.idRebanho ?? "").isNotEmpty) {
+                                                    await SQLiteManager.instance
+                                                        .updatePesagemByTipo(
+                                                      idRebanho:
+                                                          _model.idRebanho!,
+                                                      tipo: 'Desmama',
+                                                      peso: pesoDesm,
+                                                      dataPesagem:
+                                                          dateTimeFormat(
+                                                        "yyyy-MM-dd",
+                                                        _model.datePicked3 ??
+                                                            getCurrentTimestamp,
+                                                        locale:
+                                                            FFLocalizations.of(
+                                                                    context)
+                                                                .languageCode,
+                                                      ),
+                                                    );
+                                                  }
                                                 }
                                                 if (_model
                                                         .pesoAtualTextController

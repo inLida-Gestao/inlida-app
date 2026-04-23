@@ -119,6 +119,9 @@ Future<Database> initializeDatabaseFromDbFile(
   // Criar tabela de auditoria de erros de sincronização
   await _ensureSyncErrorLogTable(database);
 
+  // Limpar duplicatas históricas de Nascimento/Desmama
+  await _dedupePesagensFixas(database);
+
   return database;
 }
 
@@ -268,4 +271,41 @@ Future<void> _ensureSyncErrorLogTable(Database db) async {
     }
   }
   debugPrint('[SQLite] Tabela sync_error_log verificada/criada.');
+}
+
+/// Limpa duplicatas históricas de pesagens "Nascimento" e "Desmama".
+///
+/// Para cada (idRebanho, tipo) onde existe mais de um registro ativo
+/// (deletado='NAO'), mantém apenas o de MAIOR id (mais recente) e marca
+/// os demais como deletado='SIM'. Eles entrarão na fila de UPDATE da
+/// próxima sync e o Supabase também receberá o soft-delete.
+///
+/// Idempotente — se não há duplicatas, não faz nada.
+Future<void> _dedupePesagensFixas(Database db) async {
+  try {
+    const sql = '''
+      UPDATE local_historico_pesagens
+      SET deletado = 'SIM'
+      WHERE id IN (
+        SELECT p.id
+        FROM local_historico_pesagens p
+        WHERE p.deletado = 'NAO'
+          AND p.tipo IN ('Nascimento', 'Desmama')
+          AND p.id < (
+            SELECT MAX(p2.id)
+            FROM local_historico_pesagens p2
+            WHERE p2.idRebanho = p.idRebanho
+              AND p2.tipo = p.tipo
+              AND p2.deletado = 'NAO'
+          )
+      )
+    ''';
+    final n = await db.rawUpdate(sql);
+    if (n > 0) {
+      debugPrint('[SQLite] $n pesagem(ns) duplicada(s) Nascimento/Desmama '
+          'marcada(s) como deletada(s).');
+    }
+  } catch (e) {
+    debugPrint('[SQLite] Erro ao deduplicar pesagens fixas: $e');
+  }
 }
