@@ -74,8 +74,9 @@ refresh*Otimizada
    estendido), mas requer validação de FKs e payload mapping caso-a-caso.
 
 3. **Lógica duplicada entre `auto_sync.dart` e `navegacao_widget.dart`.**
-   Cada caminho tem seu próprio watchdog e fluxo PUSH→PULL. B3 (SyncEngine
-   unificado) endereça isso.
+   ~~Cada caminho tem seu próprio watchdog e fluxo PUSH→PULL.~~
+   ✅ **Resolvido em B3** — `SyncEngine` (lib/custom_code/actions/sync_engine.dart)
+   é o único ponto de entrada. `auto_sync.dart` removido.
 
 4. **Sem detecção de conflitos remotos.**
    Estratégia "last write wins" via upsert. Se outro dispositivo modificar
@@ -87,9 +88,18 @@ refresh*Otimizada
 
 ## 3. Roadmap de evolução
 
-### Fase 1 — SyncEngine unificado (B3, próxima prioridade)
+### Fase 1 — SyncEngine unificado (B3) ✅ IMPLEMENTADO
 
-Unificar `auto_sync` e botão manual em uma única classe stateful:
+Implementação real em `lib/custom_code/actions/sync_engine.dart`:
+
+- Singleton `SyncEngine.instance` com mutex via flag (`_active`).
+- API: `run(context, {trigger, onProgress})` retornando `SyncResult`.
+- Triggers: `manual`, `autoReconnect`, `boot`.
+- `SyncProgress` stream para UI; watchdog global de 3min.
+- Wrappers retro-compat: `performAutoSync(context)` e `performManualSync(context)`.
+- Throttle automático para `autoReconnect` (mínimo 60s entre execuções).
+
+Exemplo histórico (descartado):
 
 ```dart
 class SyncEngine {

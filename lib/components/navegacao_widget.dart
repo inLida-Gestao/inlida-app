@@ -279,256 +279,10 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                     );
                                     return;
                                   }
-                                  FFAppState().isSyncing = true;
-                                  FFAppState().syncCancelRequested = false;
-                                  FFAppState().lastSyncHeartbeat =
-                                      DateTime.now();
-                                  // Watchdog: força liberar isSyncing após 3min
-                                  // para evitar flag-zumbi se algo travar
-                                  // (ex.: Supabase sem timeout interno).
-                                  Timer? syncWatchdog = Timer(
-                                      const Duration(minutes: 3), () {
-                                    debugPrint(
-                                        '[SYNC][manual][watchdog] 3min excedidos — forçando isSyncing=false.');
-                                    FFAppState().isSyncing = false;
-                                    FFAppState().syncProgressPercent = -1;
-                                    FFAppState().syncProgressLabel = '';
-                                  });
+                                  // B3 — usa SyncEngine (mutex global, watchdogs internos).
                                   _model.temInternet =
                                       await actions.checkInternetConnection();
-                                  if (_model.temInternet == true) {
-                                    _model.userLogado =
-                                        await UsersTable().queryRows(
-                                      queryFn: (q) => q.eqOrNull(
-                                        'userID',
-                                        currentUserUid,
-                                      ),
-                                    );
-                                    if ((_model.userLogado?.firstOrNull
-                                                ?.acesso ==
-                                            'Pago') ||
-                                        (_model.userLogado?.firstOrNull
-                                                ?.acesso ==
-                                            'Gratis')) {
-                                      FFAppState().syncProgressPercent = 0;
-                                      FFAppState().syncProgressLabel =
-                                          'Enviando...';
-                                      safeSetState(() {});
-                                      try {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Sincronização iniciada.',
-                                              style: TextStyle(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                              ),
-                                            ),
-                                            duration: const Duration(
-                                                milliseconds: 4000),
-                                            backgroundColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .secondary,
-                                          ),
-                                        );
-                                        // Upload phase
-                                        FFAppState().syncProgressPercent = 5;
-                                        FFAppState().syncProgressLabel =
-                                            'Enviando propriedades...';
-                                        safeSetState(() {});
-                                        final propUploadOk = await action_blocks
-                                            .putUpdtPropriedades(context);
-                                        FFAppState().syncProgressPercent = 10;
-                                        FFAppState().syncProgressLabel =
-                                            'Enviando rebanhos...';
-                                        safeSetState(() {});
-                                        final results = await Future.wait([
-                                          action_blocks
-                                              .putUpdtRebanhos(context),
-                                          action_blocks.putUpdtLotes(context),
-                                          action_blocks
-                                              .putUpdtReproducao(context),
-                                        ]);
-                                        final rebanhoUploadOk = results[0];
-                                        final lotesUploadOk = results[1];
-                                        final reproUploadOk = results[2];
-                                        FFAppState().syncProgressPercent = 15;
-                                        FFAppState().syncProgressLabel =
-                                            'Enviando sanidades...';
-                                        safeSetState(() {});
-                                        final sanidadeUploadOk =
-                                            await action_blocks
-                                                .putUpdtSanidades(context);
-                                        FFAppState().syncProgressPercent = 20;
-                                        FFAppState().syncProgressLabel =
-                                            'Baixando propriedades...';
-                                        safeSetState(() {});
-                                        // Download propriedades - 25%
-                                        await action_blocks
-                                            .refreshPropriedades(context);
-                                        FFAppState().syncProgressPercent = 30;
-                                        FFAppState().syncProgressLabel =
-                                            'Baixando lotes...';
-                                        safeSetState(() {});
-                                        // Download lotes - 35%
-                                        try {
-                                          await action_blocks
-                                              .refreshLotes(context);
-                                        } catch (e) {
-                                          debugPrint(
-                                              '[SYNC] Erro nav1 lotes: $e');
-                                        }
-                                        FFAppState().syncProgressPercent = 35;
-                                        FFAppState().syncProgressLabel =
-                                            'Baixando dados...';
-                                        safeSetState(() {});
-                                        // Download parallel - 35% to 95%
-                                        await Future.wait([
-                                          action_blocks
-                                              .refreshRebanhoOtimizada(context),
-                                          action_blocks
-                                              .refreshReproducaoOtimizada(
-                                                  context),
-                                          action_blocks
-                                              .refresSanidadeOtimizada(context),
-                                        ]).catchError((e) {
-                                          debugPrint(
-                                              '[SYNC] Erro no Future.wait nav1: $e');
-                                          return <void>[];
-                                        });
-                                        // Pesagens sync separado para garantir execução
-                                        debugPrint(
-                                            '[SYNC][nav] Chamando refreshPesagens SEPARADAMENTE...');
-                                        try {
-                                          await action_blocks
-                                              .refreshPesagens(context);
-                                          debugPrint(
-                                              '[SYNC][nav] refreshPesagens CONCLUÍDO com sucesso.');
-                                        } catch (e) {
-                                          debugPrint(
-                                              '[SYNC][nav] Erro em refreshPesagens: $e');
-                                        }
-                                        FFAppState().syncProgressPercent = 95;
-                                        FFAppState().syncProgressLabel =
-                                            'Finalizando...';
-                                        safeSetState(() {});
-                                        await action_blocks
-                                            .countLotesCadastrados(context);
-                                        FFAppState().ultimaSincronizacao =
-                                            getCurrentTimestamp;
-                                        FFAppState().syncProgressPercent = 100;
-                                        FFAppState().syncProgressLabel =
-                                            'Concluído!';
-                                        safeSetState(() {});
-                                        // Só limpar flags dos módulos cujo upload teve sucesso
-                                        if (propUploadOk) {
-                                          FFAppState().dataDadosNaoSyncProp =
-                                              null;
-                                        }
-                                        if (rebanhoUploadOk) {
-                                          FFAppState().dataDadosNaoSyncRebanho =
-                                              null;
-                                        }
-                                        if (lotesUploadOk) {
-                                          FFAppState().dataDadosNaoSyncLotes =
-                                              null;
-                                        }
-                                        if (reproUploadOk) {
-                                          FFAppState().dataDadosNaoSyncRepro =
-                                              null;
-                                        }
-                                        if (sanidadeUploadOk) {
-                                          FFAppState()
-                                              .dataDadosNaoSyncSanidade = null;
-                                        }
-                                        safeSetState(() {});
-                                        // Reset progress after a brief delay so user sees 100%
-                                        await Future.delayed(
-                                            const Duration(milliseconds: 1500));
-                                        FFAppState().syncProgressPercent = -1;
-                                        FFAppState().syncProgressLabel = '';
-                                        syncWatchdog?.cancel();
-                                        FFAppState().isSyncing = false;
-                                        FFAppState().update(() {});
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Sincronização realizada com sucesso.',
-                                              style: TextStyle(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                              ),
-                                            ),
-                                            duration: const Duration(
-                                                milliseconds: 4000),
-                                            backgroundColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .secondary,
-                                          ),
-                                        );
-                                        Navigator.pop(context);
-                                      } catch (e) {
-                                        debugPrint(
-                                            '[SYNC] Erro geral na sincronização: $e');
-                                        FFAppState().syncProgressPercent = -1;
-                                        FFAppState().syncProgressLabel = '';
-                                        syncWatchdog?.cancel();
-                                        FFAppState().isSyncing = false;
-                                        safeSetState(() {});
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Erro na sincronização. Tente novamente.',
-                                              style: TextStyle(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                              ),
-                                            ),
-                                            duration: const Duration(
-                                                milliseconds: 4000),
-                                            backgroundColor:
-                                                FlutterFlowTheme.of(context)
-                                                    .error,
-                                          ),
-                                        );
-                                      }
-                                    } else {
-                                      syncWatchdog?.cancel();
-                                      FFAppState().isSyncing = false;
-                                      FFAppState().clearUserData();
-                                      GoRouter.of(context).prepareAuthEvent();
-                                      await authManager.signOut();
-                                      GoRouter.of(context)
-                                          .clearRedirectLocation();
-
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Seu período de acesso grátis finalizou, assine um plano para continuar acessando.',
-                                            style: TextStyle(
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .secondaryBackground,
-                                            ),
-                                          ),
-                                          duration: const Duration(
-                                              milliseconds: 4000),
-                                          backgroundColor:
-                                              FlutterFlowTheme.of(context)
-                                                  .secondary,
-                                        ),
-                                      );
-                                    }
-                                  } else {
-                                    syncWatchdog?.cancel();
-                                    FFAppState().isSyncing = false;
+                                  if (_model.temInternet != true) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
@@ -546,6 +300,133 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                             FlutterFlowTheme.of(context).error,
                                       ),
                                     );
+                                    return;
+                                  }
+                                  _model.userLogado =
+                                      await UsersTable().queryRows(
+                                    queryFn: (q) => q.eqOrNull(
+                                      'userID',
+                                      currentUserUid,
+                                    ),
+                                  );
+                                  final acesso = _model
+                                      .userLogado?.firstOrNull?.acesso;
+                                  if (acesso != 'Pago' && acesso != 'Gratis') {
+                                    FFAppState().clearUserData();
+                                    GoRouter.of(context).prepareAuthEvent();
+                                    await authManager.signOut();
+                                    GoRouter.of(context).clearRedirectLocation();
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Seu período de acesso grátis finalizou, assine um plano para continuar acessando.',
+                                            style: TextStyle(
+                                              color: FlutterFlowTheme.of(context)
+                                                  .secondaryBackground,
+                                            ),
+                                          ),
+                                          duration: const Duration(
+                                              milliseconds: 4000),
+                                          backgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .secondary,
+                                        ),
+                                      );
+                                    }
+                                    return;
+                                  }
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Sincronização iniciada.',
+                                        style: TextStyle(
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryBackground,
+                                        ),
+                                      ),
+                                      duration:
+                                          const Duration(milliseconds: 3000),
+                                      backgroundColor:
+                                          FlutterFlowTheme.of(context).secondary,
+                                    ),
+                                  );
+
+                                  final result = await actions.performManualSync(
+                                    context,
+                                    onProgress: (p) => safeSetState(() {}),
+                                  );
+                                  if (!context.mounted) return;
+                                  if (result.skipped) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Sincronização já em andamento...',
+                                          style: TextStyle(
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground,
+                                          ),
+                                        ),
+                                        duration: const Duration(
+                                            milliseconds: 2000),
+                                        backgroundColor:
+                                            FlutterFlowTheme.of(context)
+                                                .secondary,
+                                      ),
+                                    );
+                                  } else if (result.cancelled) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Sincronização cancelada.',
+                                          style: TextStyle(
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground,
+                                          ),
+                                        ),
+                                        duration: const Duration(
+                                            milliseconds: 3000),
+                                        backgroundColor:
+                                            FlutterFlowTheme.of(context)
+                                                .secondary,
+                                      ),
+                                    );
+                                  } else if (!result.allSuccess) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Sincronização concluída com avisos. Verifique a tela de diagnóstico (segure o botão de sync).',
+                                          style: TextStyle(
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground,
+                                          ),
+                                        ),
+                                        duration: const Duration(
+                                            milliseconds: 4000),
+                                        backgroundColor:
+                                            FlutterFlowTheme.of(context)
+                                                .secondary,
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Sincronização realizada com sucesso.',
+                                          style: TextStyle(
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground,
+                                          ),
+                                        ),
+                                        duration: const Duration(
+                                            milliseconds: 3000),
+                                        backgroundColor:
+                                            FlutterFlowTheme.of(context)
+                                                .secondary,
+                                      ),
+                                    );
+                                    if (context.mounted) Navigator.pop(context);
                                   }
 
                                   safeSetState(() {});
