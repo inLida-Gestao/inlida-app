@@ -1,5 +1,5 @@
 export 'check_internet_connection.dart'
-    show checkInternetConnection, watchConnectivity, hasConnection;
+    show checkInternetConnection, watchConnectivity, hasConnection, pingSupabase;
 export 'auto_sync.dart' show performAutoSync;
 export 'check_internet_connection_debug.dart' show checkInternetConnectionDebug;
 export 'setup_s_q_lite_optimized.dart' show setupSQLiteOptimized;

@@ -82,6 +82,8 @@ Future<void> performAutoSync(BuildContext context) async {
 
   debugPrint('[SYNC][auto] Iniciando auto-sync...');
   appState.isSyncing = true;
+  appState.syncCancelRequested = false;
+  appState.lastSyncHeartbeat = DateTime.now();
   appState.lastAutoSync = DateTime.now();
 
   // Watchdog global: garante que o flag isSyncing sempre é liberado.
@@ -231,7 +233,7 @@ Future<void> performAutoSync(BuildContext context) async {
   } catch (e, s) {
     debugPrint('[SYNC][auto] ERRO na auto-sync: $e\n$s');
   } finally {
-    watchdogTimer?.cancel();
+    watchdogTimer.cancel();
     appState.isSyncing = false;
     globalStopwatch.stop();
   }

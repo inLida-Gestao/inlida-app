@@ -274,6 +274,9 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                     return;
                                   }
                                   FFAppState().isSyncing = true;
+                                  FFAppState().syncCancelRequested = false;
+                                  FFAppState().lastSyncHeartbeat =
+                                      DateTime.now();
                                   // Watchdog: força liberar isSyncing após 3min
                                   // para evitar flag-zumbi se algo travar
                                   // (ex.: Supabase sem timeout interno).

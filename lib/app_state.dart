@@ -318,6 +318,23 @@ class FFAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Flag de cancelamento do sync atual (runtime only).
+  /// Os loops de push/pull verificam este flag e abortam cooperativamente.
+  bool _syncCancelRequested = false;
+  bool get syncCancelRequested => _syncCancelRequested;
+  set syncCancelRequested(bool value) {
+    _syncCancelRequested = value;
+    notifyListeners();
+  }
+
+  /// Timestamp do último heartbeat do sync (runtime only).
+  /// Usado para detectar stalls e para exibir diagnóstico ao usuário.
+  DateTime? _lastSyncHeartbeat;
+  DateTime? get lastSyncHeartbeat => _lastSyncHeartbeat;
+  set lastSyncHeartbeat(DateTime? value) {
+    _lastSyncHeartbeat = value;
+  }
+
   PropriedadeSelecionadaStruct _propriedadeSelecionada =
       PropriedadeSelecionadaStruct();
   PropriedadeSelecionadaStruct get propriedadeSelecionada =>
@@ -1915,6 +1932,12 @@ class FFAppState extends ChangeNotifier {
   String get filtroDataSanidadeTxt => _filtroDataSanidadeTxt;
   set filtroDataSanidadeTxt(String value) {
     _filtroDataSanidadeTxt = value;
+  }
+
+  DateTime? _filtroDataSanidadeFim;
+  DateTime? get filtroDataSanidadeFim => _filtroDataSanidadeFim;
+  set filtroDataSanidadeFim(DateTime? value) {
+    _filtroDataSanidadeFim = value;
   }
 
   DateTime? _sanidadeChangeDateTime =

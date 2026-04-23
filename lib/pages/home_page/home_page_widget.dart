@@ -57,6 +57,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
     // On page load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
+      // A2/A3: garantir que nenhum flag de sync fica preso em "true" se a
+      // sessão anterior travou. `isSyncing` e `syncCancelRequested` são
+      // runtime-only, então um reset aqui é suficiente.
+      FFAppState().isSyncing = false;
+      FFAppState().syncCancelRequested = false;
       Function() navigate = () {};
       _model.userLogadoON = await UsersTable().queryRows(
         queryFn: (q) => q.eqOrNull(
@@ -180,10 +185,25 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
                   // Auto-sync quando reconecta: offline → online
                   if (!hadConnection && (_model.temNet == true)) {
-                    debugPrint('[SYNC][auto] Conectividade restaurada. Aguardando debounce...');
-                    await Future.delayed(const Duration(seconds: 5));
+                    debugPrint(
+                        '[SYNC][auto] Conectividade restaurada. Aguardando debounce 10s...');
+                    // A6: debounce 10s + warm-up Supabase antes de iniciar sync.
+                    // Evita disparar sync enquanto rotas WiFi↔Mobile ainda
+                    // estão instáveis (causa raiz do travamento de 20 min).
+                    await Future.delayed(const Duration(seconds: 10));
                     final stillOnline = await actions.checkInternetConnection();
-                    if (stillOnline && context.mounted) {
+                    if (!stillOnline) {
+                      debugPrint(
+                          '[SYNC][auto] Offline após debounce — abortando.');
+                      return;
+                    }
+                    final supabaseOk = await actions.pingSupabase();
+                    if (!supabaseOk) {
+                      debugPrint(
+                          '[SYNC][auto] Supabase indisponível no warm-up — adiando sync.');
+                      return;
+                    }
+                    if (context.mounted) {
                       await actions.performAutoSync(context);
                       safeSetState(() {});
                     }
