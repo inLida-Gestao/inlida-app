@@ -258,23 +258,53 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 ),
                                 showLoadingIndicator: true,
                                 onPressed: () async {
-                                  // Evitar sync duplo (manual + auto)
+                                  // Evitar sync duplo (manual + auto) — oferece cancelar.
                                   if (FFAppState().isSyncing) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
+                                    final messenger =
+                                        ScaffoldMessenger.of(context);
+                                    messenger.hideCurrentSnackBar();
+                                    messenger.showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                          'Sincronização já em andamento...',
+                                          'Sincronização em andamento. Toque em CANCELAR se estiver travada.',
                                           style: TextStyle(
                                             color:
                                                 FlutterFlowTheme.of(context)
                                                     .secondaryBackground,
                                           ),
                                         ),
-                                        duration: const Duration(
-                                            milliseconds: 2000),
+                                        duration: const Duration(seconds: 6),
                                         backgroundColor:
                                             FlutterFlowTheme.of(context)
                                                 .secondary,
+                                        action: SnackBarAction(
+                                          label: 'CANCELAR',
+                                          textColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .secondaryBackground,
+                                          onPressed: () {
+                                            actions.SyncEngine.instance
+                                                .cancel();
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Cancelamento solicitado. Aguardando o passo atual encerrar...',
+                                                  style: TextStyle(
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .secondaryBackground,
+                                                  ),
+                                                ),
+                                                duration: const Duration(
+                                                    seconds: 4),
+                                                backgroundColor:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondary,
+                                              ),
+                                            );
+                                          },
+                                        ),
                                       ),
                                     );
                                     return;
