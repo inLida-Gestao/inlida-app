@@ -12,6 +12,7 @@ import '/rebanho/popup_rebanhos/popup_rebanhos_widget.dart';
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/actions/actions.dart' as action_blocks;
+import '/utils/peso_input_formatter.dart';
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
@@ -32,13 +33,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     with TickerProviderStateMixin {
   late EditRebanhoModel _model;
 
-  double? _parsePeso(String? rawValue) {
-    final normalized = rawValue?.trim().replaceAll(',', '.');
-    if (normalized == null || normalized.isEmpty) {
-      return null;
-    }
-    return double.tryParse(normalized);
-  }
+  double? _parsePeso(String? rawValue) => parsePesoFormatado(rawValue);
 
   String _normalizeInputText(String? value) {
     if (value == null) return '';
@@ -122,11 +117,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     );
 
     _model.pesoAtualTextController?.text =
-        (rebanhoAtual.pesoAtual == null || rebanhoAtual.pesoAtual == 0.0)
-            ? ''
-            : (rebanhoAtual.pesoAtual == rebanhoAtual.pesoAtual!.truncateToDouble()
-                ? rebanhoAtual.pesoAtual!.toInt().toString()
-                : rebanhoAtual.pesoAtual.toString());
+        formatPesoInicial(rebanhoAtual.pesoAtual);
     _model.datePicked4 = _parseStoredDate(rebanhoAtual.dataUltimaPesagem);
 
     if (mounted) {
@@ -203,25 +194,18 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     );
     _model.nomeAnimalFocusNode ??= FocusNode();
 
-    _model.pesonascimentoTextController ??= TextEditingController(text: () {
-      final val = FFAppState().rebanhoSelecionado.pesoNascimento;
-      if (val == 0.0) return '';
-      return val == val.truncateToDouble() ? val.toInt().toString() : val.toString();
-    }());
+    _model.pesonascimentoTextController ??= TextEditingController(
+        text: formatPesoInicial(
+            FFAppState().rebanhoSelecionado.pesoNascimento));
     _model.pesonascimentoFocusNode ??= FocusNode();
 
-    _model.pesodadesmamaTextController ??= TextEditingController(text: () {
-      final val = FFAppState().rebanhoSelecionado.pesoDesmama;
-      if (val == 0.0) return '';
-      return val == val.truncateToDouble() ? val.toInt().toString() : val.toString();
-    }());
+    _model.pesodadesmamaTextController ??= TextEditingController(
+        text: formatPesoInicial(
+            FFAppState().rebanhoSelecionado.pesoDesmama));
     _model.pesodadesmamaFocusNode ??= FocusNode();
 
-    _model.pesoAtualTextController ??= TextEditingController(text: () {
-      final val = FFAppState().rebanhoSelecionado.pesoAtual;
-      if (val == 0.0) return '';
-      return val == val.truncateToDouble() ? val.toInt().toString() : val.toString();
-    }());
+    _model.pesoAtualTextController ??= TextEditingController(
+        text: formatPesoInicial(FFAppState().rebanhoSelecionado.pesoAtual));
     _model.pesoAtualFocusNode ??= FocusNode();
 
     _model.anotacoesTextController ??= TextEditingController(
@@ -1807,9 +1791,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   .numberWithOptions(
                                                   decimal: true,
                                                   signed: true),
-                                              inputFormatters: [
-                                                FilteringTextInputFormatter.allow(
-                                                    RegExp(r'[0-9.,]')),
+                                              inputFormatters: const [
+                                                PesoInputFormatter(),
                                               ],
                                               validator: _model
                                                   .pesonascimentoTextControllerValidator
@@ -3552,9 +3535,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   .numberWithOptions(
                                                   decimal: true,
                                                   signed: true),
-                                              inputFormatters: [
-                                                FilteringTextInputFormatter.allow(
-                                                    RegExp(r'[0-9.,]')),
+                                              inputFormatters: const [
+                                                PesoInputFormatter(),
                                               ],
                                               validator: _model
                                                   .pesodadesmamaTextControllerValidator
@@ -3885,9 +3867,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   .numberWithOptions(
                                                   decimal: true,
                                                   signed: true),
-                                              inputFormatters: [
-                                                FilteringTextInputFormatter.allow(
-                                                    RegExp(r'[0-9.,]')),
+                                              inputFormatters: const [
+                                                PesoInputFormatter(),
                                               ],
                                               validator: _model
                                                   .pesoAtualTextControllerValidator

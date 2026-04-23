@@ -3,6 +3,7 @@ import '/backend/sqlite/sqlite_manager.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/utils/peso_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,19 +26,7 @@ class AddPesagemWidget extends StatefulWidget {
 class _AddPesagemWidgetState extends State<AddPesagemWidget> {
   late AddPesagemModel _model;
 
-  double? _parsePeso(String? rawValue) {
-    final normalized = rawValue?.trim().replaceAll(',', '.');
-    if (normalized == null || normalized.isEmpty) {
-      return null;
-    }
-
-    final parsed = double.tryParse(normalized);
-    if (parsed == null) {
-      return null;
-    }
-
-    return parsed;
-  }
+  double? _parsePeso(String? rawValue) => parsePesoFormatado(rawValue);
 
   @override
   void setState(VoidCallback callback) {
@@ -380,10 +369,9 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                                   .bodyMediumIsCustom,
                             ),
                         keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true, signed: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r'[0-9.,]')),
+                            decimal: false, signed: false),
+                        inputFormatters: const [
+                          PesoInputFormatter(),
                         ],
                         validator: _model.pesoTextControllerValidator
                             .asValidator(context),

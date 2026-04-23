@@ -12,6 +12,7 @@ import '/actions/actions.dart' as action_blocks;
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/flutter_flow/random_data_util.dart' as random_data;
+import '/utils/peso_input_formatter.dart';
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -1370,9 +1371,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   .numberWithOptions(
                                                   decimal: true,
                                                   signed: true),
-                                              inputFormatters: [
-                                                FilteringTextInputFormatter.allow(
-                                                    RegExp(r'[0-9.,]')),
+                                              inputFormatters: const [
+                                                PesoInputFormatter(),
                                               ],
                                               validator: _model
                                                   .pesonascimentoTextControllerValidator
@@ -3858,10 +3858,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           context)
                                                       .languageCode,
                                                 ),
-                                                pesoNascimento: double.tryParse(
-                                                    _model
-                                                        .pesonascimentoTextController
-                                                        .text),
+                                                pesoNascimento: parsePesoFormatado(_model
+                                                    .pesonascimentoTextController
+                                                    .text),
                                                 porte: _model.dPPorteValue,
                                                 raca: valueOrDefault<String>(
                                                   _model.dPRacaValue,
@@ -3995,7 +3994,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                         .languageCode,
                                                   ),
                                                   tipo: 'Nascimento',
-                                                  peso: double.tryParse(_model
+                                                  peso: parsePesoFormatado(_model
                                                       .pesonascimentoTextController
                                                       .text),
                                                   deletado: 'NAO',

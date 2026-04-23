@@ -12,6 +12,7 @@ import '/actions/actions.dart' as action_blocks;
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/flutter_flow/random_data_util.dart' as random_data;
+import '/utils/peso_input_formatter.dart';
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -36,13 +37,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
     with TickerProviderStateMixin {
   late AddRebanhoModel _model;
 
-  double? _parsePeso(String? rawValue) {
-    final normalized = rawValue?.trim().replaceAll(',', '.');
-    if (normalized == null || normalized.isEmpty) {
-      return null;
-    }
-    return double.tryParse(normalized);
-  }
+  double? _parsePeso(String? rawValue) => parsePesoFormatado(rawValue);
 
   @override
   void setState(VoidCallback callback) {
@@ -1566,10 +1561,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           .numberWithOptions(
                                                           decimal: true,
                                                           signed: true),
-                                                  inputFormatters: [
-                                                    FilteringTextInputFormatter
-                                                        .allow(RegExp(
-                                                            r'[0-9.,]')),
+                                                  inputFormatters: const [
+                                                    PesoInputFormatter(),
                                                   ],
                                                   validator: _model
                                                       .pesonascimentoTextControllerValidator
@@ -3393,10 +3386,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           .numberWithOptions(
                                                           decimal: true,
                                                           signed: true),
-                                                  inputFormatters: [
-                                                    FilteringTextInputFormatter
-                                                        .allow(RegExp(
-                                                            r'[0-9.,]')),
+                                                  inputFormatters: const [
+                                                    PesoInputFormatter(),
                                                   ],
                                                   validator: _model
                                                       .pesodadesmamaTextControllerValidator
@@ -3758,10 +3749,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                           .numberWithOptions(
                                                           decimal: true,
                                                           signed: true),
-                                                  inputFormatters: [
-                                                    FilteringTextInputFormatter
-                                                        .allow(RegExp(
-                                                            r'[0-9.,]')),
+                                                  inputFormatters: const [
+                                                    PesoInputFormatter(),
                                                   ],
                                                   validator: _model
                                                       .pesoAtualTextControllerValidator
