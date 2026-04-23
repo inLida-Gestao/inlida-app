@@ -530,6 +530,7 @@ Future<bool> putUpdtPropriedades(BuildContext context) async {
       );
       if (localPropriedades.isNotEmpty) {
         while (FFAppState().propriedadesIndex < localPropriedades.length) {
+          _throwIfCancelled('putUpdt_propriedades');
           try {
             await PropriedadesTable().insert({
               'userID': localPropriedades
@@ -595,8 +596,26 @@ Future<bool> putUpdtPropriedades(BuildContext context) async {
           locale: FFLocalizations.of(context).languageCode,
         ),
       );
+      // A4 dedupe PUT/UPDT: remove registros recém-inseridos.
+      if (localPropriedades.isNotEmpty) {
+        final insertedIds = localPropriedades
+            .map((r) => r.idPropriedade)
+            .toSet();
+        if (insertedIds.isNotEmpty) {
+          final before = localPropriedadesUPT.length;
+          localPropriedadesUPT = localPropriedadesUPT
+              .where((r) => !insertedIds.contains(r.idPropriedade))
+              .toList();
+          final removed = before - localPropriedadesUPT.length;
+          if (removed > 0) {
+            _syncLog('putUpdtPropriedades',
+                'Dedupe PUT/UPDT: $removed registro(s) removidos do UPDATE.');
+          }
+        }
+      }
       if (localPropriedadesUPT.isNotEmpty) {
         while (FFAppState().propriedadesIndex < localPropriedadesUPT.length) {
+          _throwIfCancelled('putUpdt_propriedades');
           try {
             await PropriedadesTable().update(
               data: {
@@ -939,8 +958,19 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
           locale: FFLocalizations.of(context).languageCode,
         ),
       );
+      // A4 dedupe PUT/UPDT: remove registros recém-inseridos (created_at ≈ updated_at)
+      if (localRebanhos.isNotEmpty) {
+        final insertedIds = localRebanhos.map((r) => r.idRebanho).whereType<String>().toSet();
+        if (insertedIds.isNotEmpty) {
+          final before = localRebanhosUPDT.length;
+          localRebanhosUPDT = localRebanhosUPDT.where((r) => !insertedIds.contains(r.idRebanho)).toList();
+          final removed = before - localRebanhosUPDT.length;
+          if (removed > 0) _syncLog('putUpdtRebanhos', 'Dedupe PUT/UPDT: $removed registro(s) removidos do UPDATE.');
+        }
+      }
       if (localRebanhosUPDT.isNotEmpty) {
         while (FFAppState().rebanhosIndex < localRebanhosUPDT.length) {
+          _throwIfCancelled('putUpdt_rebanhos');
           try {
             await RebanhoTable().update(
               data: {
@@ -1102,6 +1132,7 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
       FFAppState().pesagensIndex = 0;
       if (localHistPesPUT.isNotEmpty) {
         while (FFAppState().pesagensIndex < localHistPesPUT.length) {
+          _throwIfCancelled('putUpdt_pesagens');
           try {
             await HistoricoPesagensTable().insert({
               'idRebanho': localHistPesPUT
@@ -1136,6 +1167,7 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
       localPesagensUPDT = await SQLiteManager.instance.buscaHistPesagensUPDT();
       if (localPesagensUPDT.isNotEmpty) {
         while (FFAppState().pesagensIndex < localPesagensUPDT.length) {
+          _throwIfCancelled('putUpdt_pesagens');
           try {
             await HistoricoPesagensTable().update(
               data: {
@@ -1387,6 +1419,7 @@ Future<bool> putUpdtLotes(BuildContext context) async {
       FFAppState().lotesIndex = 0;
       if (localLotes.isNotEmpty) {
         while (FFAppState().lotesIndex < localLotes.length) {
+          _throwIfCancelled('putUpdt_lotes');
           try {
             await LotesTable().insert({
               'id_propriedade': localLotes
@@ -1439,8 +1472,18 @@ Future<bool> putUpdtLotes(BuildContext context) async {
           locale: FFLocalizations.of(context).languageCode,
         ),
       );
+      if (localLotes != null && localLotes.isNotEmpty) {
+        final insertedIds = localLotes.map((r) => r.idLote).whereType<String>().toSet();
+        if (insertedIds.isNotEmpty) {
+          final before = localLotesUPT.length;
+          localLotesUPT = localLotesUPT.where((r) => !insertedIds.contains(r.idLote)).toList();
+          final removed = before - localLotesUPT.length;
+          if (removed > 0) _syncLog('putUpdtLotes', 'Dedupe PUT/UPDT: $removed registro(s) removidos do UPDATE.');
+        }
+      }
       if (localLotesUPT.isNotEmpty) {
         while (FFAppState().lotesIndex < localLotesUPT.length) {
+          _throwIfCancelled('putUpdt_lotes');
           try {
             await LotesTable().update(
               data: {
@@ -1783,6 +1826,7 @@ Future<bool> putUpdtSanidades(BuildContext context) async {
       );
       if (localSanidade.isNotEmpty) {
         while (FFAppState().sanidadeIndex < localSanidade.length) {
+          _throwIfCancelled('putUpdt_sanidade');
           try {
             await SanidadeTable().insert({
               'id_propriedade': localSanidade
@@ -1877,8 +1921,18 @@ Future<bool> putUpdtSanidades(BuildContext context) async {
           locale: FFLocalizations.of(context).languageCode,
         ),
       );
+      if (localSanidade != null && localSanidade.isNotEmpty) {
+        final insertedIds = localSanidade.map((r) => r.idSanidade).whereType<String>().toSet();
+        if (insertedIds.isNotEmpty) {
+          final before = localSanidadeUPDT.length;
+          localSanidadeUPDT = localSanidadeUPDT.where((r) => !insertedIds.contains(r.idSanidade)).toList();
+          final removed = before - localSanidadeUPDT.length;
+          if (removed > 0) _syncLog('putUpdtSanidades', 'Dedupe PUT/UPDT: $removed registro(s) removidos do UPDATE.');
+        }
+      }
       if (localSanidadeUPDT.isNotEmpty) {
         while (FFAppState().sanidadeIndex < localSanidadeUPDT.length) {
+          _throwIfCancelled('putUpdt_sanidade');
           try {
             await SanidadeTable().update(
               data: {
