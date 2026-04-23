@@ -6,6 +6,8 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/perfil/edit_senha/edit_senha_widget.dart';
 import '/perfil/editar_perfil/editar_perfil_widget.dart';
 import '/perfil/excluir_conta/excluir_conta_widget.dart';
+import '/perfil/sync_errors/sync_errors_widget.dart';
+import '/custom_code/actions/sync_error_log.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -373,6 +375,17 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                             ),
                           ),
                         ),
+                        _SyncErrorsMenuItem(
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const SyncErrorsWidget(),
+                              ),
+                            );
+                            if (mounted) safeSetState(() {});
+                          },
+                        ),
                         Builder(
                           builder: (context) => InkWell(
                             splashColor: Colors.transparent,
@@ -601,6 +614,95 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                   ),
                 ),
               ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SyncErrorsMenuItem extends StatelessWidget {
+  final VoidCallback onTap;
+  const _SyncErrorsMenuItem({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
+    return FutureBuilder<int>(
+      future: SyncErrorLog.countAtivos(),
+      builder: (context, snap) {
+        final count = snap.data ?? 0;
+        return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(color: theme.secondaryBackground),
+          child: InkWell(
+            splashColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: count > 0
+                              ? theme.error.withOpacity(0.12)
+                              : theme.alternate,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          count > 0
+                              ? Icons.error_outline
+                              : Icons.check_circle_outline,
+                          color: count > 0 ? theme.error : theme.success,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Erros de sincronização',
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              font: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w500),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                      if (count > 0) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: theme.error,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            '$count',
+                            style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  Icon(
+                    Icons.chevron_right_outlined,
+                    color: theme.secondaryText,
+                    size: 24,
+                  ),
+                ],
+              ),
             ),
           ),
         );
