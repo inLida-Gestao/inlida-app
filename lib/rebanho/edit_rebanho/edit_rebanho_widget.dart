@@ -208,6 +208,10 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
         text: formatPesoInicial(FFAppState().rebanhoSelecionado.pesoAtual));
     _model.pesoAtualFocusNode ??= FocusNode();
 
+    attachPesoListener(_model.pesonascimentoTextController);
+    attachPesoListener(_model.pesodadesmamaTextController);
+    attachPesoListener(_model.pesoAtualTextController);
+
     _model.anotacoesTextController ??= TextEditingController(
       text: _normalizeInputText(FFAppState().rebanhoSelecionado.anotacoes),
     );

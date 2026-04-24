@@ -98,6 +98,10 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
     _model.pesoAtualTextController ??= TextEditingController();
     _model.pesoAtualFocusNode ??= FocusNode();
 
+    attachPesoListener(_model.pesonascimentoTextController);
+    attachPesoListener(_model.pesodadesmamaTextController);
+    attachPesoListener(_model.pesoAtualTextController);
+
     _model.anotacoesTextController ??= TextEditingController();
     _model.anotacoesFocusNode ??= FocusNode();
 

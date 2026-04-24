@@ -125,3 +125,44 @@ double? normalizePesoController(TextEditingController? c) {
   c.text = formatPesoInicial(v);
   return v;
 }
+
+/// Set de controllers que já têm o listener anexado — garante idempotência
+/// mesmo se [attachPesoListener] for chamado várias vezes (ex.: rebuild,
+/// hot reload).
+final Set<int> _pesoListenerAttached = <int>{};
+
+/// Anexa um listener no [controller] que reformata o texto sempre que ele
+/// muda. Funciona como uma "cinta de segurança" para casos onde o
+/// [PesoInputFormatter] é ignorado pelo IME (alguns Samsung Keyboard /
+/// Gboard com predições / autofill / scribe), garantindo que o valor
+/// final no controller esteja SEMPRE no formato canônico "X.XXX,YY".
+///
+/// Chame uma única vez no `initState` (ou `onModelInit`) do widget após
+/// criar o controller. Idempotente — chamadas repetidas não duplicam o
+/// listener.
+void attachPesoListener(TextEditingController? controller) {
+  if (controller == null) return;
+  final id = identityHashCode(controller);
+  if (_pesoListenerAttached.contains(id)) return;
+  _pesoListenerAttached.add(id);
+
+  controller.addListener(() {
+    final raw = controller.text;
+    final digits = raw.replaceAll(RegExp(r'[^0-9]'), '');
+    if (raw.isEmpty && digits.isEmpty) return;
+
+    // Limita a 8 dígitos (até 999.999,99 kg).
+    final clamped =
+        digits.length > 8 ? digits.substring(digits.length - 8) : digits;
+    final formatted =
+        clamped.isEmpty ? '' : PesoInputFormatter.formatDigits(clamped, true);
+
+    if (formatted == raw) return;
+
+    controller.value = TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+      composing: TextRange.empty,
+    );
+  });
+}
