@@ -18,7 +18,7 @@ import 'package:flutter/widgets.dart';
 class PesoInputFormatter extends TextInputFormatter {
   final bool useThousandsSeparator;
 
-  const PesoInputFormatter({this.useThousandsSeparator = true});
+  const PesoInputFormatter({this.useThousandsSeparator = false});
 
   @override
   TextEditingValue formatEditUpdate(
@@ -77,7 +77,7 @@ class PesoInputFormatter extends TextInputFormatter {
 String formatPesoInicial(double? value) {
   if (value == null || value == 0.0) return '';
   final cents = (value * 100).round().abs();
-  return PesoInputFormatter.formatDigits(cents.toString(), true);
+  return PesoInputFormatter.formatDigits(cents.toString(), false);
 }
 
 /// Faz o parse seguro de um campo de peso, tolerando QUALQUER formato que
@@ -164,7 +164,7 @@ class PesoTextEditingController extends TextEditingController {
 
     final clamped =
         digits.length > 8 ? digits.substring(digits.length - 8) : digits;
-    final formatted = PesoInputFormatter.formatDigits(clamped, true);
+    final formatted = PesoInputFormatter.formatDigits(clamped, false);
 
     final next = TextEditingValue(
       text: formatted,
