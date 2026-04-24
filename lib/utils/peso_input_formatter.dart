@@ -132,25 +132,29 @@ double? normalizePesoController(TextEditingController? c) {
 ///
 /// - Reescreve cada controller no formato canônico `X,YY`.
 /// - Se algum controller tinha mais de 1 separador (`,` ou `.`) na entrada
-///   original (ex.: `1,5,5` ou `1.5,5`), é considerado entrada ambígua:
-///   mostra um SnackBar avisando o usuário, atualiza o campo com o valor
-///   corrigido e retorna `false` para o caller abortar o save.
+///   original (ex.: `45,,5` ou `50..8`), é considerado entrada ambígua:
+///   mostra um **AlertDialog modal** avisando o usuário, atualiza o campo
+///   com o valor corrigido e retorna `false` — o save NÃO prossegue.
+///   Usuário precisa fechar o diálogo, conferir o valor sugerido e clicar
+///   Salvar novamente.
 /// - Em caso normal, retorna `true`.
+///
+/// Por que diálogo e não SnackBar: o SnackBar pode ficar escondido pelo
+/// teclado virtual, fazendo o usuário pensar que nada aconteceu.
 ///
 /// Use no início do `onPressed` de cada botão Salvar:
 ///
 /// ```dart
-/// if (!sanitizePesoControllersBeforeSave(context, [
+/// if (!await sanitizePesoControllersBeforeSave(context, [
 ///   _model.pesoNascimentoTextController,
 ///   _model.pesoAtualTextController,
 /// ])) return;
 /// ```
-bool sanitizePesoControllersBeforeSave(
+Future<bool> sanitizePesoControllersBeforeSave(
   BuildContext context,
   List<TextEditingController?> controllers,
-) {
-  var hadAmbiguous = false;
-  String? sampleCorrigido;
+) async {
+  final entradasAmbiguas = <MapEntry<String, String>>[];
 
   for (final c in controllers) {
     if (c == null) continue;
@@ -160,30 +164,61 @@ bool sanitizePesoControllersBeforeSave(
     final separadores = RegExp(r'[.,]').allMatches(original).length;
     final parsed = parsePesoFormatado(original);
     final corrigido = formatPesoInicial(parsed);
-    c.text = corrigido;
+    if (corrigido != original) {
+      c.text = corrigido;
+    }
 
     if (separadores > 1) {
-      hadAmbiguous = true;
-      sampleCorrigido ??= corrigido.isEmpty ? '0,00' : corrigido;
+      entradasAmbiguas.add(MapEntry(
+        original,
+        corrigido.isEmpty ? '0,00' : corrigido,
+      ));
     }
   }
 
-  if (hadAmbiguous) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.orange.shade700,
-        duration: const Duration(seconds: 4),
-        content: Text(
-          'Valor de peso inválido (vírgulas ou pontos a mais). '
-          'Corrigimos para "${sampleCorrigido ?? '0,00'}". '
-          'Confira e clique em Salvar novamente.',
+  if (entradasAmbiguas.isEmpty) return true;
+
+  // Fecha o teclado para o diálogo aparecer com clareza.
+  FocusManager.instance.primaryFocus?.unfocus();
+
+  await showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (dialogCtx) {
+      return AlertDialog(
+        title: const Text('Peso inválido'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+                'Você digitou um peso com mais de uma vírgula ou ponto:'),
+            const SizedBox(height: 12),
+            for (final e in entradasAmbiguas)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Text(
+                  '"${e.key}"  →  sugestão: "${e.value}"',
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            const SizedBox(height: 12),
+            const Text(
+              'Ajustamos automaticamente o(s) campo(s) com a sugestão. '
+              'Por favor, confira o valor e clique em Salvar novamente.',
+            ),
+          ],
         ),
-      ),
-    );
-    return false;
-  }
-  return true;
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogCtx).pop(),
+            child: const Text('Entendi'),
+          ),
+        ],
+      );
+    },
+  );
+  return false;
 }
 
 /// Controller customizado que SEMPRE força o formato canônico de peso no

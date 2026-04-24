@@ -5527,7 +5527,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                         Expanded(
                                           child: FFButtonWidget(
                                             onPressed: () async {
-                                              if (!sanitizePesoControllersBeforeSave(
+                                              if (!await sanitizePesoControllersBeforeSave(
                                                   context, [
                                                 _model
                                                     .pesonascimentoTextController,

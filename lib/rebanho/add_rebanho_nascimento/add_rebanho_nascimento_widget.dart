@@ -3745,7 +3745,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                         Expanded(
                                           child: FFButtonWidget(
                                             onPressed: () async {
-                                              if (!sanitizePesoControllersBeforeSave(
+                                              if (!await sanitizePesoControllersBeforeSave(
                                                   context, [
                                                 _model
                                                     .pesonascimentoTextController,

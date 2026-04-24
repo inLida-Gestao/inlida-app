@@ -396,7 +396,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
             child: FFButtonWidget(
               onPressed: () async {
                 if (_isSaving) return;
-                if (!sanitizePesoControllersBeforeSave(
+                if (!await sanitizePesoControllersBeforeSave(
                     context, [_model.pesoTextController])) {
                   return;
                 }
