@@ -4,7 +4,6 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/utils/peso_input_formatter.dart';
-import '/utils/peso_keypad_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -43,9 +42,6 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
 
     _model.pesoTextController ??= TextEditingController();
     _model.pesoFocusNode ??= FocusNode();
-
-    _model.pesoTextController =
-        ensurePesoController(_model.pesoTextController);
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
@@ -315,12 +311,48 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                   Container(
                     child: SizedBox(
                       width: double.infinity,
-                      child: PesoKeypadField(
-                        controller: _model.pesoTextController!,
-                        hintText: 'Peso do animal',
-                        validator: _model.pesoTextControllerValidator
-                            .asValidator(context),
-                      ),
+                      child: TextFormField(
+                                                  controller: _model.pesoTextController,
+                                                  autofocus: false,
+                                                  obscureText: false,
+                                                  keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                                                  decoration: InputDecoration(
+                                                    hintText: 'Peso do animal',
+                                                    hintStyle: FlutterFlowTheme.of(context).bodyMedium,
+                                                    enabledBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).alternate,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    focusedBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).primary,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    errorBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).error,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    focusedErrorBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).error,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    filled: true,
+                                                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                  ),
+                                                  style: FlutterFlowTheme.of(context).bodyMedium,
+                                                  validator: _model.pesoTextControllerValidator.asValidator(context),
+                                                ),
                     ),
                   ),
                 ].divide(const SizedBox(height: 8.0)),

@@ -13,7 +13,6 @@ import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/actions/actions.dart' as action_blocks;
 import '/utils/peso_input_formatter.dart';
-import '/utils/peso_keypad_field.dart';
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
@@ -208,13 +207,6 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     _model.pesoAtualTextController ??= TextEditingController(
         text: formatPesoInicial(FFAppState().rebanhoSelecionado.pesoAtual));
     _model.pesoAtualFocusNode ??= FocusNode();
-
-    _model.pesonascimentoTextController =
-        ensurePesoController(_model.pesonascimentoTextController);
-    _model.pesodadesmamaTextController =
-        ensurePesoController(_model.pesodadesmamaTextController);
-    _model.pesoAtualTextController =
-        ensurePesoController(_model.pesoAtualTextController);
 
     _model.anotacoesTextController ??= TextEditingController(
       text: _normalizeInputText(FFAppState().rebanhoSelecionado.anotacoes),
@@ -1701,12 +1693,48 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                         Expanded(
                                           child: SizedBox(
                                             width: double.infinity,
-                                            child: PesoKeypadField(
-                                              controller: _model.pesonascimentoTextController!,
-                                              hintText: 'Peso do animal',
-                                              validator: _model.pesonascimentoTextControllerValidator
-                                                  .asValidator(context),
-                                            ),
+                                            child: TextFormField(
+                                                  controller: _model.pesonascimentoTextController,
+                                                  autofocus: false,
+                                                  obscureText: false,
+                                                  keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                                                  decoration: InputDecoration(
+                                                    hintText: 'Peso do animal',
+                                                    hintStyle: FlutterFlowTheme.of(context).bodyMedium,
+                                                    enabledBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).alternate,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    focusedBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).primary,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    errorBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).error,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    focusedErrorBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).error,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    filled: true,
+                                                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                  ),
+                                                  style: FlutterFlowTheme.of(context).bodyMedium,
+                                                  validator: _model.pesonascimentoTextControllerValidator.asValidator(context),
+                                                ),
                                           ),
                                         ),
                                       ].divide(const SizedBox(height: 8.0)),
@@ -3345,12 +3373,48 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                         Expanded(
                                           child: SizedBox(
                                             width: double.infinity,
-                                            child: PesoKeypadField(
-                                              controller: _model.pesodadesmamaTextController!,
-                                              hintText: 'Peso do animal',
-                                              validator: _model.pesodadesmamaTextControllerValidator
-                                                  .asValidator(context),
-                                            ),
+                                            child: TextFormField(
+                                                  controller: _model.pesodadesmamaTextController,
+                                                  autofocus: false,
+                                                  obscureText: false,
+                                                  keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                                                  decoration: InputDecoration(
+                                                    hintText: 'Peso do animal',
+                                                    hintStyle: FlutterFlowTheme.of(context).bodyMedium,
+                                                    enabledBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).alternate,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    focusedBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).primary,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    errorBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).error,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    focusedErrorBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).error,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    filled: true,
+                                                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                  ),
+                                                  style: FlutterFlowTheme.of(context).bodyMedium,
+                                                  validator: _model.pesodadesmamaTextControllerValidator.asValidator(context),
+                                                ),
                                           ),
                                         ),
                                       ].divide(const SizedBox(height: 8.0)),
@@ -3577,12 +3641,48 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                         Expanded(
                                           child: SizedBox(
                                             width: double.infinity,
-                                            child: PesoKeypadField(
-                                              controller: _model.pesoAtualTextController!,
-                                              hintText: 'Peso do animal',
-                                              validator: _model.pesoAtualTextControllerValidator
-                                                  .asValidator(context),
-                                            ),
+                                            child: TextFormField(
+                                                  controller: _model.pesoAtualTextController,
+                                                  autofocus: false,
+                                                  obscureText: false,
+                                                  keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                                                  decoration: InputDecoration(
+                                                    hintText: 'Peso do animal',
+                                                    hintStyle: FlutterFlowTheme.of(context).bodyMedium,
+                                                    enabledBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).alternate,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    focusedBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).primary,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    errorBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).error,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    focusedErrorBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: FlutterFlowTheme.of(context).error,
+                                                        width: 2.0,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    filled: true,
+                                                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                  ),
+                                                  style: FlutterFlowTheme.of(context).bodyMedium,
+                                                  validator: _model.pesoAtualTextControllerValidator.asValidator(context),
+                                                ),
                                           ),
                                         ),
                                       ].divide(const SizedBox(height: 8.0)),
