@@ -43,7 +43,8 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
     _model.pesoTextController ??= TextEditingController();
     _model.pesoFocusNode ??= FocusNode();
 
-    attachPesoListener(_model.pesoTextController);
+    _model.pesoTextController =
+        ensurePesoController(_model.pesoTextController);
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }

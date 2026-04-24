@@ -81,7 +81,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
     _model.pesonascimentoTextController ??= TextEditingController();
     _model.pesonascimentoFocusNode ??= FocusNode();
 
-    attachPesoListener(_model.pesonascimentoTextController);
+    _model.pesonascimentoTextController =
+        ensurePesoController(_model.pesonascimentoTextController);
 
     _model.anotacoesTextController ??= TextEditingController();
     _model.anotacoesFocusNode ??= FocusNode();

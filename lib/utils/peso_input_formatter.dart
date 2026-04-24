@@ -126,43 +126,71 @@ double? normalizePesoController(TextEditingController? c) {
   return v;
 }
 
-/// Set de controllers que já têm o listener anexado — garante idempotência
-/// mesmo se [attachPesoListener] for chamado várias vezes (ex.: rebuild,
-/// hot reload).
-final Set<int> _pesoListenerAttached = <int>{};
-
-/// Anexa um listener no [controller] que reformata o texto sempre que ele
-/// muda. Funciona como uma "cinta de segurança" para casos onde o
-/// [PesoInputFormatter] é ignorado pelo IME (alguns Samsung Keyboard /
-/// Gboard com predições / autofill / scribe), garantindo que o valor
-/// final no controller esteja SEMPRE no formato canônico "X.XXX,YY".
+/// Controller customizado que SEMPRE força o formato canônico de peso no
+/// setter `value`. É a defesa definitiva contra IMEs que bypassam
+/// `inputFormatters` (Samsung Keyboard, Gboard com predição, autofill,
+/// scribe, voice input).
 ///
-/// Chame uma única vez no `initState` (ou `onModelInit`) do widget após
-/// criar o controller. Idempotente — chamadas repetidas não duplicam o
-/// listener.
-void attachPesoListener(TextEditingController? controller) {
-  if (controller == null) return;
-  final id = identityHashCode(controller);
-  if (_pesoListenerAttached.contains(id)) return;
-  _pesoListenerAttached.add(id);
+/// Use no lugar de `TextEditingController()` em campos de peso:
+///   _model.pesoController ??= PesoTextEditingController();
+///   _model.pesoController ??= PesoTextEditingController(text: '12,50');
+class PesoTextEditingController extends TextEditingController {
+  PesoTextEditingController({String? text}) : super() {
+    if (text != null && text.isNotEmpty) {
+      value = TextEditingValue(
+        text: text,
+        selection: TextSelection.collapsed(offset: text.length),
+      );
+    }
+  }
 
-  controller.addListener(() {
-    final raw = controller.text;
+  @override
+  set value(TextEditingValue newValue) {
+    final raw = newValue.text;
     final digits = raw.replaceAll(RegExp(r'[^0-9]'), '');
-    if (raw.isEmpty && digits.isEmpty) return;
 
-    // Limita a 8 dígitos (até 999.999,99 kg).
+    if (digits.isEmpty) {
+      if (super.value.text.isEmpty) {
+        super.value = newValue.copyWith(composing: TextRange.empty);
+        return;
+      }
+      super.value = const TextEditingValue(
+        text: '',
+        selection: TextSelection.collapsed(offset: 0),
+        composing: TextRange.empty,
+      );
+      return;
+    }
+
     final clamped =
         digits.length > 8 ? digits.substring(digits.length - 8) : digits;
-    final formatted =
-        clamped.isEmpty ? '' : PesoInputFormatter.formatDigits(clamped, true);
+    final formatted = PesoInputFormatter.formatDigits(clamped, true);
 
-    if (formatted == raw) return;
-
-    controller.value = TextEditingValue(
+    final next = TextEditingValue(
       text: formatted,
       selection: TextSelection.collapsed(offset: formatted.length),
       composing: TextRange.empty,
     );
-  });
+    if (next.text == super.value.text &&
+        next.selection == super.value.selection) {
+      return;
+    }
+    super.value = next;
+  }
+}
+
+/// Garante que [existing] seja um [PesoTextEditingController]. Se não for,
+/// cria um novo preservando o texto. Use em initState quando o controller
+/// pode já estar criado por um modelo legado.
+PesoTextEditingController ensurePesoController(
+    TextEditingController? existing) {
+  if (existing is PesoTextEditingController) return existing;
+  final c = PesoTextEditingController();
+  if (existing != null && existing.text.isNotEmpty) {
+    c.value = TextEditingValue(
+      text: existing.text,
+      selection: TextSelection.collapsed(offset: existing.text.length),
+    );
+  }
+  return c;
 }
