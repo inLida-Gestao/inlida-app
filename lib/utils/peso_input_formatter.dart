@@ -27,6 +27,16 @@ class PesoInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
+    // Se o usuário (ou IME) digitou mais de um separador (',' ou '.'),
+    // NÃO limpamos automaticamente — a entrada é ambígua e a limpeza
+    // silenciosa pode trocar o número (ex.: "50,,5" -> "5,05" em vez
+    // de "50,50"). Preservamos o texto sujo para que
+    // sanitizePesoControllersBeforeSave bloqueie o save com diálogo.
+    final separadores = RegExp(r'[.,]').allMatches(newValue.text).length;
+    if (separadores > 1) {
+      return newValue;
+    }
+
     final digits = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
     if (digits.isEmpty) {
       return const TextEditingValue(
