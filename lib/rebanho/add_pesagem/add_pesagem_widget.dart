@@ -4,6 +4,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/utils/peso_input_formatter.dart';
+import '/utils/peso_keypad_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -314,70 +315,9 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                   Container(
                     child: SizedBox(
                       width: double.infinity,
-                      child: TextFormField(
-                        controller: _model.pesoTextController,
-                        focusNode: _model.pesoFocusNode,
-                        autofocus: false,
-                        textInputAction: TextInputAction.done,
-                        obscureText: false,
-                        decoration: InputDecoration(
-                          hintText: 'Peso do animal',
-                          hintStyle: FlutterFlowTheme.of(context)
-                              .bodyMedium
-                              .override(
-                                fontFamily: FlutterFlowTheme.of(context)
-                                    .bodyMediumFamily,
-                                color: const Color(0xFFBEBEBE),
-                                fontSize: 16.0,
-                                letterSpacing: 0.0,
-                                fontWeight: FontWeight.w600,
-                                useGoogleFonts: !FlutterFlowTheme.of(context)
-                                    .bodyMediumIsCustom,
-                              ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color(0x00E0E3E7),
-                              width: 2.0,
-                            ),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color(0x004B39EF),
-                              width: 2.0,
-                            ),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          errorBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: FlutterFlowTheme.of(context).error,
-                              width: 2.0,
-                            ),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          focusedErrorBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: FlutterFlowTheme.of(context).error,
-                              width: 2.0,
-                            ),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          filled: true,
-                          fillColor: const Color(0xFFF1F1F1),
-                        ),
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily:
-                                  FlutterFlowTheme.of(context).bodyMediumFamily,
-                              letterSpacing: 0.0,
-                              useGoogleFonts: !FlutterFlowTheme.of(context)
-                                  .bodyMediumIsCustom,
-                            ),
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: false, signed: false),
-                        inputFormatters: const [
-                          FilteringTextInputFormatter.digitsOnly,
-                          PesoInputFormatter(),
-                        ],
+                      child: PesoKeypadField(
+                        controller: _model.pesoTextController!,
+                        hintText: 'Peso do animal',
                         validator: _model.pesoTextControllerValidator
                             .asValidator(context),
                       ),
