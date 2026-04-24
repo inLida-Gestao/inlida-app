@@ -496,7 +496,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   () => safeSetState(() {}),
                                                 );
                                               },
-                                              autofocus: true,
+                                              autofocus: false,
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Número do animal',
@@ -660,7 +660,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     milliseconds: 2000),
                                                 () => safeSetState(() {}),
                                               ),
-                                              autofocus: true,
+                                              autofocus: false,
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Chip do animal',
@@ -897,7 +897,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     milliseconds: 2000),
                                                 () => safeSetState(() {}),
                                               ),
-                                              autofocus: true,
+                                              autofocus: false,
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Código registro',
@@ -1050,7 +1050,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   .nomeAnimalTextController,
                                               focusNode:
                                                   _model.nomeAnimalFocusNode,
-                                              autofocus: true,
+                                              autofocus: false,
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Nome do animal',
@@ -3441,7 +3441,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   .pesodadesmamaTextController,
                                               focusNode:
                                                   _model.pesodadesmamaFocusNode,
-                                              autofocus: true,
+                                              autofocus: false,
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Peso da desmama',
@@ -3773,7 +3773,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   .pesoAtualTextController,
                                               focusNode:
                                                   _model.pesoAtualFocusNode,
-                                              autofocus: true,
+                                              autofocus: false,
                                               obscureText: false,
                                               decoration: InputDecoration(
                                                 hintText: 'Peso do animal',
