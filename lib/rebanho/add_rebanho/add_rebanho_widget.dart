@@ -5329,6 +5329,16 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 ])) {
                                                   return;
                                                 }
+                                                // DEBUG v2.0.15: mostra ao usuário o que foi parseado dos campos de peso.
+                                                final _pNasc = parsePesoFormatado(_model.pesonascimentoTextController.text);
+                                                final _pDesm = parsePesoFormatado(_model.pesodadesmamaTextController.text);
+                                                final _pAtu = parsePesoFormatado(_model.pesoAtualTextController.text);
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(
+                                                    duration: const Duration(seconds: 4),
+                                                    content: Text('v2.0.15 — Pesos parseados: nasc=$_pNasc desm=$_pDesm atual=$_pAtu'),
+                                                  ),
+                                                );
                                                 if (_model.formKey2
                                                             .currentState ==
                                                         null ||
