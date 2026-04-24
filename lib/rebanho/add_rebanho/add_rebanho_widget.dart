@@ -50,18 +50,6 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
     super.initState();
     _model = createModel(context, () => AddRebanhoModel());
 
-    // DEBUG v2.0.18: marca visível ao abrir tela add_rebanho
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('add_rebanho aberto'),
-          content: const Text('Versão: v2.0.18\nSe você vê isto, está rodando o build novo.'),
-          actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
-        ),
-      );
-    });
-
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimer = InstantTimer.periodic(
@@ -5341,35 +5329,6 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 ])) {
                                                   return;
                                                 }
-                                                // DEBUG v2.0.17: dialog modal que bloqueia para confirmar valores
-                                                final _rNasc = _model.pesonascimentoTextController.text;
-                                                final _rDesm = _model.pesodadesmamaTextController.text;
-                                                final _rAtu = _model.pesoAtualTextController.text;
-                                                final _pNasc = parsePesoFormatado(_rNasc);
-                                                final _pDesm = parsePesoFormatado(_rDesm);
-                                                final _pAtu = parsePesoFormatado(_rAtu);
-                                                await showDialog(
-                                                  context: context,
-                                                  builder: (ctx) => AlertDialog(
-                                                    title: const Text('DEBUG v2.0.17 add_rebanho'),
-                                                    content: Text(
-                                                      'Texto bruto:\n'
-                                                      'nasc="$_rNasc"\n'
-                                                      'desm="$_rDesm"\n'
-                                                      'atual="$_rAtu"\n\n'
-                                                      'Parseado:\n'
-                                                      'nasc=$_pNasc\n'
-                                                      'desm=$_pDesm\n'
-                                                      'atual=$_pAtu',
-                                                    ),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () => Navigator.pop(ctx),
-                                                        child: const Text('OK'),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
                                                 if (_model.formKey2
                                                             .currentState ==
                                                         null ||

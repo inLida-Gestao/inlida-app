@@ -33,17 +33,6 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
     super.initState();
     _model = createModel(context, () => AddRebanhoSemenModel());
 
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('add_rebanho_SEMEN aberto'),
-          content: const Text('Versão: v2.0.18'),
-          actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
-        ),
-      );
-    });
-
     _model.nAnimalTextController ??= TextEditingController();
     _model.nAnimalFocusNode ??= FocusNode();
 

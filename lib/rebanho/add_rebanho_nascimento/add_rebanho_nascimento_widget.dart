@@ -44,17 +44,6 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
     super.initState();
     _model = createModel(context, () => AddRebanhoNascimentoModel());
 
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('add_rebanho_NASCIMENTO aberto'),
-          content: const Text('Versão: v2.0.18'),
-          actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
-        ),
-      );
-    });
-
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimer = InstantTimer.periodic(
@@ -3694,12 +3683,6 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                         Expanded(
                                           child: FFButtonWidget(
                                             onPressed: () async {
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                const SnackBar(
-                                                  duration: Duration(seconds: 2),
-                                                  content: Text('v2.0.16 [add_nasc] Salvar clicado'),
-                                                ),
-                                              );
                                               if (!await sanitizePesoControllersBeforeSave(
                                                   context, [
                                                 _model
@@ -3707,14 +3690,6 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               ])) {
                                                 return;
                                               }
-                                              // DEBUG v2.0.16
-                                              final _pNasc2 = parsePesoFormatado(_model.pesonascimentoTextController.text);
-                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  duration: const Duration(seconds: 4),
-                                                  content: Text('v2.0.16 [add_nasc] Peso parseado: $_pNasc2'),
-                                                ),
-                                              );
                                               if (_model.dropDownSexoValue ==
                                                       null ||
                                                   _model.dropDownSexoValue ==
