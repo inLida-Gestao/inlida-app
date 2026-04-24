@@ -5318,12 +5318,6 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                           Expanded(
                                             child: FFButtonWidget(
                                               onPressed: () async {
-                                                ScaffoldMessenger.of(context).showSnackBar(
-                                                  const SnackBar(
-                                                    duration: Duration(seconds: 2),
-                                                    content: Text('v2.0.16 [add_rebanho] Salvar clicado'),
-                                                  ),
-                                                );
                                                 if (!await sanitizePesoControllersBeforeSave(
                                                     context, [
                                                   _model
@@ -5335,14 +5329,33 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 ])) {
                                                   return;
                                                 }
-                                                // DEBUG v2.0.15: mostra ao usuário o que foi parseado dos campos de peso.
-                                                final _pNasc = parsePesoFormatado(_model.pesonascimentoTextController.text);
-                                                final _pDesm = parsePesoFormatado(_model.pesodadesmamaTextController.text);
-                                                final _pAtu = parsePesoFormatado(_model.pesoAtualTextController.text);
-                                                ScaffoldMessenger.of(context).showSnackBar(
-                                                  SnackBar(
-                                                    duration: const Duration(seconds: 4),
-                                                    content: Text('v2.0.16 — Pesos parseados: nasc=$_pNasc desm=$_pDesm atual=$_pAtu'),
+                                                // DEBUG v2.0.17: dialog modal que bloqueia para confirmar valores
+                                                final _rNasc = _model.pesonascimentoTextController.text;
+                                                final _rDesm = _model.pesodadesmamaTextController.text;
+                                                final _rAtu = _model.pesoAtualTextController.text;
+                                                final _pNasc = parsePesoFormatado(_rNasc);
+                                                final _pDesm = parsePesoFormatado(_rDesm);
+                                                final _pAtu = parsePesoFormatado(_rAtu);
+                                                await showDialog(
+                                                  context: context,
+                                                  builder: (ctx) => AlertDialog(
+                                                    title: const Text('DEBUG v2.0.17 add_rebanho'),
+                                                    content: Text(
+                                                      'Texto bruto:\n'
+                                                      'nasc="$_rNasc"\n'
+                                                      'desm="$_rDesm"\n'
+                                                      'atual="$_rAtu"\n\n'
+                                                      'Parseado:\n'
+                                                      'nasc=$_pNasc\n'
+                                                      'desm=$_pDesm\n'
+                                                      'atual=$_pAtu',
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () => Navigator.pop(ctx),
+                                                        child: const Text('OK'),
+                                                      ),
+                                                    ],
                                                   ),
                                                 );
                                                 if (_model.formKey2
