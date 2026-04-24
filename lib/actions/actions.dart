@@ -109,6 +109,31 @@ Future<void> _batchUpsertSupabase({
   }
 }
 
+/// INSERT em lote (sem onConflict). Use para tabelas onde a PK é gerada pelo
+/// servidor (ex: `historico_pesagens.id` auto-increment) e o registro local
+/// não tem identificador para upsert idempotente.
+Future<void> _batchInsertSupabase({
+  required String tableName,
+  required List<Map<String, dynamic>> rows,
+  int chunkSize = 200,
+  required String label,
+}) async {
+  if (rows.isEmpty) return;
+  for (var start = 0; start < rows.length; start += chunkSize) {
+    _throwIfCancelled(label);
+    final end =
+        (start + chunkSize < rows.length) ? start + chunkSize : rows.length;
+    final chunk = rows.sublist(start, end);
+    await _withTimeout(
+      () => SupaFlow.client.from(tableName).insert(chunk),
+      label: '$label.insert(chunk=${chunk.length})',
+      timeout: kSyncPageTimeout,
+    );
+    _syncLog(label,
+        'Insert ok: ${chunk.length} registro(s) (offset=$start/${rows.length}).');
+  }
+}
+
 // ============================================================================
 // Timeouts e retry para chamadas de rede do sync.
 //
@@ -650,198 +675,144 @@ Future refreshPropriedades(BuildContext context) async {
 
 Future<bool> putUpdtPropriedades(BuildContext context) async {
   var allSuccess = true;
-  try {
-    List<BuscaPropriedadesPUTRow>? localPropriedades;
-    List<BuscaPropriedadesUPDATEDRow>? localPropriedadesUPT;
+  final dataPendente = FFAppState().dataDadosNaoSyncProp;
+  if (dataPendente == null) return true;
 
-    if (FFAppState().dataDadosNaoSyncProp != null) {
-      localPropriedades = await SQLiteManager.instance.buscaPropriedadesPUT(
-        datePUT: dateTimeFormat(
-          "yyyy-MM-dd HH:mm:ss",
-          FFAppState().dataDadosNaoSyncProp,
-          locale: FFLocalizations.of(context).languageCode,
-        ),
-      );
-      if (localPropriedades.isNotEmpty) {
-        while (FFAppState().propriedadesIndex < localPropriedades.length) {
-          _throwIfCancelled('putUpdt_propriedades');
-          try {
-            await PropriedadesTable().insert({
-              'userID': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.userID,
-              'anotacoes': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.anotacoes,
-              'areaAgricultura': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.areaAgricultura,
-              'areaBenfeitoria': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.areaBenfeitoria,
-              'areaPastagem': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.areaPastagem,
-              'areaReserva': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.areaReserva,
-              'areaTotal': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.areaTotal,
-              'cidade': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.cidade,
-              'estado': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.estado,
-              'icone': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.icone,
-              'idPropriedade': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.idPropriedade,
-              'nome': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.nome,
-              'usersID': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.usersID,
-              'rebanhosID': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.rebanhosID,
-              'atividades': localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.atividades,
-            });
-            _markSyncOk(
-                'propriedade',
-                localPropriedades
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.idPropriedade);
-          } catch (e) {
-            allSuccess = false;
-            _recordSyncError(
-              flow: 'putUpdtPropriedades',
-              modulo: 'propriedade',
-              operacao: 'insert',
-              erro: e,
-              registroId: localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.idPropriedade,
-              registroDescricao: localPropriedades
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.nome,
-            );
-          }
-          FFAppState().propriedadesIndex = FFAppState().propriedadesIndex + 1;
+  List<BuscaPropriedadesPUTRow> localPut = const [];
+  List<BuscaPropriedadesUPDATEDRow> localUpd = const [];
+
+  try {
+    _throwIfCancelled('putUpdtPropriedades');
+    final dateFilter = dateTimeFormat(
+      "yyyy-MM-dd HH:mm:ss",
+      dataPendente,
+      locale: FFLocalizations.of(context).languageCode,
+    );
+
+    localPut = await SQLiteManager.instance.buscaPropriedadesPUT(datePUT: dateFilter);
+    localUpd = await SQLiteManager.instance.buscaPropriedadesUPDATED(dateUPT: dateFilter);
+
+    // Dedupe PUT/UPDT — registros recém-inseridos não precisam de UPDATE separado.
+    if (localPut.isNotEmpty) {
+      final insertedIds = localPut.map((r) => r.idPropriedade).whereType<String>().toSet();
+      if (insertedIds.isNotEmpty) {
+        final before = localUpd.length;
+        localUpd = localUpd.where((r) => !insertedIds.contains(r.idPropriedade)).toList();
+        final removed = before - localUpd.length;
+        if (removed > 0) {
+          _syncLog('putUpdtPropriedades', 'Dedupe PUT/UPDT: $removed registro(s) removidos.');
         }
       }
-      FFAppState().propriedadesIndex = 0;
-      localPropriedadesUPT =
-          await SQLiteManager.instance.buscaPropriedadesUPDATED(
-        dateUPT: dateTimeFormat(
-          "yyyy-MM-dd HH:mm:ss",
-          FFAppState().dataDadosNaoSyncProp,
-          locale: FFLocalizations.of(context).languageCode,
-        ),
-      );
-      // A4 dedupe PUT/UPDT: remove registros recém-inseridos.
-      if (localPropriedades.isNotEmpty) {
-        final insertedIds = localPropriedades
-            .map((r) => r.idPropriedade)
-            .toSet();
-        if (insertedIds.isNotEmpty) {
-          final before = localPropriedadesUPT.length;
-          localPropriedadesUPT = localPropriedadesUPT
-              .where((r) => !insertedIds.contains(r.idPropriedade))
-              .toList();
-          final removed = before - localPropriedadesUPT.length;
-          if (removed > 0) {
-            _syncLog('putUpdtPropriedades',
-                'Dedupe PUT/UPDT: $removed registro(s) removidos do UPDATE.');
-          }
-        }
-      }
-      if (localPropriedadesUPT.isNotEmpty) {
-        while (FFAppState().propriedadesIndex < localPropriedadesUPT.length) {
-          _throwIfCancelled('putUpdt_propriedades');
-          try {
-            await PropriedadesTable().update(
-              data: {
-                'anotacoes': localPropriedadesUPT
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.anotacoes,
-                'areaAgricultura': localPropriedadesUPT
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.areaAgricultura,
-                'areaBenfeitoria': localPropriedadesUPT
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.areaBenfeitoria,
-                'areaPastagem': localPropriedadesUPT
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.areaPastagem,
-                'areaReserva': localPropriedadesUPT
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.areaReserva,
-                'areaTotal': localPropriedadesUPT
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.areaTotal,
-                'cidade': localPropriedadesUPT
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.cidade,
-                'estado': localPropriedadesUPT
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.estado,
-                'icone': localPropriedadesUPT
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.icone,
-                'atividades': localPropriedadesUPT
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.atividades,
-                'nome': localPropriedadesUPT
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.nome,
-                'usersID': localPropriedadesUPT
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.usersID,
-              },
-              matchingRows: (rows) => rows.eqOrNull(
-                'idPropriedade',
-                localPropriedadesUPT
-                    ?.elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.idPropriedade,
-              ),
-            );
-            _markSyncOk(
-                'propriedade',
-                localPropriedadesUPT
-                    .elementAtOrNull(FFAppState().propriedadesIndex)
-                    ?.idPropriedade);
-          } catch (e) {
-            allSuccess = false;
-            _recordSyncError(
-              flow: 'putUpdtPropriedades',
-              modulo: 'propriedade',
-              operacao: 'update',
-              erro: e,
-              registroId: localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.idPropriedade,
-              registroDescricao: localPropriedadesUPT
-                  .elementAtOrNull(FFAppState().propriedadesIndex)
-                  ?.nome,
-            );
-          }
-          FFAppState().propriedadesIndex = FFAppState().propriedadesIndex + 1;
-        }
-      }
-      FFAppState().propriedadesIndex = 0;
     }
+
+    final payloads = <Map<String, dynamic>>[];
+    for (final row in localPut) {
+      _throwIfCancelled('putUpdtPropriedades');
+      payloads.add(_buildPropriedadePayload(row.data, isInsert: true));
+    }
+    for (final row in localUpd) {
+      _throwIfCancelled('putUpdtPropriedades');
+      payloads.add(_buildPropriedadePayload(row.data, isInsert: false));
+    }
+
+    if (payloads.isEmpty) {
+      _syncLog('putUpdtPropriedades', 'Nada para enviar.');
+      return true;
+    }
+
+    _syncLog('putUpdtPropriedades',
+        'Upsert em lote: ${payloads.length} registro(s) (INSERT=${localPut.length}, UPDATE=${localUpd.length}).');
+
+    await _retry(
+      () => _batchUpsertSupabase(
+        tableName: 'propriedade',
+        rows: payloads,
+        onConflict: 'idPropriedade',
+        chunkSize: 200,
+        label: 'putUpdtPropriedades',
+      ),
+      label: 'putUpdtPropriedades.batchUpsert',
+      maxAttempts: 3,
+    );
+
+    for (final row in localPut) {
+      _markSyncOk('propriedade', row.idPropriedade);
+      // ignore: discarded_futures
+      actions.SyncErrorLog.autoResolverPorRegistro('propriedade', row.idPropriedade);
+    }
+    for (final row in localUpd) {
+      _markSyncOk('propriedade', row.idPropriedade);
+      // ignore: discarded_futures
+      actions.SyncErrorLog.autoResolverPorRegistro('propriedade', row.idPropriedade);
+    }
+    _syncLog('putUpdtPropriedades', 'Upload concluído com sucesso.');
+  } on SyncCancelledException catch (e) {
+    allSuccess = false;
+    _syncLog('putUpdtPropriedades', 'CANCELADO: $e');
+  } on TimeoutException catch (e, s) {
+    allSuccess = false;
+    _syncLog('putUpdtPropriedades', 'TIMEOUT no upload: $e\n$s');
+    _registrarErrosPropriedade(localPut, localUpd, e);
   } catch (e, s) {
     allSuccess = false;
-    _syncLog('putUpdtPropriedades', 'ERRO no upload de propriedades: $e\n$s');
+    _syncLog('putUpdtPropriedades', 'ERRO no upload: $e\n$s');
+    _registrarErrosPropriedade(localPut, localUpd, e);
   }
   return allSuccess;
+}
+
+void _registrarErrosPropriedade(
+  List<BuscaPropriedadesPUTRow> puts,
+  List<BuscaPropriedadesUPDATEDRow> upds,
+  Object e,
+) {
+  for (final r in puts) {
+    _recordSyncError(
+      flow: 'putUpdtPropriedades',
+      modulo: 'propriedade',
+      operacao: 'insert',
+      erro: e,
+      registroId: r.idPropriedade,
+      registroDescricao: r.nome,
+    );
+  }
+  for (final r in upds) {
+    _recordSyncError(
+      flow: 'putUpdtPropriedades',
+      modulo: 'propriedade',
+      operacao: 'update',
+      erro: e,
+      registroId: r.idPropriedade,
+      registroDescricao: r.nome,
+    );
+  }
+}
+
+Map<String, dynamic> _buildPropriedadePayload(
+  Map<String, dynamic> raw, {
+  required bool isInsert,
+}) {
+  final payload = <String, dynamic>{
+    'idPropriedade': raw['idPropriedade'],
+    'nome': raw['nome'],
+    'anotacoes': raw['anotacoes'],
+    'areaAgricultura': raw['areaAgricultura'],
+    'areaBenfeitoria': raw['areaBenfeitoria'],
+    'areaPastagem': raw['areaPastagem'],
+    'areaReserva': raw['areaReserva'],
+    'areaTotal': raw['areaTotal'],
+    'cidade': raw['cidade'],
+    'estado': raw['estado'],
+    'icone': raw['icone'],
+    'usersID': raw['usersID'],
+    'atividades': raw['atividades'],
+  };
+  if (isInsert) {
+    payload['userID'] = raw['userID'];
+    payload['rebanhosID'] = raw['rebanhosID'];
+  }
+  payload.removeWhere((_, v) => v == null);
+  return payload;
 }
 
 Future buscaPropriedade(
@@ -932,494 +903,280 @@ Future animaisPropriedade(BuildContext context) async {
 
 Future<bool> putUpdtRebanhos(BuildContext context) async {
   var allSuccess = true;
-  try {
-    List<BuscarRebanhoPUTRow>? localRebanhos;
-    List<RebanhoRow>? animalExiste;
-    List<BuscarRebanhoUPDATEDRow>? localRebanhosUPDT;
-    List<BuscaHistPesagensPUTRow>? localHistPesPUT;
-    List<BuscaHistPesagensUPDTRow>? localPesagensUPDT;
+  final dataPendente = FFAppState().dataDadosNaoSyncRebanho;
+  if (dataPendente == null) return true;
 
-    if (FFAppState().dataDadosNaoSyncRebanho != null) {
-      localRebanhos = await SQLiteManager.instance.buscarRebanhoPUT(
-        data: dateTimeFormat(
-          "yyyy-MM-dd HH:mm:ss",
-          FFAppState().dataDadosNaoSyncRebanho,
-          locale: FFLocalizations.of(context).languageCode,
-        ),
-      );
-      if (localRebanhos.isNotEmpty) {
-        FFAppState().rebanhosIndex = 0;
-        while (FFAppState().rebanhosIndex < localRebanhos.length) {
-          animalExiste = await RebanhoTable().queryRows(
-            queryFn: (q) => q.eqOrNull(
-              'idRebanho',
-              localRebanhos
-                  ?.elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.idRebanho,
-            ),
-          );
-          if (!((animalExiste).isNotEmpty)) {
-            try {
-              await RebanhoTable().insert({
-                'idPropriedade': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.idPropriedade,
-                'numeroAnimal': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.numeroAnimal,
-                'chip': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.chip,
-                'codRegistro': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.codRegistro,
-                'nome': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.nome,
-                'sexo': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.sexo,
-                'categoria': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.categoria,
-                'dataNascimento': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhos
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataNascimento)),
-                'pesoNascimento': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.pesoNascimento,
-                'porte': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.porte,
-                'raca': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.raca,
-                'loteID': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.loteID,
-                'dataEntradaLote': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhos
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataEntradaLote)),
-                'rebanhoIdMatriz': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.rebanhoIdMatriz,
-                'rebanhoIdReprodutor': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.rebanhoIdReprodutor,
-                'dataDesmama': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhos
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataDesmama)),
-                'pesoDesmama': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.pesoDesmama,
-                'pesoAtual': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.pesoAtual,
-                'status': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.statusRebanho,
-                'origem': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.origem,
-                'anotacoes': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.anotacoes,
-                'idRebanho': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.idRebanho,
-                'deletado': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.deletado,
-                'loteNome': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.loteNome,
-                'tipo': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.tipo,
-                'dataAcao': supaSerialize<DateTime>(functions.converterParaData(
-                    localRebanhos
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataAcao)),
-                'valorCompra': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.valorCompra,
-                'dataUltimaPesagem': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhos
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataUltimaPesagem)),
-                'nomeConcat': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.nomeConcat,
-                'dataVenda': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhos
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataVenda)),
-                'valorVenda': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.valorVenda,
-                'numeroMatriz': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.numeroMatriz,
-                'nomeMatriz': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.nomeMatriz,
-                'dataNascMatriz': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhos
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataNascMatriz)),
-                'racaMatriz': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.racaMatriz,
-                'numeroReprodutor': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.numeroReprodutor,
-                'nomeReprodutor': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.nomeReprodutor,
-                'dataNascReprodutor': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhos
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataNascReprodutor)),
-                'racaReprodutor': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.racaReprodutor,
-                'movimentacao_entrada': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhos
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.movimentacaoEntrada)),
-                'movimentacao_saida': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhos
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.movimentacaoSaida)),
-                'data_morte': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhos
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataMorte)),
-                'motivo_morte': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.motivoMorte,
-                'categoria_matriz': localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.categoriaMatriz,
-              });
-              _markSyncOk(
-                  'rebanho',
-                  localRebanhos
-                      .elementAtOrNull(FFAppState().rebanhosIndex)
-                      ?.idRebanho);
-            } catch (e) {
-              allSuccess = false;
-              _recordSyncError(
-                flow: 'putUpdtRebanhos',
-                modulo: 'rebanho',
-                operacao: 'insert',
-                erro: e,
-                registroId: localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.idRebanho,
-                registroDescricao: _descreverRebanhoBy(localRebanhos
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.numeroAnimal),
-              );
-            }
-          }
-          FFAppState().rebanhosIndex = FFAppState().rebanhosIndex + 1;
-        }
+  List<BuscarRebanhoPUTRow> localPut = const [];
+  List<BuscarRebanhoUPDATEDRow> localUpd = const [];
+  List<BuscaHistPesagensPUTRow> pesPut = const [];
+  List<BuscaHistPesagensUPDTRow> pesUpd = const [];
+
+  try {
+    _throwIfCancelled('putUpdtRebanhos');
+    final dateFilter = dateTimeFormat(
+      "yyyy-MM-dd HH:mm:ss",
+      dataPendente,
+      locale: FFLocalizations.of(context).languageCode,
+    );
+
+    // ───── REBANHO upsert em lote ─────
+    localPut = await SQLiteManager.instance.buscarRebanhoPUT(data: dateFilter);
+    localUpd = await SQLiteManager.instance.buscarRebanhoUPDATED(data: dateFilter);
+
+    if (localPut.isNotEmpty) {
+      final insertedIds = localPut.map((r) => r.idRebanho).whereType<String>().toSet();
+      if (insertedIds.isNotEmpty) {
+        final before = localUpd.length;
+        localUpd = localUpd.where((r) => !insertedIds.contains(r.idRebanho)).toList();
+        final removed = before - localUpd.length;
+        if (removed > 0) _syncLog('putUpdtRebanhos', 'Dedupe PUT/UPDT: $removed registro(s) removidos.');
       }
-      FFAppState().rebanhosIndex = 0;
-      localRebanhosUPDT = await SQLiteManager.instance.buscarRebanhoUPDATED(
-        data: dateTimeFormat(
-          "yyyy-MM-dd HH:mm:ss",
-          FFAppState().dataDadosNaoSyncRebanho,
-          locale: FFLocalizations.of(context).languageCode,
-        ),
-      );
-      // A4 dedupe PUT/UPDT: remove registros recém-inseridos (created_at ≈ updated_at)
-      if (localRebanhos.isNotEmpty) {
-        final insertedIds = localRebanhos.map((r) => r.idRebanho).whereType<String>().toSet();
-        if (insertedIds.isNotEmpty) {
-          final before = localRebanhosUPDT.length;
-          localRebanhosUPDT = localRebanhosUPDT.where((r) => !insertedIds.contains(r.idRebanho)).toList();
-          final removed = before - localRebanhosUPDT.length;
-          if (removed > 0) _syncLog('putUpdtRebanhos', 'Dedupe PUT/UPDT: $removed registro(s) removidos do UPDATE.');
-        }
-      }
-      if (localRebanhosUPDT.isNotEmpty) {
-        while (FFAppState().rebanhosIndex < localRebanhosUPDT.length) {
-          _throwIfCancelled('putUpdt_rebanhos');
-          try {
-            await RebanhoTable().update(
-              data: {
-                'numeroAnimal': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.numeroAnimal,
-                'chip': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.chip,
-                'codRegistro': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.codRegistro,
-                'nome': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.nome,
-                'sexo': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.sexo,
-                'categoria': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.categoria,
-                'dataNascimento': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhosUPDT
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataNascimento)),
-                'pesoNascimento': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.pesoNascimento,
-                'porte': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.porte,
-                'raca': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.raca,
-                'loteID': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.loteID,
-                'dataEntradaLote': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhosUPDT
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataEntradaLote)),
-                'rebanhoIdMatriz': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.rebanhoIdMatriz,
-                'rebanhoIdReprodutor': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.rebanhoIdReprodutor,
-                'dataDesmama': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhosUPDT
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataDesmama)),
-                'pesoDesmama': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.pesoDesmama,
-                'pesoAtual': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.pesoAtual,
-                'status': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.statusRebanho,
-                'origem': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.origem,
-                'anotacoes': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.anotacoes,
-                'deletado': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.deletado,
-                'loteNome': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.loteNome,
-                'tipo': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.tipo,
-                'dataAcao': supaSerialize<DateTime>(functions.converterParaData(
-                    localRebanhosUPDT
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataAcao)),
-                'valorCompra': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.valorCompra,
-                'dataUltimaPesagem': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhosUPDT
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataUltimaPesagem)),
-                'nomeConcat': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.nomeConcat,
-                'dataVenda': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhosUPDT
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataVenda)),
-                'valorVenda': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.valorVenda,
-                'numeroMatriz': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.numeroMatriz,
-                'nomeMatriz': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.nomeMatriz,
-                'dataNascMatriz': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhosUPDT
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataNascMatriz)),
-                'racaMatriz': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.racaMatriz,
-                'numeroReprodutor': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.numeroReprodutor,
-                'nomeReprodutor': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.nomeReprodutor,
-                'dataNascReprodutor': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhosUPDT
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataNascReprodutor)),
-                'racaReprodutor': localRebanhosUPDT
-                    .elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.racaReprodutor,
-                'movimentacao_entrada': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhosUPDT
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.movimentacaoEntrada)),
-                'movimentacao_saida': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhosUPDT
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.movimentacaoSaida)),
-                'data_morte': supaSerialize<DateTime>(
-                    functions.converterParaData(localRebanhosUPDT
-                        .elementAtOrNull(FFAppState().rebanhosIndex)
-                        ?.dataMorte)),
-              },
-              matchingRows: (rows) => rows.eqOrNull(
-                'idRebanho',
-                localRebanhosUPDT
-                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.idRebanho,
-              ),
-            );
-            _markSyncOk(
-                'rebanho',
-                localRebanhosUPDT
-                    ?.elementAtOrNull(FFAppState().rebanhosIndex)
-                    ?.idRebanho);
-          } catch (e) {
-            allSuccess = false;
-            _recordSyncError(
-              flow: 'putUpdtRebanhos',
-              modulo: 'rebanho',
-              operacao: 'update',
-              erro: e,
-              registroId: localRebanhosUPDT
-                  ?.elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.idRebanho,
-              registroDescricao: _descreverRebanhoBy(localRebanhosUPDT
-                  ?.elementAtOrNull(FFAppState().rebanhosIndex)
-                  ?.numeroAnimal),
-            );
-          }
-          FFAppState().rebanhosIndex = FFAppState().rebanhosIndex + 1;
-        }
-      }
-      FFAppState().rebanhosIndex = 0;
-      localHistPesPUT = await SQLiteManager.instance.buscaHistPesagensPUT(
-        data: dateTimeFormat(
-          "yyyy-MM-dd HH:mm:ss",
-          FFAppState().dataDadosNaoSyncRebanho,
-          locale: FFLocalizations.of(context).languageCode,
-        ),
-      );
-      FFAppState().pesagensIndex = 0;
-      if (localHistPesPUT.isNotEmpty) {
-        while (FFAppState().pesagensIndex < localHistPesPUT.length) {
-          _throwIfCancelled('putUpdt_pesagens');
-          try {
-            await HistoricoPesagensTable().insert({
-              'idRebanho': localHistPesPUT
-                  .elementAtOrNull(FFAppState().pesagensIndex)
-                  ?.idRebanho,
-              'dataPesagem': supaSerialize<DateTime>(
-                  functions.converterParaData(localHistPesPUT
-                      .elementAtOrNull(FFAppState().pesagensIndex)
-                      ?.dataPesagem)),
-              'tipo': localHistPesPUT
-                  .elementAtOrNull(FFAppState().pesagensIndex)
-                  ?.tipo,
-              'peso': localHistPesPUT
-                  .elementAtOrNull(FFAppState().pesagensIndex)
-                  ?.peso,
-              'deletado': localHistPesPUT
-                  .elementAtOrNull(FFAppState().pesagensIndex)
-                  ?.deletado,
-              'id_propriedade': localHistPesPUT
-                  .elementAtOrNull(FFAppState().pesagensIndex)
-                  ?.idPropriedade,
-            });
-            _markSyncOk(
-                'pesagem',
-                localHistPesPUT
-                    .elementAtOrNull(FFAppState().pesagensIndex)
-                    ?.idRebanho);
-          } catch (e) {
-            allSuccess = false;
-            _recordSyncError(
-              flow: 'putUpdtRebanhos',
-              modulo: 'pesagem',
-              operacao: 'insert',
-              erro: e,
-              registroId: localHistPesPUT
-                  .elementAtOrNull(FFAppState().pesagensIndex)
-                  ?.idRebanho,
-              registroDescricao: 'Pesagem ${localHistPesPUT.elementAtOrNull(FFAppState().pesagensIndex)?.peso ?? "?"}kg',
-            );
-          }
-          FFAppState().pesagensIndex = FFAppState().pesagensIndex + 1;
-        }
-      }
-      FFAppState().pesagensIndex = 0;
-      localPesagensUPDT = await SQLiteManager.instance.buscaHistPesagensUPDT();
-      if (localPesagensUPDT.isNotEmpty) {
-        while (FFAppState().pesagensIndex < localPesagensUPDT.length) {
-          _throwIfCancelled('putUpdt_pesagens');
-          try {
-            await HistoricoPesagensTable().update(
-              data: {
-                'deletado': localPesagensUPDT
-                    .elementAtOrNull(FFAppState().pesagensIndex)
-                    ?.deletado,
-              },
-              matchingRows: (rows) => rows.eqOrNull(
-                'id',
-                localPesagensUPDT
-                    ?.elementAtOrNull(FFAppState().pesagensIndex)
-                    ?.id,
-              ),
-            );
-            _markSyncOk(
-                'pesagem',
-                localPesagensUPDT
-                    .elementAtOrNull(FFAppState().pesagensIndex)
-                    ?.id
-                    ?.toString());
-          } catch (e) {
-            allSuccess = false;
-            _recordSyncError(
-              flow: 'putUpdtRebanhos',
-              modulo: 'pesagem',
-              operacao: 'update',
-              erro: e,
-              registroId: localPesagensUPDT
-                  .elementAtOrNull(FFAppState().pesagensIndex)
-                  ?.id
-                  ?.toString(),
-              registroDescricao: 'Pesagem id=${localPesagensUPDT.elementAtOrNull(FFAppState().pesagensIndex)?.id ?? "?"}',
-            );
-          }
-          FFAppState().pesagensIndex = FFAppState().pesagensIndex + 1;
-        }
-      }
-      FFAppState().pesagensIndex = 0;
     }
+
+    final rebanhoPayloads = <Map<String, dynamic>>[];
+    for (final row in localPut) {
+      _throwIfCancelled('putUpdtRebanhos');
+      rebanhoPayloads.add(_buildRebanhoPayload(row.data, isInsert: true));
+    }
+    for (final row in localUpd) {
+      _throwIfCancelled('putUpdtRebanhos');
+      rebanhoPayloads.add(_buildRebanhoPayload(row.data, isInsert: false));
+    }
+
+    if (rebanhoPayloads.isNotEmpty) {
+      _syncLog('putUpdtRebanhos',
+          'Upsert rebanho em lote: ${rebanhoPayloads.length} (INSERT=${localPut.length}, UPDATE=${localUpd.length}).');
+      try {
+        await _retry(
+          () => _batchUpsertSupabase(
+            tableName: 'rebanho',
+            rows: rebanhoPayloads,
+            onConflict: 'idRebanho',
+            chunkSize: 200,
+            label: 'putUpdtRebanhos.rebanho',
+          ),
+          label: 'putUpdtRebanhos.rebanho.batchUpsert',
+          maxAttempts: 3,
+        );
+        for (final row in localPut) {
+          _markSyncOk('rebanho', row.idRebanho);
+          // ignore: discarded_futures
+          actions.SyncErrorLog.autoResolverPorRegistro('rebanho', row.idRebanho);
+        }
+        for (final row in localUpd) {
+          _markSyncOk('rebanho', row.idRebanho);
+          // ignore: discarded_futures
+          actions.SyncErrorLog.autoResolverPorRegistro('rebanho', row.idRebanho);
+        }
+      } catch (e) {
+        allSuccess = false;
+        for (final r in localPut) {
+          _recordSyncError(
+            flow: 'putUpdtRebanhos',
+            modulo: 'rebanho',
+            operacao: 'insert',
+            erro: e,
+            registroId: r.idRebanho,
+            registroDescricao: _descreverRebanhoBy(r.numeroAnimal),
+          );
+        }
+        for (final r in localUpd) {
+          _recordSyncError(
+            flow: 'putUpdtRebanhos',
+            modulo: 'rebanho',
+            operacao: 'update',
+            erro: e,
+            registroId: r.idRebanho,
+            registroDescricao: _descreverRebanhoBy(r.numeroAnimal),
+          );
+        }
+      }
+    }
+
+    // ───── HISTORICO_PESAGENS ─────
+    pesPut = await SQLiteManager.instance.buscaHistPesagensPUT(data: dateFilter);
+    pesUpd = await SQLiteManager.instance.buscaHistPesagensUPDT();
+
+    // INSERT em lote (PK auto-increment, sem onConflict).
+    final pesInserts = <Map<String, dynamic>>[];
+    for (final row in pesPut) {
+      _throwIfCancelled('putUpdt_pesagens');
+      pesInserts.add(_buildPesagemPayloadInsert(row.data));
+    }
+    if (pesInserts.isNotEmpty) {
+      _syncLog('putUpdt_pesagens', 'Insert em lote: ${pesInserts.length} pesagem(ns).');
+      try {
+        await _retry(
+          () => _batchInsertSupabase(
+            tableName: 'historico_pesagens',
+            rows: pesInserts,
+            chunkSize: 200,
+            label: 'putUpdt_pesagens.insert',
+          ),
+          label: 'putUpdt_pesagens.batchInsert',
+          maxAttempts: 3,
+        );
+        for (final row in pesPut) {
+          _markSyncOk('pesagem', row.idRebanho);
+        }
+      } catch (e) {
+        allSuccess = false;
+        for (final r in pesPut) {
+          _recordSyncError(
+            flow: 'putUpdtRebanhos',
+            modulo: 'pesagem',
+            operacao: 'insert',
+            erro: e,
+            registroId: r.idRebanho,
+            registroDescricao: 'Pesagem ${r.peso ?? "?"}kg',
+          );
+        }
+      }
+    }
+
+    // UPDATE em lote — PK = id (int auto-increment, conhecido localmente).
+    final pesUpdates = <Map<String, dynamic>>[];
+    for (final row in pesUpd) {
+      _throwIfCancelled('putUpdt_pesagens');
+      if (row.id == null) continue;
+      pesUpdates.add({
+        'id': row.id,
+        'deletado': row.deletado,
+      });
+    }
+    if (pesUpdates.isNotEmpty) {
+      _syncLog('putUpdt_pesagens', 'Upsert em lote (UPDATE): ${pesUpdates.length} pesagem(ns).');
+      try {
+        await _retry(
+          () => _batchUpsertSupabase(
+            tableName: 'historico_pesagens',
+            rows: pesUpdates,
+            onConflict: 'id',
+            chunkSize: 200,
+            label: 'putUpdt_pesagens.update',
+          ),
+          label: 'putUpdt_pesagens.batchUpsertUpdate',
+          maxAttempts: 3,
+        );
+        for (final row in pesUpd) {
+          _markSyncOk('pesagem', row.id?.toString());
+        }
+      } catch (e) {
+        allSuccess = false;
+        for (final r in pesUpd) {
+          _recordSyncError(
+            flow: 'putUpdtRebanhos',
+            modulo: 'pesagem',
+            operacao: 'update',
+            erro: e,
+            registroId: r.id?.toString(),
+            registroDescricao: 'Pesagem id=${r.id ?? "?"}',
+          );
+        }
+      }
+    }
+    _syncLog('putUpdtRebanhos', 'Upload concluído.');
+  } on SyncCancelledException catch (e) {
+    allSuccess = false;
+    _syncLog('putUpdtRebanhos', 'CANCELADO: $e');
+  } on TimeoutException catch (e, s) {
+    allSuccess = false;
+    _syncLog('putUpdtRebanhos', 'TIMEOUT no upload: $e\n$s');
   } catch (e, s) {
     allSuccess = false;
     _syncLog('putUpdtRebanhos', 'ERRO no upload de rebanhos: $e\n$s');
   }
   return allSuccess;
 }
+
+Map<String, dynamic> _buildRebanhoPayload(
+  Map<String, dynamic> raw, {
+  required bool isInsert,
+}) {
+  String? serializeDate(dynamic v) {
+    if (v == null) return null;
+    final s = v.toString().trim();
+    if (s.isEmpty || s == 'null') return null;
+    final dt = functions.converterParaData(s);
+    if (dt == null) return null;
+    return supaSerialize<DateTime>(dt);
+  }
+
+  final payload = <String, dynamic>{
+    'idRebanho': raw['idRebanho'],
+    'idPropriedade': raw['idPropriedade'],
+    'numeroAnimal': raw['numeroAnimal'],
+    'chip': raw['chip'],
+    'codRegistro': raw['codRegistro'],
+    'nome': raw['nome'],
+    'sexo': raw['sexo'],
+    'categoria': raw['categoria'],
+    'dataNascimento': serializeDate(raw['dataNascimento']),
+    'pesoNascimento': raw['pesoNascimento'],
+    'porte': raw['porte'],
+    'raca': raw['raca'],
+    'loteID': raw['loteID'],
+    'dataEntradaLote': serializeDate(raw['dataEntradaLote']),
+    'rebanhoIdMatriz': raw['rebanhoIdMatriz'],
+    'rebanhoIdReprodutor': raw['rebanhoIdReprodutor'],
+    'dataDesmama': serializeDate(raw['dataDesmama']),
+    'pesoDesmama': raw['pesoDesmama'],
+    'pesoAtual': raw['pesoAtual'],
+    'status': raw['statusRebanho'],
+    'origem': raw['origem'],
+    'anotacoes': raw['anotacoes'],
+    'deletado': raw['deletado'],
+    'loteNome': raw['loteNome'],
+    'tipo': raw['tipo'],
+    'dataAcao': serializeDate(raw['dataAcao']),
+    'valorCompra': raw['valorCompra'],
+    'dataUltimaPesagem': serializeDate(raw['dataUltimaPesagem']),
+    'nomeConcat': raw['nomeConcat'],
+    'dataVenda': serializeDate(raw['dataVenda']),
+    'valorVenda': raw['valorVenda'],
+    'numeroMatriz': raw['numeroMatriz'],
+    'nomeMatriz': raw['nomeMatriz'],
+    'dataNascMatriz': serializeDate(raw['dataNascMatriz']),
+    'racaMatriz': raw['racaMatriz'],
+    'numeroReprodutor': raw['numeroReprodutor'],
+    'nomeReprodutor': raw['nomeReprodutor'],
+    'dataNascReprodutor': serializeDate(raw['dataNascReprodutor']),
+    'racaReprodutor': raw['racaReprodutor'],
+    'movimentacao_entrada': serializeDate(raw['movimentacao_entrada']),
+    'movimentacao_saida': serializeDate(raw['movimentacao_saida']),
+    'data_morte': serializeDate(raw['data_morte']),
+  };
+  if (isInsert) {
+    // Campos que só fazem sentido no INSERT (presentes em PUTRow apenas).
+    payload['motivo_morte'] = raw['motivo_morte'];
+    payload['categoria_matriz'] = raw['categoria_matriz'];
+  }
+  payload.removeWhere((_, v) => v == null);
+  return payload;
+}
+
+Map<String, dynamic> _buildPesagemPayloadInsert(Map<String, dynamic> raw) {
+  String? serializeDate(dynamic v) {
+    if (v == null) return null;
+    final s = v.toString().trim();
+    if (s.isEmpty || s == 'null') return null;
+    final dt = functions.converterParaData(s);
+    if (dt == null) return null;
+    return supaSerialize<DateTime>(dt);
+  }
+
+  final payload = <String, dynamic>{
+    'idRebanho': raw['idRebanho'],
+    'dataPesagem': serializeDate(raw['dataPesagem']),
+    'tipo': raw['tipo'],
+    'peso': raw['peso'],
+    'deletado': raw['deletado'],
+    'id_propriedade': raw['id_propriedade'],
+  };
+  payload.removeWhere((_, v) => v == null);
+  return payload;
+}
+
 
 Future countLotesAtivoInativo(BuildContext context) async {
   List<LotesAtivoRow>? qtdAtivos;
@@ -1626,174 +1383,150 @@ Future refreshLotes(BuildContext context) async {
 
 Future<bool> putUpdtLotes(BuildContext context) async {
   var allSuccess = true;
-  try {
-    List<BuscarLotePUTRow>? localLotes;
-    List<BuscarLoteUPDTRow>? localLotesUPT;
+  final dataPendente = FFAppState().dataDadosNaoSyncLotes;
+  if (dataPendente == null) return true;
 
-    if (FFAppState().dataDadosNaoSyncLotes != null) {
-      localLotes = await SQLiteManager.instance.buscarLotePUT(
-        datePUT: dateTimeFormat(
-          "yyyy-MM-dd HH:mm:ss",
-          FFAppState().dataDadosNaoSyncLotes,
-          locale: FFLocalizations.of(context).languageCode,
-        ),
-      );
-      FFAppState().lotesIndex = 0;
-      if (localLotes.isNotEmpty) {
-        while (FFAppState().lotesIndex < localLotes.length) {
-          _throwIfCancelled('putUpdt_lotes');
-          try {
-            await LotesTable().insert({
-              'id_propriedade': localLotes
-                  .elementAtOrNull(FFAppState().lotesIndex)
-                  ?.idPropriedade,
-              'id_animais': localLotes
-                  .elementAtOrNull(FFAppState().lotesIndex)
-                  ?.idAnimais,
-              'nome': localLotes.elementAtOrNull(FFAppState().lotesIndex)?.nome,
-              'anotacoes': localLotes
-                  .elementAtOrNull(FFAppState().lotesIndex)
-                  ?.anotacoes,
-              'ativo':
-                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.ativo,
-              'motivo':
-                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.motivo,
-              'data_motivo': supaSerialize<DateTime>(
-                  functions.converterParaData(localLotes
-                      .elementAtOrNull(FFAppState().lotesIndex)
-                      ?.dataMotivo)),
-              'id_lote':
-                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
-              'deletado':
-                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.deletado,
-              'data_entrada_piquete': supaSerialize<DateTime>(
-                  functions.converterParaData(localLotes
-                      .elementAtOrNull(FFAppState().lotesIndex)
-                      ?.dataEntradaPiquete)),
-              'data_saida_piquete': supaSerialize<DateTime>(
-                  functions.converterParaData(localLotes
-                      .elementAtOrNull(FFAppState().lotesIndex)
-                      ?.dataSaidaPiquete)),
-              'valorVenda': localLotes
-                  .elementAtOrNull(FFAppState().lotesIndex)
-                  ?.valorVenda,
-            });
-            _markSyncOk('lote',
-                localLotes.elementAtOrNull(FFAppState().lotesIndex)?.idLote);
-          } catch (e) {
-            allSuccess = false;
-            _recordSyncError(
-              flow: 'putUpdtLotes',
-              modulo: 'lote',
-              operacao: 'insert',
-              erro: e,
-              registroId:
-                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
-              registroDescricao:
-                  localLotes.elementAtOrNull(FFAppState().lotesIndex)?.nome,
-            );
-          }
-          FFAppState().lotesIndex = FFAppState().lotesIndex + 1;
-        }
+  List<BuscarLotePUTRow> localPut = const [];
+  List<BuscarLoteUPDTRow> localUpd = const [];
+
+  try {
+    _throwIfCancelled('putUpdtLotes');
+    final dateFilter = dateTimeFormat(
+      "yyyy-MM-dd HH:mm:ss",
+      dataPendente,
+      locale: FFLocalizations.of(context).languageCode,
+    );
+
+    localPut = await SQLiteManager.instance.buscarLotePUT(datePUT: dateFilter);
+    localUpd = await SQLiteManager.instance.buscarLoteUPDT(dateUPDT: dateFilter);
+
+    if (localPut.isNotEmpty) {
+      final insertedIds = localPut.map((r) => r.idLote).whereType<String>().toSet();
+      if (insertedIds.isNotEmpty) {
+        final before = localUpd.length;
+        localUpd = localUpd.where((r) => !insertedIds.contains(r.idLote)).toList();
+        final removed = before - localUpd.length;
+        if (removed > 0) _syncLog('putUpdtLotes', 'Dedupe PUT/UPDT: $removed registro(s) removidos.');
       }
-      FFAppState().lotesIndex = 0;
-      localLotesUPT = await SQLiteManager.instance.buscarLoteUPDT(
-        dateUPDT: dateTimeFormat(
-          "yyyy-MM-dd HH:mm:ss",
-          FFAppState().dataDadosNaoSyncLotes,
-          locale: FFLocalizations.of(context).languageCode,
-        ),
-      );
-      if (localLotes != null && localLotes.isNotEmpty) {
-        final insertedIds = localLotes.map((r) => r.idLote).whereType<String>().toSet();
-        if (insertedIds.isNotEmpty) {
-          final before = localLotesUPT.length;
-          localLotesUPT = localLotesUPT.where((r) => !insertedIds.contains(r.idLote)).toList();
-          final removed = before - localLotesUPT.length;
-          if (removed > 0) _syncLog('putUpdtLotes', 'Dedupe PUT/UPDT: $removed registro(s) removidos do UPDATE.');
-        }
-      }
-      if (localLotesUPT.isNotEmpty) {
-        while (FFAppState().lotesIndex < localLotesUPT.length) {
-          _throwIfCancelled('putUpdt_lotes');
-          try {
-            await LotesTable().update(
-              data: {
-                'id_propriedade': localLotesUPT
-                    .elementAtOrNull(FFAppState().lotesIndex)
-                    ?.idPropriedade,
-                'id_animais': localLotesUPT
-                    .elementAtOrNull(FFAppState().lotesIndex)
-                    ?.idAnimais,
-                'nome': localLotesUPT
-                    .elementAtOrNull(FFAppState().lotesIndex)
-                    ?.nome,
-                'anotacoes': localLotesUPT
-                    .elementAtOrNull(FFAppState().lotesIndex)
-                    ?.anotacoes,
-                'ativo': localLotesUPT
-                    .elementAtOrNull(FFAppState().lotesIndex)
-                    ?.ativo,
-                'motivo': localLotesUPT
-                    .elementAtOrNull(FFAppState().lotesIndex)
-                    ?.motivo,
-                'data_motivo': supaSerialize<DateTime>(
-                    functions.converterParaData(localLotesUPT
-                        .elementAtOrNull(FFAppState().lotesIndex)
-                        ?.dataMotivo)),
-                'id_lote': localLotesUPT
-                    .elementAtOrNull(FFAppState().lotesIndex)
-                    ?.idLote,
-                'deletado': localLotesUPT
-                    .elementAtOrNull(FFAppState().lotesIndex)
-                    ?.deletado,
-                'updated_at': supaSerialize<DateTime>(
-                    functions.converterParaData(localLotesUPT
-                        .elementAtOrNull(FFAppState().lotesIndex)
-                        ?.updatedAt)),
-                'data_entrada_piquete': supaSerialize<DateTime>(
-                    functions.converterParaData(localLotesUPT
-                        .elementAtOrNull(FFAppState().lotesIndex)
-                        ?.dataEntradaPiquete)),
-                'data_saida_piquete': supaSerialize<DateTime>(
-                    functions.converterParaData(localLotesUPT
-                        .elementAtOrNull(FFAppState().lotesIndex)
-                        ?.dataSaidaPiquete)),
-                'valorVenda': localLotesUPT
-                    .elementAtOrNull(FFAppState().lotesIndex)
-                    ?.valorVenda,
-              },
-              matchingRows: (rows) => rows.eqOrNull(
-                'id_lote',
-                localLotesUPT?.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
-              ),
-            );
-            _markSyncOk('lote',
-                localLotesUPT.elementAtOrNull(FFAppState().lotesIndex)?.idLote);
-          } catch (e) {
-            allSuccess = false;
-            _recordSyncError(
-              flow: 'putUpdtLotes',
-              modulo: 'lote',
-              operacao: 'update',
-              erro: e,
-              registroId:
-                  localLotesUPT.elementAtOrNull(FFAppState().lotesIndex)?.idLote,
-              registroDescricao:
-                  localLotesUPT.elementAtOrNull(FFAppState().lotesIndex)?.nome,
-            );
-          }
-          FFAppState().lotesIndex = FFAppState().lotesIndex + 1;
-        }
-      }
-      FFAppState().lotesIndex = 0;
     }
+
+    final payloads = <Map<String, dynamic>>[];
+    for (final row in localPut) {
+      _throwIfCancelled('putUpdtLotes');
+      payloads.add(_buildLotePayload(row.data, isInsert: true));
+    }
+    for (final row in localUpd) {
+      _throwIfCancelled('putUpdtLotes');
+      payloads.add(_buildLotePayload(row.data, isInsert: false));
+    }
+
+    if (payloads.isEmpty) {
+      _syncLog('putUpdtLotes', 'Nada para enviar.');
+      return true;
+    }
+
+    _syncLog('putUpdtLotes',
+        'Upsert em lote: ${payloads.length} (INSERT=${localPut.length}, UPDATE=${localUpd.length}).');
+
+    await _retry(
+      () => _batchUpsertSupabase(
+        tableName: 'lotes',
+        rows: payloads,
+        onConflict: 'id_lote',
+        chunkSize: 200,
+        label: 'putUpdtLotes',
+      ),
+      label: 'putUpdtLotes.batchUpsert',
+      maxAttempts: 3,
+    );
+
+    for (final row in localPut) {
+      _markSyncOk('lote', row.idLote);
+      // ignore: discarded_futures
+      actions.SyncErrorLog.autoResolverPorRegistro('lote', row.idLote);
+    }
+    for (final row in localUpd) {
+      _markSyncOk('lote', row.idLote);
+      // ignore: discarded_futures
+      actions.SyncErrorLog.autoResolverPorRegistro('lote', row.idLote);
+    }
+    _syncLog('putUpdtLotes', 'Upload concluído.');
+  } on SyncCancelledException catch (e) {
+    allSuccess = false;
+    _syncLog('putUpdtLotes', 'CANCELADO: $e');
+  } on TimeoutException catch (e, s) {
+    allSuccess = false;
+    _syncLog('putUpdtLotes', 'TIMEOUT no upload: $e\n$s');
+    _registrarErrosLote(localPut, localUpd, e);
   } catch (e, s) {
     allSuccess = false;
     _syncLog('putUpdtLotes', 'ERRO no upload de lotes: $e\n$s');
+    _registrarErrosLote(localPut, localUpd, e);
   }
   return allSuccess;
 }
+
+void _registrarErrosLote(
+  List<BuscarLotePUTRow> puts,
+  List<BuscarLoteUPDTRow> upds,
+  Object e,
+) {
+  for (final r in puts) {
+    _recordSyncError(
+      flow: 'putUpdtLotes',
+      modulo: 'lote',
+      operacao: 'insert',
+      erro: e,
+      registroId: r.idLote,
+      registroDescricao: r.nome,
+    );
+  }
+  for (final r in upds) {
+    _recordSyncError(
+      flow: 'putUpdtLotes',
+      modulo: 'lote',
+      operacao: 'update',
+      erro: e,
+      registroId: r.idLote,
+      registroDescricao: r.nome,
+    );
+  }
+}
+
+Map<String, dynamic> _buildLotePayload(
+  Map<String, dynamic> raw, {
+  required bool isInsert,
+}) {
+  String? serializeDate(dynamic v) {
+    if (v == null) return null;
+    final s = v.toString().trim();
+    if (s.isEmpty || s == 'null') return null;
+    final dt = functions.converterParaData(s);
+    if (dt == null) return null;
+    return supaSerialize<DateTime>(dt);
+  }
+
+  final payload = <String, dynamic>{
+    'id_lote': raw['idLote'],
+    'id_propriedade': raw['idPropriedade'],
+    'id_animais': raw['idAnimais'],
+    'nome': raw['nome'],
+    'anotacoes': raw['anotacoes'],
+    'ativo': raw['ativo'],
+    'motivo': raw['motivo'],
+    'data_motivo': serializeDate(raw['dataMotivo']),
+    'deletado': raw['deletado'],
+    'data_entrada_piquete': serializeDate(raw['dataEntradaPiquete']),
+    'data_saida_piquete': serializeDate(raw['dataSaidaPiquete']),
+    'valorVenda': raw['valorVenda'],
+  };
+  if (!isInsert) {
+    payload['updated_at'] = serializeDate(raw['updated_at']);
+  }
+  payload.removeWhere((_, v) => v == null);
+  return payload;
+}
+
 
 Future countLotesCadastrados(BuildContext context) async {
   List<CountLotesCadastradosRow>? qtdLotes;
@@ -2107,247 +1840,161 @@ Future countSanidades(BuildContext context) async {
 
 Future<bool> putUpdtSanidades(BuildContext context) async {
   var allSuccess = true;
-  try {
-    List<BuscarSanidadePUTRow>? localSanidade;
-    List<BuscarSanidadeUPDTRow>? localSanidadeUPDT;
+  final dataPendente = FFAppState().dataDadosNaoSyncSanidade;
+  if (dataPendente == null) return true;
 
-    if (FFAppState().dataDadosNaoSyncSanidade != null) {
-      localSanidade = await SQLiteManager.instance.buscarSanidadePUT(
-        datePUT: dateTimeFormat(
-          "yyyy-MM-dd HH:mm:ss",
-          FFAppState().dataDadosNaoSyncSanidade,
-          locale: FFLocalizations.of(context).languageCode,
-        ),
-      );
-      if (localSanidade.isNotEmpty) {
-        while (FFAppState().sanidadeIndex < localSanidade.length) {
-          _throwIfCancelled('putUpdt_sanidade');
-          try {
-            await SanidadeTable().insert({
-              'id_propriedade': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.idPropriedade,
-              'deletado': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.deletado,
-              'updated_at': supaSerialize<DateTime>(functions.converterParaData(
-                  localSanidade
-                      .elementAtOrNull(FFAppState().sanidadeIndex)
-                      ?.updatedAt)),
-              'created_at': supaSerialize<DateTime>(functions.converterParaData(
-                  localSanidade
-                      .elementAtOrNull(FFAppState().sanidadeIndex)
-                      ?.createdAt)),
-              'id_rebanho': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.idRebanho,
-              'data_sanidade': supaSerialize<DateTime>(
-                  functions.converterParaData(localSanidade
-                      .elementAtOrNull(FFAppState().sanidadeIndex)
-                      ?.dataSanidade)),
-              'id_lote': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.idLote,
-              'porcentagem_lote': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.porcentagemLote,
-              'id_sanidade': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.idSanidade,
-              'vacinacao': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.vacinacao,
-              'vacinacao_outros': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.vacinacaoOutros,
-              'vacinacao_obs': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.vacinacaoObs,
-              'antiparasitario': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.antiparasitario,
-              'antiparasitario_outros': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.antiparasitarioOutros,
-              'antiparasitario_obs': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.antiparasitarioObs,
-              'tratamento': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.tratamento,
-              'tratamento_outros': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.tratamentoOutros,
-              'tratamento_obs': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.tratamentoObs,
-              'protocolo_reprodutivo': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.protocoloReprodutivo,
-              'protocolo_reprodutivo_outros': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.protocoloReprodutivoOutros,
-              'protocolo_reprodutivo_obs': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.protocoloReprodutivoObs,
-              'protocolo_d0': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.protocoloD0,
-              'protocolo_retirada': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.protocoloRetirada,
-              'protocolo_iatf': localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.protocoloIatf,
-            });
-            _markSyncOk(
-                'sanidade',
-                localSanidade
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.idSanidade);
-          } catch (e) {
-            allSuccess = false;
-            _recordSyncError(
-              flow: 'putUpdtSanidades',
-              modulo: 'sanidade',
-              operacao: 'insert',
-              erro: e,
-              registroId: localSanidade
-                  .elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.idSanidade,
-              registroDescricao: 'Sanidade ' +
-                  (localSanidade
-                          .elementAtOrNull(FFAppState().sanidadeIndex)
-                          ?.dataSanidade ??
-                      ''),
-            );
-          }
-          FFAppState().sanidadeIndex = FFAppState().sanidadeIndex + 1;
-        }
+  List<BuscarSanidadePUTRow> localPut = const [];
+  List<BuscarSanidadeUPDTRow> localUpd = const [];
+
+  try {
+    _throwIfCancelled('putUpdtSanidades');
+    final dateFilter = dateTimeFormat(
+      "yyyy-MM-dd HH:mm:ss",
+      dataPendente,
+      locale: FFLocalizations.of(context).languageCode,
+    );
+
+    localPut = await SQLiteManager.instance.buscarSanidadePUT(datePUT: dateFilter);
+    localUpd = await SQLiteManager.instance.buscarSanidadeUPDT(dateUPDT: dateFilter);
+
+    if (localPut.isNotEmpty) {
+      final insertedIds = localPut.map((r) => r.idSanidade).whereType<String>().toSet();
+      if (insertedIds.isNotEmpty) {
+        final before = localUpd.length;
+        localUpd = localUpd.where((r) => !insertedIds.contains(r.idSanidade)).toList();
+        final removed = before - localUpd.length;
+        if (removed > 0) _syncLog('putUpdtSanidades', 'Dedupe PUT/UPDT: $removed registro(s) removidos.');
       }
-      FFAppState().sanidadeIndex = 0;
-      localSanidadeUPDT = await SQLiteManager.instance.buscarSanidadeUPDT(
-        dateUPDT: dateTimeFormat(
-          "yyyy-MM-dd HH:mm:ss",
-          FFAppState().dataDadosNaoSyncSanidade,
-          locale: FFLocalizations.of(context).languageCode,
-        ),
-      );
-      if (localSanidade != null && localSanidade.isNotEmpty) {
-        final insertedIds = localSanidade.map((r) => r.idSanidade).whereType<String>().toSet();
-        if (insertedIds.isNotEmpty) {
-          final before = localSanidadeUPDT.length;
-          localSanidadeUPDT = localSanidadeUPDT.where((r) => !insertedIds.contains(r.idSanidade)).toList();
-          final removed = before - localSanidadeUPDT.length;
-          if (removed > 0) _syncLog('putUpdtSanidades', 'Dedupe PUT/UPDT: $removed registro(s) removidos do UPDATE.');
-        }
-      }
-      if (localSanidadeUPDT.isNotEmpty) {
-        while (FFAppState().sanidadeIndex < localSanidadeUPDT.length) {
-          _throwIfCancelled('putUpdt_sanidade');
-          try {
-            await SanidadeTable().update(
-              data: {
-                'data_sanidade': supaSerialize<DateTime>(
-                    functions.converterParaData(localSanidadeUPDT
-                        .elementAtOrNull(FFAppState().sanidadeIndex)
-                        ?.dataSanidade)),
-                'porcentagem_lote': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.porcentagemLote,
-                'updated_at': supaSerialize<DateTime>(
-                    functions.converterParaData(localSanidadeUPDT
-                        .elementAtOrNull(FFAppState().sanidadeIndex)
-                        ?.updatedAt)),
-                'deletado': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.deletado,
-                'vacinacao': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.vacinacao,
-                'vacinacao_outros': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.vacinacaoOutros,
-                'vacinacao_obs': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.vacinacaoObs,
-                'antiparasitario': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.antiparasitario,
-                'antiparasitario_outros': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.antiparasitarioOutros,
-                'antiparasitario_obs': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.antiparasitarioObs,
-                'tratamento': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.tratamento,
-                'tratamento_outros': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.tratamentoOutros,
-                'tratamento_obs': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.tratamentoObs,
-                'protocolo_reprodutivo': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.protocoloReprodutivo,
-                'protocolo_reprodutivo_outros': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.protocoloReprodutivoOutros,
-                'protocolo_reprodutivo_obs': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.protocoloReprodutivoObs,
-                'protocolo_d0': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.protocoloD0,
-                'protocolo_retirada': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.protocoloRetirada,
-                'protocolo_iatf': localSanidadeUPDT
-                    .elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.protocoloIatf,
-              },
-              matchingRows: (rows) => rows.eqOrNull(
-                'id_sanidade',
-                localSanidadeUPDT
-                    ?.elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.idSanidade,
-              ),
-            );
-            _markSyncOk(
-                'sanidade',
-                localSanidadeUPDT
-                    ?.elementAtOrNull(FFAppState().sanidadeIndex)
-                    ?.idSanidade);
-          } catch (e) {
-            allSuccess = false;
-            _recordSyncError(
-              flow: 'putUpdtSanidades',
-              modulo: 'sanidade',
-              operacao: 'update',
-              erro: e,
-              registroId: localSanidadeUPDT
-                  ?.elementAtOrNull(FFAppState().sanidadeIndex)
-                  ?.idSanidade,
-              registroDescricao: 'Sanidade ' +
-                  (localSanidadeUPDT
-                          ?.elementAtOrNull(FFAppState().sanidadeIndex)
-                          ?.dataSanidade ??
-                      ''),
-            );
-          }
-          FFAppState().sanidadeIndex = FFAppState().sanidadeIndex + 1;
-        }
-      }
-      FFAppState().sanidadeIndex = 0;
     }
+
+    final payloads = <Map<String, dynamic>>[];
+    for (final row in localPut) {
+      _throwIfCancelled('putUpdtSanidades');
+      payloads.add(_buildSanidadePayload(row.data, isInsert: true));
+    }
+    for (final row in localUpd) {
+      _throwIfCancelled('putUpdtSanidades');
+      payloads.add(_buildSanidadePayload(row.data, isInsert: false));
+    }
+
+    if (payloads.isEmpty) {
+      _syncLog('putUpdtSanidades', 'Nada para enviar.');
+      return true;
+    }
+
+    _syncLog('putUpdtSanidades',
+        'Upsert em lote: ${payloads.length} (INSERT=${localPut.length}, UPDATE=${localUpd.length}).');
+
+    await _retry(
+      () => _batchUpsertSupabase(
+        tableName: 'sanidade',
+        rows: payloads,
+        onConflict: 'id_sanidade',
+        chunkSize: 200,
+        label: 'putUpdtSanidades',
+      ),
+      label: 'putUpdtSanidades.batchUpsert',
+      maxAttempts: 3,
+    );
+
+    for (final row in localPut) {
+      _markSyncOk('sanidade', row.idSanidade);
+      // ignore: discarded_futures
+      actions.SyncErrorLog.autoResolverPorRegistro('sanidade', row.idSanidade);
+    }
+    for (final row in localUpd) {
+      _markSyncOk('sanidade', row.idSanidade);
+      // ignore: discarded_futures
+      actions.SyncErrorLog.autoResolverPorRegistro('sanidade', row.idSanidade);
+    }
+    _syncLog('putUpdtSanidades', 'Upload concluído.');
+  } on SyncCancelledException catch (e) {
+    allSuccess = false;
+    _syncLog('putUpdtSanidades', 'CANCELADO: $e');
+  } on TimeoutException catch (e, s) {
+    allSuccess = false;
+    _syncLog('putUpdtSanidades', 'TIMEOUT no upload: $e\n$s');
+    _registrarErrosSanidade(localPut, localUpd, e);
   } catch (e, s) {
     allSuccess = false;
     _syncLog('putUpdtSanidades', 'ERRO no upload de sanidades: $e\n$s');
+    _registrarErrosSanidade(localPut, localUpd, e);
   }
   return allSuccess;
 }
+
+void _registrarErrosSanidade(
+  List<BuscarSanidadePUTRow> puts,
+  List<BuscarSanidadeUPDTRow> upds,
+  Object e,
+) {
+  for (final r in puts) {
+    _recordSyncError(
+      flow: 'putUpdtSanidades',
+      modulo: 'sanidade',
+      operacao: 'insert',
+      erro: e,
+      registroId: r.idSanidade,
+      registroDescricao: 'Sanidade ${r.dataSanidade ?? ""}',
+    );
+  }
+  for (final r in upds) {
+    _recordSyncError(
+      flow: 'putUpdtSanidades',
+      modulo: 'sanidade',
+      operacao: 'update',
+      erro: e,
+      registroId: r.idSanidade,
+      registroDescricao: 'Sanidade ${r.dataSanidade ?? ""}',
+    );
+  }
+}
+
+Map<String, dynamic> _buildSanidadePayload(
+  Map<String, dynamic> raw, {
+  required bool isInsert,
+}) {
+  String? serializeDate(dynamic v) {
+    if (v == null) return null;
+    final s = v.toString().trim();
+    if (s.isEmpty || s == 'null') return null;
+    final dt = functions.converterParaData(s);
+    if (dt == null) return null;
+    return supaSerialize<DateTime>(dt);
+  }
+
+  final payload = <String, dynamic>{
+    'id_sanidade': raw['idSanidade'],
+    'id_propriedade': raw['idPropriedade'],
+    'deletado': raw['deletado'],
+    'updated_at': serializeDate(raw['updated_at']),
+    'id_rebanho': raw['idRebanho'],
+    'data_sanidade': serializeDate(raw['dataSanidade']),
+    'id_lote': raw['idLote'],
+    'porcentagem_lote': raw['porcentagemLote'],
+    'vacinacao': raw['vacinacao'],
+    'vacinacao_outros': raw['vacinacaoOutros'],
+    'vacinacao_obs': raw['vacinacaoObs'],
+    'antiparasitario': raw['antiparasitario'],
+    'antiparasitario_outros': raw['antiparasitarioOutros'],
+    'antiparasitario_obs': raw['antiparasitarioObs'],
+    'tratamento': raw['tratamento'],
+    'tratamento_outros': raw['tratamentoOutros'],
+    'tratamento_obs': raw['tratamentoObs'],
+    'protocolo_reprodutivo': raw['protocoloReprodutivo'],
+    'protocolo_reprodutivo_outros': raw['protocoloReprodutivoOutros'],
+    'protocolo_reprodutivo_obs': raw['protocoloReprodutivoObs'],
+    'protocolo_d0': raw['protocoloD0'],
+    'protocolo_retirada': raw['protocoloRetirada'],
+    'protocolo_iatf': raw['protocoloIatf'],
+  };
+  if (isInsert) {
+    payload['created_at'] = serializeDate(raw['created_at']);
+  }
+  payload.removeWhere((_, v) => v == null);
+  return payload;
+}
+
 
 Future qTDSanidades(BuildContext context) async {
   List<QTDSanidadesRow>? qtdSanidades;

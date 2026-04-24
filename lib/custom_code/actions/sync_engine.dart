@@ -204,6 +204,10 @@ class SyncEngine {
         hasPendingRepro ||
         hasPendingSanidade;
 
+    debugPrint('[SYNC][engine] Pendentes: prop=$hasPendingProp, '
+        'rebanhos=$hasPendingRebanho, lotes=$hasPendingLotes, '
+        'repro=$hasPendingRepro, sanidade=$hasPendingSanidade.');
+
     // ───── PUSH phase ─────
     var propOk = true;
     var rebanhoOk = true;
@@ -404,17 +408,31 @@ class SyncEngine {
     Duration timeout,
     T fallback,
   ) async {
-    try {
-      return await task().timeout(timeout, onTimeout: () {
+    final cancelCompleter = Completer<T>();
+    final cancelTimer = Timer.periodic(const Duration(milliseconds: 500), (t) {
+      if (FFAppState().syncCancelRequested && !cancelCompleter.isCompleted) {
         debugPrint(
-            '[SYNC][engine][watchdog] $label estourou após ${timeout.inSeconds}s.');
-        throw TimeoutException('$label timeout');
-      });
+            '[SYNC][engine][watchdog] $label cancelado cooperativamente.');
+        cancelCompleter.complete(fallback);
+        t.cancel();
+      }
+    });
+    try {
+      return await Future.any<T>([
+        task().timeout(timeout, onTimeout: () {
+          debugPrint(
+              '[SYNC][engine][watchdog] $label estourou após ${timeout.inSeconds}s.');
+          throw TimeoutException('$label timeout');
+        }),
+        cancelCompleter.future,
+      ]);
     } on TimeoutException {
       return fallback;
     } catch (e, s) {
       debugPrint('[SYNC][engine][watchdog] $label falhou: $e\n$s');
       return fallback;
+    } finally {
+      cancelTimer.cancel();
     }
   }
 }
