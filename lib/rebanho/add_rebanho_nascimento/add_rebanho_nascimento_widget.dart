@@ -1372,6 +1372,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                   ),
                                               keyboardType: TextInputType.number,
                                               inputFormatters: const [
+                                                FilteringTextInputFormatter.digitsOnly,
                                                 PesoInputFormatter(),
                                               ],
                                               validator: _model

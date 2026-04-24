@@ -1796,6 +1796,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                               keyboardType: TextInputType.number,
                                               inputFormatters: const [
+                                                FilteringTextInputFormatter.digitsOnly,
                                                 PesoInputFormatter(),
                                               ],
                                               validator: _model
@@ -3537,6 +3538,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                               keyboardType: TextInputType.number,
                                               inputFormatters: const [
+                                                FilteringTextInputFormatter.digitsOnly,
                                                 PesoInputFormatter(),
                                               ],
                                               validator: _model
@@ -3866,6 +3868,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   ),
                                               keyboardType: TextInputType.number,
                                               inputFormatters: const [
+                                                FilteringTextInputFormatter.digitsOnly,
                                                 PesoInputFormatter(),
                                               ],
                                               validator: _model

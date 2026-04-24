@@ -375,6 +375,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: false, signed: false),
                         inputFormatters: const [
+                          FilteringTextInputFormatter.digitsOnly,
                           PesoInputFormatter(),
                         ],
                         validator: _model.pesoTextControllerValidator

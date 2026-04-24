@@ -27,16 +27,9 @@ class PesoInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    // Se o usuário (ou IME) digitou mais de um separador (',' ou '.'),
-    // NÃO limpamos automaticamente — a entrada é ambígua e a limpeza
-    // silenciosa pode trocar o número (ex.: "50,,5" -> "5,05" em vez
-    // de "50,50"). Preservamos o texto sujo para que
-    // sanitizePesoControllersBeforeSave bloqueie o save com diálogo.
-    final separadores = RegExp(r'[.,]').allMatches(newValue.text).length;
-    if (separadores > 1) {
-      return newValue;
-    }
-
+    // Strip qualquer não-dígito (defesa interna; o TextField usa
+    // FilteringTextInputFormatter.digitsOnly antes deste formatter,
+    // mas garantimos que mesmo entrada programatica fique sa).
     final digits = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
     if (digits.isEmpty) {
       return const TextEditingValue(
@@ -140,95 +133,29 @@ double? normalizePesoController(TextEditingController? c) {
 
 /// Sanitiza uma lista de controllers de peso ANTES de salvar.
 ///
-/// - Reescreve cada controller no formato canônico `X,YY`.
-/// - Se algum controller tinha mais de 1 separador (`,` ou `.`) na entrada
-///   original (ex.: `45,,5` ou `50..8`), é considerado entrada ambígua:
-///   mostra um **AlertDialog modal** avisando o usuário, atualiza o campo
-///   com o valor corrigido e retorna `false` — o save NÃO prossegue.
-///   Usuário precisa fechar o diálogo, conferir o valor sugerido e clicar
-///   Salvar novamente.
-/// - Em caso normal, retorna `true`.
+/// Reescreve cada controller no formato canônico `X,YY`. Como os
+/// TextFormField de peso usam `FilteringTextInputFormatter.digitsOnly`
+/// no engine, é praticamente impossível chegar aqui com texto sujo.
+/// Esta função é mantida como defesa-em-profundidade para garantir
+/// que `parsePesoFormatado` lerá um valor limpo.
 ///
-/// Por que diálogo e não SnackBar: o SnackBar pode ficar escondido pelo
-/// teclado virtual, fazendo o usuário pensar que nada aconteceu.
-///
-/// Use no início do `onPressed` de cada botão Salvar:
-///
-/// ```dart
-/// if (!await sanitizePesoControllersBeforeSave(context, [
-///   _model.pesoNascimentoTextController,
-///   _model.pesoAtualTextController,
-/// ])) return;
-/// ```
+/// Sempre retorna `true` — não bloqueia o save. Mantém assinatura
+/// `Future<bool>` para compatibilidade com callers existentes.
 Future<bool> sanitizePesoControllersBeforeSave(
   BuildContext context,
   List<TextEditingController?> controllers,
 ) async {
-  final entradasAmbiguas = <MapEntry<String, String>>[];
-
   for (final c in controllers) {
     if (c == null) continue;
     final original = c.text;
     if (original.trim().isEmpty) continue;
-
-    final separadores = RegExp(r'[.,]').allMatches(original).length;
     final parsed = parsePesoFormatado(original);
     final corrigido = formatPesoInicial(parsed);
     if (corrigido != original) {
       c.text = corrigido;
     }
-
-    if (separadores > 1) {
-      entradasAmbiguas.add(MapEntry(
-        original,
-        corrigido.isEmpty ? '0,00' : corrigido,
-      ));
-    }
   }
-
-  if (entradasAmbiguas.isEmpty) return true;
-
-  // Fecha o teclado para o diálogo aparecer com clareza.
-  FocusManager.instance.primaryFocus?.unfocus();
-
-  await showDialog<void>(
-    context: context,
-    barrierDismissible: false,
-    builder: (dialogCtx) {
-      return AlertDialog(
-        title: const Text('Peso inválido'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-                'Você digitou um peso com mais de uma vírgula ou ponto:'),
-            const SizedBox(height: 12),
-            for (final e in entradasAmbiguas)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Text(
-                  '"${e.key}"  →  sugestão: "${e.value}"',
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
-            const SizedBox(height: 12),
-            const Text(
-              'Ajustamos automaticamente o(s) campo(s) com a sugestão. '
-              'Por favor, confira o valor e clique em Salvar novamente.',
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: const Text('Entendi'),
-          ),
-        ],
-      );
-    },
-  );
-  return false;
+  return true;
 }
 
 /// Controller customizado que SEMPRE força o formato canônico de peso no
@@ -254,20 +181,6 @@ class PesoTextEditingController extends TextEditingController {
     final raw = newValue.text;
     // ignore: avoid_print
     debugPrint('[PesoCtrl] set value <- "$raw"');
-
-    // Se o usuário digitou mais de um separador (ex.: "45,,5", "50..8",
-    // "1,5,5"), NÃO limpamos automaticamente — o valor é ambíguo e a
-    // limpeza silenciosa pode trocar o número (ex.: "45,,5" -> "4,55"
-    // em vez de "45,50"). Preservamos a entrada para que
-    // sanitizePesoControllersBeforeSave bloqueie o save com diálogo.
-    final separadores = RegExp(r'[.,]').allMatches(raw).length;
-    if (separadores > 1) {
-      if (raw == super.value.text && newValue.selection == super.value.selection) {
-        return;
-      }
-      super.value = newValue.copyWith(composing: TextRange.empty);
-      return;
-    }
 
     final digits = raw.replaceAll(RegExp(r'[^0-9]'), '');
 
