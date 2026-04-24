@@ -3683,6 +3683,12 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                         Expanded(
                                           child: FFButtonWidget(
                                             onPressed: () async {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(
+                                                  duration: Duration(seconds: 2),
+                                                  content: Text('v2.0.16 [add_nasc] Salvar clicado'),
+                                                ),
+                                              );
                                               if (!await sanitizePesoControllersBeforeSave(
                                                   context, [
                                                 _model
@@ -3690,6 +3696,14 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               ])) {
                                                 return;
                                               }
+                                              // DEBUG v2.0.16
+                                              final _pNasc2 = parsePesoFormatado(_model.pesonascimentoTextController.text);
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  duration: const Duration(seconds: 4),
+                                                  content: Text('v2.0.16 [add_nasc] Peso parseado: $_pNasc2'),
+                                                ),
+                                              );
                                               if (_model.dropDownSexoValue ==
                                                       null ||
                                                   _model.dropDownSexoValue ==

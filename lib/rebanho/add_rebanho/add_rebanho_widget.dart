@@ -5318,6 +5318,12 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                           Expanded(
                                             child: FFButtonWidget(
                                               onPressed: () async {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  const SnackBar(
+                                                    duration: Duration(seconds: 2),
+                                                    content: Text('v2.0.16 [add_rebanho] Salvar clicado'),
+                                                  ),
+                                                );
                                                 if (!await sanitizePesoControllersBeforeSave(
                                                     context, [
                                                   _model
@@ -5336,7 +5342,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 ScaffoldMessenger.of(context).showSnackBar(
                                                   SnackBar(
                                                     duration: const Duration(seconds: 4),
-                                                    content: Text('v2.0.15 — Pesos parseados: nasc=$_pNasc desm=$_pDesm atual=$_pAtu'),
+                                                    content: Text('v2.0.16 — Pesos parseados: nasc=$_pNasc desm=$_pDesm atual=$_pAtu'),
                                                   ),
                                                 );
                                                 if (_model.formKey2
