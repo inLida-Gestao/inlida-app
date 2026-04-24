@@ -244,6 +244,21 @@ class PesoTextEditingController extends TextEditingController {
     final raw = newValue.text;
     // ignore: avoid_print
     debugPrint('[PesoCtrl] set value <- "$raw"');
+
+    // Se o usuário digitou mais de um separador (ex.: "45,,5", "50..8",
+    // "1,5,5"), NÃO limpamos automaticamente — o valor é ambíguo e a
+    // limpeza silenciosa pode trocar o número (ex.: "45,,5" -> "4,55"
+    // em vez de "45,50"). Preservamos a entrada para que
+    // sanitizePesoControllersBeforeSave bloqueie o save com diálogo.
+    final separadores = RegExp(r'[.,]').allMatches(raw).length;
+    if (separadores > 1) {
+      if (raw == super.value.text && newValue.selection == super.value.selection) {
+        return;
+      }
+      super.value = newValue.copyWith(composing: TextRange.empty);
+      return;
+    }
+
     final digits = raw.replaceAll(RegExp(r'[^0-9]'), '');
 
     if (digits.isEmpty) {
