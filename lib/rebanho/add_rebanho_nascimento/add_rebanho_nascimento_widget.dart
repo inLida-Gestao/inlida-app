@@ -3745,6 +3745,13 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                         Expanded(
                                           child: FFButtonWidget(
                                             onPressed: () async {
+                                              if (!sanitizePesoControllersBeforeSave(
+                                                  context, [
+                                                _model
+                                                    .pesonascimentoTextController,
+                                              ])) {
+                                                return;
+                                              }
                                               if (_model.dropDownSexoValue ==
                                                       null ||
                                                   _model.dropDownSexoValue ==

@@ -396,6 +396,10 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
             child: FFButtonWidget(
               onPressed: () async {
                 if (_isSaving) return;
+                if (!sanitizePesoControllersBeforeSave(
+                    context, [_model.pesoTextController])) {
+                  return;
+                }
                 if (_model.datePicked == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

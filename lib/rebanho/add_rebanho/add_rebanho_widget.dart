@@ -5525,6 +5525,17 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                           Expanded(
                                             child: FFButtonWidget(
                                               onPressed: () async {
+                                                if (!sanitizePesoControllersBeforeSave(
+                                                    context, [
+                                                  _model
+                                                      .pesonascimentoTextController,
+                                                  _model
+                                                      .pesodadesmamaTextController,
+                                                  _model
+                                                      .pesoAtualTextController,
+                                                ])) {
+                                                  return;
+                                                }
                                                 if (_model.formKey2
                                                             .currentState ==
                                                         null ||
