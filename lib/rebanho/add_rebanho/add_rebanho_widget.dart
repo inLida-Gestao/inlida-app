@@ -50,6 +50,18 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
     super.initState();
     _model = createModel(context, () => AddRebanhoModel());
 
+    // DEBUG v2.0.18: marca visível ao abrir tela add_rebanho
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('add_rebanho aberto'),
+          content: const Text('Versão: v2.0.18\nSe você vê isto, está rodando o build novo.'),
+          actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
+        ),
+      );
+    });
+
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimer = InstantTimer.periodic(

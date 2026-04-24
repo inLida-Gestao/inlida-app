@@ -44,6 +44,17 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
     super.initState();
     _model = createModel(context, () => AddRebanhoNascimentoModel());
 
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('add_rebanho_NASCIMENTO aberto'),
+          content: const Text('Versão: v2.0.18'),
+          actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
+        ),
+      );
+    });
+
     // On component load action.
     SchedulerBinding.instance.addPostFrameCallback((_) async {
       _model.instantTimer = InstantTimer.periodic(

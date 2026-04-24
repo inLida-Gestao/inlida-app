@@ -7,6 +7,7 @@ import '/flutter_flow/form_field_controller.dart';
 import '/actions/actions.dart' as action_blocks;
 import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'add_rebanho_semen_model.dart';
 export 'add_rebanho_semen_model.dart';
@@ -31,6 +32,17 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => AddRebanhoSemenModel());
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('add_rebanho_SEMEN aberto'),
+          content: const Text('Versão: v2.0.18'),
+          actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
+        ),
+      );
+    });
 
     _model.nAnimalTextController ??= TextEditingController();
     _model.nAnimalFocusNode ??= FocusNode();
