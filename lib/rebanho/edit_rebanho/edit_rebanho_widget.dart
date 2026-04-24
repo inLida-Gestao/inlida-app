@@ -246,7 +246,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
+            padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 32.0, 0.0),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
