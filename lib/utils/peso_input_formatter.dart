@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 /// Formatter para campos de peso (kg) com 2 casas decimais.
 ///
@@ -79,13 +80,48 @@ String formatPesoInicial(double? value) {
   return PesoInputFormatter.formatDigits(cents.toString(), true);
 }
 
-/// Faz o parse seguro de um campo formatado pelo [PesoInputFormatter].
-/// Remove separadores de milhar (".") e converte vírgula decimal em ponto.
-/// Retorna null se vazio ou inválido.
+/// Faz o parse seguro de um campo de peso, tolerando QUALQUER formato que
+/// possa vir do teclado (mesmo se o [PesoInputFormatter] for ignorado por
+/// algum IME exótico em release):
+///
+///   "12,5"      → 12.5
+///   "12.5"      → 12.5    (ponto tratado como decimal)
+///   "12.345,67" → 12345.67
+///   "12,345.67" → 12345.67
+///   "1,2,3"     → 12.3    (último separador é o decimal)
+///   "abc"       → null
+///
+/// Regra: o ÚLTIMO `.` ou `,` é o separador decimal. Os anteriores
+/// (separadores de milhar) são removidos. Caracteres não-numéricos e não
+/// separadores são descartados.
 double? parsePesoFormatado(String? raw) {
   if (raw == null) return null;
-  final trimmed = raw.trim();
-  if (trimmed.isEmpty) return null;
-  final normalized = trimmed.replaceAll('.', '').replaceAll(',', '.');
+  var s = raw.trim().replaceAll(RegExp(r'[^0-9.,]'), '');
+  if (s.isEmpty) return null;
+
+  final lastSep = s.lastIndexOf(RegExp(r'[.,]'));
+  String intPart;
+  String decPart;
+  if (lastSep < 0) {
+    intPart = s;
+    decPart = '';
+  } else {
+    intPart = s.substring(0, lastSep).replaceAll(RegExp(r'[.,]'), '');
+    decPart = s.substring(lastSep + 1).replaceAll(RegExp(r'[.,]'), '');
+  }
+  if (intPart.isEmpty) intPart = '0';
+  final normalized = decPart.isEmpty ? intPart : '$intPart.$decPart';
   return double.tryParse(normalized);
+}
+
+/// Normaliza o texto de um controller de peso aplicando a formatação
+/// canônica. Use ANTES de salvar para garantir que mesmo se o formatter
+/// não foi acionado (IME exótico), o valor lido será consistente.
+///
+/// Retorna o double parseado (pode ser null se o campo está vazio/inválido).
+double? normalizePesoController(TextEditingController? c) {
+  if (c == null) return null;
+  final v = parsePesoFormatado(c.text);
+  c.text = formatPesoInicial(v);
+  return v;
 }

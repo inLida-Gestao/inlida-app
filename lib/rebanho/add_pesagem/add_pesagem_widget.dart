@@ -25,6 +25,7 @@ class AddPesagemWidget extends StatefulWidget {
 
 class _AddPesagemWidgetState extends State<AddPesagemWidget> {
   late AddPesagemModel _model;
+  bool _isSaving = false;
 
   double? _parsePeso(String? rawValue) => parsePesoFormatado(rawValue);
 
@@ -391,6 +392,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                 const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
             child: FFButtonWidget(
               onPressed: () async {
+                if (_isSaving) return;
                 if (_model.datePicked == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -401,7 +403,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                   return;
                 }
                 final peso =
-                    _parsePeso(_model.pesoTextController.text);
+                    normalizePesoController(_model.pesoTextController);
                 if (peso == null || peso <= 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -412,6 +414,8 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                   return;
                 }
 
+                _isSaving = true;
+                safeSetState(() {});
                 try {
                   await SQLiteManager.instance.addPesagem(
                     idRebanho: widget.idRebanho,
@@ -461,6 +465,11 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                         backgroundColor: Color(0xFFE53935),
                       ),
                     );
+                  }
+                } finally {
+                  if (mounted) {
+                    _isSaving = false;
+                    safeSetState(() {});
                   }
                 }
               },

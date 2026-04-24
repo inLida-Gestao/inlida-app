@@ -1556,11 +1556,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                     .of(context)
                                                                 .bodyMediumIsCustom,
                                                       ),
-                                                  keyboardType:
-                                                      const TextInputType
-                                                          .numberWithOptions(
-                                                          decimal: true,
-                                                          signed: true),
+                                                  keyboardType: TextInputType.number,
                                                   inputFormatters: const [
                                                     PesoInputFormatter(),
                                                   ],
@@ -3381,11 +3377,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                     .of(context)
                                                                 .bodyMediumIsCustom,
                                                       ),
-                                                  keyboardType:
-                                                      const TextInputType
-                                                          .numberWithOptions(
-                                                          decimal: true,
-                                                          signed: true),
+                                                  keyboardType: TextInputType.number,
                                                   inputFormatters: const [
                                                     PesoInputFormatter(),
                                                   ],
@@ -3744,11 +3736,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                     .of(context)
                                                                 .bodyMediumIsCustom,
                                                       ),
-                                                  keyboardType:
-                                                      const TextInputType
-                                                          .numberWithOptions(
-                                                          decimal: true,
-                                                          signed: true),
+                                                  keyboardType: TextInputType.number,
                                                   inputFormatters: const [
                                                     PesoInputFormatter(),
                                                   ],

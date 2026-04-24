@@ -1367,10 +1367,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                                 context)
                                                             .bodyMediumIsCustom,
                                                   ),
-                                              keyboardType: const TextInputType
-                                                  .numberWithOptions(
-                                                  decimal: true,
-                                                  signed: true),
+                                              keyboardType: TextInputType.number,
                                               inputFormatters: const [
                                                 PesoInputFormatter(),
                                               ],
