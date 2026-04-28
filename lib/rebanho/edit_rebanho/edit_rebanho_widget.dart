@@ -16,7 +16,6 @@ import '/utils/peso_input_formatter.dart';
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'edit_rebanho_model.dart';
@@ -5447,25 +5446,31 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   _model.dPRacaValue,
                                                   'null',
                                                 ),
-                                                dataEntradaLote:
-                                                    _model.datePicked1 != null
-                                                        ? dateTimeFormat(
-                                                            "yyyy-MM-dd",
-                                                            _model.datePicked1,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          )
+                                                dataEntradaLote: ((_model
+                                                                .dPLoteValue ??
+                                                            '') !=
+                                                        (_model.loteAtual ??
+                                                            ''))
+                                                    ? (((_model.dPLoteValue ??
+                                                                    '')
+                                                                .trim()
+                                                                .isEmpty)
+                                                        ? ' '
                                                         : dateTimeFormat(
                                                             "yyyy-MM-dd",
-                                                            functions.converterParaData(
-                                                                FFAppState()
-                                                                    .rebanhoSelecionado
-                                                                    .dataNascimento),
+                                                            getCurrentTimestamp,
                                                             locale: FFLocalizations
                                                                     .of(context)
                                                                 .languageCode,
-                                                          ),
+                                                          ))
+                                                    : (FFAppState()
+                                                            .rebanhoSelecionado
+                                                            .dataEntradaLote
+                                                            .isNotEmpty
+                                                        ? FFAppState()
+                                                            .rebanhoSelecionado
+                                                            .dataEntradaLote
+                                                        : ' '),
                                                 dataDesmama:
                                                     _model.datePicked3 != null
                                                         ? dateTimeFormat(

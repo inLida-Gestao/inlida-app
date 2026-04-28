@@ -33,10 +33,10 @@ Future<Database> initializeDatabaseFromDbFile(
   final databasePath = join(databasesPath, path);
 
   // Extrair versão do nome do asset (ex: "inlida_v48.db" → 48)
-  final versionMatch = RegExp(r'_v(\d+)\.db$').firstMatch(databaseAssetFilename);
-  final int expectedVersion = versionMatch != null
-      ? int.parse(versionMatch.group(1)!)
-      : 0;
+  final versionMatch =
+      RegExp(r'_v(\d+)\.db$').firstMatch(databaseAssetFilename);
+  final int expectedVersion =
+      versionMatch != null ? int.parse(versionMatch.group(1)!) : 0;
 
   final prefs = await SharedPreferences.getInstance();
   final String prefsKey = 'sqlite_db_version_$databaseName';
@@ -50,7 +50,8 @@ Future<Database> initializeDatabaseFromDbFile(
       !exists || (expectedVersion > 0 && installedVersion != expectedVersion);
 
   if (exists && needsRecreation && hasPendingLocalSync) {
-    debugPrint('[SQLite] Atualização do banco adiada por pendências locais de sync. '
+    debugPrint(
+        '[SQLite] Atualização do banco adiada por pendências locais de sync. '
         'versãoInstalada=$installedVersion, versãoEsperada=$expectedVersion');
     needsRecreation = false;
   }
@@ -99,9 +100,11 @@ Future<Database> initializeDatabaseFromDbFile(
 
     // Salvar a versão instalada
     await prefs.setInt(prefsKey, expectedVersion);
-    debugPrint('[SQLite] Banco "$databaseName" v$expectedVersion instalado com sucesso.');
+    debugPrint(
+        '[SQLite] Banco "$databaseName" v$expectedVersion instalado com sucesso.');
   } else {
-    debugPrint('[SQLite] Banco "$databaseName" v$installedVersion já está atualizado.');
+    debugPrint(
+        '[SQLite] Banco "$databaseName" v$installedVersion já está atualizado.');
   }
 
   // Abrir o banco de dados
@@ -120,7 +123,7 @@ Future<Database> initializeDatabaseFromDbFile(
   await _ensureSyncErrorLogTable(database);
 
   // Limpar duplicatas históricas de Nascimento/Desmama
-  await _dedupePesagensFixas(database);
+  await _dedupePesagensFixas(database, prefs, expectedVersion);
 
   return database;
 }
@@ -135,7 +138,8 @@ Future<void> _ensureFts5Compatibility(Database db) async {
     await db.rawQuery('SELECT * FROM local_rebanho_fts LIMIT 1');
     debugPrint('[SQLite] FTS5 suportado. Triggers mantidos.');
   } catch (e) {
-    debugPrint('[SQLite] FTS5 NÃO suportado neste dispositivo ($e). Removendo triggers FTS...');
+    debugPrint(
+        '[SQLite] FTS5 NÃO suportado neste dispositivo ($e). Removendo triggers FTS...');
     // Dropar triggers que dependem de FTS5 para evitar falha nos INSERTs
     final triggers = [
       'rebanho_fts_insert',
@@ -214,11 +218,11 @@ Future<void> _ensureUniqueBusinessKeys(Database db) async {
   // para permitir múltiplas pesagens no mesmo dia.
   try {
     // Verifica se o índice antigo existe e se tem apenas 3 colunas
-    final idxInfo = await db.rawQuery(
-        "PRAGMA index_info(idx_unique_pesagem)");
+    final idxInfo = await db.rawQuery("PRAGMA index_info(idx_unique_pesagem)");
     if (idxInfo.isNotEmpty && idxInfo.length <= 3) {
       await db.execute('DROP INDEX IF EXISTS idx_unique_pesagem');
-      debugPrint('[SQLite] Índice antigo idx_unique_pesagem (3 cols) removido.');
+      debugPrint(
+          '[SQLite] Índice antigo idx_unique_pesagem (3 cols) removido.');
     }
   } catch (e) {
     debugPrint('[SQLite] Erro ao verificar/dropar índice antigo: $e');
@@ -281,26 +285,35 @@ Future<void> _ensureSyncErrorLogTable(Database db) async {
 /// próxima sync e o Supabase também receberá o soft-delete.
 ///
 /// Idempotente — se não há duplicatas, não faz nada.
-Future<void> _dedupePesagensFixas(Database db) async {
+Future<void> _dedupePesagensFixas(
+  Database db,
+  SharedPreferences prefs,
+  int databaseVersion,
+) async {
+  final prefsKey = 'sqlite_dedupe_pesagens_fixas_v1_$databaseVersion';
+  if (prefs.getBool(prefsKey) ?? false) {
+    return;
+  }
+
   try {
+    await db.execute('''CREATE INDEX IF NOT EXISTS idx_pesagens_dedupe_fixas
+       ON local_historico_pesagens (deletado, tipo, idRebanho)''');
+
     const sql = '''
       UPDATE local_historico_pesagens
       SET deletado = 'SIM'
-      WHERE id IN (
-        SELECT p.id
-        FROM local_historico_pesagens p
-        WHERE p.deletado = 'NAO'
-          AND p.tipo IN ('Nascimento', 'Desmama')
-          AND p.id < (
-            SELECT MAX(p2.id)
-            FROM local_historico_pesagens p2
-            WHERE p2.idRebanho = p.idRebanho
-              AND p2.tipo = p.tipo
-              AND p2.deletado = 'NAO'
-          )
+      WHERE deletado = 'NAO'
+        AND tipo IN ('Nascimento', 'Desmama')
+        AND rowid NOT IN (
+          SELECT MAX(rowid)
+          FROM local_historico_pesagens
+          WHERE deletado = 'NAO'
+            AND tipo IN ('Nascimento', 'Desmama')
+          GROUP BY idRebanho, tipo
       )
     ''';
     final n = await db.rawUpdate(sql);
+    await prefs.setBool(prefsKey, true);
     if (n > 0) {
       debugPrint('[SQLite] $n pesagem(ns) duplicada(s) Nascimento/Desmama '
           'marcada(s) como deletada(s).');

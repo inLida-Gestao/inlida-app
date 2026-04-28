@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void _syncLog(String flow, String message) {
   // Atualiza heartbeat a cada log — permite watchdogs externos detectarem
@@ -52,7 +53,7 @@ void _recordSyncError({
   Map<String, dynamic>? payload,
 }) {
   _syncLog(flow,
-      'ERRO ${operacao} ${modulo} id=${registroId ?? "?"}: $erro');
+      'ERRO $operacao $modulo id=${registroId ?? "?"}: $erro');
   // Fire-and-forget — não awaita pra não atrasar o loop principal.
   // ignore: discarded_futures
   actions.SyncErrorLog.registrar(
@@ -434,6 +435,7 @@ Future<ApiCallResponse> _buscarPesagensSemPropriedade({
   required List<String> rebanhoIds,
   required int limit,
   required int offset,
+  String? updatedAfter,
 }) {
   return ApiManager.instance.makeApiCall(
     callName: 'Buscar Pesagens sem Propriedade',
@@ -445,6 +447,7 @@ Future<ApiCallResponse> _buscarPesagensSemPropriedade({
       'select': '*',
       'id_propriedade': 'is.null',
       'idRebanho': 'in.${_buildSupabaseInFilter(rebanhoIds)}',
+      if (updatedAfter != null) 'updated_at': 'gt.$updatedAfter',
       'order': 'id.asc',
       'limit': limit,
       'offset': offset,
@@ -1294,6 +1297,9 @@ Future refreshLotes(BuildContext context) async {
     List<LotesChangeTrackerRow>? lastChangeResult;
     ApiCallResponse? propriedades;
     List<LotesRow>? lotes;
+    const includeDeletedPrefsKey = 'sync_lotes_include_deleted_v1';
+    final prefs = await SharedPreferences.getInstance();
+    final includeDeletedSynced = prefs.getBool(includeDeletedPrefsKey) ?? false;
 
     try {
       lastChangeResult = await LotesChangeTrackerTable().queryRows(
@@ -1307,9 +1313,10 @@ Future refreshLotes(BuildContext context) async {
     final localLastChange = FFAppState().lotesChangeDateTime;
     final shouldSync = remoteLastChange == null ||
         localLastChange == null ||
-        remoteLastChange.isAfter(localLastChange);
+        remoteLastChange.isAfter(localLastChange) ||
+        !includeDeletedSynced;
     _syncLog('lotes',
-        'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
+        'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange  includeDeletedSynced=$includeDeletedSynced');
     if (shouldSync) {
       propriedades =
           await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
@@ -1328,10 +1335,6 @@ Future refreshLotes(BuildContext context) async {
                   .withoutNulls
                   .map((e) => e.idPropriedade)
                   .toList(),
-            )
-            .eqOrNull(
-              'deletado',
-              'NAO',
             ),
       );
 
@@ -1362,12 +1365,16 @@ Future refreshLotes(BuildContext context) async {
       // se o batch insert falhar. ConflictAlgorithm.replace já sobrescreve.
       final loteResult = await actions.batchInsertLocalLotes(records);
       final lotesInserted = loteResult['inserted'] as int? ?? 0;
-      final lotesErrors = loteResult['errors'] as List<Map<String, String>>? ?? [];
+      final lotesErrors = loteResult['errors'] as List<Map<String, String>>? ??
+          [];
       if (lotesInserted == 0 && records.isNotEmpty) {
         _syncLog('lotes',
             'Batch insert falhou completamente (${lotesErrors.length} erros). Mantendo dados locais.');
       } else {
         _syncLog('lotes', '$lotesInserted lotes inseridos via UPSERT.');
+        if (lotesInserted == records.length && lotesErrors.isEmpty) {
+          await prefs.setBool(includeDeletedPrefsKey, true);
+        }
       }
 
       FFAppState().lotesChangeDateTime = remoteLastChange ?? DateTime.now();
@@ -2614,6 +2621,7 @@ Future refreshPesagens(BuildContext context) async {
                 rebanhoIds: batch,
                 limit: 999,
                 offset: catchupOffset,
+                updatedAfter: updatedAfter,
               );
               final recs = _safeRecordsFromApi(resp.jsonBody);
               if (recs.isEmpty) break;
