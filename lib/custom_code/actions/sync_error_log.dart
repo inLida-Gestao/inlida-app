@@ -285,10 +285,12 @@ class SyncErrorLog {
         .hasMatch(bruta)) {
       return 'Sem permissão para gravar este registro.';
     }
-    if (RegExp(r'TimeoutException|deadline').hasMatch(bruta)) {
+    if (RegExp(r'TimeoutException|deadline|timed out|Read timed out')
+        .hasMatch(bruta)) {
       return 'O servidor demorou demais para responder.';
     }
-    if (RegExp(r'SocketException|Network|Failed host lookup')
+    if (RegExp(
+            r'SocketException|Network|Failed host lookup|HandshakeException|TLS handshake|ClientException|Connection closed|Connection reset|Connection refused|Broken pipe|HttpException|os error|errno = (?:50|51|52|53|54|60|61|65|101)')
         .hasMatch(bruta)) {
       return 'Falha de conexão durante o envio.';
     }
