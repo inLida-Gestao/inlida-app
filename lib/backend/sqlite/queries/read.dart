@@ -814,6 +814,7 @@ Future<List<LotesAtivoRow>> performLotesAtivo(
   final query = '''
 SELECT * FROM local_lotes
 WHERE ativo = 'Ativo'
+AND deletado = 'NAO'
 AND id_propriedade = '$idPropriedade'
 ''';
   return _readQuery(database, query, (d) => LotesAtivoRow(d));
@@ -835,6 +836,7 @@ Future<List<LotesInativosRow>> performLotesInativos(
   final query = '''
 SELECT * FROM local_lotes
 WHERE ativo = 'Inativo'
+AND deletado = 'NAO'
 AND id_propriedade = '$idPropriedade'
 ''';
   return _readQuery(database, query, (d) => LotesInativosRow(d));
@@ -1031,6 +1033,7 @@ Future<List<CountLotesCadastradosRow>> performCountLotesCadastrados(
   final query = '''
 SELECT * FROM local_lotes
 WHERE id_propriedade = '$idPropriedade'
+AND deletado = 'NAO'
 ''';
   return _readQuery(database, query, (d) => CountLotesCadastradosRow(d));
 }
@@ -1104,6 +1107,7 @@ Future<List<BuscarLotesRow>> performBuscarLotes(
   final query = '''
 SELECT * FROM local_lotes
 WHERE ativo = 'Ativo'
+AND deletado = 'NAO'
 AND id_propriedade IN ($safeId)
 ''';
   return _readQuery(database, query, (d) => BuscarLotesRow(d));
