@@ -908,6 +908,107 @@ Future animaisPropriedade(BuildContext context) async {
   );
 }
 
+/// Filtra do `chunk` as pesagens que JÁ existem no Supabase, evitando
+/// duplicação por retry após sucesso parcial (timeout pós-INSERT).
+///
+/// Critério de identidade: `(idRebanho, dataPesagem, tipo, created_at)` —
+/// mesma tupla do índice UNIQUE local. O `created_at` é gerado pelo cliente
+/// no momento do INSERT local e nunca muda, então funciona como discriminador
+/// estável de identidade lógica entre cliente e servidor.
+///
+/// Em caso de qualquer falha na pré-checagem (timeout, erro de rede),
+/// retorna o chunk inalterado — fail-open: melhor tentar inserir e arriscar
+/// uma duplicata isolada do que travar a sync inteira.
+Future<List<Map<String, dynamic>>> _filterPesagensJaInseridas(
+  List<Map<String, dynamic>> chunk,
+) async {
+  if (chunk.isEmpty) return chunk;
+  try {
+    final idRebanhos = <String>{};
+    final createdAts = <String>{};
+    for (final r in chunk) {
+      final idR = r['idRebanho']?.toString();
+      final ca = r['created_at']?.toString();
+      if (idR != null && idR.isNotEmpty) idRebanhos.add(idR);
+      if (ca != null && ca.isNotEmpty) createdAts.add(ca);
+    }
+    if (idRebanhos.isEmpty || createdAts.isEmpty) return chunk;
+
+    final query = SupaFlow.client
+        .from('historico_pesagens')
+        .select('idRebanho,dataPesagem,tipo,created_at')
+        .inFilter('idRebanho', idRebanhos.toList())
+        .inFilter('created_at', createdAts.toList());
+    final existentes = await _withTimeout(
+      () => query,
+      label: 'pesagens.preCheck',
+      timeout: kSyncLightTimeout,
+    );
+
+    final existentesSet = <String>{};
+    for (final row in (existentes as List)) {
+      final m = row as Map;
+      final key = _pesagemPushKey(
+        m['idRebanho']?.toString(),
+        m['dataPesagem']?.toString(),
+        m['tipo']?.toString(),
+        m['created_at']?.toString(),
+      );
+      if (key != null) existentesSet.add(key);
+    }
+    if (existentesSet.isEmpty) return chunk;
+
+    final filtered = <Map<String, dynamic>>[];
+    var skipped = 0;
+    for (final r in chunk) {
+      final key = _pesagemPushKey(
+        r['idRebanho']?.toString(),
+        r['dataPesagem']?.toString(),
+        r['tipo']?.toString(),
+        r['created_at']?.toString(),
+      );
+      if (key != null && existentesSet.contains(key)) {
+        skipped++;
+      } else {
+        filtered.add(r);
+      }
+    }
+    if (skipped > 0) {
+      _syncLog('pesagens.preCheck',
+          '$skipped pesagem(ns) já existem no servidor — puladas para evitar duplicata.');
+    }
+    return filtered;
+  } catch (e) {
+    _syncLog('pesagens.preCheck',
+        'Pré-checagem falhou ($e). Seguindo com insert normal (fail-open).');
+    return chunk;
+  }
+}
+
+/// Normaliza chave de identidade lógica de uma pesagem.
+/// O `dataPesagem` precisa ser comparado em formato uniforme: localmente
+/// guardamos 'yyyy-MM-dd', mas o Supabase pode retornar com timezone — então
+/// usamos só a parte YYYY-MM-DD. Para `created_at`, comparamos os primeiros
+/// 19 chars ('YYYY-MM-DD HH:MM:SS' ou 'YYYY-MM-DDTHH:MM:SS').
+String? _pesagemPushKey(
+    String? idRebanho, String? dataPesagem, String? tipo, String? createdAt) {
+  if (idRebanho == null || idRebanho.isEmpty) return null;
+  if (createdAt == null || createdAt.isEmpty) return null;
+  String normDate(String? s) {
+    if (s == null || s.isEmpty) return '';
+    final t = s.length >= 10 ? s.substring(0, 10) : s;
+    return t;
+  }
+
+  String normTs(String s) {
+    var t = s.replaceAll('T', ' ');
+    if (t.length >= 19) t = t.substring(0, 19);
+    return t;
+  }
+
+  return '$idRebanho|${normDate(dataPesagem)}|${tipo ?? ''}|${normTs(createdAt)}';
+}
+
 Future<bool> putUpdtRebanhos(BuildContext context) async {
   var allSuccess = true;
   final dataPendente = FFAppState().dataDadosNaoSyncRebanho;
@@ -1013,18 +1114,30 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
     if (pesInserts.isNotEmpty) {
       _syncLog('putUpdt_pesagens', 'Insert em lote: ${pesInserts.length} pesagem(ns).');
       try {
-        await _retry(
-          () => _batchInsertSupabase(
-            tableName: 'historico_pesagens',
-            rows: pesInserts,
-            chunkSize: 200,
-            label: 'putUpdt_pesagens.insert',
-          ),
-          label: 'putUpdt_pesagens.batchInsert',
-          maxAttempts: 3,
-        );
-        for (final row in pesPut) {
-          _markSyncOk('pesagem', row.idRebanho);
+        // Pré-deduplicação: remove do payload as pesagens que já existem no
+        // Supabase. Evita duplicatas causadas por retry após sucesso parcial
+        // (servidor inseriu, cliente não recebeu resposta por timeout).
+        final pesagensParaInserir = await _filterPesagensJaInseridas(pesInserts);
+        if (pesagensParaInserir.isEmpty) {
+          _syncLog('putUpdt_pesagens',
+              'Todas as pesagens já existem no servidor — nada a inserir.');
+          for (final row in pesPut) {
+            _markSyncOk('pesagem', row.idRebanho);
+          }
+        } else {
+          await _retry(
+            () => _batchInsertSupabase(
+              tableName: 'historico_pesagens',
+              rows: pesagensParaInserir,
+              chunkSize: 200,
+              label: 'putUpdt_pesagens.insert',
+            ),
+            label: 'putUpdt_pesagens.batchInsert',
+            maxAttempts: 3,
+          );
+          for (final row in pesPut) {
+            _markSyncOk('pesagem', row.idRebanho);
+          }
         }
       } catch (e) {
         allSuccess = false;
