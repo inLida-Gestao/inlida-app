@@ -827,19 +827,23 @@ Future<void> _dedupPesagensDuplicadas(Database db) async {
 // Problema: PULL (batchInsertLocalRebanho) usa ConflictAlgorithm.replace,
 // que só substitui se houver UNIQUE INDEX em idRebanho. Se a base já tem
 // duplicatas (de bugs anteriores), o CREATE UNIQUE INDEX falha silenciosamente
-// e o REPLACE degrada para INSERT puro — cada PULL duplica tudo.
+// e o REPLACE degrada para INSERT puro — cada PULL duplica tudo. Cada edição
+// do usuário (UPDATE WHERE idRebanho=?) também afeta as duas linhas, e a
+// duplicação se amplifica a cada ciclo PUSH/PULL.
 //
-// Estratégia conservadora (não perde dados):
-// - Considera TODAS as linhas (incluindo deletado='SIM') no GROUP BY,
-//   senão o índice UNIQUE não consegue ser criado.
-// - Canônico = linha com maior `id` local (estável, não depende de parsing
-//   de timestamps que podem ter formatos mistos).
-// - Merge defensivo: só copia campo se canônico tem NULL/'' e duplicata tem
-//   valor real. Nunca sobrescreve valor real.
-// - Conflito real (dois valores não-vazios diferentes no mesmo campo):
-//   NÃO apaga. Loga em sync_error_log para inspeção manual e pula o grupo.
-// - Hard delete (não soft): servidor só conhece UMA cópia desse idRebanho;
-//   apagar a duplicata local não desincroniza nada remoto.
+// Estratégia AGRESSIVA (idRebanho é UUID único = mesma entidade lógica):
+// - GROUP BY idRebanho HAVING COUNT(*) > 1, considerando TODAS as linhas
+//   (incluindo deletado='SIM'), senão UNIQUE INDEX continua falhando.
+// - Canônico = linha mais RECENTE (maior updated_at; fallback created_at;
+//   fallback maior id local). Se o usuário fez 2 edições do MESMO animal
+//   em momentos diferentes, a edição mais recente prevalece (não há "duas
+//   versões válidas" de uma mesma entidade UUID).
+// - Merge defensivo PARA TRÁS: para campos onde o canônico tem NULL/'',
+//   adota valor da duplicata (preserva dados que possam estar só lá).
+//   Campos onde ambos têm valor: canônico ganha (é a versão mais recente
+//   editada pelo usuário).
+// - Hard delete das duplicatas: servidor só conhece UMA cópia por idRebanho;
+//   apagar local não desincroniza nada remoto.
 // - Marker dataDadosNaoSyncRebanho zerado quando há merge → mesclagens
 //   sobem como UPDATE no próximo sync.
 // - Try/catch por grupo + global: boot nunca trava.
@@ -860,16 +864,31 @@ Future<void> _dedupRebanhoPorIdRebanho(Database db) async {
     return false;
   }
 
+  // Score para escolher canônico: prioriza updated_at, fallback created_at,
+  // fallback id. Retorna inteiro comparável.
+  int recencyScore(Map<String, Object?> row) {
+    final u = row['updated_at']?.toString();
+    final c = row['created_at']?.toString();
+    final ts = (u != null && u.isNotEmpty) ? u : (c ?? '');
+    if (ts.isEmpty) return 0;
+    try {
+      // Aceita ISO (com ou sem T) e formato "yyyy-MM-dd HH:mm:ss".
+      final parsed =
+          DateTime.tryParse(ts.contains('T') ? ts : ts.replaceFirst(' ', 'T'));
+      if (parsed != null) return parsed.millisecondsSinceEpoch;
+    } catch (_) {}
+    return 0;
+  }
+
   int gruposDetectados = 0;
   int gruposFundidos = 0;
-  int gruposComConflito = 0;
   int linhasRemovidas = 0;
   int gruposComErro = 0;
   bool houveMerge = false;
 
   try {
     final groups = await db.rawQuery('''
-      SELECT idRebanho, COUNT(*) AS qtd
+      SELECT idRebanho
       FROM local_rebanho
       WHERE COALESCE(idRebanho, '') != ''
       GROUP BY idRebanho
@@ -893,67 +912,40 @@ Future<void> _dedupRebanhoPorIdRebanho(Database db) async {
             'local_rebanho',
             where: 'idRebanho = ?',
             whereArgs: [idRebanho],
-            orderBy: 'id DESC',
           );
           if (rows.length < 2) return;
 
-          // Canônico = primeira (maior id).
-          final canonical = Map<String, Object?>.from(rows.first);
-          final duplicates = rows.skip(1).toList();
+          // Canônico = mais recente (updated_at DESC, depois id DESC).
+          final sorted = List<Map<String, Object?>>.from(rows);
+          sorted.sort((a, b) {
+            final cmp = recencyScore(b).compareTo(recencyScore(a));
+            if (cmp != 0) return cmp;
+            final ai = (a['id'] as int?) ?? 0;
+            final bi = (b['id'] as int?) ?? 0;
+            return bi.compareTo(ai);
+          });
 
-          // Detectar conflito real e preparar merge.
+          final canonical = sorted.first;
+          final duplicates = sorted.skip(1).toList();
+
+          // Merge defensivo PARA TRÁS: preenche campos vazios do canônico
+          // com valores das duplicatas (pega a primeira ocorrência não-vazia).
           final mergedFields = <String, Object?>{};
-          final conflictsDetected = <String>[];
-
           for (final dup in duplicates) {
             for (final entry in dup.entries) {
               final field = entry.key;
               if (ignoreFields.contains(field)) continue;
               final dupVal = entry.value;
               if (isEmpty(dupVal)) continue;
-
-              final canVal =
-                  mergedFields.containsKey(field) ? mergedFields[field] : canonical[field];
+              final canVal = mergedFields.containsKey(field)
+                  ? mergedFields[field]
+                  : canonical[field];
               if (isEmpty(canVal)) {
-                // Canônico vazio → adota valor da duplicata.
                 mergedFields[field] = dupVal;
-              } else if (canVal.toString() != dupVal.toString()) {
-                // Conflito real: dois valores não-vazios diferentes.
-                conflictsDetected.add(field);
               }
             }
           }
 
-          if (conflictsDetected.isNotEmpty) {
-            gruposComConflito++;
-            // Persiste no log de sync para inspeção manual posterior.
-            try {
-              final nowIso = DateTime.now().toIso8601String();
-              await txn.insert(
-                'sync_error_log',
-                {
-                  'modulo': 'rebanho',
-                  'operacao': 'dedup_local',
-                  'registro_id': idRebanho,
-                  'campo_problema': conflictsDetected.join(','),
-                  'mensagem_erro':
-                      'Duplicata por idRebanho com conflito de valores (não fundida automaticamente). Linhas locais: ${rows.map((r) => r['id']).toList()}',
-                  'mensagem_amigavel':
-                      'Animal duplicado localmente com dados divergentes — verifique manualmente.',
-                  'primeira_ocorrencia': nowIso,
-                  'ultima_ocorrencia': nowIso,
-                },
-                conflictAlgorithm: ConflictAlgorithm.ignore,
-              );
-            } catch (_) {
-              // Tabela pode não existir ainda; ignoramos.
-            }
-            debugPrint(
-                '[SQLite][dedupRebanhoIdR] CONFLITO em idRebanho=$idRebanho campos=$conflictsDetected — grupo NÃO fundido.');
-            return;
-          }
-
-          // Sem conflito: aplica merge no canônico (se houver).
           if (mergedFields.isNotEmpty) {
             mergedFields['updated_at'] = DateTime.now().toIso8601String();
             await txn.update(
@@ -984,14 +976,17 @@ Future<void> _dedupRebanhoPorIdRebanho(Database db) async {
     }
 
     // Se houve merge, marca janela de sync para reenviar como UPDATE.
+    // ATENÇÃO: o app_state.dart grava como millisecondsSinceEpoch (Int).
+    // Manter o mesmo formato para não quebrar o load do FFAppState.
     if (houveMerge) {
       try {
         final prefs = await SharedPreferences.getInstance();
-        final fiveMinAgo =
-            DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String();
-        await prefs.setString('ff_dataDadosNaoSyncRebanho', fiveMinAgo);
+        final fiveMinAgoMs = DateTime.now()
+            .subtract(const Duration(minutes: 5))
+            .millisecondsSinceEpoch;
+        await prefs.setInt('ff_dataDadosNaoSyncRebanho', fiveMinAgoMs);
         debugPrint(
-            '[SQLite][dedupRebanhoIdR] Marker ff_dataDadosNaoSyncRebanho=$fiveMinAgo (mesclagens subirão como UPDATE).');
+            '[SQLite][dedupRebanhoIdR] Marker ff_dataDadosNaoSyncRebanho=$fiveMinAgoMs (Int ms — mesclagens subirão como UPDATE).');
       } catch (e) {
         debugPrint(
             '[SQLite][dedupRebanhoIdR] Falha ao gravar marker de sync: $e');
@@ -999,7 +994,7 @@ Future<void> _dedupRebanhoPorIdRebanho(Database db) async {
     }
 
     debugPrint(
-        '[SQLite][dedupRebanhoIdR] Resumo: detectados=$gruposDetectados fundidos=$gruposFundidos conflitos=$gruposComConflito erros=$gruposComErro linhasRemovidas=$linhasRemovidas');
+        '[SQLite][dedupRebanhoIdR] Resumo: detectados=$gruposDetectados fundidos=$gruposFundidos erros=$gruposComErro linhasRemovidas=$linhasRemovidas');
   } catch (e, s) {
     debugPrint('[SQLite][dedupRebanhoIdR] ERRO GLOBAL: $e\n$s');
   }
