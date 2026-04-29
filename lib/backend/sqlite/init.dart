@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -124,6 +125,11 @@ Future<Database> initializeDatabaseFromDbFile(
 
   // Limpar duplicatas históricas de Nascimento/Desmama
   await _dedupePesagensFixas(database, prefs, expectedVersion);
+
+  // Limpar duplicatas de animais (mesmo numeroAnimal/dataNascimento) causadas
+  // por duplo-clique no botão Salvar antes do fix v1.8.4+109.
+  // É CONSERVADOR: só funde quando todos os campos críticos batem.
+  await _dedupRebanhoDuplicados(database, prefs);
 
   return database;
 }
@@ -320,5 +326,400 @@ Future<void> _dedupePesagensFixas(
     }
   } catch (e) {
     debugPrint('[SQLite] Erro ao deduplicar pesagens fixas: $e');
+  }
+}
+
+// ============================================================================
+// Deduplicação SEGURA de animais duplicados (causados por duplo-clique
+// antes do fix em v1.8.4+109).
+//
+// PRINCÍPIOS DE SEGURANÇA:
+// 1. Só considera duplicatas quando TODOS os campos-chave batem
+//    (idPropriedade + numeroAnimal + dataNascimento + sexo).
+// 2. Antes de fundir, compara TODOS os campos críticos. Se houver QUALQUER
+//    divergência (ambos não vazios e diferentes), o grupo é deixado
+//    intocado e logado para revisão manual.
+// 3. Os dados do duplicado são MERGED para o canônico (campos vazios
+//    no canônico recebem valores não-vazios do duplicado) — garantia de
+//    NÃO PERDER nenhuma informação.
+// 4. Todas as referências (pesagens, sanidade, reprodução, lotes,
+//    auto-refs matriz/reprodutor) são re-vinculadas para o canônico.
+// 5. O duplicado é marcado deletado='SIM' (soft delete) e updated_at é
+//    atualizado, fazendo com que a próxima sync envie esse delete ao
+//    Supabase — evitando que o duplicado fique no servidor.
+// 6. Idempotente — controlada por flag em prefs. Roda 1x por instalação.
+// ============================================================================
+// DEDUPLICAÇÃO SEGURA DE ANIMAIS (rebanho) — v2
+// ============================================================================
+// Limpa duplicatas geradas pelo bug de duplo-clique anterior a v1.8.4+109.
+//
+// Garantias de segurança ("FORMA ALGUMA perder dados"):
+//
+// 1. Detecta candidatos por (idPropriedade, numeroAnimal, dataNascimento, sexo).
+// 2. EQUIVALÊNCIA TOTAL: compara TODOS os campos de negócio entre TODAS as
+//    linhas do grupo (não só canonical vs cada dup). Se qualquer campo
+//    apresenta MAIS DE UM VALOR não-vazio distinto entre as linhas, o grupo
+//    é completamente IGNORADO. Sem merge.
+// 3. Canônico = mais recente (updated_at/created_at DESC).
+// 4. Pesagens são RE-INSERIDAS no canônico (com novo created_at) para que
+//    a sync envie o INSERT ao Supabase — depois a antiga é soft-deleted.
+//    (A tabela local_historico_pesagens só sincroniza INSERT por created_at
+//    e UPDATE quando deletado='SIM'; mudar idRebanho via UPDATE não subiria.)
+// 5. Sanidade, reprodução, auto-refs e JSON de lotes são re-vinculados via
+//    UPDATE com updated_at = nowIso (essas tabelas têm UPDT por updated_at).
+// 6. Markers de sync (ff_dataDadosNaoSync*) são gravados ANTES das mutações,
+//    com janela de segurança (now - 5min), garantindo que linhas alteradas
+//    fiquem dentro do filtro updated_at >= marker da próxima sync.
+// 7. Cada grupo é uma transação ATÔMICA isolada. Falha em um grupo não
+//    afeta os outros. Erros por grupo são contados; flag de "concluído" só
+//    é gravada se zero erros.
+// 8. JSON de id_animais em lotes é manipulado via jsonDecode/encode real.
+// 9. Idempotente — controlada por flag prefs. Roda 1x por instalação.
+// ============================================================================
+Future<void> _dedupRebanhoDuplicados(
+  Database db,
+  SharedPreferences prefs,
+) async {
+  const prefsKey = 'sqlite_dedup_rebanho_duplicados_v2';
+  if (prefs.getBool(prefsKey) ?? false) return;
+
+  // Campos que IDENTIFICAM o registro / não comparamos.
+  const ignoreFields = <String>{
+    'id',
+    'idRebanho',
+    'created_at',
+    'updated_at',
+    'deletado',
+  };
+
+  final report = <String, int>{
+    'gruposDetectados': 0,
+    'fundidos': 0,
+    'conflitos': 0,
+    'erros': 0,
+    'pesagensReinseridas': 0,
+    'pesagensSoftDelete': 0,
+    'sanidadeReatribuidos': 0,
+    'reproducaoReatribuidos': 0,
+    'lotesAtualizados': 0,
+    'autoRefsAtualizadas': 0,
+  };
+
+  List<Map<String, Object?>> groups;
+  try {
+    groups = await db.rawQuery('''
+      SELECT idPropriedade, numeroAnimal,
+             COALESCE(dataNascimento, '') AS dn,
+             COALESCE(sexo, '') AS sx,
+             COUNT(*) AS qtd
+      FROM local_rebanho
+      WHERE COALESCE(deletado, 'NAO') != 'SIM'
+        AND COALESCE(idPropriedade, '') != ''
+        AND COALESCE(numeroAnimal, '') != ''
+      GROUP BY idPropriedade, numeroAnimal,
+               COALESCE(dataNascimento, ''),
+               COALESCE(sexo, '')
+      HAVING COUNT(*) > 1
+    ''');
+  } catch (e, s) {
+    debugPrint('[SQLite][dedupRebanho] erro ao detectar grupos: $e\n$s');
+    return; // não marca flag
+  }
+
+  if (groups.isEmpty) {
+    await prefs.setBool(prefsKey, true);
+    debugPrint('[SQLite][dedupRebanho] nenhuma duplicata.');
+    return;
+  }
+
+  report['gruposDetectados'] = groups.length;
+  debugPrint('[SQLite][dedupRebanho] ${groups.length} grupo(s) candidato(s).');
+
+  // CRÍTICO: gravar marker de sync ANTES das mutações, com janela de
+  // segurança de 5 min, para que TODAS as linhas alteradas com nowIso fiquem
+  // dentro do filtro updated_at >= marker no próximo sync.
+  final agoraMs = DateTime.now().millisecondsSinceEpoch;
+  final markerMs = agoraMs - 5 * 60 * 1000;
+  for (final key in const [
+    'ff_dataDadosNaoSyncRebanho',
+    'ff_dataDadosNaoSyncLotes',
+    'ff_dataDadosNaoSyncSanidade',
+    'ff_dataDadosNaoSyncRepro',
+  ]) {
+    final existing = prefs.getInt(key);
+    if (existing == null || existing > markerMs) {
+      await prefs.setInt(key, markerMs);
+    }
+  }
+
+  final nowIso = DateTime.now().toUtc().toIso8601String();
+
+  for (final g in groups) {
+    final idPropriedade = g['idPropriedade'] as String?;
+    final numeroAnimal = g['numeroAnimal'] as String?;
+    final dn = g['dn'] as String? ?? '';
+    final sx = g['sx'] as String? ?? '';
+    if (idPropriedade == null || numeroAnimal == null) continue;
+
+    try {
+      final rows = await db.rawQuery('''
+        SELECT * FROM local_rebanho
+        WHERE COALESCE(deletado, 'NAO') != 'SIM'
+          AND idPropriedade = ?
+          AND numeroAnimal = ?
+          AND COALESCE(dataNascimento, '') = ?
+          AND COALESCE(sexo, '') = ?
+        ORDER BY datetime(COALESCE(updated_at, created_at, '1970-01-01')) DESC,
+                 datetime(COALESCE(created_at, '1970-01-01')) DESC
+      ''', [idPropriedade, numeroAnimal, dn, sx]);
+
+      if (rows.length < 2) continue;
+
+      // EQUIVALÊNCIA TOTAL: para cada coluna (exceto ignoreFields), coleta
+      // todos os valores não-vazios distintos entre as linhas. Se houver
+      // mais de 1 valor distinto, o grupo é abortado.
+      final allFields = rows.first.keys.where((k) => !ignoreFields.contains(k));
+      bool conflict = false;
+      String? conflictField;
+      Set<String>? conflictValues;
+      for (final field in allFields) {
+        final values = <String>{};
+        for (final r in rows) {
+          final v = _normalize(r[field]);
+          if (v != null) values.add(v);
+        }
+        if (values.length > 1) {
+          conflict = true;
+          conflictField = field;
+          conflictValues = values;
+          break;
+        }
+      }
+      if (conflict) {
+        report['conflitos'] = (report['conflitos'] ?? 0) + 1;
+        debugPrint(
+            '[SQLite][dedupRebanho] CONFLITO em "$conflictField" para numeroAnimal=$numeroAnimal valores=$conflictValues — grupo IGNORADO.');
+        continue;
+      }
+
+      // Canônico: a linha mais recente (já ordenado DESC).
+      final canonical = rows.first;
+      final canonicalId = canonical['idRebanho'] as String?;
+      if (canonicalId == null || canonicalId.isEmpty) continue;
+      final duplicates =
+          rows.where((r) => r['idRebanho'] != canonicalId).toList();
+      if (duplicates.isEmpty) continue;
+
+      // Como o grupo passou em equivalência total, pode haver campos vazios
+      // no canônico que outros dups preencheram. Mesclar é seguro.
+      final canonicalUpdates = <String, Object?>{};
+      for (final field in allFields) {
+        if (_normalize(canonical[field]) != null) continue;
+        for (final dup in duplicates) {
+          if (_normalize(dup[field]) != null) {
+            canonicalUpdates[field] = dup[field];
+            break;
+          }
+        }
+      }
+
+      await db.transaction((txn) async {
+        if (canonicalUpdates.isNotEmpty) {
+          canonicalUpdates['updated_at'] = nowIso;
+          await txn.update('local_rebanho', canonicalUpdates,
+              where: 'idRebanho = ?', whereArgs: [canonicalId]);
+        }
+
+        // Pré-carrega pesagens do canônico para deduplicar por
+        // (dataPesagem, tipo, peso) e evitar inserir gêmeas.
+        final canonPesagens = await txn.query(
+          'local_historico_pesagens',
+          where: 'idRebanho = ?',
+          whereArgs: [canonicalId],
+        );
+        final canonKeys = <String>{};
+        for (final p in canonPesagens) {
+          canonKeys.add(_pesagemKey(p));
+        }
+
+        for (final dup in duplicates) {
+          final dupId = dup['idRebanho'] as String?;
+          if (dupId == null || dupId.isEmpty || dupId == canonicalId) continue;
+
+          // Pesagens: re-inserir no canônico (com novo created_at) para que
+          // a sync envie INSERT ao Supabase. Soft-delete da antiga.
+          final pesagensDup = await txn.query(
+            'local_historico_pesagens',
+            where: 'idRebanho = ?',
+            whereArgs: [dupId],
+          );
+          for (final p in pesagensDup) {
+            final pid = p['id'];
+            final isDeleted = (p['deletado'] as String?) == 'SIM';
+            final key = _pesagemKey(p);
+
+            if (!isDeleted && !canonKeys.contains(key)) {
+              // Inserir clone no canônico
+              final clone = Map<String, Object?>.from(p);
+              clone.remove('id');
+              clone['idRebanho'] = canonicalId;
+              clone['created_at'] = nowIso;
+              try {
+                await txn.insert(
+                  'local_historico_pesagens',
+                  clone,
+                  conflictAlgorithm: ConflictAlgorithm.ignore,
+                );
+                canonKeys.add(key);
+                report['pesagensReinseridas'] =
+                    (report['pesagensReinseridas'] ?? 0) + 1;
+              } on DatabaseException catch (e) {
+                if (!e.isUniqueConstraintError()) rethrow;
+                // Já existe equivalente — ok, segue.
+              }
+            }
+            // Soft-delete da pesagem do dup (será propagada via UPDT).
+            await txn.update(
+              'local_historico_pesagens',
+              {'deletado': 'SIM'},
+              where: 'id = ?',
+              whereArgs: [pid],
+            );
+            report['pesagensSoftDelete'] =
+                (report['pesagensSoftDelete'] ?? 0) + 1;
+          }
+
+          // Sanidade
+          final n1 = await txn.update(
+            'local_sanidade',
+            {'id_rebanho': canonicalId, 'updated_at': nowIso},
+            where: 'id_rebanho = ?',
+            whereArgs: [dupId],
+          );
+          report['sanidadeReatribuidos'] =
+              (report['sanidadeReatribuidos'] ?? 0) + n1;
+
+          // Reprodução
+          final n2 = await txn.update(
+            'local_reproducao',
+            {'id_rebanho_matriz': canonicalId, 'updated_at': nowIso},
+            where: 'id_rebanho_matriz = ?',
+            whereArgs: [dupId],
+          );
+          final n3 = await txn.update(
+            'local_reproducao',
+            {'id_rebanho_reprodutor': canonicalId, 'updated_at': nowIso},
+            where: 'id_rebanho_reprodutor = ?',
+            whereArgs: [dupId],
+          );
+          report['reproducaoReatribuidos'] =
+              (report['reproducaoReatribuidos'] ?? 0) + n2 + n3;
+
+          // Auto-refs em local_rebanho
+          final n4 = await txn.update(
+            'local_rebanho',
+            {'rebanhoIdMatriz': canonicalId, 'updated_at': nowIso},
+            where: 'rebanhoIdMatriz = ?',
+            whereArgs: [dupId],
+          );
+          final n5 = await txn.update(
+            'local_rebanho',
+            {'rebanhoIdReprodutor': canonicalId, 'updated_at': nowIso},
+            where: 'rebanhoIdReprodutor = ?',
+            whereArgs: [dupId],
+          );
+          report['autoRefsAtualizadas'] =
+              (report['autoRefsAtualizadas'] ?? 0) + n4 + n5;
+
+          // Lotes: id_animais é JSON-array. Manipula via jsonDecode/encode.
+          final lotesRows = await txn.query(
+            'local_lotes',
+            columns: ['id', 'id_animais'],
+            where: "id_animais LIKE ? AND COALESCE(deletado,'NAO') != 'SIM'",
+            whereArgs: ['%$dupId%'],
+          );
+          for (final lr in lotesRows) {
+            final id = lr['id'];
+            final ja = lr['id_animais'] as String?;
+            if (ja == null || ja.isEmpty) continue;
+            final novoJson = _replaceIdInJsonList(ja, dupId, canonicalId);
+            if (novoJson != null && novoJson != ja) {
+              await txn.update(
+                'local_lotes',
+                {'id_animais': novoJson, 'updated_at': nowIso},
+                where: 'id = ?',
+                whereArgs: [id],
+              );
+              report['lotesAtualizados'] =
+                  (report['lotesAtualizados'] ?? 0) + 1;
+            }
+          }
+
+          // Soft-delete do duplicado.
+          await txn.update(
+            'local_rebanho',
+            {'deletado': 'SIM', 'updated_at': nowIso},
+            where: 'idRebanho = ?',
+            whereArgs: [dupId],
+          );
+        }
+
+        report['fundidos'] = (report['fundidos'] ?? 0) + duplicates.length;
+      });
+    } catch (e, s) {
+      report['erros'] = (report['erros'] ?? 0) + 1;
+      debugPrint(
+          '[SQLite][dedupRebanho] erro no grupo numeroAnimal=$numeroAnimal: $e\n$s');
+      // Continua com outros grupos.
+    }
+  }
+
+  debugPrint('[SQLite][dedupRebanho] Concluído. Relatório: $report');
+
+  // Só marca flag se NENHUM erro ocorreu — assim, se houve falha, tenta
+  // novamente no próximo boot (grupos já fundidos não voltam a aparecer
+  // pois o duplicado está deletado='SIM').
+  if ((report['erros'] ?? 0) == 0) {
+    await prefs.setBool(prefsKey, true);
+  } else {
+    debugPrint(
+        '[SQLite][dedupRebanho] flag NÃO gravada por causa de erros — re-executará no próximo boot.');
+  }
+}
+
+/// Chave de identidade lógica de uma pesagem para detectar equivalentes
+/// (mesmo valor de pesagem na mesma data e tipo).
+String _pesagemKey(Map<String, Object?> p) {
+  final dt = (p['dataPesagem'] ?? '').toString();
+  final tp = (p['tipo'] ?? '').toString();
+  final peso = p['peso'];
+  final pesoStr = peso == null ? '' : peso.toString();
+  return '$dt|$tp|$pesoStr';
+}
+
+String? _normalize(Object? v) {
+  if (v == null) return null;
+  final s = v.toString().trim();
+  if (s.isEmpty || s.toLowerCase() == 'null') return null;
+  return s;
+}
+
+/// Substitui `oldId` por `newId` num JSON-array de strings, deduplicando.
+/// Retorna null se o JSON for inválido (não toca na linha).
+String? _replaceIdInJsonList(String json, String oldId, String newId) {
+  try {
+    final decoded = jsonDecode(json);
+    if (decoded is! List) return null;
+    final seen = <String>{};
+    final out = <String>[];
+    for (final item in decoded) {
+      if (item == null) continue;
+      final s = item.toString();
+      final mapped = s == oldId ? newId : s;
+      if (seen.add(mapped)) out.add(mapped);
+    }
+    return jsonEncode(out);
+  } catch (_) {
+    return null;
   }
 }
