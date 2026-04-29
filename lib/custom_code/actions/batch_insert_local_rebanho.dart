@@ -165,6 +165,40 @@ Future<Map<String, dynamic>> batchInsertLocalRebanho(
     }
   }
 
+  // Dedup do INPUT por idRebanho — mantém última ocorrência da página.
+  // Defesa em profundidade: a RPC pode retornar repetidos por instabilidade
+  // de paginação (ORDER BY updated_at com empates) e, mesmo com UNIQUE INDEX,
+  // o REPLACE dentro de um batch produz ordem indeterminada.
+  if (mappedRecords.length > 1) {
+    final byKey = <String, Map<String, dynamic>>{};
+    final ordered = <Map<String, dynamic>>[];
+    final orderIndex = <String, int>{};
+    for (final m in mappedRecords) {
+      final key = m['idRebanho']?.toString();
+      if (key == null || key.isEmpty) {
+        ordered.add(m);
+        continue;
+      }
+      if (byKey.containsKey(key)) {
+        final idx = orderIndex[key]!;
+        ordered[idx] = m; // sobrescreve com a última ocorrência
+        byKey[key] = m;
+      } else {
+        byKey[key] = m;
+        orderIndex[key] = ordered.length;
+        ordered.add(m);
+      }
+    }
+    final removed = mappedRecords.length - ordered.length;
+    if (removed > 0) {
+      debugPrint(
+          '[SYNC][rebanho] Dedup do input do batch: $removed duplicata(s) removida(s).');
+    }
+    mappedRecords
+      ..clear()
+      ..addAll(ordered);
+  }
+
   // Fase 2: Garantir que triggers FTS5 não bloqueiem o insert (Android)
   final db = SQLiteManager.instance.database;
   await _disableFtsTriggersSafely(db);

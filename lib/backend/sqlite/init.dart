@@ -117,6 +117,13 @@ Future<Database> initializeDatabaseFromDbFile(
   // Criar índices para otimizar buscas no rebanho popup
   await _ensureRebanhoIndexes(database);
 
+  // CRÍTICO: dedup por idRebanho ANTES de criar UNIQUE INDEX, senão o
+  // CREATE UNIQUE falha silenciosamente e o PULL passa a duplicar tudo
+  // (ConflictAlgorithm.replace só funciona se o índice UNIQUE existe).
+  // Roda toda inicialização — sem flag — porque novas duplicatas podem
+  // chegar até a base estar limpa.
+  await _dedupRebanhoPorIdRebanho(database);
+
   // Criar índices UNIQUE para suportar UPSERT incremental
   await _ensureUniqueBusinessKeys(database);
 
@@ -811,5 +818,189 @@ Future<void> _dedupPesagensDuplicadas(Database db) async {
     }
   } catch (e, s) {
     debugPrint('[SQLite][dedupPesagens] ERRO: $e\n$s');
+  }
+}
+
+// ============================================================================
+// _dedupRebanhoPorIdRebanho — limpa duplicatas com MESMO idRebanho.
+//
+// Problema: PULL (batchInsertLocalRebanho) usa ConflictAlgorithm.replace,
+// que só substitui se houver UNIQUE INDEX em idRebanho. Se a base já tem
+// duplicatas (de bugs anteriores), o CREATE UNIQUE INDEX falha silenciosamente
+// e o REPLACE degrada para INSERT puro — cada PULL duplica tudo.
+//
+// Estratégia conservadora (não perde dados):
+// - Considera TODAS as linhas (incluindo deletado='SIM') no GROUP BY,
+//   senão o índice UNIQUE não consegue ser criado.
+// - Canônico = linha com maior `id` local (estável, não depende de parsing
+//   de timestamps que podem ter formatos mistos).
+// - Merge defensivo: só copia campo se canônico tem NULL/'' e duplicata tem
+//   valor real. Nunca sobrescreve valor real.
+// - Conflito real (dois valores não-vazios diferentes no mesmo campo):
+//   NÃO apaga. Loga em sync_error_log para inspeção manual e pula o grupo.
+// - Hard delete (não soft): servidor só conhece UMA cópia desse idRebanho;
+//   apagar a duplicata local não desincroniza nada remoto.
+// - Marker dataDadosNaoSyncRebanho zerado quando há merge → mesclagens
+//   sobem como UPDATE no próximo sync.
+// - Try/catch por grupo + global: boot nunca trava.
+// ============================================================================
+Future<void> _dedupRebanhoPorIdRebanho(Database db) async {
+  // Campos de identificação / não comparados em conflito.
+  const ignoreFields = <String>{
+    'id',
+    'idRebanho',
+    'created_at',
+    'updated_at',
+    'deletado',
+  };
+
+  bool isEmpty(Object? v) {
+    if (v == null) return true;
+    if (v is String && v.trim().isEmpty) return true;
+    return false;
+  }
+
+  int gruposDetectados = 0;
+  int gruposFundidos = 0;
+  int gruposComConflito = 0;
+  int linhasRemovidas = 0;
+  int gruposComErro = 0;
+  bool houveMerge = false;
+
+  try {
+    final groups = await db.rawQuery('''
+      SELECT idRebanho, COUNT(*) AS qtd
+      FROM local_rebanho
+      WHERE COALESCE(idRebanho, '') != ''
+      GROUP BY idRebanho
+      HAVING COUNT(*) > 1
+    ''');
+    gruposDetectados = groups.length;
+    if (gruposDetectados == 0) {
+      debugPrint('[SQLite][dedupRebanhoIdR] Nenhuma duplicata por idRebanho.');
+      return;
+    }
+    debugPrint(
+        '[SQLite][dedupRebanhoIdR] $gruposDetectados grupo(s) duplicado(s) por idRebanho detectado(s).');
+
+    for (final g in groups) {
+      final idRebanho = g['idRebanho'] as String?;
+      if (idRebanho == null || idRebanho.isEmpty) continue;
+
+      try {
+        await db.transaction((txn) async {
+          final rows = await txn.query(
+            'local_rebanho',
+            where: 'idRebanho = ?',
+            whereArgs: [idRebanho],
+            orderBy: 'id DESC',
+          );
+          if (rows.length < 2) return;
+
+          // Canônico = primeira (maior id).
+          final canonical = Map<String, Object?>.from(rows.first);
+          final duplicates = rows.skip(1).toList();
+
+          // Detectar conflito real e preparar merge.
+          final mergedFields = <String, Object?>{};
+          final conflictsDetected = <String>[];
+
+          for (final dup in duplicates) {
+            for (final entry in dup.entries) {
+              final field = entry.key;
+              if (ignoreFields.contains(field)) continue;
+              final dupVal = entry.value;
+              if (isEmpty(dupVal)) continue;
+
+              final canVal =
+                  mergedFields.containsKey(field) ? mergedFields[field] : canonical[field];
+              if (isEmpty(canVal)) {
+                // Canônico vazio → adota valor da duplicata.
+                mergedFields[field] = dupVal;
+              } else if (canVal.toString() != dupVal.toString()) {
+                // Conflito real: dois valores não-vazios diferentes.
+                conflictsDetected.add(field);
+              }
+            }
+          }
+
+          if (conflictsDetected.isNotEmpty) {
+            gruposComConflito++;
+            // Persiste no log de sync para inspeção manual posterior.
+            try {
+              final nowIso = DateTime.now().toIso8601String();
+              await txn.insert(
+                'sync_error_log',
+                {
+                  'modulo': 'rebanho',
+                  'operacao': 'dedup_local',
+                  'registro_id': idRebanho,
+                  'campo_problema': conflictsDetected.join(','),
+                  'mensagem_erro':
+                      'Duplicata por idRebanho com conflito de valores (não fundida automaticamente). Linhas locais: ${rows.map((r) => r['id']).toList()}',
+                  'mensagem_amigavel':
+                      'Animal duplicado localmente com dados divergentes — verifique manualmente.',
+                  'primeira_ocorrencia': nowIso,
+                  'ultima_ocorrencia': nowIso,
+                },
+                conflictAlgorithm: ConflictAlgorithm.ignore,
+              );
+            } catch (_) {
+              // Tabela pode não existir ainda; ignoramos.
+            }
+            debugPrint(
+                '[SQLite][dedupRebanhoIdR] CONFLITO em idRebanho=$idRebanho campos=$conflictsDetected — grupo NÃO fundido.');
+            return;
+          }
+
+          // Sem conflito: aplica merge no canônico (se houver).
+          if (mergedFields.isNotEmpty) {
+            mergedFields['updated_at'] = DateTime.now().toIso8601String();
+            await txn.update(
+              'local_rebanho',
+              mergedFields,
+              where: 'id = ?',
+              whereArgs: [canonical['id']],
+            );
+            houveMerge = true;
+          }
+
+          // Hard delete das duplicatas.
+          for (final dup in duplicates) {
+            await txn.delete(
+              'local_rebanho',
+              where: 'id = ?',
+              whereArgs: [dup['id']],
+            );
+            linhasRemovidas++;
+          }
+          gruposFundidos++;
+        });
+      } catch (e, s) {
+        gruposComErro++;
+        debugPrint(
+            '[SQLite][dedupRebanhoIdR] Erro no grupo idRebanho=$idRebanho: $e\n$s');
+      }
+    }
+
+    // Se houve merge, marca janela de sync para reenviar como UPDATE.
+    if (houveMerge) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final fiveMinAgo =
+            DateTime.now().subtract(const Duration(minutes: 5)).toIso8601String();
+        await prefs.setString('ff_dataDadosNaoSyncRebanho', fiveMinAgo);
+        debugPrint(
+            '[SQLite][dedupRebanhoIdR] Marker ff_dataDadosNaoSyncRebanho=$fiveMinAgo (mesclagens subirão como UPDATE).');
+      } catch (e) {
+        debugPrint(
+            '[SQLite][dedupRebanhoIdR] Falha ao gravar marker de sync: $e');
+      }
+    }
+
+    debugPrint(
+        '[SQLite][dedupRebanhoIdR] Resumo: detectados=$gruposDetectados fundidos=$gruposFundidos conflitos=$gruposComConflito erros=$gruposComErro linhasRemovidas=$linhasRemovidas');
+  } catch (e, s) {
+    debugPrint('[SQLite][dedupRebanhoIdR] ERRO GLOBAL: $e\n$s');
   }
 }
