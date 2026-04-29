@@ -110,6 +110,33 @@ Future<void> _batchUpsertSupabase({
   }
 }
 
+/// UPDATE explícito de rebanho por idRebanho.
+///
+/// Usado para edição de animal existente: não deve tentar INSERT. Retorna
+/// `true` quando o Supabase atualizou ao menos uma linha e `false` quando o
+/// idRebanho não foi encontrado no servidor.
+Future<bool> _updateRebanhoSupabaseById(
+  Map<String, dynamic> payload, {
+  required String label,
+}) async {
+  final idRebanho = payload['idRebanho']?.toString();
+  if (idRebanho == null || idRebanho.isEmpty) {
+    throw ArgumentError('Payload de rebanho sem idRebanho para UPDATE.');
+  }
+
+  final updatePayload = Map<String, dynamic>.from(payload)..remove('idRebanho');
+  final updated = await _withTimeout(
+    () => SupaFlow.client
+        .from('rebanho')
+        .update(updatePayload)
+        .eq('idRebanho', idRebanho)
+        .select('idRebanho'),
+    label: '$label.update(idRebanho=$idRebanho)',
+    timeout: kSyncPageTimeout,
+  );
+  return updated.isNotEmpty;
+}
+
 /// INSERT em lote (sem onConflict). Use para tabelas onde a PK é gerada pelo
 /// servidor (ex: `historico_pesagens.id` auto-increment) e o registro local
 /// não tem identificador para upsert idempotente.
@@ -1025,82 +1052,79 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
       locale: FFLocalizations.of(context).languageCode,
     );
 
-    // ───── REBANHO upsert em lote ─────
-    localPut = await SQLiteManager.instance.buscarRebanhoPUT(data: dateFilter);
+    // ───── REBANHO: INSERT e UPDATE separados ─────
+    final rawLocalPut =
+        await SQLiteManager.instance.buscarRebanhoPUT(data: dateFilter);
     localUpd = await SQLiteManager.instance.buscarRebanhoUPDATED(data: dateFilter);
 
-    if (localPut.isNotEmpty) {
-      final insertedIds = localPut.map((r) => r.idRebanho).whereType<String>().toSet();
-      if (insertedIds.isNotEmpty) {
-        final before = localUpd.length;
-        localUpd = localUpd.where((r) => !insertedIds.contains(r.idRebanho)).toList();
-        final removed = before - localUpd.length;
-        if (removed > 0) _syncLog('putUpdtRebanhos', 'Dedupe PUT/UPDT: $removed registro(s) removidos.');
+    final ignoredDeletedPut =
+        rawLocalPut.where((r) => r.deletado == 'SIM').toList();
+    localPut = rawLocalPut.where((r) => r.deletado != 'SIM').toList();
+    if (ignoredDeletedPut.isNotEmpty) {
+      _syncLog('putUpdtRebanhos',
+          'PUT ignorou ${ignoredDeletedPut.length} rebanho(s) deletado(s); deleções seguem por UPDATE.');
+    }
+
+    // Se o mesmo registro está em PUT ativo e UPDATE, o PUT carrega o payload
+    // completo e idempotente. Deixa no UPDATE apenas edições/deleções reais.
+    final putIds = localPut.map((r) => r.idRebanho).whereType<String>().toSet();
+    if (putIds.isNotEmpty) {
+      final before = localUpd.length;
+      localUpd = localUpd.where((r) => !putIds.contains(r.idRebanho)).toList();
+      final removed = before - localUpd.length;
+      if (removed > 0) {
+        _syncLog('putUpdtRebanhos',
+            'Dedupe PUT/UPDT: $removed update(s) removidos porque já estavam no PUT ativo.');
       }
     }
 
-    final rebanhoPayloads = <Map<String, dynamic>>[];
+    // INSERT/UPSERT somente para novos ativos.
+    final rebanhoInserts = <Map<String, dynamic>>[];
     for (final row in localPut) {
-      _throwIfCancelled('putUpdtRebanhos');
-      rebanhoPayloads.add(_buildRebanhoPayload(row.data, isInsert: true));
+      _throwIfCancelled('putUpdtRebanhos.insert');
+      rebanhoInserts.add(_buildRebanhoPayload(row.data, isInsert: true));
     }
-    for (final row in localUpd) {
-      _throwIfCancelled('putUpdtRebanhos');
-      rebanhoPayloads.add(_buildRebanhoPayload(row.data, isInsert: false));
-    }
-
-    // Dedup INTERNO do batch por idRebanho. Postgres não consegue executar
-    // ON CONFLICT DO UPDATE 2x na mesma linha alvo dentro do mesmo upsert
-    // ("ON CONFLICT cannot affect row a second time" / 23505). Mantém apenas
-    // a última ocorrência (mais recente, vinda de localUpd que vem depois).
-    if (rebanhoPayloads.length > 1) {
+    if (rebanhoInserts.length > 1) {
       final seen = <String, int>{};
       final dedupOrder = <Map<String, dynamic>>[];
-      for (final p in rebanhoPayloads) {
+      for (final p in rebanhoInserts) {
         final id = p['idRebanho']?.toString();
         if (id == null || id.isEmpty) {
           dedupOrder.add(p);
           continue;
         }
         if (seen.containsKey(id)) {
-          final idx = seen[id]!;
-          dedupOrder[idx] = p; // sobrescreve com a versão mais recente
+          dedupOrder[seen[id]!] = p;
         } else {
           seen[id] = dedupOrder.length;
           dedupOrder.add(p);
         }
       }
-      final removed = rebanhoPayloads.length - dedupOrder.length;
+      final removed = rebanhoInserts.length - dedupOrder.length;
       if (removed > 0) {
         _syncLog('putUpdtRebanhos',
-            'Dedup interno do batch: $removed duplicata(s) por idRebanho removidas (evita 23505).');
+            'Dedup interno INSERT: $removed duplicata(s) por idRebanho removidas.');
       }
-      rebanhoPayloads
+      rebanhoInserts
         ..clear()
         ..addAll(dedupOrder);
     }
-
-    if (rebanhoPayloads.isNotEmpty) {
+    if (rebanhoInserts.isNotEmpty) {
       _syncLog('putUpdtRebanhos',
-          'Upsert rebanho em lote: ${rebanhoPayloads.length} (INSERT=${localPut.length}, UPDATE=${localUpd.length}).');
+          'INSERT/UPSERT rebanho: ${rebanhoInserts.length} novo(s) ativo(s).');
       try {
         await _retry(
           () => _batchUpsertSupabase(
             tableName: 'rebanho',
-            rows: rebanhoPayloads,
+            rows: rebanhoInserts,
             onConflict: 'idRebanho',
             chunkSize: 200,
-            label: 'putUpdtRebanhos.rebanho',
+            label: 'putUpdtRebanhos.rebanho.insert',
           ),
-          label: 'putUpdtRebanhos.rebanho.batchUpsert',
+          label: 'putUpdtRebanhos.rebanho.insert.batchUpsert',
           maxAttempts: 3,
         );
         for (final row in localPut) {
-          _markSyncOk('rebanho', row.idRebanho);
-          // ignore: discarded_futures
-          actions.SyncErrorLog.autoResolverPorRegistro('rebanho', row.idRebanho);
-        }
-        for (final row in localUpd) {
           _markSyncOk('rebanho', row.idRebanho);
           // ignore: discarded_futures
           actions.SyncErrorLog.autoResolverPorRegistro('rebanho', row.idRebanho);
@@ -1117,14 +1141,79 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
             registroDescricao: _descreverRebanhoBy(r.numeroAnimal),
           );
         }
-        for (final r in localUpd) {
+      }
+    }
+
+    // UPDATE explícito para edições/deleções. Não usa upsert para evitar que
+    // edição de animal existente tente INSERT silencioso.
+    if (localUpd.length > 1) {
+      final byId = <String, BuscarRebanhoUPDATEDRow>{};
+      final noId = <BuscarRebanhoUPDATEDRow>[];
+      for (final row in localUpd) {
+        final id = row.idRebanho;
+        if (id == null || id.isEmpty) {
+          noId.add(row);
+        } else {
+          byId[id] = row; // mantém a última ocorrência
+        }
+      }
+      final removed = localUpd.length - byId.length - noId.length;
+      if (removed > 0) {
+        _syncLog('putUpdtRebanhos',
+            'Dedup interno UPDATE: $removed duplicata(s) por idRebanho removidas.');
+      }
+      localUpd = [...noId, ...byId.values];
+    }
+
+    if (localUpd.isNotEmpty) {
+      _syncLog('putUpdtRebanhos',
+          'UPDATE explícito rebanho: ${localUpd.length} registro(s).');
+      for (final row in localUpd) {
+        _throwIfCancelled('putUpdtRebanhos.update');
+        final payload = _buildRebanhoPayload(row.data, isInsert: false);
+        final isDelete = payload['deletado'] == 'SIM';
+        try {
+          final matched = await _retry(
+            () => _updateRebanhoSupabaseById(
+              payload,
+              label: 'putUpdtRebanhos.rebanho.update',
+            ),
+            label: 'putUpdtRebanhos.rebanho.update.${row.idRebanho}',
+            maxAttempts: 3,
+          );
+
+          if (!matched && !isDelete) {
+            allSuccess = false;
+            final error = StateError(
+                'UPDATE rebanho não encontrou idRebanho=${row.idRebanho} no Supabase; INSERT não executado para evitar duplicidade.');
+            _recordSyncError(
+              flow: 'putUpdtRebanhos',
+              modulo: 'rebanho',
+              operacao: 'update',
+              erro: error,
+              registroId: row.idRebanho,
+              registroDescricao: _descreverRebanhoBy(row.numeroAnimal),
+            );
+            _syncLog('putUpdtRebanhos', error.message);
+            continue;
+          }
+
+          if (!matched && isDelete) {
+            _syncLog('putUpdtRebanhos',
+                'DELETE remoto no-op: idRebanho=${row.idRebanho} não existe mais no Supabase.');
+          }
+          _markSyncOk('rebanho', row.idRebanho);
+          // ignore: discarded_futures
+          actions.SyncErrorLog.autoResolverPorRegistro('rebanho', row.idRebanho);
+        } catch (e) {
+          allSuccess = false;
           _recordSyncError(
             flow: 'putUpdtRebanhos',
             modulo: 'rebanho',
             operacao: 'update',
             erro: e,
-            registroId: r.idRebanho,
-            registroDescricao: _descreverRebanhoBy(r.numeroAnimal),
+            registroId: row.idRebanho,
+            registroDescricao: _descreverRebanhoBy(row.numeroAnimal),
           );
         }
       }

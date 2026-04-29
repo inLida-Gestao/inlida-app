@@ -280,6 +280,8 @@ Future<List<ListarRebanhosRow>> performListarRebanhos(
   final query = '''
 SELECT * FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
+AND COALESCE(deletado, 'NAO') != 'SIM'
+ORDER BY created_at DESC
 ''';
   return _readQuery(database, query, (d) => ListarRebanhosRow(d));
 }
@@ -344,6 +346,10 @@ Future<List<BuscarRebanhoRow>> performBuscarRebanho(
   final query = '''
 SELECT * FROM local_rebanho
 WHERE idRebanho = '$idRebanho'
+AND COALESCE(deletado, 'NAO') != 'SIM'
+ORDER BY datetime(COALESCE(updated_at, created_at, '1970-01-01')) DESC,
+         id DESC
+LIMIT 1
 
 ''';
   return _readQuery(database, query, (d) => BuscarRebanhoRow(d));
@@ -565,6 +571,7 @@ Future<List<QTDDeAnimaisGeralRow>> performQTDDeAnimaisGeral(
   final query = '''
 SELECT * FROM local_rebanho
 WHERE idPropriedade in ($idPropriedade)
+AND COALESCE(deletado, 'NAO') != 'SIM'
 ''';
   return _readQuery(database, query, (d) => QTDDeAnimaisGeralRow(d));
 }
@@ -730,6 +737,7 @@ Future<List<ListarRebanhosProgenereRow>> performListarRebanhosProgenere(
 SELECT * FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
 AND idRebanho <> '$idRebanho'
+AND COALESCE(deletado, 'NAO') != 'SIM'
 LIMIT $limitReb OFFSET $offsetReb
 ''';
   return _readQuery(database, query, (d) => ListarRebanhosProgenereRow(d));
@@ -859,6 +867,7 @@ Future<List<AnimaisNoLoteRow>> performAnimaisNoLote(
 SELECT * FROM local_rebanho
 WHERE loteNome <> 'null'
 AND idPropriedade = '$idPropriedade'
+AND COALESCE(deletado, 'NAO') != 'SIM'
 ''';
   return _readQuery(database, query, (d) => AnimaisNoLoteRow(d));
 }
@@ -912,7 +921,7 @@ Future<List<BuscarRebanhoLoteRow>> performBuscarRebanhoLote(
   final query = '''
 SELECT * FROM local_rebanho
 WHERE loteID = '$idLote'
-AND deletado = 'NAO'
+AND COALESCE(deletado, 'NAO') != 'SIM'
 
 ''';
   return _readQuery(database, query, (d) => BuscarRebanhoLoteRow(d));

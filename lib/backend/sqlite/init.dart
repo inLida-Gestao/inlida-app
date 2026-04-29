@@ -138,6 +138,12 @@ Future<Database> initializeDatabaseFromDbFile(
   // É CONSERVADOR: só funde quando todos os campos críticos batem.
   await _dedupRebanhoDuplicados(database, prefs);
 
+  // Limpar duplicatas lógicas remanescentes (mesmo número na propriedade, mas
+  // idRebanho diferente). A v2 era conservadora e podia pular grupos depois de
+  // edições; esta rotina mantém a versão mais recente e marca as antigas como
+  // deletado=SIM para o sync remover do Supabase.
+  await _dedupRebanhoLogicoDuplicadoV3(database, prefs);
+
   // Limpar duplicatas de pesagens (mesmo idRebanho/dataPesagem/tipo/peso)
   // causadas pelo bug de pré-dedup quebrada (created_at não enviado ao
   // servidor) antes do fix v1.8.7+112. Roda toda inicialização (não tem
@@ -698,6 +704,288 @@ Future<void> _dedupRebanhoDuplicados(
   } else {
     debugPrint(
         '[SQLite][dedupRebanho] flag NÃO gravada por causa de erros — re-executará no próximo boot.');
+  }
+}
+
+// ============================================================================
+// DEDUP LÓGICO V3 — mesmo animal com idRebanho diferente.
+// ============================================================================
+// Cobre o caso restante observado em produção: duplicatas ativas com número do
+// animal igual na mesma propriedade, mas idRebanho diferente. A rotina v2 era
+// conservadora e pulava grupos após edições (campos divergentes); aqui a regra
+// é manter a versão mais recente e marcar as antigas como deletado=SIM para o
+// sync atualizar o Supabase. Para evitar falso positivo, se houver datas de
+// nascimento diferentes e não vazias, o grupo é ignorado.
+Future<void> _dedupRebanhoLogicoDuplicadoV3(
+  Database db,
+  SharedPreferences prefs,
+) async {
+  const ignoreFields = <String>{
+    'id',
+    'idRebanho',
+    'created_at',
+    'updated_at',
+    'deletado',
+  };
+
+  int recencyScore(Map<String, Object?> row) {
+    final updated = _normalize(row['updated_at']);
+    final created = _normalize(row['created_at']);
+    final raw = updated ?? created;
+    if (raw != null) {
+      final parsed = DateTime.tryParse(
+        raw.contains('T') ? raw : raw.replaceFirst(' ', 'T'),
+      );
+      if (parsed != null) return parsed.millisecondsSinceEpoch;
+    }
+    return (row['id'] as int?) ?? 0;
+  }
+
+  Future<void> markPendingSync() async {
+    final markerMs =
+        DateTime.now().subtract(const Duration(minutes: 5)).millisecondsSinceEpoch;
+    for (final key in const [
+      'ff_dataDadosNaoSyncRebanho',
+      'ff_dataDadosNaoSyncLotes',
+      'ff_dataDadosNaoSyncSanidade',
+      'ff_dataDadosNaoSyncRepro',
+    ]) {
+      final existing = prefs.getInt(key);
+      if (existing == null || existing > markerMs) {
+        await prefs.setInt(key, markerMs);
+      }
+    }
+  }
+
+  final report = <String, int>{
+    'gruposDetectados': 0,
+    'fundidos': 0,
+    'ignoradosDataNascimento': 0,
+    'erros': 0,
+    'pesagensReinseridas': 0,
+    'pesagensSoftDelete': 0,
+    'sanidadeReatribuidos': 0,
+    'reproducaoReatribuidos': 0,
+    'lotesAtualizados': 0,
+    'autoRefsAtualizadas': 0,
+  };
+
+  var houveMutacao = false;
+  try {
+    final groups = await db.rawQuery('''
+      SELECT idPropriedade, numeroAnimal, COUNT(*) AS qtd
+      FROM local_rebanho
+      WHERE COALESCE(deletado, 'NAO') != 'SIM'
+        AND COALESCE(idPropriedade, '') != ''
+        AND COALESCE(numeroAnimal, '') != ''
+      GROUP BY idPropriedade, numeroAnimal
+      HAVING COUNT(*) > 1
+    ''');
+
+    if (groups.isEmpty) {
+      debugPrint('[SQLite][dedupRebanhoV3] nenhuma duplicata lógica.');
+      return;
+    }
+    report['gruposDetectados'] = groups.length;
+    debugPrint(
+        '[SQLite][dedupRebanhoV3] ${groups.length} grupo(s) lógico(s) candidato(s).');
+
+    for (final group in groups) {
+      final idPropriedade = group['idPropriedade'] as String?;
+      final numeroAnimal = group['numeroAnimal'] as String?;
+      if (idPropriedade == null || numeroAnimal == null) continue;
+
+      try {
+        final rows = await db.rawQuery('''
+          SELECT * FROM local_rebanho
+          WHERE COALESCE(deletado, 'NAO') != 'SIM'
+            AND idPropriedade = ?
+            AND numeroAnimal = ?
+        ''', [idPropriedade, numeroAnimal]);
+        if (rows.length < 2) continue;
+
+        final birthDates = rows
+            .map((r) => _normalize(r['dataNascimento']))
+            .whereType<String>()
+            .toSet();
+        if (birthDates.length > 1) {
+          report['ignoradosDataNascimento'] =
+              (report['ignoradosDataNascimento'] ?? 0) + 1;
+          debugPrint(
+              '[SQLite][dedupRebanhoV3] grupo ignorado por datas diferentes: propriedade=$idPropriedade numero=$numeroAnimal datas=$birthDates');
+          continue;
+        }
+
+        final sorted = List<Map<String, Object?>>.from(rows);
+        sorted.sort((a, b) {
+          final cmp = recencyScore(b).compareTo(recencyScore(a));
+          if (cmp != 0) return cmp;
+          final ai = (a['id'] as int?) ?? 0;
+          final bi = (b['id'] as int?) ?? 0;
+          return bi.compareTo(ai);
+        });
+
+        final canonical = sorted.first;
+        final canonicalId = canonical['idRebanho'] as String?;
+        if (canonicalId == null || canonicalId.isEmpty) continue;
+        final duplicates =
+            sorted.where((r) => r['idRebanho'] != canonicalId).toList();
+        if (duplicates.isEmpty) continue;
+
+        final nowIso = DateTime.now().toUtc().toIso8601String();
+        await db.transaction((txn) async {
+          final canonicalUpdates = <String, Object?>{};
+          final fields = canonical.keys.where((k) => !ignoreFields.contains(k));
+          for (final field in fields) {
+            if (_normalize(canonical[field]) != null) continue;
+            for (final dup in duplicates) {
+              if (_normalize(dup[field]) != null) {
+                canonicalUpdates[field] = dup[field];
+                break;
+              }
+            }
+          }
+          if (canonicalUpdates.isNotEmpty) {
+            canonicalUpdates['updated_at'] = nowIso;
+            await txn.update(
+              'local_rebanho',
+              canonicalUpdates,
+              where: 'idRebanho = ?',
+              whereArgs: [canonicalId],
+            );
+          }
+
+          final canonPesagens = await txn.query(
+            'local_historico_pesagens',
+            where: 'idRebanho = ?',
+            whereArgs: [canonicalId],
+          );
+          final canonKeys = canonPesagens.map(_pesagemKey).toSet();
+
+          for (final dup in duplicates) {
+            final dupId = dup['idRebanho'] as String?;
+            if (dupId == null || dupId.isEmpty || dupId == canonicalId) {
+              continue;
+            }
+
+            final pesagensDup = await txn.query(
+              'local_historico_pesagens',
+              where: 'idRebanho = ?',
+              whereArgs: [dupId],
+            );
+            for (final p in pesagensDup) {
+              final pid = p['id'];
+              final isDeleted = (p['deletado'] as String?) == 'SIM';
+              final key = _pesagemKey(p);
+              if (!isDeleted && !canonKeys.contains(key)) {
+                final clone = Map<String, Object?>.from(p);
+                clone.remove('id');
+                clone['idRebanho'] = canonicalId;
+                clone['created_at'] = nowIso;
+                await txn.insert(
+                  'local_historico_pesagens',
+                  clone,
+                  conflictAlgorithm: ConflictAlgorithm.ignore,
+                );
+                canonKeys.add(key);
+                report['pesagensReinseridas'] =
+                    (report['pesagensReinseridas'] ?? 0) + 1;
+              }
+              await txn.update(
+                'local_historico_pesagens',
+                {'deletado': 'SIM'},
+                where: 'id = ?',
+                whereArgs: [pid],
+              );
+              report['pesagensSoftDelete'] =
+                  (report['pesagensSoftDelete'] ?? 0) + 1;
+            }
+
+            final n1 = await txn.update(
+              'local_sanidade',
+              {'id_rebanho': canonicalId, 'updated_at': nowIso},
+              where: 'id_rebanho = ?',
+              whereArgs: [dupId],
+            );
+            final n2 = await txn.update(
+              'local_reproducao',
+              {'id_rebanho_matriz': canonicalId, 'updated_at': nowIso},
+              where: 'id_rebanho_matriz = ?',
+              whereArgs: [dupId],
+            );
+            final n3 = await txn.update(
+              'local_reproducao',
+              {'id_rebanho_reprodutor': canonicalId, 'updated_at': nowIso},
+              where: 'id_rebanho_reprodutor = ?',
+              whereArgs: [dupId],
+            );
+            final n4 = await txn.update(
+              'local_rebanho',
+              {'rebanhoIdMatriz': canonicalId, 'updated_at': nowIso},
+              where: 'rebanhoIdMatriz = ?',
+              whereArgs: [dupId],
+            );
+            final n5 = await txn.update(
+              'local_rebanho',
+              {'rebanhoIdReprodutor': canonicalId, 'updated_at': nowIso},
+              where: 'rebanhoIdReprodutor = ?',
+              whereArgs: [dupId],
+            );
+
+            report['sanidadeReatribuidos'] =
+                (report['sanidadeReatribuidos'] ?? 0) + n1;
+            report['reproducaoReatribuidos'] =
+                (report['reproducaoReatribuidos'] ?? 0) + n2 + n3;
+            report['autoRefsAtualizadas'] =
+                (report['autoRefsAtualizadas'] ?? 0) + n4 + n5;
+
+            final lotesRows = await txn.query(
+              'local_lotes',
+              columns: ['id', 'id_animais'],
+              where: "id_animais LIKE ? AND COALESCE(deletado,'NAO') != 'SIM'",
+              whereArgs: ['%$dupId%'],
+            );
+            for (final lote in lotesRows) {
+              final novoJson = _replaceIdInJsonList(
+                (lote['id_animais'] ?? '').toString(),
+                dupId,
+                canonicalId,
+              );
+              if (novoJson != null && novoJson != lote['id_animais']) {
+                await txn.update(
+                  'local_lotes',
+                  {'id_animais': novoJson, 'updated_at': nowIso},
+                  where: 'id = ?',
+                  whereArgs: [lote['id']],
+                );
+                report['lotesAtualizados'] =
+                    (report['lotesAtualizados'] ?? 0) + 1;
+              }
+            }
+
+            await txn.update(
+              'local_rebanho',
+              {'deletado': 'SIM', 'updated_at': nowIso},
+              where: 'idRebanho = ?',
+              whereArgs: [dupId],
+            );
+            houveMutacao = true;
+            report['fundidos'] = (report['fundidos'] ?? 0) + 1;
+          }
+        });
+      } catch (e, s) {
+        report['erros'] = (report['erros'] ?? 0) + 1;
+        debugPrint(
+            '[SQLite][dedupRebanhoV3] erro no grupo propriedade=$idPropriedade numero=$numeroAnimal: $e\n$s');
+      }
+    }
+
+    if (houveMutacao) {
+      await markPendingSync();
+    }
+    debugPrint('[SQLite][dedupRebanhoV3] Concluído. Relatório: $report');
+  } catch (e, s) {
+    debugPrint('[SQLite][dedupRebanhoV3] ERRO GLOBAL: $e\n$s');
   }
 }
 
