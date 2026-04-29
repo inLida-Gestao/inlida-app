@@ -31,6 +31,7 @@ class AddRebanhoNascimentoWidget extends StatefulWidget {
 class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
     with TickerProviderStateMixin {
   late AddRebanhoNascimentoModel _model;
+  bool _isSaving = false;
 
   @override
   void setState(VoidCallback callback) {
@@ -3682,6 +3683,10 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                         Expanded(
                                           child: FFButtonWidget(
                                             onPressed: () async {
+                                              if (_isSaving) return;
+                                              _isSaving = true;
+                                              safeSetState(() {});
+                                              try {
                                               if (!await sanitizePesoControllersBeforeSave(
                                                   context, [
                                                 _model
@@ -4009,6 +4014,12 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               );
                                               FFAppState().update(() {});
                                               Navigator.pop(context);
+                                              } finally {
+                                                if (mounted) {
+                                                  _isSaving = false;
+                                                  safeSetState(() {});
+                                                }
+                                              }
                                             },
                                             text: 'Salvar',
                                             options: FFButtonOptions(

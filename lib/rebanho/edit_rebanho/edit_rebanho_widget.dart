@@ -31,6 +31,7 @@ class EditRebanhoWidget extends StatefulWidget {
 class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     with TickerProviderStateMixin {
   late EditRebanhoModel _model;
+  bool _isSaving = false;
 
   double? _parsePeso(String? rawValue) => parsePesoFormatado(rawValue);
 
@@ -5337,6 +5338,10 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                         Expanded(
                                           child: FFButtonWidget(
                                             onPressed: () async {
+                                              if (_isSaving) return;
+                                              _isSaving = true;
+                                              safeSetState(() {});
+                                              try {
                                               if (!await sanitizePesoControllersBeforeSave(
                                                   context, [
                                                 _model
@@ -6023,6 +6028,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               );
                                               FFAppState().update(() {});
                                               Navigator.pop(context);
+                                              } finally {
+                                                if (mounted) {
+                                                  _isSaving = false;
+                                                  safeSetState(() {});
+                                                }
+                                              }
                                             },
                                             text: 'Salvar',
                                             options: FFButtonOptions(

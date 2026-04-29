@@ -35,6 +35,7 @@ class EditLoteWidget extends StatefulWidget {
 class _EditLoteWidgetState extends State<EditLoteWidget>
     with TickerProviderStateMixin {
   late EditLoteModel _model;
+  bool _isSaving = false;
 
   String _normalizeLoteNome(String? loteNome) {
     final normalized = loteNome?.trim();
@@ -4236,6 +4237,10 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                 '')
                                                             ? null
                                                             : () async {
+                                                                if (_isSaving) return;
+                                                                _isSaving = true;
+                                                                safeSetState(() {});
+                                                                try {
                                                                 if (!(FFAppState()
                                                                         .dataDadosNaoSyncLotes !=
                                                                     null)) {
@@ -4700,6 +4705,12 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
 
                                                                 safeSetState(
                                                                     () {});
+                                                                } finally {
+                                                                  if (mounted) {
+                                                                    _isSaving = false;
+                                                                    safeSetState(() {});
+                                                                  }
+                                                                }
                                                               },
                                                     text: 'Salvar',
                                                     options: FFButtonOptions(

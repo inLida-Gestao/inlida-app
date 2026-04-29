@@ -135,6 +135,12 @@ class FFAppState extends ChangeNotifier {
               : _pesagensChangeDateTime;
     });
     _safeInit(() {
+      _lastCatchupPesagens = prefs.containsKey('ff_lastCatchupPesagens')
+          ? DateTime.fromMillisecondsSinceEpoch(
+              prefs.getInt('ff_lastCatchupPesagens')!)
+          : _lastCatchupPesagens;
+    });
+    _safeInit(() {
       _lotesCadastrados =
           prefs.getInt('ff_lotesCadastrados') ?? _lotesCadastrados;
     });
@@ -2268,6 +2274,16 @@ class FFAppState extends ChangeNotifier {
         ? prefs.setInt(
             'ff_pesagensChangeDateTime', value.millisecondsSinceEpoch)
         : prefs.remove('ff_pesagensChangeDateTime');
+  }
+
+  DateTime? _lastCatchupPesagens;
+  DateTime? get lastCatchupPesagens => _lastCatchupPesagens;
+  set lastCatchupPesagens(DateTime? value) {
+    _lastCatchupPesagens = value;
+    value != null
+        ? prefs.setInt(
+            'ff_lastCatchupPesagens', value.millisecondsSinceEpoch)
+        : prefs.remove('ff_lastCatchupPesagens');
   }
 
   int _totalPesagens = 0;

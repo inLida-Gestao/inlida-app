@@ -20,6 +20,7 @@ class AddRebanhoSemenWidget extends StatefulWidget {
 
 class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
   late AddRebanhoSemenModel _model;
+  bool _isSaving = false;
 
   @override
   void setState(VoidCallback callback) {
@@ -735,6 +736,10 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                               Expanded(
                                 child: FFButtonWidget(
                                   onPressed: () async {
+                                    if (_isSaving) return;
+                                    _isSaving = true;
+                                    safeSetState(() {});
+                                    try {
                                     if (!(FFAppState()
                                             .dataDadosNaoSyncRebanho !=
                                         null)) {
@@ -804,6 +809,12 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                       ),
                                     );
                                     Navigator.pop(context);
+                                    } finally {
+                                      if (mounted) {
+                                        _isSaving = false;
+                                        safeSetState(() {});
+                                      }
+                                    }
                                   },
                                   text: 'Salvar',
                                   options: FFButtonOptions(

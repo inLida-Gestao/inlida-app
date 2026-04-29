@@ -35,6 +35,7 @@ class AddRebanhoWidget extends StatefulWidget {
 class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
     with TickerProviderStateMixin {
   late AddRebanhoModel _model;
+  bool _isSaving = false;
 
   double? _parsePeso(String? rawValue) => parsePesoFormatado(rawValue);
 
@@ -5317,6 +5318,10 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                           Expanded(
                                             child: FFButtonWidget(
                                               onPressed: () async {
+                                                if (_isSaving) return;
+                                                _isSaving = true;
+                                                safeSetState(() {});
+                                                try {
                                                 if (!await sanitizePesoControllersBeforeSave(
                                                     context, [
                                                   _model
@@ -5808,6 +5813,12 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 );
                                                 FFAppState().update(() {});
                                                 Navigator.pop(context);
+                                                } finally {
+                                                  if (mounted) {
+                                                    _isSaving = false;
+                                                    safeSetState(() {});
+                                                  }
+                                                }
                                               },
                                               text: 'Salvar',
                                               options: FFButtonOptions(

@@ -400,10 +400,13 @@ Future<ApiCallResponse> _buscarPesagensDireto({
   required int offset,
   bool includeCount = false,
   String? updatedAfter,
+  Duration timeout = const Duration(seconds: 25),
 }) {
   final headers = <String, dynamic>{
     ...SupabaseFunctionsGroup.headers,
-    if (includeCount) 'Prefer': 'count=exact',
+    // count=planned é estimativa via planner do Postgres — barato.
+    // count=exact roda COUNT(*) completo e era gargalo principal do 85%.
+    if (includeCount) 'Prefer': 'count=planned',
   };
 
   return ApiManager.instance.makeApiCall(
@@ -426,7 +429,7 @@ Future<ApiCallResponse> _buscarPesagensDireto({
     cache: false,
     isStreamingApi: false,
     alwaysAllowBody: false,
-  );
+  ).timeout(timeout);
 }
 
 /// Busca pesagens onde id_propriedade é NULL, filtrando por idRebanho do
@@ -436,6 +439,7 @@ Future<ApiCallResponse> _buscarPesagensSemPropriedade({
   required int limit,
   required int offset,
   String? updatedAfter,
+  Duration timeout = const Duration(seconds: 25),
 }) {
   return ApiManager.instance.makeApiCall(
     callName: 'Buscar Pesagens sem Propriedade',
@@ -458,7 +462,7 @@ Future<ApiCallResponse> _buscarPesagensSemPropriedade({
     cache: false,
     isStreamingApi: false,
     alwaysAllowBody: false,
-  );
+  ).timeout(timeout);
 }
 
 /// Retorna os idRebanho de todos os animais locais não deletados.
@@ -2550,6 +2554,7 @@ Future refreshPesagens(BuildContext context) async {
       // Continuar com as páginas restantes
       if (firstPageRecords.length >= 999) {
         while (true) {
+          _throwIfCancelled('refreshPesagens');
           final offsetAtual = FFAppState().indexPesagens;
           try {
             pesagensAPI = await _buscarPesagensDireto(
@@ -2603,41 +2608,61 @@ Future refreshPesagens(BuildContext context) async {
       // Registros criados pela web podem não ter id_propriedade preenchido,
       // o que faz com que o filtro principal (in.props) os ignore.
       // Aqui buscamos esses registros usando os idRebanho locais do usuário.
+      //
+      // OTIMIZAÇÃO: no sync incremental, o catch-up só roda se a última
+      // execução foi há mais de 6h — registros legados sem id_propriedade
+      // não migram retroativamente, então é seguro espaçar essa varredura
+      // pesada. No primeiro sync (isFirst) sempre roda.
+      final lastCatchup = FFAppState().lastCatchupPesagens;
+      final shouldRunCatchup = isFirst ||
+          lastCatchup == null ||
+          DateTime.now().difference(lastCatchup) > const Duration(hours: 6);
+      if (!shouldRunCatchup) {
+        _syncLog('pesagens',
+            'Catch-up pulado (último em $lastCatchup, < 6h atrás).');
+      }
       try {
-        final localRebIds = await _getLocalRebanhoIds();
-        if (localRebIds.isNotEmpty) {
-          _syncLog('pesagens',
-              'Catch-up: verificando pesagens com id_propriedade NULL para ${localRebIds.length} animais.');
-          const batchSize = 200;
-          for (var i = 0; i < localRebIds.length; i += batchSize) {
-            final batch = localRebIds.sublist(
-                i,
-                i + batchSize > localRebIds.length
-                    ? localRebIds.length
-                    : i + batchSize);
-            var catchupOffset = 0;
-            while (true) {
-              final resp = await _buscarPesagensSemPropriedade(
-                rebanhoIds: batch,
-                limit: 999,
-                offset: catchupOffset,
-                updatedAfter: updatedAfter,
-              );
-              final recs = _safeRecordsFromApi(resp.jsonBody);
-              if (recs.isEmpty) break;
+        if (shouldRunCatchup) {
+          final localRebIds = await _getLocalRebanhoIds();
+          if (localRebIds.isNotEmpty) {
+            _syncLog('pesagens',
+                'Catch-up: verificando pesagens com id_propriedade NULL para ${localRebIds.length} animais.');
+            // Reduzido de 200 → 50: URLs menores (~1.8KB vs ~7.2KB), queries
+            // Postgres mais leves, e cancelamento mais granular.
+            const batchSize = 50;
+            for (var i = 0; i < localRebIds.length; i += batchSize) {
+              _throwIfCancelled('refreshPesagens');
+              final batch = localRebIds.sublist(
+                  i,
+                  i + batchSize > localRebIds.length
+                      ? localRebIds.length
+                      : i + batchSize);
+              var catchupOffset = 0;
+              while (true) {
+                _throwIfCancelled('refreshPesagens');
+                final resp = await _buscarPesagensSemPropriedade(
+                  rebanhoIds: batch,
+                  limit: 999,
+                  offset: catchupOffset,
+                  updatedAfter: updatedAfter,
+                );
+                final recs = _safeRecordsFromApi(resp.jsonBody);
+                if (recs.isEmpty) break;
 
-              final result = await actions.batchInsertLocalPesagens(recs);
-              final cnt = result['inserted'] as int? ?? 0;
-              totalInserted += cnt;
-              final errs =
-                  result['errors'] as List<Map<String, String>>? ?? [];
-              if (errs.isNotEmpty) syncErrors.addAll(errs);
-              _syncLog('pesagens',
-                  'Catch-up: $cnt registros inseridos (batch ${i ~/ batchSize}, offset=$catchupOffset).');
+                final result = await actions.batchInsertLocalPesagens(recs);
+                final cnt = result['inserted'] as int? ?? 0;
+                totalInserted += cnt;
+                final errs =
+                    result['errors'] as List<Map<String, String>>? ?? [];
+                if (errs.isNotEmpty) syncErrors.addAll(errs);
+                _syncLog('pesagens',
+                    'Catch-up: $cnt registros inseridos (batch ${i ~/ batchSize}, offset=$catchupOffset).');
 
-              if (recs.length < 999) break;
-              catchupOffset += recs.length;
+                if (recs.length < 999) break;
+                catchupOffset += recs.length;
+              }
             }
+            FFAppState().lastCatchupPesagens = DateTime.now();
           }
         }
       } catch (e, s) {

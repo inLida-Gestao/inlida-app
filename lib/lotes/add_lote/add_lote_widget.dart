@@ -27,6 +27,7 @@ class AddLoteWidget extends StatefulWidget {
 class _AddLoteWidgetState extends State<AddLoteWidget>
     with TickerProviderStateMixin {
   late AddLoteModel _model;
+  bool _isSaving = false;
 
   String _normalizeLoteNome(String? loteNome) {
     final normalized = loteNome?.trim();
@@ -3574,6 +3575,10 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                           '')
                                                       ? null
                                                       : () async {
+                                                          if (_isSaving) return;
+                                                          _isSaving = true;
+                                                          safeSetState(() {});
+                                                          try {
                                                           if (!(FFAppState()
                                                                   .dataDadosNaoSyncLotes !=
                                                               null)) {
@@ -3928,6 +3933,12 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                           );
 
                                                           safeSetState(() {});
+                                                          } finally {
+                                                            if (mounted) {
+                                                              _isSaving = false;
+                                                              safeSetState(() {});
+                                                            }
+                                                          }
                                                         },
                                               text: 'Salvar',
                                               options: FFButtonOptions(
