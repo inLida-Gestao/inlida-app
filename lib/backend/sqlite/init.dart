@@ -131,6 +131,13 @@ Future<Database> initializeDatabaseFromDbFile(
   // É CONSERVADOR: só funde quando todos os campos críticos batem.
   await _dedupRebanhoDuplicados(database, prefs);
 
+  // Limpar duplicatas de pesagens (mesmo idRebanho/dataPesagem/tipo/peso)
+  // causadas pelo bug de pré-dedup quebrada (created_at não enviado ao
+  // servidor) antes do fix v1.8.7+112. Roda toda inicialização (não tem
+  // flag) porque novas duplicatas podem chegar via PULL até toda a base
+  // ser limpa.
+  await _dedupPesagensDuplicadas(database);
+
   return database;
 }
 
@@ -721,5 +728,88 @@ String? _replaceIdInJsonList(String json, String oldId, String newId) {
     return jsonEncode(out);
   } catch (_) {
     return null;
+  }
+}
+
+// ============================================================================
+// DEDUPLICAÇÃO DE PESAGENS DUPLICADAS
+// ============================================================================
+// Causa raiz: até v1.8.6+111 o payload de INSERT em historico_pesagens NÃO
+// incluía `created_at`. O servidor gerava seu próprio now() e a pré-dedup
+// (que comparava por created_at) NUNCA batia. Cada retry após timeout pós
+// sucesso criava outra linha. Pior: o PULL trazia as duplicatas de volta
+// como linhas locais distintas (cada uma com id próprio).
+//
+// Esta rotina identifica grupos de pesagens locais que dividem a mesma
+// chave lógica `(idRebanho, dataPesagem, tipo, peso)` (excluindo já
+// deletadas) e mantém apenas UMA — a sobrevivente é a com MENOR id (mais
+// antiga, mais provável de já estar no Supabase com o id correto). As
+// outras são marcadas `deletado='SIM'` e propagadas via UPDT por id.
+//
+// Roda em TODA inicialização (sem flag) porque o PULL pode trazer novas
+// duplicatas até toda a base estar limpa.
+// ============================================================================
+Future<void> _dedupPesagensDuplicadas(Database db) async {
+  try {
+    final groups = await db.rawQuery('''
+      SELECT idRebanho,
+             COALESCE(dataPesagem, '') AS dp,
+             COALESCE(tipo, '') AS tp,
+             COALESCE(peso, 0) AS pe,
+             COUNT(*) AS qtd
+      FROM local_historico_pesagens
+      WHERE COALESCE(deletado, 'NAO') != 'SIM'
+        AND COALESCE(idRebanho, '') != ''
+      GROUP BY idRebanho,
+               COALESCE(dataPesagem, ''),
+               COALESCE(tipo, ''),
+               COALESCE(peso, 0)
+      HAVING COUNT(*) > 1
+    ''');
+
+    if (groups.isEmpty) return;
+
+    int total = 0;
+    for (final g in groups) {
+      final idRebanho = g['idRebanho'] as String?;
+      final dp = g['dp'] as String? ?? '';
+      final tp = g['tp'] as String? ?? '';
+      final pe = g['pe'];
+      if (idRebanho == null) continue;
+
+      // MANTÉM o de MENOR id (geralmente o que o servidor já reconhece) e
+      // marca os outros como deletados.
+      final rows = await db.rawQuery('''
+        SELECT id FROM local_historico_pesagens
+        WHERE COALESCE(deletado, 'NAO') != 'SIM'
+          AND idRebanho = ?
+          AND COALESCE(dataPesagem, '') = ?
+          AND COALESCE(tipo, '') = ?
+          AND COALESCE(peso, 0) = ?
+        ORDER BY id ASC
+      ''', [idRebanho, dp, tp, pe]);
+
+      if (rows.length < 2) continue;
+
+      // Skip o primeiro (sobrevivente). Soft-delete os demais.
+      for (final r in rows.skip(1)) {
+        final id = r['id'];
+        if (id == null) continue;
+        await db.update(
+          'local_historico_pesagens',
+          {'deletado': 'SIM'},
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+        total++;
+      }
+    }
+
+    if (total > 0) {
+      debugPrint(
+          '[SQLite][dedupPesagens] ${groups.length} grupo(s) com duplicata; $total pesagem(ns) marcadas deletado=SIM (propagarão via UPDT na próxima sync).');
+    }
+  } catch (e, s) {
+    debugPrint('[SQLite][dedupPesagens] ERRO: $e\n$s');
   }
 }

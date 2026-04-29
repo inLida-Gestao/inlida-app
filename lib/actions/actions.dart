@@ -911,10 +911,10 @@ Future animaisPropriedade(BuildContext context) async {
 /// Filtra do `chunk` as pesagens que JÁ existem no Supabase, evitando
 /// duplicação por retry após sucesso parcial (timeout pós-INSERT).
 ///
-/// Critério de identidade: `(idRebanho, dataPesagem, tipo, created_at)` —
-/// mesma tupla do índice UNIQUE local. O `created_at` é gerado pelo cliente
-/// no momento do INSERT local e nunca muda, então funciona como discriminador
-/// estável de identidade lógica entre cliente e servidor.
+/// Critério de identidade: `(idRebanho, dataPesagem, tipo, peso)` —
+/// invariante entre cliente e servidor. Antes usávamos `created_at`, mas
+/// como o servidor gera seu próprio `now()` quando o cliente não envia o
+/// campo, a comparação NUNCA batia → todos os retries duplicavam.
 ///
 /// Em caso de qualquer falha na pré-checagem (timeout, erro de rede),
 /// retorna o chunk inalterado — fail-open: melhor tentar inserir e arriscar
@@ -925,34 +925,33 @@ Future<List<Map<String, dynamic>>> _filterPesagensJaInseridas(
   if (chunk.isEmpty) return chunk;
   try {
     final idRebanhos = <String>{};
-    final createdAts = <String>{};
     for (final r in chunk) {
       final idR = r['idRebanho']?.toString();
-      final ca = r['created_at']?.toString();
       if (idR != null && idR.isNotEmpty) idRebanhos.add(idR);
-      if (ca != null && ca.isNotEmpty) createdAts.add(ca);
     }
-    if (idRebanhos.isEmpty || createdAts.isEmpty) return chunk;
+    if (idRebanhos.isEmpty) return chunk;
 
     final query = SupaFlow.client
         .from('historico_pesagens')
-        .select('idRebanho,dataPesagem,tipo,created_at')
-        .inFilter('idRebanho', idRebanhos.toList())
-        .inFilter('created_at', createdAts.toList());
+        .select('idRebanho,dataPesagem,tipo,peso,deletado')
+        .inFilter('idRebanho', idRebanhos.toList());
     final existentes = await _withTimeout(
       () => query,
       label: 'pesagens.preCheck',
-      timeout: kSyncLightTimeout,
+      timeout: kSyncPageTimeout,
     );
 
     final existentesSet = <String>{};
     for (final row in (existentes as List)) {
       final m = row as Map;
+      // Pesagens marcadas deletadas NÃO contam como "existentes" — se o
+      // cliente está re-enviando, é porque vai re-inserir uma equivalente.
+      if ((m['deletado']?.toString() ?? '').toUpperCase() == 'SIM') continue;
       final key = _pesagemPushKey(
         m['idRebanho']?.toString(),
         m['dataPesagem']?.toString(),
         m['tipo']?.toString(),
-        m['created_at']?.toString(),
+        m['peso'],
       );
       if (key != null) existentesSet.add(key);
     }
@@ -965,7 +964,7 @@ Future<List<Map<String, dynamic>>> _filterPesagensJaInseridas(
         r['idRebanho']?.toString(),
         r['dataPesagem']?.toString(),
         r['tipo']?.toString(),
-        r['created_at']?.toString(),
+        r['peso'],
       );
       if (key != null && existentesSet.contains(key)) {
         skipped++;
@@ -985,28 +984,27 @@ Future<List<Map<String, dynamic>>> _filterPesagensJaInseridas(
   }
 }
 
-/// Normaliza chave de identidade lógica de uma pesagem.
-/// O `dataPesagem` precisa ser comparado em formato uniforme: localmente
-/// guardamos 'yyyy-MM-dd', mas o Supabase pode retornar com timezone — então
-/// usamos só a parte YYYY-MM-DD. Para `created_at`, comparamos os primeiros
-/// 19 chars ('YYYY-MM-DD HH:MM:SS' ou 'YYYY-MM-DDTHH:MM:SS').
+/// Chave de identidade lógica de uma pesagem, estável entre cliente e
+/// servidor: `(idRebanho|dataPesagem(YYYY-MM-DD)|tipo|peso)`.
+/// Peso é normalizado para 3 casas decimais para tolerar diferenças de
+/// representação numérica entre Postgres e Dart.
 String? _pesagemPushKey(
-    String? idRebanho, String? dataPesagem, String? tipo, String? createdAt) {
+    String? idRebanho, String? dataPesagem, String? tipo, dynamic peso) {
   if (idRebanho == null || idRebanho.isEmpty) return null;
-  if (createdAt == null || createdAt.isEmpty) return null;
   String normDate(String? s) {
     if (s == null || s.isEmpty) return '';
-    final t = s.length >= 10 ? s.substring(0, 10) : s;
-    return t;
+    return s.length >= 10 ? s.substring(0, 10) : s;
   }
 
-  String normTs(String s) {
-    var t = s.replaceAll('T', ' ');
-    if (t.length >= 19) t = t.substring(0, 19);
-    return t;
+  String normPeso(dynamic v) {
+    if (v == null) return '';
+    if (v is num) return v.toStringAsFixed(3);
+    final s = v.toString().replaceAll(',', '.').trim();
+    final n = double.tryParse(s);
+    return n == null ? s : n.toStringAsFixed(3);
   }
 
-  return '$idRebanho|${normDate(dataPesagem)}|${tipo ?? ''}|${normTs(createdAt)}';
+  return '$idRebanho|${normDate(dataPesagem)}|${tipo ?? ''}|${normPeso(peso)}';
 }
 
 Future<bool> putUpdtRebanhos(BuildContext context) async {
@@ -1049,6 +1047,37 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
     for (final row in localUpd) {
       _throwIfCancelled('putUpdtRebanhos');
       rebanhoPayloads.add(_buildRebanhoPayload(row.data, isInsert: false));
+    }
+
+    // Dedup INTERNO do batch por idRebanho. Postgres não consegue executar
+    // ON CONFLICT DO UPDATE 2x na mesma linha alvo dentro do mesmo upsert
+    // ("ON CONFLICT cannot affect row a second time" / 23505). Mantém apenas
+    // a última ocorrência (mais recente, vinda de localUpd que vem depois).
+    if (rebanhoPayloads.length > 1) {
+      final seen = <String, int>{};
+      final dedupOrder = <Map<String, dynamic>>[];
+      for (final p in rebanhoPayloads) {
+        final id = p['idRebanho']?.toString();
+        if (id == null || id.isEmpty) {
+          dedupOrder.add(p);
+          continue;
+        }
+        if (seen.containsKey(id)) {
+          final idx = seen[id]!;
+          dedupOrder[idx] = p; // sobrescreve com a versão mais recente
+        } else {
+          seen[id] = dedupOrder.length;
+          dedupOrder.add(p);
+        }
+      }
+      final removed = rebanhoPayloads.length - dedupOrder.length;
+      if (removed > 0) {
+        _syncLog('putUpdtRebanhos',
+            'Dedup interno do batch: $removed duplicata(s) por idRebanho removidas (evita 23505).');
+      }
+      rebanhoPayloads
+        ..clear()
+        ..addAll(dedupOrder);
     }
 
     if (rebanhoPayloads.isNotEmpty) {
@@ -1110,6 +1139,33 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
     for (final row in pesPut) {
       _throwIfCancelled('putUpdt_pesagens');
       pesInserts.add(_buildPesagemPayloadInsert(row.data));
+    }
+    // Dedup INTERNO do batch por chave lógica (idRebanho|data|tipo|peso).
+    // Mesmo motivo: evitar inserir 2x o mesmo dado num único push.
+    if (pesInserts.length > 1) {
+      final seen = <String>{};
+      final dedupOrder = <Map<String, dynamic>>[];
+      for (final p in pesInserts) {
+        final key = _pesagemPushKey(
+          p['idRebanho']?.toString(),
+          p['dataPesagem']?.toString(),
+          p['tipo']?.toString(),
+          p['peso'],
+        );
+        if (key == null) {
+          dedupOrder.add(p);
+        } else if (seen.add(key)) {
+          dedupOrder.add(p);
+        }
+      }
+      final removed = pesInserts.length - dedupOrder.length;
+      if (removed > 0) {
+        _syncLog('putUpdt_pesagens',
+            'Dedup interno do batch: $removed pesagem(ns) duplicadas removidas.');
+      }
+      pesInserts
+        ..clear()
+        ..addAll(dedupOrder);
     }
     if (pesInserts.isNotEmpty) {
       _syncLog('putUpdt_pesagens', 'Insert em lote: ${pesInserts.length} pesagem(ns).');
@@ -1292,6 +1348,9 @@ Map<String, dynamic> _buildPesagemPayloadInsert(Map<String, dynamic> raw) {
     'peso': raw['peso'],
     'deletado': raw['deletado'],
     'id_propriedade': raw['id_propriedade'],
+    // CRÍTICO: enviar created_at do cliente para que o servidor não gere um
+    // now() próprio. Sem isso, qualquer pré-checagem por created_at falha.
+    'created_at': serializeDate(raw['created_at']),
   };
   payload.removeWhere((_, v) => v == null);
   return payload;
