@@ -578,35 +578,34 @@ Future<void> _dedupRebanhoDuplicados(
             final isDeleted = (p['deletado'] as String?) == 'SIM';
             final key = _pesagemKey(p);
 
-            if (!isDeleted && !canonKeys.contains(key)) {
-              // Inserir clone no canônico
+            if (isDeleted) continue;
+
+            var podeDeletarOriginal = canonKeys.contains(key);
+            if (!podeDeletarOriginal) {
+              // Inserir clone no canônico. Só deletamos a pesagem original se
+              // o clone for confirmado; falha aqui aborta a transação do grupo.
               final clone = Map<String, Object?>.from(p);
               clone.remove('id');
               clone['idRebanho'] = canonicalId;
               clone['created_at'] = nowIso;
-              try {
-                await txn.insert(
-                  'local_historico_pesagens',
-                  clone,
-                  conflictAlgorithm: ConflictAlgorithm.ignore,
-                );
-                canonKeys.add(key);
-                report['pesagensReinseridas'] =
-                    (report['pesagensReinseridas'] ?? 0) + 1;
-              } on DatabaseException catch (e) {
-                if (!e.isUniqueConstraintError()) rethrow;
-                // Já existe equivalente — ok, segue.
-              }
+              await txn.insert('local_historico_pesagens', clone);
+              canonKeys.add(key);
+              podeDeletarOriginal = true;
+              report['pesagensReinseridas'] =
+                  (report['pesagensReinseridas'] ?? 0) + 1;
             }
-            // Soft-delete da pesagem do dup (será propagada via UPDT).
-            await txn.update(
-              'local_historico_pesagens',
-              {'deletado': 'SIM'},
-              where: 'id = ?',
-              whereArgs: [pid],
-            );
-            report['pesagensSoftDelete'] =
-                (report['pesagensSoftDelete'] ?? 0) + 1;
+
+            if (podeDeletarOriginal) {
+              // Soft-delete da pesagem do dup (será propagada via UPDT).
+              await txn.update(
+                'local_historico_pesagens',
+                {'deletado': 'SIM'},
+                where: 'id = ?',
+                whereArgs: [pid],
+              );
+              report['pesagensSoftDelete'] =
+                  (report['pesagensSoftDelete'] ?? 0) + 1;
+            }
           }
 
           // Sanidade
@@ -877,28 +876,32 @@ Future<void> _dedupRebanhoLogicoDuplicadoV3(
               final pid = p['id'];
               final isDeleted = (p['deletado'] as String?) == 'SIM';
               final key = _pesagemKey(p);
-              if (!isDeleted && !canonKeys.contains(key)) {
+
+              if (isDeleted) continue;
+
+              var podeDeletarOriginal = canonKeys.contains(key);
+              if (!podeDeletarOriginal) {
                 final clone = Map<String, Object?>.from(p);
                 clone.remove('id');
                 clone['idRebanho'] = canonicalId;
                 clone['created_at'] = nowIso;
-                await txn.insert(
-                  'local_historico_pesagens',
-                  clone,
-                  conflictAlgorithm: ConflictAlgorithm.ignore,
-                );
+                await txn.insert('local_historico_pesagens', clone);
                 canonKeys.add(key);
+                podeDeletarOriginal = true;
                 report['pesagensReinseridas'] =
                     (report['pesagensReinseridas'] ?? 0) + 1;
               }
-              await txn.update(
-                'local_historico_pesagens',
-                {'deletado': 'SIM'},
-                where: 'id = ?',
-                whereArgs: [pid],
-              );
-              report['pesagensSoftDelete'] =
-                  (report['pesagensSoftDelete'] ?? 0) + 1;
+
+              if (podeDeletarOriginal) {
+                await txn.update(
+                  'local_historico_pesagens',
+                  {'deletado': 'SIM'},
+                  where: 'id = ?',
+                  whereArgs: [pid],
+                );
+                report['pesagensSoftDelete'] =
+                    (report['pesagensSoftDelete'] ?? 0) + 1;
+              }
             }
 
             final n1 = await txn.update(
