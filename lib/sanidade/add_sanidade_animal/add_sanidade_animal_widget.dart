@@ -32,6 +32,7 @@ class AddSanidadeAnimalWidget extends StatefulWidget {
 
 class _AddSanidadeAnimalWidgetState extends State<AddSanidadeAnimalWidget> {
   late AddSanidadeAnimalModel _model;
+  bool _isSaving = false;
 
   @override
   void setState(VoidCallback callback) {
@@ -255,8 +256,7 @@ class _AddSanidadeAnimalWidgetState extends State<AddSanidadeAnimalWidget> {
                                               child: SizedBox(
                                                 height: 450.0,
                                                 width: double.infinity,
-                                                child:
-                                                    PopupRebanhosWidget(
+                                                child: PopupRebanhosWidget(
                                                   sanidade: true,
                                                 ),
                                               ),
@@ -403,7 +403,8 @@ class _AddSanidadeAnimalWidgetState extends State<AddSanidadeAnimalWidget> {
                               highlightColor: Colors.transparent,
                               onTap: () async {
                                 final datePickedDate = await showDatePicker(
-                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                  initialEntryMode:
+                                      DatePickerEntryMode.calendarOnly,
                                   context: context,
                                   initialDate: getCurrentTimestamp,
                                   firstDate: DateTime(1900),
@@ -2427,212 +2428,231 @@ class _AddSanidadeAnimalWidgetState extends State<AddSanidadeAnimalWidget> {
                   ),
                   Expanded(
                     child: FFButtonWidget(
-                      onPressed: ((FFAppState()
-                                      .rebanhoSanidadeSelecionado
-                                      .idRebanho ==
-                                  '') ||
-                              (_model.datePicked == null) ||
-                              (FFAppState().sanidade.isEmpty) ||
-                              (FFAppState().sanidade.contains('Vacina') &&
-                                  !(_model.dropDownVacinaValue?.isNotEmpty ??
-                                      false)) ||
-                              (FFAppState()
-                                      .sanidade
-                                      .contains('Antiparasitário') &&
-                                  !(_model.dropDownAntiparasitarioValue
-                                          ?.isNotEmpty ??
-                                      false)) ||
-                              (FFAppState().sanidade.contains('Tratamento') &&
-                                  !(_model.dropDownTratamentoValue
-                                          ?.isNotEmpty ??
-                                      false)) ||
-                              (FFAppState()
-                                      .sanidade
-                                      .contains('Protocolo reprodutivo') &&
-                                  ((_model.dropDownProtocoloValue == null) ||
-                                      (_model.dropDownProtocoloValue == ''))))
+                      onPressed: (_isSaving ||
+                              ((FFAppState()
+                                          .rebanhoSanidadeSelecionado
+                                          .idRebanho ==
+                                      '') ||
+                                  (_model.datePicked == null) ||
+                                  (FFAppState().sanidade.isEmpty) ||
+                                  (FFAppState().sanidade.contains('Vacina') &&
+                                      !(_model.dropDownVacinaValue
+                                              ?.isNotEmpty ??
+                                          false)) ||
+                                  (FFAppState()
+                                          .sanidade
+                                          .contains('Antiparasitário') &&
+                                      !(_model.dropDownAntiparasitarioValue
+                                              ?.isNotEmpty ??
+                                          false)) ||
+                                  (FFAppState()
+                                          .sanidade
+                                          .contains('Tratamento') &&
+                                      !(_model.dropDownTratamentoValue
+                                              ?.isNotEmpty ??
+                                          false)) ||
+                                  (FFAppState()
+                                          .sanidade
+                                          .contains('Protocolo reprodutivo') &&
+                                      ((_model.dropDownProtocoloValue ==
+                                              null) ||
+                                          (_model.dropDownProtocoloValue ==
+                                              '')))))
                           ? null
                           : () async {
-                              if (!(FFAppState().dataDadosNaoSyncSanidade !=
-                                  null)) {
-                                FFAppState().dataDadosNaoSyncSanidade =
-                                    getCurrentTimestamp;
-                                safeSetState(() {});
-                              }
-                              await SQLiteManager.instance.insertSanidadeAnimal(
-                                idPropriedade: FFAppState()
-                                    .propriedadeSelecionada
-                                    .idPropriedade,
-                                idRebanho: FFAppState()
-                                    .rebanhoSanidadeSelecionado
-                                    .idRebanho,
-                                dataSanidade: dateTimeFormat(
-                                  "yyyy-MM-dd",
-                                  _model.datePicked,
-                                  locale:
-                                      FFLocalizations.of(context).languageCode,
-                                ),
-                                idSanidade: random_data.randomString(
-                                  20,
-                                  20,
-                                  true,
-                                  false,
-                                  true,
-                                ),
-                                updatedat: dateTimeFormat(
-                                  "yyyy-MM-dd HH:mm:ss",
-                                  getCurrentTimestamp,
-                                  locale:
-                                      FFLocalizations.of(context).languageCode,
-                                ),
-                                deletado: 'NAO',
-                                vacinacao: (_model.dropDownVacinaValue
-                                                    ?.firstOrNull !=
-                                                null &&
-                                            _model.dropDownVacinaValue
-                                                    ?.firstOrNull !=
-                                                '') &&
-                                        (FFAppState()
-                                                .sanidade
-                                                .contains('Vacina') ==
-                                            true)
-                                    ? functions.converterListaParaJSON(
-                                        _model.dropDownVacinaValue?.toList())
-                                    : 'null',
-                                vacinacaoOutros: _model
-                                    .textFieldVacinaOutrosTextController.text,
-                                vacinacaoObs: _model
-                                    .textFieldVacinaObservacaoTextController
-                                    .text,
-                                antiparasitario: (_model
-                                                    .dropDownAntiparasitarioValue
-                                                    ?.firstOrNull !=
-                                                null &&
-                                            _model.dropDownAntiparasitarioValue
-                                                    ?.firstOrNull !=
-                                                '') &&
-                                        (FFAppState().sanidade.contains(
-                                                'Antiparasitário') ==
-                                            true)
-                                    ? functions.converterListaParaJSON(_model
-                                        .dropDownAntiparasitarioValue
-                                        ?.toList())
-                                    : 'null',
-                                antiparasitarioOutros: _model
-                                    .textFieldAntiparasitarioOutrosTextController
-                                    .text,
-                                antiparasitarioObs: _model
-                                    .textFieldAntiparasitarioObservacaoTextController
-                                    .text,
-                                tratamento: (_model.dropDownTratamentoValue !=
-                                                null &&
-                                            (_model.dropDownTratamentoValue)!
-                                                .isNotEmpty) &&
-                                        FFAppState()
-                                            .sanidade
-                                            .contains('Tratamento')
-                                    ? functions.converterListaParaJSON(_model
-                                        .dropDownTratamentoValue
-                                        ?.toList())
-                                    : 'null',
-                                tratamentoOutros: _model
-                                    .textFieldTratamentoOutrosTextController
-                                    .text,
-                                tratamentoObs: _model
-                                    .textFieldTratamentoObservacaoTextController
-                                    .text,
-                                protocoloReprodutivo: valueOrDefault<String>(
-                                  (_model.dropDownProtocoloValue != null &&
-                                              _model.dropDownProtocoloValue !=
+                              if (_isSaving) return;
+                              _isSaving = true;
+                              safeSetState(() {});
+                              try {
+                                if (!(FFAppState().dataDadosNaoSyncSanidade !=
+                                    null)) {
+                                  FFAppState().dataDadosNaoSyncSanidade =
+                                      getCurrentTimestamp;
+                                  safeSetState(() {});
+                                }
+                                await SQLiteManager.instance
+                                    .insertSanidadeAnimal(
+                                  idPropriedade: FFAppState()
+                                      .propriedadeSelecionada
+                                      .idPropriedade,
+                                  idRebanho: FFAppState()
+                                      .rebanhoSanidadeSelecionado
+                                      .idRebanho,
+                                  dataSanidade: dateTimeFormat(
+                                    "yyyy-MM-dd",
+                                    _model.datePicked,
+                                    locale: FFLocalizations.of(context)
+                                        .languageCode,
+                                  ),
+                                  idSanidade: random_data.randomString(
+                                    20,
+                                    20,
+                                    true,
+                                    false,
+                                    true,
+                                  ),
+                                  updatedat: dateTimeFormat(
+                                    "yyyy-MM-dd HH:mm:ss",
+                                    getCurrentTimestamp,
+                                    locale: FFLocalizations.of(context)
+                                        .languageCode,
+                                  ),
+                                  deletado: 'NAO',
+                                  vacinacao: (_model.dropDownVacinaValue
+                                                      ?.firstOrNull !=
+                                                  null &&
+                                              _model.dropDownVacinaValue
+                                                      ?.firstOrNull !=
                                                   '') &&
+                                          (FFAppState()
+                                                  .sanidade
+                                                  .contains('Vacina') ==
+                                              true)
+                                      ? functions.converterListaParaJSON(
+                                          _model.dropDownVacinaValue?.toList())
+                                      : 'null',
+                                  vacinacaoOutros: _model
+                                      .textFieldVacinaOutrosTextController.text,
+                                  vacinacaoObs: _model
+                                      .textFieldVacinaObservacaoTextController
+                                      .text,
+                                  antiparasitario: (_model
+                                                      .dropDownAntiparasitarioValue
+                                                      ?.firstOrNull !=
+                                                  null &&
+                                              _model.dropDownAntiparasitarioValue
+                                                      ?.firstOrNull !=
+                                                  '') &&
+                                          (FFAppState().sanidade.contains(
+                                                  'Antiparasitário') ==
+                                              true)
+                                      ? functions.converterListaParaJSON(_model
+                                          .dropDownAntiparasitarioValue
+                                          ?.toList())
+                                      : 'null',
+                                  antiparasitarioOutros: _model
+                                      .textFieldAntiparasitarioOutrosTextController
+                                      .text,
+                                  antiparasitarioObs: _model
+                                      .textFieldAntiparasitarioObservacaoTextController
+                                      .text,
+                                  tratamento: (_model.dropDownTratamentoValue !=
+                                                  null &&
+                                              (_model.dropDownTratamentoValue)!
+                                                  .isNotEmpty) &&
                                           FFAppState()
                                               .sanidade
-                                              .contains('Protocolo reprodutivo')
-                                      ? _model.dropDownProtocoloValue
+                                              .contains('Tratamento')
+                                      ? functions.converterListaParaJSON(_model
+                                          .dropDownTratamentoValue
+                                          ?.toList())
                                       : 'null',
-                                  'null',
-                                ),
-                                protocoloreprodutivoOutros: _model
-                                    .textFieldProtocoloOutrosTextController
-                                    .text,
-                                protocoloreprodutivoObs: _model
-                                    .textFieldProtocoloObservacaoTextController
-                                    .text,
-                                createdat: dateTimeFormat(
-                                  "yyyy-MM-dd HH:mm:ss",
-                                  getCurrentTimestamp,
-                                  locale:
-                                      FFLocalizations.of(context).languageCode,
-                                ),
-                                protocolod0: _model.dropDownD0Value,
-                                protocoloretirada: _model.dropDownRetiradaValue,
-                                protocoloiatf: _model.dropDownIATFValue,
-                              );
-                              await action_blocks.countSanidades(context);
-                              await action_blocks.qTDSanidades(context);
-                              safeSetState(() {
-                                _model.dropDownVacinaValueController?.reset();
-                                _model.dropDownVacinaValue = null;
-                                _model.dropDownAntiparasitarioValueController
-                                    ?.reset();
-                                _model.dropDownAntiparasitarioValue = null;
-                                _model.dropDownTratamentoValueController
-                                    ?.reset();
-                                _model.dropDownTratamentoValue = null;
-                                _model.dropDownProtocoloValueController
-                                    ?.reset();
-                                _model.dropDownProtocoloValue = null;
-                                _model.dropDownD0ValueController?.reset();
-                                _model.dropDownD0Value = null;
-                                _model.dropDownRetiradaValueController?.reset();
-                                _model.dropDownRetiradaValue = null;
-                                _model.dropDownIATFValueController?.reset();
-                                _model.dropDownIATFValue = null;
-                              });
-                              safeSetState(() {
-                                _model.textFieldVacinaOutrosTextController
-                                    ?.clear();
-                                _model.textFieldVacinaObservacaoTextController
-                                    ?.clear();
-                                _model
-                                    .textFieldAntiparasitarioOutrosTextController
-                                    ?.clear();
-                                _model
-                                    .textFieldAntiparasitarioObservacaoTextController
-                                    ?.clear();
-                                _model.textFieldTratamentoOutrosTextController
-                                    ?.clear();
-                                _model
-                                    .textFieldTratamentoObservacaoTextController
-                                    ?.clear();
-                                _model.textFieldProtocoloOutrosTextController
-                                    ?.clear();
-                                _model
-                                    .textFieldProtocoloObservacaoTextController
-                                    ?.clear();
-                              });
-                              FFAppState().sanidade = [];
-                              FFAppState().vacinasCount = 0;
-                              FFAppState().tratamentosCount = 0;
-                              FFAppState().antiParasitarioCount = 0;
-                              FFAppState().protocolosReproCount = 0;
-                              safeSetState(() {});
-                              FFAppState().update(() {});
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Sanidade adicionada com sucesso.',
-                                    style: TextStyle(
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryBackground,
-                                    ),
+                                  tratamentoOutros: _model
+                                      .textFieldTratamentoOutrosTextController
+                                      .text,
+                                  tratamentoObs: _model
+                                      .textFieldTratamentoObservacaoTextController
+                                      .text,
+                                  protocoloReprodutivo: valueOrDefault<String>(
+                                    (_model.dropDownProtocoloValue != null &&
+                                                _model.dropDownProtocoloValue !=
+                                                    '') &&
+                                            FFAppState().sanidade.contains(
+                                                'Protocolo reprodutivo')
+                                        ? _model.dropDownProtocoloValue
+                                        : 'null',
+                                    'null',
                                   ),
-                                  duration: const Duration(milliseconds: 4000),
-                                  backgroundColor:
-                                      FlutterFlowTheme.of(context).secondary,
-                                ),
-                              );
+                                  protocoloreprodutivoOutros: _model
+                                      .textFieldProtocoloOutrosTextController
+                                      .text,
+                                  protocoloreprodutivoObs: _model
+                                      .textFieldProtocoloObservacaoTextController
+                                      .text,
+                                  createdat: dateTimeFormat(
+                                    "yyyy-MM-dd HH:mm:ss",
+                                    getCurrentTimestamp,
+                                    locale: FFLocalizations.of(context)
+                                        .languageCode,
+                                  ),
+                                  protocolod0: _model.dropDownD0Value,
+                                  protocoloretirada:
+                                      _model.dropDownRetiradaValue,
+                                  protocoloiatf: _model.dropDownIATFValue,
+                                );
+                                await action_blocks.countSanidades(context);
+                                await action_blocks.qTDSanidades(context);
+                                safeSetState(() {
+                                  _model.dropDownVacinaValueController?.reset();
+                                  _model.dropDownVacinaValue = null;
+                                  _model.dropDownAntiparasitarioValueController
+                                      ?.reset();
+                                  _model.dropDownAntiparasitarioValue = null;
+                                  _model.dropDownTratamentoValueController
+                                      ?.reset();
+                                  _model.dropDownTratamentoValue = null;
+                                  _model.dropDownProtocoloValueController
+                                      ?.reset();
+                                  _model.dropDownProtocoloValue = null;
+                                  _model.dropDownD0ValueController?.reset();
+                                  _model.dropDownD0Value = null;
+                                  _model.dropDownRetiradaValueController
+                                      ?.reset();
+                                  _model.dropDownRetiradaValue = null;
+                                  _model.dropDownIATFValueController?.reset();
+                                  _model.dropDownIATFValue = null;
+                                });
+                                safeSetState(() {
+                                  _model.textFieldVacinaOutrosTextController
+                                      ?.clear();
+                                  _model.textFieldVacinaObservacaoTextController
+                                      ?.clear();
+                                  _model
+                                      .textFieldAntiparasitarioOutrosTextController
+                                      ?.clear();
+                                  _model
+                                      .textFieldAntiparasitarioObservacaoTextController
+                                      ?.clear();
+                                  _model.textFieldTratamentoOutrosTextController
+                                      ?.clear();
+                                  _model
+                                      .textFieldTratamentoObservacaoTextController
+                                      ?.clear();
+                                  _model.textFieldProtocoloOutrosTextController
+                                      ?.clear();
+                                  _model
+                                      .textFieldProtocoloObservacaoTextController
+                                      ?.clear();
+                                });
+                                FFAppState().sanidade = [];
+                                FFAppState().vacinasCount = 0;
+                                FFAppState().tratamentosCount = 0;
+                                FFAppState().antiParasitarioCount = 0;
+                                FFAppState().protocolosReproCount = 0;
+                                safeSetState(() {});
+                                FFAppState().update(() {});
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Sanidade adicionada com sucesso.',
+                                      style: TextStyle(
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryBackground,
+                                      ),
+                                    ),
+                                    duration:
+                                        const Duration(milliseconds: 4000),
+                                    backgroundColor:
+                                        FlutterFlowTheme.of(context).secondary,
+                                  ),
+                                );
+                              } finally {
+                                _isSaving = false;
+                                if (mounted) {
+                                  safeSetState(() {});
+                                }
+                              }
                             },
                       text: 'Salvar',
                       options: FFButtonOptions(

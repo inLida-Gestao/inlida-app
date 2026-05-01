@@ -47,31 +47,39 @@ Future<Map<String, dynamic>> batchInsertLocalReproducao(
     }
   }
 
+  final dedupedRecords = _dedupMappedReproducao(mappedRecords);
+  final removedDuplicates = mappedRecords.length - dedupedRecords.length;
+  if (removedDuplicates > 0) {
+    debugPrint(
+        '[SYNC][reproducao] PULL dedup: $removedDuplicates duplicata(s) por id_reproducao removida(s) antes do INSERT local.');
+  }
+
   // Fase 2: Tentar batch insert
   try {
     final db = SQLiteManager.instance.database;
     await db.transaction((txn) async {
       final batch = txn.batch();
-      for (final cleanData in mappedRecords) {
+      for (final cleanData in dedupedRecords) {
         batch.insert('local_reproducao', cleanData,
             conflictAlgorithm: ConflictAlgorithm.replace);
       }
       await batch.commit(noResult: true);
     });
-    return {'inserted': mappedRecords.length, 'errors': errors};
+    return {'inserted': dedupedRecords.length, 'errors': errors};
   } catch (batchError) {
     debugPrint(
         '[SYNC][reproducao] Batch falhou ($batchError). Inserindo individualmente...');
     final db = SQLiteManager.instance.database;
     int insertedCount = 0;
 
-    for (final cleanData in mappedRecords) {
+    for (final cleanData in dedupedRecords) {
       try {
         await db.insert('local_reproducao', cleanData,
             conflictAlgorithm: ConflictAlgorithm.replace);
         insertedCount++;
       } catch (e) {
-        final id = cleanData['idReproducao']?.toString() ??
+        final id = cleanData['id_reproducao']?.toString() ??
+            cleanData['idReproducao']?.toString() ??
             cleanData['id_rebanho']?.toString() ??
             'desconhecido';
         errors.add({'id': id, 'error': e.toString()});
@@ -82,9 +90,35 @@ Future<Map<String, dynamic>> batchInsertLocalReproducao(
   }
 }
 
+List<Map<String, dynamic>> _dedupMappedReproducao(
+  List<Map<String, dynamic>> records,
+) {
+  if (records.length < 2) return records;
+
+  final output = <Map<String, dynamic>>[];
+  final indexById = <String, int>{};
+  for (final record in records) {
+    final id = record['id_reproducao']?.toString().trim();
+    if (id == null || id.isEmpty) {
+      output.add(record);
+      continue;
+    }
+
+    final existingIndex = indexById[id];
+    if (existingIndex == null) {
+      indexById[id] = output.length;
+      output.add(record);
+    } else {
+      output[existingIndex] = record; // mantém a última ocorrência da página.
+    }
+  }
+  return output;
+}
+
 String _extractReproducaoId(dynamic record) {
   if (record is Map) {
-    return record['idReproducao']?.toString() ??
+    return record['id_reproducao']?.toString() ??
+        record['idReproducao']?.toString() ??
         record['id_rebanho']?.toString() ??
         'desconhecido';
   }

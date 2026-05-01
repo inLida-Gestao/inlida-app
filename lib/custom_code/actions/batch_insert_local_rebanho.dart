@@ -157,6 +157,9 @@ Future<Map<String, dynamic>> batchInsertLocalRebanho(
       if (source['categoria_matriz'] != null) {
         mapped['categoria_matriz'] = _cleanNull(source['categoria_matriz']);
       }
+      mapped['sync_dirty'] = 0;
+      mapped['sync_op'] = null;
+      mapped['sync_updated_at'] = null;
 
       mappedRecords.add(mapped);
     } catch (e) {

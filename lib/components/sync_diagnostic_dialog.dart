@@ -1,14 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '/actions/actions.dart' as action_blocks;
+import '/backend/sqlite/sqlite_manager.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 
 /// B6 — Tela de diagnóstico de sincronização.
 ///
 /// Exibe estado atual do sync (isSyncing, lastHeartbeat, lastAutoSync) e os
-/// últimos 200 eventos de telemetria capturados em memória pelo
+/// últimos 500 eventos de telemetria capturados em memória pelo
 /// [action_blocks.SyncTelemetry]. Inclui botão "Cancelar sincronização" que
 /// aciona o flag cooperativo (`FFAppState.syncCancelRequested`).
 ///
@@ -57,6 +59,83 @@ class _SyncDiagnosticDialogState extends State<SyncDiagnosticDialog> {
     return '${two(dt.hour)}:${two(dt.minute)}:${two(dt.second)}';
   }
 
+  String _fmtDateTime(DateTime? dt) => dt?.toIso8601String() ?? '-';
+
+  Future<Map<String, int?>> _collectLocalCounts() async {
+    final tables = <String>[
+      'local_propriedades',
+      'local_lotes',
+      'local_rebanho',
+      'local_reproducao',
+      'local_sanidade',
+      'local_historico_pesagens',
+      'sync_error_log',
+    ];
+    final result = <String, int?>{};
+    for (final table in tables) {
+      try {
+        final rows = await SQLiteManager.instance.database
+            .rawQuery('SELECT COUNT(*) AS qtd FROM $table');
+        final value = rows.isNotEmpty ? rows.first['qtd'] : null;
+        result[table] = value is int ? value : int.tryParse('$value');
+      } catch (_) {
+        result[table] = null;
+      }
+    }
+    return result;
+  }
+
+  Future<String> _buildReport() async {
+    final state = FFAppState();
+    final events = action_blocks.SyncTelemetry.snapshot();
+    final localCounts = await _collectLocalCounts();
+    final buffer = StringBuffer()
+      ..writeln('=== Diagnostico de sincronizacao inLida ===')
+      ..writeln('gerado_em=${DateTime.now().toIso8601String()}')
+      ..writeln('is_syncing=${state.isSyncing}')
+      ..writeln('online=${state.isOnline}')
+      ..writeln('cancel_requested=${state.syncCancelRequested}')
+      ..writeln(
+          'progress=${state.syncProgressPercent}% ${state.syncProgressLabel}')
+      ..writeln('last_heartbeat=${_fmtDateTime(state.lastSyncHeartbeat)}')
+      ..writeln('last_auto_sync=${_fmtDateTime(state.lastAutoSync)}')
+      ..writeln(
+          'ultima_sincronizacao=${_fmtDateTime(state.ultimaSincronizacao)}')
+      ..writeln('marker_prop=${_fmtDateTime(state.dataDadosNaoSyncProp)}')
+      ..writeln('marker_rebanho=${_fmtDateTime(state.dataDadosNaoSyncRebanho)}')
+      ..writeln('marker_lotes=${_fmtDateTime(state.dataDadosNaoSyncLotes)}')
+      ..writeln('marker_repro=${_fmtDateTime(state.dataDadosNaoSyncRepro)}')
+      ..writeln(
+          'marker_sanidade=${_fmtDateTime(state.dataDadosNaoSyncSanidade)}')
+      ..writeln('')
+      ..writeln('--- Contagens locais ---');
+    for (final entry in localCounts.entries) {
+      buffer.writeln('${entry.key}=${entry.value ?? "erro"}');
+    }
+    buffer
+      ..writeln('')
+      ..writeln('--- Eventos (${events.length}) ---');
+
+    for (final e in events) {
+      final elapsed = e.elapsedMs != null ? ' ${e.elapsedMs}ms' : '';
+      final level = e.isError ? 'ERRO' : 'INFO';
+      buffer.writeln(
+          '${e.timestamp.toIso8601String()} [$level][${e.flow}]$elapsed ${e.message}');
+    }
+    return buffer.toString();
+  }
+
+  Future<void> _copyReport() async {
+    await Clipboard.setData(ClipboardData(text: await _buildReport()));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Relatório de sincronização copiado.'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = FFAppState();
@@ -79,8 +158,7 @@ class _SyncDiagnosticDialogState extends State<SyncDiagnosticDialog> {
               const Expanded(
                 child: Text(
                   'Diagnóstico de sincronização',
-                  style: TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
               IconButton(
@@ -110,9 +188,21 @@ class _SyncDiagnosticDialogState extends State<SyncDiagnosticDialog> {
                 ? '${_fmtTime(lastAuto)} (${DateTime.now().difference(lastAuto).inSeconds}s atrás)'
                 : '—',
           ),
+          _statusRow(
+            'Progresso atual',
+            state.syncProgressPercent >= 0
+                ? '${state.syncProgressPercent}% - ${state.syncProgressLabel}'
+                : '—',
+          ),
           _statusRow('Online?', state.isOnline ? 'Sim' : 'Não',
               ok: state.isOnline),
           const SizedBox(height: 12),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.copy),
+            label: const Text('Copiar relatório para análise'),
+            onPressed: _copyReport,
+          ),
+          const SizedBox(height: 8),
           if (isSyncing)
             ElevatedButton.icon(
               icon: const Icon(Icons.cancel),
@@ -136,6 +226,11 @@ class _SyncDiagnosticDialogState extends State<SyncDiagnosticDialog> {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const Spacer(),
+              TextButton.icon(
+                icon: const Icon(Icons.copy, size: 18),
+                label: const Text('Copiar'),
+                onPressed: _copyReport,
+              ),
               TextButton.icon(
                 icon: const Icon(Icons.delete_outline, size: 18),
                 label: const Text('Limpar'),

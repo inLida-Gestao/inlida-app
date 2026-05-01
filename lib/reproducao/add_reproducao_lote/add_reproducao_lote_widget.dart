@@ -29,6 +29,7 @@ class AddReproducaoLoteWidget extends StatefulWidget {
 
 class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
   late AddReproducaoLoteModel _model;
+  bool _isSaving = false;
 
   @override
   void setState(VoidCallback callback) {
@@ -832,7 +833,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       onTap: () async {
                                         final datePicked1Date =
                                             await showDatePicker(
-                                          initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                          initialEntryMode:
+                                              DatePickerEntryMode.calendarOnly,
                                           context: context,
                                           initialDate: getCurrentTimestamp,
                                           firstDate: DateTime(1900),
@@ -1272,7 +1274,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       onTap: () async {
                                         final datePicked2Date =
                                             await showDatePicker(
-                                          initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                          initialEntryMode:
+                                              DatePickerEntryMode.calendarOnly,
                                           context: context,
                                           initialDate: getCurrentTimestamp,
                                           firstDate: DateTime(1900),
@@ -1638,7 +1641,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       onTap: () async {
                                         final datePicked3Date =
                                             await showDatePicker(
-                                          initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                          initialEntryMode:
+                                              DatePickerEntryMode.calendarOnly,
                                           context: context,
                                           initialDate: getCurrentTimestamp,
                                           firstDate: DateTime(1900),
@@ -1823,7 +1827,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       onTap: () async {
                                         final datePicked4Date =
                                             await showDatePicker(
-                                          initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                          initialEntryMode:
+                                              DatePickerEntryMode.calendarOnly,
                                           context: context,
                                           initialDate: getCurrentTimestamp,
                                           firstDate: DateTime(1900),
@@ -2451,7 +2456,9 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               onTap: () async {
                                                 final datePicked5Date =
                                                     await showDatePicker(
-                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                  initialEntryMode:
+                                                      DatePickerEntryMode
+                                                          .calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       getCurrentTimestamp,
@@ -2669,7 +2676,9 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                 onTap: () async {
                                                   final datePicked6Date =
                                                       await showDatePicker(
-                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                    initialEntryMode:
+                                                        DatePickerEntryMode
+                                                            .calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -2894,14 +2903,15 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                 onTap: () async {
                                                   final datePicked6Date =
                                                       await showDatePicker(
-                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                    initialEntryMode:
+                                                        DatePickerEntryMode
+                                                            .calendarOnly,
                                                     context: context,
-                                                    initialDate:
-                                                        _model.datePicked6 ??
-                                                            functions
-                                                                .dataMais295(
-                                                                    _model
-                                                                        .datePicked1!),
+                                                    initialDate: _model
+                                                            .datePicked6 ??
+                                                        functions.dataMais295(
+                                                            _model
+                                                                .datePicked1!),
                                                     firstDate: DateTime(1900),
                                                     lastDate: DateTime(2050),
                                                     builder: (context, child) {
@@ -2976,11 +2986,10 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                   width: double.infinity,
                                                   height: 56.0,
                                                   decoration: BoxDecoration(
-                                                    color: const Color(
-                                                        0xFFF1F1F1),
+                                                    color:
+                                                        const Color(0xFFF1F1F1),
                                                     borderRadius:
-                                                        const BorderRadius
-                                                            .only(
+                                                        const BorderRadius.only(
                                                       bottomLeft:
                                                           Radius.circular(6.0),
                                                       bottomRight:
@@ -2998,8 +3007,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                   child: Padding(
                                                     padding:
                                                         const EdgeInsetsDirectional
-                                                            .fromSTEB(8.0, 0.0,
-                                                            8.0, 0.0),
+                                                            .fromSTEB(
+                                                            8.0, 0.0, 8.0, 0.0),
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -3018,8 +3027,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                                           _model
                                                                               .datePicked1!),
                                                               locale: FFLocalizations
-                                                                      .of(
-                                                                          context)
+                                                                      .of(context)
                                                                   .languageCode,
                                                             ),
                                                             'Data da inseminação + 295 dias',
@@ -3028,10 +3036,9 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                                   .of(context)
                                                               .bodyMedium
                                                               .override(
-                                                                fontFamily:
-                                                                    FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMediumFamily,
+                                                                fontFamily: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
                                                                 color: FlutterFlowTheme.of(
                                                                         context)
                                                                     .secondaryText,
@@ -3050,11 +3057,9 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                         Icon(
                                                           Icons
                                                               .calendar_month_rounded,
-                                                          color:
-                                                              FlutterFlowTheme
-                                                                      .of(
-                                                                          context)
-                                                                  .secondaryText,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .secondaryText,
                                                           size: 24.0,
                                                         ),
                                                       ],
@@ -3165,7 +3170,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                     onTap: () async {
                                       final datePicked7Date =
                                           await showDatePicker(
-                                        initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                        initialEntryMode:
+                                            DatePickerEntryMode.calendarOnly,
                                         context: context,
                                         initialDate: getCurrentTimestamp,
                                         firstDate: DateTime(1900),
@@ -3529,463 +3535,472 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                     ),
                                     Expanded(
                                       child: FFButtonWidget(
-                                        onPressed: ((_model.dropDownLoteValue ==
-                                                        null ||
-                                                    _model.dropDownLoteValue ==
-                                                        '') ||
-                                                (FFAppState()
-                                                        .reprodutorSelecionado
-                                                        .numAnimal ==
-                                                    ''))
+                                        onPressed: (_isSaving ||
+                                                ((_model.dropDownLoteValue ==
+                                                            null ||
+                                                        _model.dropDownLoteValue ==
+                                                            '') ||
+                                                    (FFAppState()
+                                                            .reprodutorSelecionado
+                                                            .numAnimal ==
+                                                        '')))
                                             ? null
                                             : () async {
-                                                _model.lote =
-                                                    await SQLiteManager.instance
-                                                        .buscarLote(
-                                                  idLote:
-                                                      _model.dropDownLoteValue,
-                                                );
-                                                if (functions
-                                                    .converterJSONparaLista(
-                                                        _model
-                                                            .lote!
-                                                            .firstOrNull!
-                                                            .idAnimais!)
-                                                    .isNotEmpty) {
-                                                  if (!(FFAppState()
-                                                          .dataDadosNaoSyncRepro !=
-                                                      null)) {
-                                                    FFAppState()
-                                                            .dataDadosNaoSyncRepro =
-                                                        getCurrentTimestamp;
-                                                    safeSetState(() {});
-                                                  }
-                                                  _model.animaisLote =
+                                                if (_isSaving) return;
+                                                _isSaving = true;
+                                                safeSetState(() {});
+                                                try {
+                                                  _model.lote =
                                                       await SQLiteManager
                                                           .instance
-                                                          .buscarRebanhoReproducaoLote(
-                                                    loteID: _model
+                                                          .buscarLote(
+                                                    idLote: _model
                                                         .dropDownLoteValue,
                                                   );
-                                                  while (_model.index <
-                                                      _model.animaisLote!
-                                                          .length) {
-                                                    if (_model.tipoReproducao ==
-                                                        'Inseminação') {
-                                                      await SQLiteManager
-                                                          .instance
-                                                          .insertReproducao(
-                                                        idPropriedade: FFAppState()
-                                                            .propriedadeSelecionada
-                                                            .idPropriedade,
-                                                        tipoReproducao: _model
-                                                            .tipoReproducao,
-                                                        scoreCorporal: 0.0,
-                                                        dataInseminacao:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked1,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        dataPartidaSemen:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked2,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        partidaSemen:
-                                                            _model.partidaSemen,
-                                                        previsaoParto:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked6 ??
-                                                              functions
-                                                                  .dataMais295(
-                                                                      _model
-                                                                          .datePicked1!),
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        idLote: _model
-                                                            .dropDownLoteValue,
-                                                        dataInicial:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked3,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        dataFinal:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked4,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        inseminador: _model
-                                                            .textFieldInseminadorTextController
-                                                            .text,
-                                                        anotacoes: _model
-                                                            .textFieldAnotacoesTextController
-                                                            .text,
-                                                        idReproducao:
-                                                            random_data
-                                                                .randomString(
-                                                          20,
-                                                          20,
-                                                          true,
-                                                          false,
-                                                          true,
-                                                        ),
-                                                        deletado: 'NAO',
-                                                        createdAt:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd HH:mm:ss",
-                                                          getCurrentTimestamp,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        updatedAt:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd HH:mm:ss",
-                                                          getCurrentTimestamp,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        categoria: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.categoria,
-                                                        numMatriz: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.numeroAnimal,
-                                                        nomeMatriz: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.nome,
-                                                        nascimentoMatriz: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.dataNascimento,
-                                                        numReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .numAnimal,
-                                                        nomeReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .nomeAnimal,
-                                                        nascimentoReprodutor:
-                                                            FFAppState()
-                                                                .reprodutorSelecionado
-                                                                .dataNascAnimal,
-                                                        loteNome:
-                                                            containerListarLotesRowList
-                                                                .where((e) =>
-                                                                    e.idLote ==
-                                                                    _model
-                                                                        .dropDownLoteValue)
-                                                                .toList()
-                                                                .firstOrNull
-                                                                ?.nome,
-                                                        statusReproducao:
-                                                            valueOrDefault<
-                                                                String>(
+                                                  if (functions
+                                                      .converterJSONparaLista(
                                                           _model
-                                                              .dropdownStatusValue,
-                                                          'Não diagnosticado',
-                                                        ),
-                                                        dataStatus:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked5,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        racaMatriz: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.raca,
-                                                        racaReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .racaAnimal,
-                                                        chipReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .chip,
-                                                        chipMatriz: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.chip,
-                                                        ressinc: _model
-                                                            .dropdownRessincValue,
-                                                        parida:
-                                                            _model.checkboxParidaValue ==
-                                                                    true
-                                                                ? 'Sim'
-                                                                : 'Não',
-                                                        dataParto:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked7,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        idrebanhomatriz: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.idRebanho,
-                                                        idrebanhoreprodutor:
-                                                            FFAppState()
-                                                                .reprodutorSelecionado
-                                                                .idRebanho,
-                                                        gnrh: _model
-                                                            .dropdownGnrhValue,
-                                                        cio: _model
-                                                            .dropdownCioValue,
-                                                      );
-                                                    } else {
-                                                      await SQLiteManager
-                                                          .instance
-                                                          .insertReproducaoMonta(
-                                                        idPropriedade: FFAppState()
-                                                            .propriedadeSelecionada
-                                                            .idPropriedade,
-                                                        tipoReproducao: _model
-                                                            .tipoReproducao,
-                                                        scoreCorporal: _model
-                                                            .score
-                                                            .toDouble(),
-                                                        idLote: ' ',
-                                                        dataInicial:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked3,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        dataFinal:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked4,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        anotacoes: _model
-                                                            .textFieldAnotacoesTextController
-                                                            .text,
-                                                        idReproducao:
-                                                            random_data
-                                                                .randomString(
-                                                          20,
-                                                          20,
-                                                          true,
-                                                          false,
-                                                          true,
-                                                        ),
-                                                        deletado: 'NAO',
-                                                        createdAt:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd HH:mm:ss",
-                                                          getCurrentTimestamp,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        updatedAt:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd HH:mm:ss",
-                                                          getCurrentTimestamp,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        categoria: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.categoria,
-                                                        numMatriz: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.numeroAnimal,
-                                                        nomeMatriz: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.nome,
-                                                        nascimentoMatriz: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.dataNascimento,
-                                                        racaMatriz: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.raca,
-                                                        numReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .numAnimal,
-                                                        nomeReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .nomeAnimal,
-                                                        nascimentoReprodutor:
-                                                            FFAppState()
-                                                                .reprodutorSelecionado
-                                                                .dataNascAnimal,
-                                                        racaReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .racaAnimal,
-                                                        loteNome: ' ',
-                                                        statusReproducao:
-                                                            valueOrDefault<
-                                                                String>(
-                                                          _model
-                                                              .dropdownStatusValue,
-                                                          'Não diagnosticado',
-                                                        ),
-                                                        dataStatus:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked5,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        datainseminacao: '',
-                                                        chipReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .chip,
-                                                        chipMatriz: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.chip,
-                                                        previsaoParto:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked6,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        ressinc: _model
-                                                            .dropdownRessincValue,
-                                                        parida:
-                                                            _model.checkboxParidaValue ==
-                                                                    true
-                                                                ? 'Sim'
-                                                                : 'Não',
-                                                        dataParto:
-                                                            dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked7,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
-                                                        idrebanhomatriz: _model
-                                                            .animaisLote
-                                                            ?.elementAtOrNull(
-                                                                _model.index)
-                                                            ?.idRebanho,
-                                                        idrebanhoreprodutor:
-                                                            FFAppState()
-                                                                .reprodutorSelecionado
-                                                                .idRebanho,
-                                                        gnrh: _model
-                                                            .dropdownGnrhValue,
-                                                        cio: _model
-                                                            .dropdownCioValue,
-                                                      );
+                                                              .lote!
+                                                              .firstOrNull!
+                                                              .idAnimais!)
+                                                      .isNotEmpty) {
+                                                    if (!(FFAppState()
+                                                            .dataDadosNaoSyncRepro !=
+                                                        null)) {
+                                                      FFAppState()
+                                                              .dataDadosNaoSyncRepro =
+                                                          getCurrentTimestamp;
+                                                      safeSetState(() {});
                                                     }
+                                                    _model.animaisLote =
+                                                        await SQLiteManager
+                                                            .instance
+                                                            .buscarRebanhoReproducaoLote(
+                                                      loteID: _model
+                                                          .dropDownLoteValue,
+                                                    );
+                                                    while (_model.index <
+                                                        _model.animaisLote!
+                                                            .length) {
+                                                      if (_model
+                                                              .tipoReproducao ==
+                                                          'Inseminação') {
+                                                        await SQLiteManager
+                                                            .instance
+                                                            .insertReproducao(
+                                                          idPropriedade: FFAppState()
+                                                              .propriedadeSelecionada
+                                                              .idPropriedade,
+                                                          tipoReproducao: _model
+                                                              .tipoReproducao,
+                                                          scoreCorporal: 0.0,
+                                                          dataInseminacao:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd",
+                                                            _model.datePicked1,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          dataPartidaSemen:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd",
+                                                            _model.datePicked2,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          partidaSemen: _model
+                                                              .partidaSemen,
+                                                          previsaoParto:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd",
+                                                            _model.datePicked6 ??
+                                                                functions
+                                                                    .dataMais295(
+                                                                        _model
+                                                                            .datePicked1!),
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          idLote: _model
+                                                              .dropDownLoteValue,
+                                                          dataInicial:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd",
+                                                            _model.datePicked3,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          dataFinal:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd",
+                                                            _model.datePicked4,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          inseminador: _model
+                                                              .textFieldInseminadorTextController
+                                                              .text,
+                                                          anotacoes: _model
+                                                              .textFieldAnotacoesTextController
+                                                              .text,
+                                                          idReproducao:
+                                                              random_data
+                                                                  .randomString(
+                                                            20,
+                                                            20,
+                                                            true,
+                                                            false,
+                                                            true,
+                                                          ),
+                                                          deletado: 'NAO',
+                                                          createdAt:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd HH:mm:ss",
+                                                            getCurrentTimestamp,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          updatedAt:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd HH:mm:ss",
+                                                            getCurrentTimestamp,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          categoria: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.categoria,
+                                                          numMatriz: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.numeroAnimal,
+                                                          nomeMatriz: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.nome,
+                                                          nascimentoMatriz: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.dataNascimento,
+                                                          numReprodutor:
+                                                              FFAppState()
+                                                                  .reprodutorSelecionado
+                                                                  .numAnimal,
+                                                          nomeReprodutor:
+                                                              FFAppState()
+                                                                  .reprodutorSelecionado
+                                                                  .nomeAnimal,
+                                                          nascimentoReprodutor:
+                                                              FFAppState()
+                                                                  .reprodutorSelecionado
+                                                                  .dataNascAnimal,
+                                                          loteNome:
+                                                              containerListarLotesRowList
+                                                                  .where((e) =>
+                                                                      e.idLote ==
+                                                                      _model
+                                                                          .dropDownLoteValue)
+                                                                  .toList()
+                                                                  .firstOrNull
+                                                                  ?.nome,
+                                                          statusReproducao:
+                                                              valueOrDefault<
+                                                                  String>(
+                                                            _model
+                                                                .dropdownStatusValue,
+                                                            'Não diagnosticado',
+                                                          ),
+                                                          dataStatus:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd",
+                                                            _model.datePicked5,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          racaMatriz: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.raca,
+                                                          racaReprodutor:
+                                                              FFAppState()
+                                                                  .reprodutorSelecionado
+                                                                  .racaAnimal,
+                                                          chipReprodutor:
+                                                              FFAppState()
+                                                                  .reprodutorSelecionado
+                                                                  .chip,
+                                                          chipMatriz: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.chip,
+                                                          ressinc: _model
+                                                              .dropdownRessincValue,
+                                                          parida:
+                                                              _model.checkboxParidaValue ==
+                                                                      true
+                                                                  ? 'Sim'
+                                                                  : 'Não',
+                                                          dataParto:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd",
+                                                            _model.datePicked7,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          idrebanhomatriz: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.idRebanho,
+                                                          idrebanhoreprodutor:
+                                                              FFAppState()
+                                                                  .reprodutorSelecionado
+                                                                  .idRebanho,
+                                                          gnrh: _model
+                                                              .dropdownGnrhValue,
+                                                          cio: _model
+                                                              .dropdownCioValue,
+                                                        );
+                                                      } else {
+                                                        await SQLiteManager
+                                                            .instance
+                                                            .insertReproducaoMonta(
+                                                          idPropriedade: FFAppState()
+                                                              .propriedadeSelecionada
+                                                              .idPropriedade,
+                                                          tipoReproducao: _model
+                                                              .tipoReproducao,
+                                                          scoreCorporal: _model
+                                                              .score
+                                                              .toDouble(),
+                                                          idLote: ' ',
+                                                          dataInicial:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd",
+                                                            _model.datePicked3,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          dataFinal:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd",
+                                                            _model.datePicked4,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          anotacoes: _model
+                                                              .textFieldAnotacoesTextController
+                                                              .text,
+                                                          idReproducao:
+                                                              random_data
+                                                                  .randomString(
+                                                            20,
+                                                            20,
+                                                            true,
+                                                            false,
+                                                            true,
+                                                          ),
+                                                          deletado: 'NAO',
+                                                          createdAt:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd HH:mm:ss",
+                                                            getCurrentTimestamp,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          updatedAt:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd HH:mm:ss",
+                                                            getCurrentTimestamp,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          categoria: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.categoria,
+                                                          numMatriz: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.numeroAnimal,
+                                                          nomeMatriz: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.nome,
+                                                          nascimentoMatriz: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.dataNascimento,
+                                                          racaMatriz: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.raca,
+                                                          numReprodutor:
+                                                              FFAppState()
+                                                                  .reprodutorSelecionado
+                                                                  .numAnimal,
+                                                          nomeReprodutor:
+                                                              FFAppState()
+                                                                  .reprodutorSelecionado
+                                                                  .nomeAnimal,
+                                                          nascimentoReprodutor:
+                                                              FFAppState()
+                                                                  .reprodutorSelecionado
+                                                                  .dataNascAnimal,
+                                                          racaReprodutor:
+                                                              FFAppState()
+                                                                  .reprodutorSelecionado
+                                                                  .racaAnimal,
+                                                          loteNome: ' ',
+                                                          statusReproducao:
+                                                              valueOrDefault<
+                                                                  String>(
+                                                            _model
+                                                                .dropdownStatusValue,
+                                                            'Não diagnosticado',
+                                                          ),
+                                                          dataStatus:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd",
+                                                            _model.datePicked5,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          datainseminacao: '',
+                                                          chipReprodutor:
+                                                              FFAppState()
+                                                                  .reprodutorSelecionado
+                                                                  .chip,
+                                                          chipMatriz: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.chip,
+                                                          previsaoParto:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd",
+                                                            _model.datePicked6,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          ressinc: _model
+                                                              .dropdownRessincValue,
+                                                          parida:
+                                                              _model.checkboxParidaValue ==
+                                                                      true
+                                                                  ? 'Sim'
+                                                                  : 'Não',
+                                                          dataParto:
+                                                              dateTimeFormat(
+                                                            "yyyy-MM-dd",
+                                                            _model.datePicked7,
+                                                            locale: FFLocalizations
+                                                                    .of(context)
+                                                                .languageCode,
+                                                          ),
+                                                          idrebanhomatriz: _model
+                                                              .animaisLote
+                                                              ?.elementAtOrNull(
+                                                                  _model.index)
+                                                              ?.idRebanho,
+                                                          idrebanhoreprodutor:
+                                                              FFAppState()
+                                                                  .reprodutorSelecionado
+                                                                  .idRebanho,
+                                                          gnrh: _model
+                                                              .dropdownGnrhValue,
+                                                          cio: _model
+                                                              .dropdownCioValue,
+                                                        );
+                                                      }
 
-                                                    _model.index =
-                                                        _model.index + 1;
+                                                      _model.index =
+                                                          _model.index + 1;
+                                                      safeSetState(() {});
+                                                    }
+                                                    await action_blocks
+                                                        .qTDReproducoes(
+                                                            context);
+                                                    FFAppState().update(() {});
+                                                    Navigator.pop(context);
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                        content: Text(
+                                                          'Reprodução em lote adicionada com sucesso.',
+                                                          style: TextStyle(
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondaryBackground,
+                                                          ),
+                                                        ),
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    4000),
+                                                        backgroundColor:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .secondary,
+                                                      ),
+                                                    );
+                                                  } else {
+                                                    await showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (alertDialogContext) {
+                                                        return AlertDialog(
+                                                          content: const Text(
+                                                              'Este lote não possui nenhum animal'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext),
+                                                              child: const Text(
+                                                                  'Ok'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                  }
+
+                                                  safeSetState(() {});
+                                                } finally {
+                                                  _isSaving = false;
+                                                  if (mounted) {
                                                     safeSetState(() {});
                                                   }
-                                                  await action_blocks
-                                                      .qTDReproducoes(context);
-                                                  FFAppState().update(() {});
-                                                  Navigator.pop(context);
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content: Text(
-                                                        'Reprodução em lote adicionada com sucesso.',
-                                                        style: TextStyle(
-                                                          color: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .secondaryBackground,
-                                                        ),
-                                                      ),
-                                                      duration: const Duration(
-                                                          milliseconds: 4000),
-                                                      backgroundColor:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .secondary,
-                                                    ),
-                                                  );
-                                                } else {
-                                                  await showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (alertDialogContext) {
-                                                      return AlertDialog(
-                                                        content: const Text(
-                                                            'Este lote não possui nenhum animal'),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    alertDialogContext),
-                                                            child: const Text(
-                                                                'Ok'),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
                                                 }
-
-                                                safeSetState(() {});
                                               },
                                         text: 'Salvar',
                                         options: FFButtonOptions(

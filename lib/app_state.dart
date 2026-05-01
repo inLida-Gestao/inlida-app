@@ -82,10 +82,9 @@ class FFAppState extends ChangeNotifier {
       _isFirstRun = prefs.getBool('ff_isFirstRun') ?? _isFirstRun;
     });
     _safeInit(() {
-      _dataDadosNaoSyncProp = prefs.containsKey('ff_dataDadosNaoSyncProp')
-          ? DateTime.fromMillisecondsSinceEpoch(
-              prefs.getInt('ff_dataDadosNaoSyncProp')!)
-          : _dataDadosNaoSyncProp;
+      _dataDadosNaoSyncProp =
+          _readPersistedDateTime(prefs, 'ff_dataDadosNaoSyncProp') ??
+              _dataDadosNaoSyncProp;
     });
     _safeInit(() {
       if (prefs.containsKey('ff_userLogado')) {
@@ -128,11 +127,10 @@ class FFAppState extends ChangeNotifier {
               : _rebanhosPesagemChangeDateTime;
     });
     _safeInit(() {
-      _pesagensChangeDateTime =
-          prefs.containsKey('ff_pesagensChangeDateTime')
-              ? DateTime.fromMillisecondsSinceEpoch(
-                  prefs.getInt('ff_pesagensChangeDateTime')!)
-              : _pesagensChangeDateTime;
+      _pesagensChangeDateTime = prefs.containsKey('ff_pesagensChangeDateTime')
+          ? DateTime.fromMillisecondsSinceEpoch(
+              prefs.getInt('ff_pesagensChangeDateTime')!)
+          : _pesagensChangeDateTime;
     });
     _safeInit(() {
       _lastCatchupPesagens = prefs.containsKey('ff_lastCatchupPesagens')
@@ -172,29 +170,24 @@ class FFAppState extends ChangeNotifier {
           prefs.getStringList('ff_categoriasRebanho') ?? _categoriasRebanho;
     });
     _safeInit(() {
-      _dataDadosNaoSyncRebanho = prefs.containsKey('ff_dataDadosNaoSyncRebanho')
-          ? DateTime.fromMillisecondsSinceEpoch(
-              prefs.getInt('ff_dataDadosNaoSyncRebanho')!)
-          : _dataDadosNaoSyncRebanho;
+      _dataDadosNaoSyncRebanho =
+          _readPersistedDateTime(prefs, 'ff_dataDadosNaoSyncRebanho') ??
+              _dataDadosNaoSyncRebanho;
     });
     _safeInit(() {
-      _dataDadosNaoSyncLotes = prefs.containsKey('ff_dataDadosNaoSyncLotes')
-          ? DateTime.fromMillisecondsSinceEpoch(
-              prefs.getInt('ff_dataDadosNaoSyncLotes')!)
-          : _dataDadosNaoSyncLotes;
+      _dataDadosNaoSyncLotes =
+          _readPersistedDateTime(prefs, 'ff_dataDadosNaoSyncLotes') ??
+              _dataDadosNaoSyncLotes;
     });
     _safeInit(() {
-      _dataDadosNaoSyncRepro = prefs.containsKey('ff_dataDadosNaoSyncRepro')
-          ? DateTime.fromMillisecondsSinceEpoch(
-              prefs.getInt('ff_dataDadosNaoSyncRepro')!)
-          : _dataDadosNaoSyncRepro;
+      _dataDadosNaoSyncRepro =
+          _readPersistedDateTime(prefs, 'ff_dataDadosNaoSyncRepro') ??
+              _dataDadosNaoSyncRepro;
     });
     _safeInit(() {
       _dataDadosNaoSyncSanidade =
-          prefs.containsKey('ff_dataDadosNaoSyncSanidade')
-              ? DateTime.fromMillisecondsSinceEpoch(
-                  prefs.getInt('ff_dataDadosNaoSyncSanidade')!)
-              : _dataDadosNaoSyncSanidade;
+          _readPersistedDateTime(prefs, 'ff_dataDadosNaoSyncSanidade') ??
+              _dataDadosNaoSyncSanidade;
     });
     _safeInit(() {
       _propriedadesOFF = prefs
@@ -2281,8 +2274,7 @@ class FFAppState extends ChangeNotifier {
   set lastCatchupPesagens(DateTime? value) {
     _lastCatchupPesagens = value;
     value != null
-        ? prefs.setInt(
-            'ff_lastCatchupPesagens', value.millisecondsSinceEpoch)
+        ? prefs.setInt('ff_lastCatchupPesagens', value.millisecondsSinceEpoch)
         : prefs.remove('ff_lastCatchupPesagens');
   }
 
@@ -2437,6 +2429,25 @@ void _safeInit(Function() initializeField) {
   try {
     initializeField();
   } catch (_) {}
+}
+
+DateTime? _readPersistedDateTime(SharedPreferences prefs, String key) {
+  if (!prefs.containsKey(key)) return null;
+
+  try {
+    final raw = prefs.get(key);
+    if (raw is int) {
+      return DateTime.fromMillisecondsSinceEpoch(raw);
+    }
+    if (raw is String) {
+      final intValue = int.tryParse(raw);
+      if (intValue != null) {
+        return DateTime.fromMillisecondsSinceEpoch(intValue);
+      }
+      return DateTime.tryParse(raw);
+    }
+  } catch (_) {}
+  return null;
 }
 
 Future _safeInitAsync(Function() initializeField) async {

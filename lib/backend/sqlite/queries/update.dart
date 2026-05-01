@@ -194,6 +194,8 @@ Future performInsertRebanho(
   String? rebanhoIdMatriz,
   String? rebanhoIdReprodutor,
 }) {
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
   final query = '''
 INSERT INTO local_rebanho (
     idPropriedade,
@@ -241,7 +243,10 @@ INSERT INTO local_rebanho (
     motivo_morte,
     categoria_matriz,
     rebanhoIdMatriz,
-    rebanhoIdReprodutor
+    rebanhoIdReprodutor,
+    sync_dirty,
+    sync_op,
+    sync_updated_at
 ) VALUES (
     '$idPropriedade',
     '$numeroAnimal',
@@ -288,7 +293,10 @@ INSERT INTO local_rebanho (
     '$motivomorte',
     '$categoriamatriz',
     '$rebanhoIdMatriz',
-    '$rebanhoIdReprodutor'
+    '$rebanhoIdReprodutor',
+    1,
+    'insert',
+    '$syncUpdatedAt'
 );
 ''';
   return database.rawQuery(query);
@@ -366,6 +374,8 @@ Future performInsertRebanhoNascimento(
   String? rebanhoIdMatriz,
   String? rebanhoIdReprodutor,
 }) {
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
   final query = '''
 INSERT INTO local_rebanho (
     idPropriedade,
@@ -405,7 +415,10 @@ INSERT INTO local_rebanho (
     motivo_morte,
     categoria_matriz,
     rebanhoIdMatriz,
-    rebanhoIdReprodutor
+    rebanhoIdReprodutor,
+    sync_dirty,
+    sync_op,
+    sync_updated_at
 ) VALUES (
     '$idPropriedade',
     '$numeroAnimal',
@@ -444,7 +457,10 @@ INSERT INTO local_rebanho (
     '$motivomorte',
     '$categoriamatriz',
     '$rebanhoIdMatriz',
-    '$rebanhoIdReprodutor'
+    '$rebanhoIdReprodutor',
+    1,
+    'insert',
+    '$syncUpdatedAt'
 );
 ''';
   return database.rawQuery(query);
@@ -471,6 +487,8 @@ Future performInsertRebanhoSemen(
   String? nomeConcat,
   String? statusRebanho,
 }) {
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
   final query = '''
 INSERT INTO local_rebanho (
     idPropriedade,
@@ -487,7 +505,10 @@ INSERT INTO local_rebanho (
     updated_at,
     tipo,
     nomeConcat,
-    statusRebanho
+    statusRebanho,
+    sync_dirty,
+    sync_op,
+    sync_updated_at
 ) VALUES (
     '$idPropriedade',
     '$numeroAnimal',
@@ -503,7 +524,10 @@ INSERT INTO local_rebanho (
     '$updatedat',
     '$tipo',
     '$nomeConcat',
-    '$statusRebanho'
+    '$statusRebanho',
+    1,
+    'insert',
+    '$syncUpdatedAt'
 );
 ''';
   return database.rawQuery(query);
@@ -514,6 +538,7 @@ INSERT INTO local_rebanho (
 /// BEGIN ADD PESAGEM
 Future performAddPesagem(
   Database database, {
+  String? idPesagem,
   String? idRebanho,
   String? dataPesagem,
   String? tipo,
@@ -523,10 +548,13 @@ Future performAddPesagem(
   String? idPropriedade,
 }) {
   const query = '''
-INSERT INTO local_historico_pesagens (idRebanho, dataPesagem, tipo, peso, deletado, created_at, id_propriedade)
-VALUES (?, ?, ?, ?, ?, ?, ?)
+INSERT INTO local_historico_pesagens (id_pesagem, idRebanho, dataPesagem, tipo, peso, deletado, created_at, id_propriedade, sync_dirty, sync_op, sync_updated_at)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ''';
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
   return database.rawInsert(query, [
+    idPesagem,
     idRebanho,
     dataPesagem,
     tipo,
@@ -534,6 +562,9 @@ VALUES (?, ?, ?, ?, ?, ?, ?)
     deletado,
     createdat,
     idPropriedade,
+    1,
+    'upsert',
+    syncUpdatedAt,
   ]);
 }
 
@@ -546,9 +577,15 @@ Future performUPDTPesoRebanho(
   String? data,
   String? idRebanho,
 }) {
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
   final query = '''
 UPDATE local_rebanho
-SET pesoAtual = $peso, dataUltimaPesagem = '$data'
+SET pesoAtual = $peso,
+    dataUltimaPesagem = '$data',
+    sync_dirty = 1,
+    sync_op = CASE WHEN sync_op = 'insert' THEN 'insert' ELSE 'update' END,
+    sync_updated_at = '$syncUpdatedAt'
 WHERE idRebanho = '$idRebanho'
 ''';
   return database.rawQuery(query);
@@ -614,9 +651,14 @@ loteNome = ?, loteID = ?, movimentacao_entrada = ?, dataVenda = ?,
 valorVenda = ?, numeroMatriz = ?, nomeMatriz = ?, dataNascMatriz = ?,
 racaMatriz = ?, numeroReprodutor = ?, nomeReprodutor = ?, dataNascReprodutor = ?,
 racaReprodutor = ?, movimentacao_saida = ?, data_morte = ?, motivo_morte = ?,
-categoria_matriz = ?, rebanhoIdMatriz = ?, rebanhoIdReprodutor = ?
+categoria_matriz = ?, rebanhoIdMatriz = ?, rebanhoIdReprodutor = ?,
+sync_dirty = 1,
+sync_op = CASE WHEN sync_op = 'insert' THEN 'insert' ELSE 'update' END,
+sync_updated_at = ?
 WHERE idRebanho = ?
 ''';
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
   return database.rawUpdate(query, [
     numeroAnimal,
     chip,
@@ -659,6 +701,7 @@ WHERE idRebanho = ?
     categoriamatriz,
     rebanhoIdMatriz,
     rebanhoIdReprodutor,
+    syncUpdatedAt,
     idRebanho,
   ]);
 }
@@ -671,13 +714,22 @@ Future performDeletePesagem(
   String? idRebanho,
   int? idPesagem,
 }) {
-  final query = '''
+  const query = '''
 UPDATE local_historico_pesagens
-SET deletado = 'SIM'
-WHERE idRebanho = '$idRebanho'
-AND id = $idPesagem
+SET deletado = 'SIM',
+    sync_dirty = 1,
+    sync_op = 'delete',
+    sync_updated_at = ?
+WHERE idRebanho = ?
+AND id = ?
 ''';
-  return database.rawQuery(query);
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  return database.rawUpdate(query, [
+    syncUpdatedAt,
+    idRebanho,
+    idPesagem,
+  ]);
 }
 
 /// END DELETE PESAGEM
@@ -746,9 +798,17 @@ Future performUPDTRebanhoLote(
   String? idRebanho,
   String? dataEntradaLote,
 }) {
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
   final query = '''
 UPDATE local_rebanho
-SET loteID = '$loteID', loteNome = '$loteNome', updated_at = '$updatedat', dataEntradaLote = '$dataEntradaLote'
+SET loteID = '$loteID',
+    loteNome = '$loteNome',
+    updated_at = '$updatedat',
+    dataEntradaLote = '$dataEntradaLote',
+    sync_dirty = 1,
+    sync_op = CASE WHEN sync_op = 'insert' THEN 'insert' ELSE 'update' END,
+    sync_updated_at = '$syncUpdatedAt'
 WHERE idRebanho = '$idRebanho'
 ''';
   return database.rawQuery(query);
@@ -1382,12 +1442,22 @@ Future performDeleteRebanho(
   String? idRebanho,
   String? updatedat,
 }) {
-  final query = '''
+  const query = '''
 UPDATE local_rebanho
-SET deletado = 'SIM', updated_at = '$updatedat'
-where idRebanho = '$idRebanho'
+SET deletado = 'SIM',
+    updated_at = ?,
+    sync_dirty = 1,
+    sync_op = 'delete',
+    sync_updated_at = ?
+WHERE idRebanho = ?
 ''';
-  return database.rawQuery(query);
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  return database.rawUpdate(query, [
+    updatedat,
+    syncUpdatedAt,
+    idRebanho,
+  ]);
 }
 
 /// END DELETE REBANHO
@@ -1638,10 +1708,15 @@ Future performUPDTRebanhoLoteVenda(
   String? dataVenda,
   double? valorVenda,
 }) {
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
   final query = '''
 UPDATE local_rebanho
 SET loteID = '$loteID', loteNome = '$loteNome', updated_at = '$updatedat', dataEntradaLote = '$dataEntradaLote',
-dataVenda = '$dataVenda', valorVenda = $valorVenda, statusRebanho = 'Vendido'
+dataVenda = '$dataVenda', valorVenda = $valorVenda, statusRebanho = 'Vendido',
+sync_dirty = 1,
+sync_op = CASE WHEN sync_op = 'insert' THEN 'insert' ELSE 'update' END,
+sync_updated_at = '$syncUpdatedAt'
 WHERE idRebanho = '$idRebanho'
 ''';
   return database.rawQuery(query);

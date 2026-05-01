@@ -8,6 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+const int _largeStartupDbBytes = 25 * 1024 * 1024;
+const int _largeStartupTableRows = 50000;
+
 bool _hasPendingLocalSync(SharedPreferences prefs) {
   const pendingSyncKeys = <String>[
     'ff_dataDadosNaoSyncProp',
@@ -23,6 +26,44 @@ bool _hasPendingLocalSync(SharedPreferences prefs) {
     }
   }
   return false;
+}
+
+int? _getPrefsIntSafe(SharedPreferences prefs, String key) {
+  try {
+    final raw = prefs.get(key);
+    if (raw is int) return raw;
+    if (raw is String) {
+      final parsedInt = int.tryParse(raw);
+      if (parsedInt != null) return parsedInt;
+      final parsedDate = DateTime.tryParse(raw);
+      return parsedDate?.millisecondsSinceEpoch;
+    }
+  } catch (e) {
+    debugPrint('[SQLite] Preferência "$key" inválida: $e');
+  }
+  return null;
+}
+
+Future<int> _safeFileSizeBytes(String path) async {
+  try {
+    final file = File(path);
+    if (!await file.exists()) return 0;
+    return await file.length();
+  } catch (e) {
+    debugPrint('[SQLite] Erro ao medir tamanho do banco: $e');
+    return 0;
+  }
+}
+
+Future<void> _setPendingMarkerIfEarlier(
+  SharedPreferences prefs,
+  String key,
+  int markerMs,
+) async {
+  final existing = _getPrefsIntSafe(prefs, key);
+  if (existing == null || existing > markerMs) {
+    await prefs.setInt(key, markerMs);
+  }
 }
 
 Future<Database> initializeDatabaseFromDbFile(
@@ -41,7 +82,7 @@ Future<Database> initializeDatabaseFromDbFile(
 
   final prefs = await SharedPreferences.getInstance();
   final String prefsKey = 'sqlite_db_version_$databaseName';
-  final int installedVersion = prefs.getInt(prefsKey) ?? 0;
+  final int installedVersion = _getPrefsIntSafe(prefs, prefsKey) ?? 0;
   final bool hasPendingLocalSync = _hasPendingLocalSync(prefs);
 
   final exists = await databaseExists(databasePath);
@@ -56,6 +97,10 @@ Future<Database> initializeDatabaseFromDbFile(
         'versãoInstalada=$installedVersion, versãoEsperada=$expectedVersion');
     needsRecreation = false;
   }
+  final bool isDeferredDatabaseUpgrade = exists &&
+      expectedVersion > 0 &&
+      installedVersion != expectedVersion &&
+      hasPendingLocalSync;
 
   if (needsRecreation) {
     debugPrint('[SQLite] DB "$databaseName" precisa ser recriado. '
@@ -110,48 +155,347 @@ Future<Database> initializeDatabaseFromDbFile(
 
   // Abrir o banco de dados
   final database = await openDatabase(databasePath);
+  final databaseSizeBytes = await _safeFileSizeBytes(databasePath);
+  final largeStartupDb = databaseSizeBytes >= _largeStartupDbBytes;
+  if (largeStartupDb) {
+    debugPrint(
+        '[SQLite] Base local grande (${(databaseSizeBytes / (1024 * 1024)).toStringAsFixed(1)}MB). '
+        'Manutenções pesadas de abertura serão adiadas.');
+  }
+
+  // Em atualização com dados locais pendentes, o banco antigo é preservado.
+  // Antes de qualquer query nova, garanta colunas adicionadas em versões
+  // recentes para evitar crash na splash por "no such column".
+  await _ensureLocalSchemaCompatibility(database);
+  await _backfillLocalRebanhoDirtyFlags(database, prefs);
+  await _backfillLocalPesagemKeys(database, prefs);
+  if (largeStartupDb) {
+    debugPrint(
+        '[SQLite] Dedup por id_pesagem pulado na abertura para evitar travar update Android.');
+  } else {
+    await _dedupPesagemPorIdPesagem(database);
+  }
 
   // Validar compatibilidade FTS5 (Android não tem FTS5 no SQLite do sistema)
   await _ensureFts5Compatibility(database);
 
   // Criar índices para otimizar buscas no rebanho popup
-  await _ensureRebanhoIndexes(database);
+  await _ensureRebanhoIndexes(database, allowHeavyIndexes: !largeStartupDb);
 
-  // CRÍTICO: dedup por idRebanho ANTES de criar UNIQUE INDEX, senão o
-  // CREATE UNIQUE falha silenciosamente e o PULL passa a duplicar tudo
-  // (ConflictAlgorithm.replace só funciona se o índice UNIQUE existe).
-  // Roda toda inicialização — sem flag — porque novas duplicatas podem
-  // chegar até a base estar limpa.
-  await _dedupRebanhoPorIdRebanho(database);
+  final shouldRunStartupMaintenance =
+      await _shouldRunStartupMaintenance(database, isDeferredDatabaseUpgrade);
+
+  // CRÍTICO: em bases grandes/antigas com pendências locais, não rode
+  // deduplicações pesadas antes do runApp. Isso era a causa provável da splash
+  // longa/kill pelo SO após atualização. A sync foi blindada para não depender
+  // dessas limpezas síncronas.
+  if (shouldRunStartupMaintenance) {
+    await _dedupReproducaoPorIdReproducao(database);
+    await _dedupSanidadePorIdSanidade(database);
+  } else {
+    debugPrint(
+        '[SQLite] Manutenção pesada de startup adiada para preservar abertura rápida.');
+  }
 
   // Criar índices UNIQUE para suportar UPSERT incremental
-  await _ensureUniqueBusinessKeys(database);
+  await _ensureUniqueBusinessKeys(database, allowHeavyIndexes: !largeStartupDb);
 
   // Criar tabela de auditoria de erros de sincronização
   await _ensureSyncErrorLogTable(database);
 
-  // Limpar duplicatas históricas de Nascimento/Desmama
-  await _dedupePesagensFixas(database, prefs, expectedVersion);
+  if (shouldRunStartupMaintenance) {
+    // Limpar duplicatas históricas de Nascimento/Desmama
+    await _dedupePesagensFixas(database, prefs, expectedVersion);
 
-  // Limpar duplicatas de animais (mesmo numeroAnimal/dataNascimento) causadas
-  // por duplo-clique no botão Salvar antes do fix v1.8.4+109.
-  // É CONSERVADOR: só funde quando todos os campos críticos batem.
-  await _dedupRebanhoDuplicados(database, prefs);
+    // Limpar duplicatas de pesagens (mesmo idRebanho/dataPesagem/tipo/peso)
+    // causadas pelo bug de pré-dedup quebrada (created_at não enviado ao
+    // servidor) antes do fix v1.8.7+112.
+    await _dedupPesagensDuplicadas(database);
 
-  // Limpar duplicatas lógicas remanescentes (mesmo número na propriedade, mas
-  // idRebanho diferente). A v2 era conservadora e podia pular grupos depois de
-  // edições; esta rotina mantém a versão mais recente e marca as antigas como
-  // deletado=SIM para o sync remover do Supabase.
-  await _dedupRebanhoLogicoDuplicadoV3(database, prefs);
+    // Limpar duplicatas lógicas de reprodução causadas por duplo toque/loop de
+    // lote (mesma matriz/reprodutor/data/período com id_reproducao diferente).
+    await _dedupReproducaoLogicoDuplicado(database, prefs);
 
-  // Limpar duplicatas de pesagens (mesmo idRebanho/dataPesagem/tipo/peso)
-  // causadas pelo bug de pré-dedup quebrada (created_at não enviado ao
-  // servidor) antes do fix v1.8.7+112. Roda toda inicialização (não tem
-  // flag) porque novas duplicatas podem chegar via PULL até toda a base
-  // ser limpa.
-  await _dedupPesagensDuplicadas(database);
+    // Limpar duplicatas lógicas de sanidade causadas por duplo toque/loop de
+    // lote, mantendo canônico e propagando soft-delete das duplicatas.
+    await _dedupSanidadeLogicoDuplicado(database, prefs);
+  }
 
   return database;
+}
+
+Future<void> _ensureLocalSchemaCompatibility(Database db) async {
+  final columnsByTable = <String, Map<String, String>>{
+    'local_historico_pesagens': {
+      'id_pesagem': 'TEXT',
+      'sync_dirty': 'INTEGER',
+      'sync_op': 'TEXT',
+      'sync_updated_at': 'TEXT',
+    },
+    'local_rebanho': {
+      'movimentacao_entrada': 'TEXT',
+      'movimentacao_saida': 'TEXT',
+      'data_morte': 'TEXT',
+      'motivo_morte': 'TEXT',
+      'categoria_matriz': 'TEXT',
+      'sync_dirty': 'INTEGER',
+      'sync_op': 'TEXT',
+      'sync_updated_at': 'TEXT',
+    },
+    'local_reproducao': {
+      'racaMatriz': 'TEXT',
+      'racaReprodutor': 'TEXT',
+      'chipReprodutor': 'TEXT',
+      'chipMatriz': 'TEXT',
+      'ressinc': 'TEXT',
+      'parida': 'TEXT',
+      'data_parto': 'TEXT',
+      'gnrh': 'TEXT',
+      'cio': 'TEXT',
+    },
+    'local_sanidade': {
+      'protocolo_d0': 'TEXT',
+      'protocolo_retirada': 'TEXT',
+      'protocolo_iatf': 'TEXT',
+    },
+  };
+
+  for (final tableEntry in columnsByTable.entries) {
+    try {
+      final existingColumns = await _tableColumns(db, tableEntry.key);
+      if (existingColumns.isEmpty) continue;
+      for (final columnEntry in tableEntry.value.entries) {
+        if (existingColumns.contains(columnEntry.key)) continue;
+        await db.execute(
+            'ALTER TABLE ${tableEntry.key} ADD COLUMN ${columnEntry.key} ${columnEntry.value}');
+        debugPrint(
+            '[SQLite] Coluna ${tableEntry.key}.${columnEntry.key} criada para compatibilidade.');
+      }
+    } catch (e) {
+      debugPrint(
+          '[SQLite] Erro ao garantir compatibilidade de ${tableEntry.key}: $e');
+    }
+  }
+}
+
+Future<void> _backfillLocalRebanhoDirtyFlags(
+  Database db,
+  SharedPreferences prefs,
+) async {
+  try {
+    if (!await _tableExists(db, 'local_rebanho')) return;
+    final columns = await _tableColumns(db, 'local_rebanho');
+    if (!columns.contains('sync_dirty') ||
+        !columns.contains('sync_op') ||
+        !columns.contains('sync_updated_at')) {
+      return;
+    }
+
+    final markerMs = _getPrefsIntSafe(prefs, 'ff_dataDadosNaoSyncRebanho');
+    var insertsMarked = 0;
+    var updatesMarked = 0;
+    var deletesMarked = 0;
+    if (markerMs != null) {
+      final marker = DateTime.fromMillisecondsSinceEpoch(markerMs)
+          .toIso8601String()
+          .substring(0, 19)
+          .replaceFirst('T', ' ');
+      insertsMarked = await db.rawUpdate(
+        '''
+        UPDATE local_rebanho
+        SET sync_dirty = 1,
+            sync_op = 'insert',
+            sync_updated_at = COALESCE(created_at, updated_at)
+        WHERE sync_dirty IS NULL
+          AND COALESCE(idRebanho, '') != ''
+          AND COALESCE(deletado, 'NAO') != 'SIM'
+          AND datetime(created_at, 'localtime') >= datetime(?, 'localtime')
+        ''',
+        [marker],
+      );
+      updatesMarked = await db.rawUpdate(
+        '''
+        UPDATE local_rebanho
+        SET sync_dirty = 1,
+            sync_op = 'update',
+            sync_updated_at = COALESCE(updated_at, created_at)
+        WHERE sync_dirty IS NULL
+          AND COALESCE(idRebanho, '') != ''
+          AND COALESCE(deletado, 'NAO') != 'SIM'
+          AND datetime(updated_at, 'localtime') >= datetime(?, 'localtime')
+          AND (
+            created_at IS NULL
+            OR datetime(created_at, 'localtime') < datetime(?, 'localtime')
+          )
+        ''',
+        [marker, marker],
+      );
+      deletesMarked = await db.rawUpdate(
+        '''
+        UPDATE local_rebanho
+        SET sync_dirty = 1,
+            sync_op = 'delete',
+            sync_updated_at = COALESCE(updated_at, created_at)
+        WHERE sync_dirty IS NULL
+          AND COALESCE(idRebanho, '') != ''
+          AND COALESCE(deletado, 'NAO') = 'SIM'
+          AND datetime(updated_at, 'localtime') >= datetime(?, 'localtime')
+        ''',
+        [marker],
+      );
+    }
+
+    if (insertsMarked > 0 || updatesMarked > 0 || deletesMarked > 0) {
+      debugPrint(
+          '[SQLite] Backfill sync rebanho: inserts=$insertsMarked updates=$updatesMarked deletes=$deletesMarked.');
+    }
+  } catch (e) {
+    debugPrint('[SQLite] Erro no backfill de sync rebanho: $e');
+  }
+}
+
+Future<void> _backfillLocalPesagemKeys(
+  Database db,
+  SharedPreferences prefs,
+) async {
+  try {
+    if (!await _tableExists(db, 'local_historico_pesagens')) return;
+    final markerMs = _getPrefsIntSafe(prefs, 'ff_dataDadosNaoSyncRebanho');
+    final args = <Object?>[];
+    final pendingFilter = StringBuffer('''
+      AND (
+        sync_dirty = 1
+    ''');
+    if (markerMs != null) {
+      final marker = DateTime.fromMillisecondsSinceEpoch(markerMs)
+          .toIso8601String()
+          .substring(0, 19)
+          .replaceFirst('T', ' ');
+      pendingFilter.write('''
+        OR datetime(created_at, 'localtime') >= datetime(?, 'localtime')
+      ''');
+      args.add(marker);
+    }
+    pendingFilter.write('''
+      )
+    ''');
+
+    final updated = await db.rawUpdate('''
+      UPDATE local_historico_pesagens
+      SET id_pesagem = 'legacy:' ||
+          COALESCE(idRebanho, '') || '|' ||
+          COALESCE(substr(dataPesagem, 1, 10), '') || '|' ||
+          COALESCE(tipo, '') || '|' ||
+          CASE
+            WHEN peso IS NULL THEN ''
+            ELSE printf('%.3f', CAST(peso AS REAL))
+           END || '|' ||
+           COALESCE(created_at, '')
+      WHERE COALESCE(id_pesagem, '') = ''
+      ${pendingFilter.toString()}
+    ''', args);
+    if (updated > 0) {
+      debugPrint(
+          '[SQLite] Backfill id_pesagem pendente aplicado em $updated pesagem(ns).');
+    }
+  } catch (e) {
+    debugPrint('[SQLite] Erro ao preencher id_pesagem local: $e');
+  }
+}
+
+Future<void> _dedupPesagemPorIdPesagem(Database db) async {
+  try {
+    final total = await _safeTableCount(db, 'local_historico_pesagens');
+    if (total > _largeStartupTableRows) {
+      debugPrint(
+          '[SQLite] Dedup id_pesagem adiado: $total pesagem(ns) locais.');
+      return;
+    }
+    final groups = await db.rawQuery('''
+      SELECT id_pesagem, COUNT(*) AS qtd
+      FROM local_historico_pesagens
+      WHERE COALESCE(id_pesagem, '') != ''
+      GROUP BY id_pesagem
+      HAVING COUNT(*) > 1
+    ''');
+    var removed = 0;
+    for (final group in groups) {
+      final idPesagem = group['id_pesagem']?.toString();
+      if (idPesagem == null || idPesagem.isEmpty) continue;
+      final rows = await db.query(
+        'local_historico_pesagens',
+        columns: ['id'],
+        where: 'id_pesagem = ?',
+        whereArgs: [idPesagem],
+        orderBy: 'id DESC',
+      );
+      for (final row in rows.skip(1)) {
+        final id = row['id'];
+        if (id == null) continue;
+        await db.delete(
+          'local_historico_pesagens',
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+        removed++;
+      }
+    }
+    if (removed > 0) {
+      debugPrint(
+          '[SQLite] $removed pesagem(ns) duplicada(s) por id_pesagem removida(s).');
+    }
+  } catch (e) {
+    debugPrint('[SQLite] Erro ao deduplicar id_pesagem local: $e');
+  }
+}
+
+Future<Set<String>> _tableColumns(Database db, String tableName) async {
+  final info = await db.rawQuery('PRAGMA table_info($tableName)');
+  return info.map((row) => row['name']?.toString()).whereType<String>().toSet();
+}
+
+Future<bool> _tableExists(Database db, String tableName) async {
+  final rows = await db.rawQuery(
+    "SELECT name FROM sqlite_master WHERE type='table' AND name=? LIMIT 1",
+    [tableName],
+  );
+  return rows.isNotEmpty;
+}
+
+Future<int> _safeTableCount(Database db, String tableName) async {
+  try {
+    if (!await _tableExists(db, tableName)) return 0;
+    final rows = await db.rawQuery('SELECT COUNT(*) AS qtd FROM $tableName');
+    return Sqflite.firstIntValue(rows) ?? 0;
+  } catch (e) {
+    debugPrint('[SQLite] Erro ao contar $tableName: $e');
+    return 0;
+  }
+}
+
+Future<bool> _shouldRunStartupMaintenance(
+  Database db,
+  bool isDeferredDatabaseUpgrade,
+) async {
+  if (isDeferredDatabaseUpgrade) {
+    debugPrint(
+        '[SQLite] Upgrade do asset adiado por pendências locais; manutenção pesada será pulada na splash.');
+    return false;
+  }
+
+  final counts = <String, int>{
+    'local_rebanho': await _safeTableCount(db, 'local_rebanho'),
+    'local_historico_pesagens':
+        await _safeTableCount(db, 'local_historico_pesagens'),
+    'local_reproducao': await _safeTableCount(db, 'local_reproducao'),
+    'local_sanidade': await _safeTableCount(db, 'local_sanidade'),
+  };
+  final total = counts.values.fold<int>(0, (sum, value) => sum + value);
+  debugPrint('[SQLite] Tamanho base local para manutenção startup: $counts');
+
+  // Limite conservador: mantém limpeza síncrona para bases pequenas, mas evita
+  // travar a splash/ser morto pelo SO em bases reais/grandes após update.
+  return total <= 1500;
 }
 
 /// Verifica se FTS5 é suportado pelo SQLite do sistema.
@@ -193,28 +537,89 @@ Future<void> _ensureFts5Compatibility(Database db) async {
 /// Cria índices compostos na tabela local_rebanho para acelerar
 /// buscas no popup de seleção de animais (LIKE em numeroAnimal, nome, chip).
 /// Usa CREATE INDEX IF NOT EXISTS para ser idempotente.
-Future<void> _ensureRebanhoIndexes(Database db) async {
-  const indexes = <String>[
+Future<bool> _indexExists(Database db, String indexName) async {
+  try {
+    final rows = await db.rawQuery(
+      "SELECT 1 FROM sqlite_master WHERE type='index' AND name=? LIMIT 1",
+      [indexName],
+    );
+    return rows.isNotEmpty;
+  } catch (e) {
+    debugPrint('[SQLite] Erro ao verificar índice $indexName: $e');
+    return false;
+  }
+}
+
+Future<void> _ensureRebanhoIndexes(
+  Database db, {
+  required bool allowHeavyIndexes,
+}) async {
+  const indexes = <({String name, String sql, bool heavy})>[
     // Índice composto principal para a busca do popup
-    '''CREATE INDEX IF NOT EXISTS idx_rebanho_prop_deletado
+    (
+      name: 'idx_rebanho_prop_deletado',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_prop_deletado
        ON local_rebanho (idPropriedade, deletado)''',
+    ),
     // Índice para busca por numeroAnimal (LIKE prefix)
-    '''CREATE INDEX IF NOT EXISTS idx_rebanho_numero_animal
+    (
+      name: 'idx_rebanho_numero_animal',
+      heavy: true,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_numero_animal
        ON local_rebanho (idPropriedade, deletado, numeroAnimal)''',
+    ),
     // Índice para busca por nome (LIKE prefix)
-    '''CREATE INDEX IF NOT EXISTS idx_rebanho_nome
+    (
+      name: 'idx_rebanho_nome',
+      heavy: true,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_nome
        ON local_rebanho (idPropriedade, deletado, nome)''',
+    ),
     // Índice para busca por chip
-    '''CREATE INDEX IF NOT EXISTS idx_rebanho_chip
+    (
+      name: 'idx_rebanho_chip',
+      heavy: true,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_chip
        ON local_rebanho (idPropriedade, deletado, chip)''',
+    ),
     // Índice para filtros por sexo e status
-    '''CREATE INDEX IF NOT EXISTS idx_rebanho_sexo_status
+    (
+      name: 'idx_rebanho_sexo_status',
+      heavy: true,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_sexo_status
        ON local_rebanho (idPropriedade, deletado, sexo, statusRebanho, categoria)''',
+    ),
+    (
+      name: 'idx_rebanho_sync_created',
+      heavy: true,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_sync_created
+       ON local_rebanho (created_at, idRebanho, deletado)''',
+    ),
+    (
+      name: 'idx_rebanho_sync_updated',
+      heavy: true,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_sync_updated
+       ON local_rebanho (updated_at, idRebanho)''',
+    ),
+    (
+      name: 'idx_rebanho_sync_dirty',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_sync_dirty
+       ON local_rebanho (sync_dirty, sync_op, idPropriedade, idRebanho)''',
+    ),
   ];
 
-  for (final indexSql in indexes) {
+  for (final index in indexes) {
     try {
-      await db.execute(indexSql);
+      if (!allowHeavyIndexes &&
+          index.heavy &&
+          !await _indexExists(db, index.name)) {
+        debugPrint(
+            '[SQLite] Índice pesado ${index.name} adiado para preservar abertura.');
+        continue;
+      }
+      await db.execute(index.sql);
     } catch (e) {
       debugPrint('[SQLite] Erro ao criar índice: $e');
     }
@@ -224,20 +629,77 @@ Future<void> _ensureRebanhoIndexes(Database db) async {
 
 /// Cria índices UNIQUE nas colunas de chave de negócio para que
 /// ConflictAlgorithm.replace funcione como UPSERT na sync incremental.
-Future<void> _ensureUniqueBusinessKeys(Database db) async {
-  const indexes = <String>[
-    '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_propriedade
+Future<void> _ensureUniqueBusinessKeys(
+  Database db, {
+  required bool allowHeavyIndexes,
+}) async {
+  const indexes = <({String name, String sql, bool heavy})>[
+    (
+      name: 'idx_unique_propriedade',
+      heavy: false,
+      sql: '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_propriedade
        ON local_propriedades (idPropriedade)''',
-    '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_rebanho
+    ),
+    (
+      name: 'idx_unique_rebanho',
+      heavy: false,
+      sql: '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_rebanho
        ON local_rebanho (idRebanho)''',
-    '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_lote
+    ),
+    (
+      name: 'idx_unique_lote',
+      heavy: false,
+      sql: '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_lote
        ON local_lotes (id_lote)''',
-    '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_reproducao
+    ),
+    (
+      name: 'idx_unique_reproducao',
+      heavy: true,
+      sql: '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_reproducao
        ON local_reproducao (id_reproducao)''',
-    '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_sanidade
+    ),
+    (
+      name: 'idx_unique_sanidade',
+      heavy: true,
+      sql: '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_sanidade
        ON local_sanidade (id_sanidade)''',
-    '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_pesagem
+    ),
+    (
+      name: 'idx_unique_pesagem',
+      heavy: true,
+      sql: '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_pesagem
        ON local_historico_pesagens (idRebanho, dataPesagem, tipo, created_at)''',
+    ),
+    (
+      name: 'idx_unique_pesagem_id_pesagem',
+      heavy: true,
+      sql: '''CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_pesagem_id_pesagem
+       ON local_historico_pesagens (id_pesagem)''',
+    ),
+    (
+      name: 'idx_pesagem_prop_created',
+      heavy: true,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_pesagem_prop_created
+       ON local_historico_pesagens (id_propriedade, created_at)''',
+    ),
+    (
+      name: 'idx_pesagem_rebanho_created',
+      heavy: true,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_pesagem_rebanho_created
+       ON local_historico_pesagens (idRebanho, created_at)''',
+    ),
+    (
+      name: 'idx_pesagem_created',
+      heavy: true,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_pesagem_created
+       ON local_historico_pesagens (created_at)''',
+    ),
+    (
+      name: 'idx_pesagem_sync_dirty',
+      heavy: true,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_pesagem_sync_dirty
+       ON local_historico_pesagens (sync_dirty, sync_op, id_pesagem)''',
+    ),
   ];
 
   // Dropar índice antigo de pesagem (sem created_at) se existir,
@@ -245,7 +707,7 @@ Future<void> _ensureUniqueBusinessKeys(Database db) async {
   try {
     // Verifica se o índice antigo existe e se tem apenas 3 colunas
     final idxInfo = await db.rawQuery("PRAGMA index_info(idx_unique_pesagem)");
-    if (idxInfo.isNotEmpty && idxInfo.length <= 3) {
+    if (idxInfo.isNotEmpty && idxInfo.length <= 3 && allowHeavyIndexes) {
       await db.execute('DROP INDEX IF EXISTS idx_unique_pesagem');
       debugPrint(
           '[SQLite] Índice antigo idx_unique_pesagem (3 cols) removido.');
@@ -254,9 +716,16 @@ Future<void> _ensureUniqueBusinessKeys(Database db) async {
     debugPrint('[SQLite] Erro ao verificar/dropar índice antigo: $e');
   }
 
-  for (final indexSql in indexes) {
+  for (final index in indexes) {
     try {
-      await db.execute(indexSql);
+      if (!allowHeavyIndexes &&
+          index.heavy &&
+          !await _indexExists(db, index.name)) {
+        debugPrint(
+            '[SQLite] Índice pesado ${index.name} adiado para preservar abertura.');
+        continue;
+      }
+      await db.execute(index.sql);
     } catch (e) {
       debugPrint('[SQLite] Erro ao criar índice UNIQUE: $e');
     }
@@ -466,10 +935,7 @@ Future<void> _dedupRebanhoDuplicados(
     'ff_dataDadosNaoSyncSanidade',
     'ff_dataDadosNaoSyncRepro',
   ]) {
-    final existing = prefs.getInt(key);
-    if (existing == null || existing > markerMs) {
-      await prefs.setInt(key, markerMs);
-    }
+    await _setPendingMarkerIfEarlier(prefs, key, markerMs);
   }
 
   final nowIso = DateTime.now().toUtc().toIso8601String();
@@ -741,18 +1207,16 @@ Future<void> _dedupRebanhoLogicoDuplicadoV3(
   }
 
   Future<void> markPendingSync() async {
-    final markerMs =
-        DateTime.now().subtract(const Duration(minutes: 5)).millisecondsSinceEpoch;
+    final markerMs = DateTime.now()
+        .subtract(const Duration(minutes: 5))
+        .millisecondsSinceEpoch;
     for (final key in const [
       'ff_dataDadosNaoSyncRebanho',
       'ff_dataDadosNaoSyncLotes',
       'ff_dataDadosNaoSyncSanidade',
       'ff_dataDadosNaoSyncRepro',
     ]) {
-      final existing = prefs.getInt(key);
-      if (existing == null || existing > markerMs) {
-        await prefs.setInt(key, markerMs);
-      }
+      await _setPendingMarkerIfEarlier(prefs, key, markerMs);
     }
   }
 
@@ -924,13 +1388,19 @@ Future<void> _dedupRebanhoLogicoDuplicadoV3(
             );
             final n4 = await txn.update(
               'local_rebanho',
-              {'rebanhoIdMatriz': canonicalId, 'updated_at': nowIso},
+              {
+                'rebanhoIdMatriz': canonicalId,
+                'updated_at': nowIso,
+              },
               where: 'rebanhoIdMatriz = ?',
               whereArgs: [dupId],
             );
             final n5 = await txn.update(
               'local_rebanho',
-              {'rebanhoIdReprodutor': canonicalId, 'updated_at': nowIso},
+              {
+                'rebanhoIdReprodutor': canonicalId,
+                'updated_at': nowIso,
+              },
               where: 'rebanhoIdReprodutor = ?',
               whereArgs: [dupId],
             );
@@ -968,7 +1438,10 @@ Future<void> _dedupRebanhoLogicoDuplicadoV3(
 
             await txn.update(
               'local_rebanho',
-              {'deletado': 'SIM', 'updated_at': nowIso},
+              {
+                'deletado': 'SIM',
+                'updated_at': nowIso,
+              },
               where: 'idRebanho = ?',
               whereArgs: [dupId],
             );
@@ -990,6 +1463,11 @@ Future<void> _dedupRebanhoLogicoDuplicadoV3(
   } catch (e, s) {
     debugPrint('[SQLite][dedupRebanhoV3] ERRO GLOBAL: $e\n$s');
   }
+}
+
+Future<void> dedupLocalRebanhoLogicoDuplicado(Database db) async {
+  final prefs = await SharedPreferences.getInstance();
+  await _dedupRebanhoLogicoDuplicadoV3(db, prefs);
 }
 
 /// Chave de identidade lógica de uma pesagem para detectar equivalentes
@@ -1288,5 +1766,749 @@ Future<void> _dedupRebanhoPorIdRebanho(Database db) async {
         '[SQLite][dedupRebanhoIdR] Resumo: detectados=$gruposDetectados fundidos=$gruposFundidos erros=$gruposComErro linhasRemovidas=$linhasRemovidas');
   } catch (e, s) {
     debugPrint('[SQLite][dedupRebanhoIdR] ERRO GLOBAL: $e\n$s');
+  }
+}
+
+// ============================================================================
+// _dedupReproducaoPorIdReproducao — limpa duplicatas com MESMO id_reproducao.
+// ============================================================================
+Future<void> _dedupReproducaoPorIdReproducao(Database db) async {
+  const ignoreFields = <String>{
+    'id',
+    'id_reproducao',
+    'created_at',
+    'updated_at',
+    'deletado',
+  };
+
+  bool isEmpty(Object? value) => _normalize(value) == null;
+
+  int recencyScore(Map<String, Object?> row) {
+    final updated = _normalize(row['updated_at']);
+    final created = _normalize(row['created_at']);
+    final raw = updated ?? created;
+    if (raw != null) {
+      final parsed = DateTime.tryParse(
+        raw.contains('T') ? raw : raw.replaceFirst(' ', 'T'),
+      );
+      if (parsed != null) return parsed.millisecondsSinceEpoch;
+    }
+    return (row['id'] as int?) ?? 0;
+  }
+
+  var gruposDetectados = 0;
+  var gruposFundidos = 0;
+  var linhasRemovidas = 0;
+  var gruposComErro = 0;
+  var houveMerge = false;
+
+  try {
+    final groups = await db.rawQuery('''
+      SELECT id_reproducao
+      FROM local_reproducao
+      WHERE COALESCE(id_reproducao, '') != ''
+      GROUP BY id_reproducao
+      HAVING COUNT(*) > 1
+    ''');
+    gruposDetectados = groups.length;
+    if (gruposDetectados == 0) {
+      debugPrint('[SQLite][dedupReproId] Nenhuma duplicata por id_reproducao.');
+      return;
+    }
+    debugPrint(
+        '[SQLite][dedupReproId] $gruposDetectados grupo(s) duplicado(s) por id_reproducao detectado(s).');
+
+    for (final g in groups) {
+      final idReproducao = g['id_reproducao'] as String?;
+      if (idReproducao == null || idReproducao.isEmpty) continue;
+
+      try {
+        await db.transaction((txn) async {
+          final rows = await txn.query(
+            'local_reproducao',
+            where: 'id_reproducao = ?',
+            whereArgs: [idReproducao],
+          );
+          if (rows.length < 2) return;
+
+          final sorted = List<Map<String, Object?>>.from(rows);
+          sorted.sort((a, b) {
+            final cmp = recencyScore(b).compareTo(recencyScore(a));
+            if (cmp != 0) return cmp;
+            final ai = (a['id'] as int?) ?? 0;
+            final bi = (b['id'] as int?) ?? 0;
+            return bi.compareTo(ai);
+          });
+
+          final canonical = sorted.first;
+          final duplicates = sorted.skip(1).toList();
+          final mergedFields = <String, Object?>{};
+
+          for (final dup in duplicates) {
+            for (final entry in dup.entries) {
+              final field = entry.key;
+              if (ignoreFields.contains(field)) continue;
+              final dupVal = entry.value;
+              if (isEmpty(dupVal)) continue;
+              final canVal = mergedFields.containsKey(field)
+                  ? mergedFields[field]
+                  : canonical[field];
+              if (isEmpty(canVal)) {
+                mergedFields[field] = dupVal;
+              }
+            }
+          }
+
+          if (mergedFields.isNotEmpty) {
+            mergedFields['updated_at'] =
+                DateTime.now().toUtc().toIso8601String();
+            await txn.update(
+              'local_reproducao',
+              mergedFields,
+              where: 'id = ?',
+              whereArgs: [canonical['id']],
+            );
+            houveMerge = true;
+          }
+
+          for (final dup in duplicates) {
+            await txn.delete(
+              'local_reproducao',
+              where: 'id = ?',
+              whereArgs: [dup['id']],
+            );
+            linhasRemovidas++;
+          }
+          gruposFundidos++;
+        });
+      } catch (e, s) {
+        gruposComErro++;
+        debugPrint(
+            '[SQLite][dedupReproId] Erro no grupo id_reproducao=$idReproducao: $e\n$s');
+      }
+    }
+
+    if (houveMerge) {
+      final prefs = await SharedPreferences.getInstance();
+      await _markReproPendingSync(prefs, '[SQLite][dedupReproId]');
+    }
+
+    debugPrint(
+        '[SQLite][dedupReproId] Resumo: detectados=$gruposDetectados fundidos=$gruposFundidos erros=$gruposComErro linhasRemovidas=$linhasRemovidas');
+  } catch (e, s) {
+    debugPrint('[SQLite][dedupReproId] ERRO GLOBAL: $e\n$s');
+  }
+}
+
+// ============================================================================
+// DEDUP LÓGICO DE REPRODUÇÃO — mesma operação com id_reproducao diferente.
+// ============================================================================
+Future<void> _dedupReproducaoLogicoDuplicado(
+  Database db,
+  SharedPreferences prefs,
+) async {
+  const ignoreFields = <String>{
+    'id',
+    'id_reproducao',
+    'created_at',
+    'updated_at',
+    'deletado',
+  };
+  const maxCreatedAtDistance = Duration(minutes: 10);
+
+  bool isEmpty(Object? value) => _normalize(value) == null;
+
+  int recencyScore(Map<String, Object?> row) {
+    final updated = _normalize(row['updated_at']);
+    final created = _normalize(row['created_at']);
+    final raw = updated ?? created;
+    if (raw != null) {
+      final parsed = DateTime.tryParse(
+        raw.contains('T') ? raw : raw.replaceFirst(' ', 'T'),
+      );
+      if (parsed != null) return parsed.millisecondsSinceEpoch;
+    }
+    return (row['id'] as int?) ?? 0;
+  }
+
+  int? createdScore(Map<String, Object?> row) {
+    final raw = _normalize(row['created_at']);
+    if (raw == null) return null;
+    final parsed = DateTime.tryParse(
+      raw.contains('T') ? raw : raw.replaceFirst(' ', 'T'),
+    );
+    return parsed?.millisecondsSinceEpoch;
+  }
+
+  final report = <String, int>{
+    'gruposDetectados': 0,
+    'fundidos': 0,
+    'ignoradosTempo': 0,
+    'erros': 0,
+  };
+  var houveMutacao = false;
+
+  try {
+    final groups = await db.rawQuery('''
+      SELECT
+        COALESCE(id_propriedade, '') AS idProp,
+        COALESCE(tipo_reproducao, '') AS tipo,
+        COALESCE(id_rebanho_matriz, '') AS matriz,
+        COALESCE(id_rebanho_reprodutor, '') AS reprodutor,
+        COALESCE(data_inseminacao, '') AS dataIns,
+        COALESCE(data_partida_semen, '') AS dataSemen,
+        COALESCE(partida_semen, '') AS partida,
+        COALESCE(data_inicial, '') AS dataIni,
+        COALESCE(data_final, '') AS dataFim,
+        COALESCE(id_lote, '') AS lote,
+        COUNT(*) AS qtd
+      FROM local_reproducao
+      WHERE COALESCE(deletado, 'NAO') != 'SIM'
+        AND COALESCE(id_reproducao, '') != ''
+        AND COALESCE(id_propriedade, '') != ''
+        AND COALESCE(tipo_reproducao, '') != ''
+        AND COALESCE(id_rebanho_matriz, '') != ''
+        AND (
+          COALESCE(data_inseminacao, '') != ''
+          OR COALESCE(data_inicial, '') != ''
+          OR COALESCE(data_final, '') != ''
+        )
+      GROUP BY
+        COALESCE(id_propriedade, ''),
+        COALESCE(tipo_reproducao, ''),
+        COALESCE(id_rebanho_matriz, ''),
+        COALESCE(id_rebanho_reprodutor, ''),
+        COALESCE(data_inseminacao, ''),
+        COALESCE(data_partida_semen, ''),
+        COALESCE(partida_semen, ''),
+        COALESCE(data_inicial, ''),
+        COALESCE(data_final, ''),
+        COALESCE(id_lote, '')
+      HAVING COUNT(*) > 1
+    ''');
+
+    if (groups.isEmpty) {
+      debugPrint('[SQLite][dedupReproLogico] nenhuma duplicata lógica.');
+      return;
+    }
+    report['gruposDetectados'] = groups.length;
+    debugPrint(
+        '[SQLite][dedupReproLogico] ${groups.length} grupo(s) lógico(s) candidato(s).');
+
+    for (final group in groups) {
+      try {
+        final rows = await db.rawQuery('''
+          SELECT *
+          FROM local_reproducao
+          WHERE COALESCE(deletado, 'NAO') != 'SIM'
+            AND COALESCE(id_propriedade, '') = ?
+            AND COALESCE(tipo_reproducao, '') = ?
+            AND COALESCE(id_rebanho_matriz, '') = ?
+            AND COALESCE(id_rebanho_reprodutor, '') = ?
+            AND COALESCE(data_inseminacao, '') = ?
+            AND COALESCE(data_partida_semen, '') = ?
+            AND COALESCE(partida_semen, '') = ?
+            AND COALESCE(data_inicial, '') = ?
+            AND COALESCE(data_final, '') = ?
+            AND COALESCE(id_lote, '') = ?
+        ''', [
+          group['idProp'],
+          group['tipo'],
+          group['matriz'],
+          group['reprodutor'],
+          group['dataIns'],
+          group['dataSemen'],
+          group['partida'],
+          group['dataIni'],
+          group['dataFim'],
+          group['lote'],
+        ]);
+        if (rows.length < 2) continue;
+
+        final createdScores = rows.map(createdScore).whereType<int>().toList();
+        if (createdScores.length > 1) {
+          createdScores.sort();
+          final distance = createdScores.last - createdScores.first;
+          if (distance > maxCreatedAtDistance.inMilliseconds) {
+            report['ignoradosTempo'] = (report['ignoradosTempo'] ?? 0) + 1;
+            debugPrint(
+                '[SQLite][dedupReproLogico] grupo ignorado por intervalo entre created_at maior que ${maxCreatedAtDistance.inMinutes}min: matriz=${group['matriz']} tipo=${group['tipo']} data=${group['dataIns']}${group['dataIni']}');
+            continue;
+          }
+        }
+
+        final sorted = List<Map<String, Object?>>.from(rows);
+        sorted.sort((a, b) {
+          final cmp = recencyScore(b).compareTo(recencyScore(a));
+          if (cmp != 0) return cmp;
+          final ai = (a['id'] as int?) ?? 0;
+          final bi = (b['id'] as int?) ?? 0;
+          return bi.compareTo(ai);
+        });
+
+        final canonical = sorted.first;
+        final canonicalId = canonical['id_reproducao'] as String?;
+        if (canonicalId == null || canonicalId.isEmpty) continue;
+        final duplicates =
+            sorted.where((r) => r['id_reproducao'] != canonicalId).toList();
+        if (duplicates.isEmpty) continue;
+
+        final nowIso = DateTime.now().toUtc().toIso8601String();
+        await db.transaction((txn) async {
+          final canonicalUpdates = <String, Object?>{};
+          for (final dup in duplicates) {
+            for (final entry in dup.entries) {
+              final field = entry.key;
+              if (ignoreFields.contains(field)) continue;
+              final dupVal = entry.value;
+              if (isEmpty(dupVal)) continue;
+              final canVal = canonicalUpdates.containsKey(field)
+                  ? canonicalUpdates[field]
+                  : canonical[field];
+              if (isEmpty(canVal)) {
+                canonicalUpdates[field] = dupVal;
+              }
+            }
+          }
+
+          if (canonicalUpdates.isNotEmpty) {
+            canonicalUpdates['updated_at'] = nowIso;
+            await txn.update(
+              'local_reproducao',
+              canonicalUpdates,
+              where: 'id = ?',
+              whereArgs: [canonical['id']],
+            );
+          }
+
+          for (final dup in duplicates) {
+            await txn.update(
+              'local_reproducao',
+              {'deletado': 'SIM', 'updated_at': nowIso},
+              where: 'id = ?',
+              whereArgs: [dup['id']],
+            );
+            report['fundidos'] = (report['fundidos'] ?? 0) + 1;
+          }
+          houveMutacao = true;
+        });
+      } catch (e, s) {
+        report['erros'] = (report['erros'] ?? 0) + 1;
+        debugPrint('[SQLite][dedupReproLogico] erro no grupo: $e\n$s');
+      }
+    }
+
+    if (houveMutacao) {
+      await _markReproPendingSync(prefs, '[SQLite][dedupReproLogico]');
+    }
+    debugPrint('[SQLite][dedupReproLogico] Concluído. Relatório: $report');
+  } catch (e, s) {
+    debugPrint('[SQLite][dedupReproLogico] ERRO GLOBAL: $e\n$s');
+  }
+}
+
+Future<void> _markReproPendingSync(
+  SharedPreferences prefs,
+  String label,
+) async {
+  final markerMs = DateTime.now()
+      .subtract(const Duration(minutes: 5))
+      .millisecondsSinceEpoch;
+  final existing = _getPrefsIntSafe(prefs, 'ff_dataDadosNaoSyncRepro');
+  await _setPendingMarkerIfEarlier(prefs, 'ff_dataDadosNaoSyncRepro', markerMs);
+  if (existing == null || existing > markerMs) {
+    debugPrint('$label Marker ff_dataDadosNaoSyncRepro=$markerMs.');
+  }
+}
+
+// ============================================================================
+// _dedupSanidadePorIdSanidade — limpa duplicatas com MESMO id_sanidade.
+// ============================================================================
+Future<void> _dedupSanidadePorIdSanidade(Database db) async {
+  const ignoreFields = <String>{
+    'id',
+    'id_sanidade',
+    'created_at',
+    'updated_at',
+    'deletado',
+  };
+
+  bool isEmpty(Object? value) => _normalize(value) == null;
+
+  int recencyScore(Map<String, Object?> row) {
+    final updated = _normalize(row['updated_at']);
+    final created = _normalize(row['created_at']);
+    final raw = updated ?? created;
+    if (raw != null) {
+      final parsed = DateTime.tryParse(
+        raw.contains('T') ? raw : raw.replaceFirst(' ', 'T'),
+      );
+      if (parsed != null) return parsed.millisecondsSinceEpoch;
+    }
+    return (row['id'] as int?) ?? 0;
+  }
+
+  var gruposDetectados = 0;
+  var gruposFundidos = 0;
+  var linhasRemovidas = 0;
+  var gruposComErro = 0;
+  var houveMerge = false;
+
+  try {
+    final groups = await db.rawQuery('''
+      SELECT id_sanidade
+      FROM local_sanidade
+      WHERE COALESCE(id_sanidade, '') != ''
+      GROUP BY id_sanidade
+      HAVING COUNT(*) > 1
+    ''');
+    gruposDetectados = groups.length;
+    if (gruposDetectados == 0) {
+      debugPrint(
+          '[SQLite][dedupSanidadeId] Nenhuma duplicata por id_sanidade.');
+      return;
+    }
+    debugPrint(
+        '[SQLite][dedupSanidadeId] $gruposDetectados grupo(s) duplicado(s) por id_sanidade detectado(s).');
+
+    for (final group in groups) {
+      final idSanidade = group['id_sanidade'] as String?;
+      if (idSanidade == null || idSanidade.isEmpty) continue;
+
+      try {
+        await db.transaction((txn) async {
+          final rows = await txn.query(
+            'local_sanidade',
+            where: 'id_sanidade = ?',
+            whereArgs: [idSanidade],
+          );
+          if (rows.length < 2) return;
+
+          final sorted = List<Map<String, Object?>>.from(rows);
+          sorted.sort((a, b) {
+            final cmp = recencyScore(b).compareTo(recencyScore(a));
+            if (cmp != 0) return cmp;
+            final ai = (a['id'] as int?) ?? 0;
+            final bi = (b['id'] as int?) ?? 0;
+            return bi.compareTo(ai);
+          });
+
+          final canonical = sorted.first;
+          final duplicates = sorted.skip(1).toList();
+          final mergedFields = <String, Object?>{};
+
+          for (final dup in duplicates) {
+            for (final entry in dup.entries) {
+              final field = entry.key;
+              if (ignoreFields.contains(field)) continue;
+              final dupVal = entry.value;
+              if (isEmpty(dupVal)) continue;
+              final canVal = mergedFields.containsKey(field)
+                  ? mergedFields[field]
+                  : canonical[field];
+              if (isEmpty(canVal)) {
+                mergedFields[field] = dupVal;
+              }
+            }
+          }
+
+          if (mergedFields.isNotEmpty) {
+            mergedFields['updated_at'] =
+                DateTime.now().toUtc().toIso8601String();
+            await txn.update(
+              'local_sanidade',
+              mergedFields,
+              where: 'id = ?',
+              whereArgs: [canonical['id']],
+            );
+            houveMerge = true;
+          }
+
+          for (final dup in duplicates) {
+            await txn.delete(
+              'local_sanidade',
+              where: 'id = ?',
+              whereArgs: [dup['id']],
+            );
+            linhasRemovidas++;
+          }
+          gruposFundidos++;
+        });
+      } catch (e, s) {
+        gruposComErro++;
+        debugPrint(
+            '[SQLite][dedupSanidadeId] Erro no grupo id_sanidade=$idSanidade: $e\n$s');
+      }
+    }
+
+    if (houveMerge) {
+      final prefs = await SharedPreferences.getInstance();
+      await _markSanidadePendingSync(prefs, '[SQLite][dedupSanidadeId]');
+    }
+
+    debugPrint(
+        '[SQLite][dedupSanidadeId] Resumo: detectados=$gruposDetectados fundidos=$gruposFundidos erros=$gruposComErro linhasRemovidas=$linhasRemovidas');
+  } catch (e, s) {
+    debugPrint('[SQLite][dedupSanidadeId] ERRO GLOBAL: $e\n$s');
+  }
+}
+
+// ============================================================================
+// DEDUP LÓGICO DE SANIDADE — mesma aplicação com id_sanidade diferente.
+// ============================================================================
+Future<void> _dedupSanidadeLogicoDuplicado(
+  Database db,
+  SharedPreferences prefs,
+) async {
+  const ignoreFields = <String>{
+    'id',
+    'id_sanidade',
+    'created_at',
+    'updated_at',
+    'deletado',
+  };
+  const maxCreatedAtDistance = Duration(minutes: 10);
+
+  bool isEmpty(Object? value) => _normalize(value) == null;
+
+  int recencyScore(Map<String, Object?> row) {
+    final updated = _normalize(row['updated_at']);
+    final created = _normalize(row['created_at']);
+    final raw = updated ?? created;
+    if (raw != null) {
+      final parsed = DateTime.tryParse(
+        raw.contains('T') ? raw : raw.replaceFirst(' ', 'T'),
+      );
+      if (parsed != null) return parsed.millisecondsSinceEpoch;
+    }
+    return (row['id'] as int?) ?? 0;
+  }
+
+  int? createdScore(Map<String, Object?> row) {
+    final raw = _normalize(row['created_at']);
+    if (raw == null) return null;
+    final parsed = DateTime.tryParse(
+      raw.contains('T') ? raw : raw.replaceFirst(' ', 'T'),
+    );
+    return parsed?.millisecondsSinceEpoch;
+  }
+
+  final report = <String, int>{
+    'gruposDetectados': 0,
+    'fundidos': 0,
+    'ignoradosTempo': 0,
+    'erros': 0,
+  };
+  var houveMutacao = false;
+
+  try {
+    final groups = await db.rawQuery('''
+      SELECT
+        COALESCE(id_propriedade, '') AS idProp,
+        COALESCE(id_rebanho, '') AS rebanho,
+        COALESCE(id_lote, '') AS lote,
+        COALESCE(data_sanidade, '') AS dataSan,
+        COALESCE(CAST(porcentagem_lote AS TEXT), '') AS pctLote,
+        COALESCE(vacinacao, '') AS vac,
+        COALESCE(vacinacao_outros, '') AS vacOutros,
+        COALESCE(vacinacao_obs, '') AS vacObs,
+        COALESCE(antiparasitario, '') AS anti,
+        COALESCE(antiparasitario_outros, '') AS antiOutros,
+        COALESCE(antiparasitario_obs, '') AS antiObs,
+        COALESCE(tratamento, '') AS trat,
+        COALESCE(tratamento_outros, '') AS tratOutros,
+        COALESCE(tratamento_obs, '') AS tratObs,
+        COALESCE(protocolo_reprodutivo, '') AS proto,
+        COALESCE(protocolo_reprodutivo_outros, '') AS protoOutros,
+        COALESCE(protocolo_reprodutivo_obs, '') AS protoObs,
+        COALESCE(protocolo_d0, '') AS protoD0,
+        COALESCE(protocolo_retirada, '') AS protoRetirada,
+        COALESCE(protocolo_iatf, '') AS protoIatf,
+        COUNT(*) AS qtd
+      FROM local_sanidade
+      WHERE COALESCE(deletado, 'NAO') != 'SIM'
+        AND COALESCE(id_sanidade, '') != ''
+        AND COALESCE(id_propriedade, '') != ''
+        AND COALESCE(data_sanidade, '') != ''
+        AND (
+          COALESCE(id_rebanho, '') != ''
+          OR COALESCE(id_lote, '') != ''
+        )
+      GROUP BY
+        COALESCE(id_propriedade, ''),
+        COALESCE(id_rebanho, ''),
+        COALESCE(id_lote, ''),
+        COALESCE(data_sanidade, ''),
+        COALESCE(CAST(porcentagem_lote AS TEXT), ''),
+        COALESCE(vacinacao, ''),
+        COALESCE(vacinacao_outros, ''),
+        COALESCE(vacinacao_obs, ''),
+        COALESCE(antiparasitario, ''),
+        COALESCE(antiparasitario_outros, ''),
+        COALESCE(antiparasitario_obs, ''),
+        COALESCE(tratamento, ''),
+        COALESCE(tratamento_outros, ''),
+        COALESCE(tratamento_obs, ''),
+        COALESCE(protocolo_reprodutivo, ''),
+        COALESCE(protocolo_reprodutivo_outros, ''),
+        COALESCE(protocolo_reprodutivo_obs, ''),
+        COALESCE(protocolo_d0, ''),
+        COALESCE(protocolo_retirada, ''),
+        COALESCE(protocolo_iatf, '')
+      HAVING COUNT(*) > 1
+    ''');
+
+    if (groups.isEmpty) {
+      debugPrint('[SQLite][dedupSanidadeLogico] nenhuma duplicata lógica.');
+      return;
+    }
+    report['gruposDetectados'] = groups.length;
+    debugPrint(
+        '[SQLite][dedupSanidadeLogico] ${groups.length} grupo(s) lógico(s) candidato(s).');
+
+    for (final group in groups) {
+      try {
+        final rows = await db.rawQuery('''
+          SELECT *
+          FROM local_sanidade
+          WHERE COALESCE(deletado, 'NAO') != 'SIM'
+            AND COALESCE(id_propriedade, '') = ?
+            AND COALESCE(id_rebanho, '') = ?
+            AND COALESCE(id_lote, '') = ?
+            AND COALESCE(data_sanidade, '') = ?
+            AND COALESCE(CAST(porcentagem_lote AS TEXT), '') = ?
+            AND COALESCE(vacinacao, '') = ?
+            AND COALESCE(vacinacao_outros, '') = ?
+            AND COALESCE(vacinacao_obs, '') = ?
+            AND COALESCE(antiparasitario, '') = ?
+            AND COALESCE(antiparasitario_outros, '') = ?
+            AND COALESCE(antiparasitario_obs, '') = ?
+            AND COALESCE(tratamento, '') = ?
+            AND COALESCE(tratamento_outros, '') = ?
+            AND COALESCE(tratamento_obs, '') = ?
+            AND COALESCE(protocolo_reprodutivo, '') = ?
+            AND COALESCE(protocolo_reprodutivo_outros, '') = ?
+            AND COALESCE(protocolo_reprodutivo_obs, '') = ?
+            AND COALESCE(protocolo_d0, '') = ?
+            AND COALESCE(protocolo_retirada, '') = ?
+            AND COALESCE(protocolo_iatf, '') = ?
+        ''', [
+          group['idProp'],
+          group['rebanho'],
+          group['lote'],
+          group['dataSan'],
+          group['pctLote'],
+          group['vac'],
+          group['vacOutros'],
+          group['vacObs'],
+          group['anti'],
+          group['antiOutros'],
+          group['antiObs'],
+          group['trat'],
+          group['tratOutros'],
+          group['tratObs'],
+          group['proto'],
+          group['protoOutros'],
+          group['protoObs'],
+          group['protoD0'],
+          group['protoRetirada'],
+          group['protoIatf'],
+        ]);
+        if (rows.length < 2) continue;
+
+        final createdScores = rows.map(createdScore).whereType<int>().toList();
+        if (createdScores.length > 1) {
+          createdScores.sort();
+          final distance = createdScores.last - createdScores.first;
+          if (distance > maxCreatedAtDistance.inMilliseconds) {
+            report['ignoradosTempo'] = (report['ignoradosTempo'] ?? 0) + 1;
+            debugPrint(
+                '[SQLite][dedupSanidadeLogico] grupo ignorado por intervalo entre created_at maior que ${maxCreatedAtDistance.inMinutes}min: rebanho=${group['rebanho']} lote=${group['lote']} data=${group['dataSan']}');
+            continue;
+          }
+        }
+
+        final sorted = List<Map<String, Object?>>.from(rows);
+        sorted.sort((a, b) {
+          final cmp = recencyScore(b).compareTo(recencyScore(a));
+          if (cmp != 0) return cmp;
+          final ai = (a['id'] as int?) ?? 0;
+          final bi = (b['id'] as int?) ?? 0;
+          return bi.compareTo(ai);
+        });
+
+        final canonical = sorted.first;
+        final canonicalId = canonical['id_sanidade'] as String?;
+        if (canonicalId == null || canonicalId.isEmpty) continue;
+        final duplicates =
+            sorted.where((r) => r['id_sanidade'] != canonicalId).toList();
+        if (duplicates.isEmpty) continue;
+
+        final nowIso = DateTime.now().toUtc().toIso8601String();
+        await db.transaction((txn) async {
+          final canonicalUpdates = <String, Object?>{};
+          for (final dup in duplicates) {
+            for (final entry in dup.entries) {
+              final field = entry.key;
+              if (ignoreFields.contains(field)) continue;
+              final dupVal = entry.value;
+              if (isEmpty(dupVal)) continue;
+              final canVal = canonicalUpdates.containsKey(field)
+                  ? canonicalUpdates[field]
+                  : canonical[field];
+              if (isEmpty(canVal)) {
+                canonicalUpdates[field] = dupVal;
+              }
+            }
+          }
+
+          if (canonicalUpdates.isNotEmpty) {
+            canonicalUpdates['updated_at'] = nowIso;
+            await txn.update(
+              'local_sanidade',
+              canonicalUpdates,
+              where: 'id = ?',
+              whereArgs: [canonical['id']],
+            );
+          }
+
+          for (final dup in duplicates) {
+            await txn.update(
+              'local_sanidade',
+              {'deletado': 'SIM', 'updated_at': nowIso},
+              where: 'id = ?',
+              whereArgs: [dup['id']],
+            );
+            report['fundidos'] = (report['fundidos'] ?? 0) + 1;
+          }
+          houveMutacao = true;
+        });
+      } catch (e, s) {
+        report['erros'] = (report['erros'] ?? 0) + 1;
+        debugPrint('[SQLite][dedupSanidadeLogico] erro no grupo: $e\n$s');
+      }
+    }
+
+    if (houveMutacao) {
+      await _markSanidadePendingSync(prefs, '[SQLite][dedupSanidadeLogico]');
+    }
+    debugPrint('[SQLite][dedupSanidadeLogico] Concluído. Relatório: $report');
+  } catch (e, s) {
+    debugPrint('[SQLite][dedupSanidadeLogico] ERRO GLOBAL: $e\n$s');
+  }
+}
+
+Future<void> _markSanidadePendingSync(
+  SharedPreferences prefs,
+  String label,
+) async {
+  final markerMs = DateTime.now()
+      .subtract(const Duration(minutes: 5))
+      .millisecondsSinceEpoch;
+  final existing = _getPrefsIntSafe(prefs, 'ff_dataDadosNaoSyncSanidade');
+  await _setPendingMarkerIfEarlier(
+      prefs, 'ff_dataDadosNaoSyncSanidade', markerMs);
+  if (existing == null || existing > markerMs) {
+    debugPrint('$label Marker ff_dataDadosNaoSyncSanidade=$markerMs.');
   }
 }

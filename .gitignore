@@ -76,3 +76,8 @@ ios/Pods/
 android/key.properties
 *.jks
 *.keystore
+
+# Build artifacts
+*.ipa
+*.aab
+*.apk

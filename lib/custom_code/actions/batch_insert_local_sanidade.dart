@@ -111,25 +111,32 @@ Future<Map<String, dynamic>> batchInsertLocalSanidade(
     }
   }
 
+  final dedupedRecords = _dedupMappedSanidade(mappedRecords);
+  final removedDuplicates = mappedRecords.length - dedupedRecords.length;
+  if (removedDuplicates > 0) {
+    debugPrint(
+        '[SYNC][sanidade] PULL dedup: $removedDuplicates duplicata(s) por id_sanidade removida(s) antes do INSERT local.');
+  }
+
   // Fase 2: Tentar batch insert
   try {
     final db = SQLiteManager.instance.database;
     await db.transaction((txn) async {
       final batch = txn.batch();
-      for (final mapped in mappedRecords) {
+      for (final mapped in dedupedRecords) {
         batch.insert('local_sanidade', mapped,
             conflictAlgorithm: ConflictAlgorithm.replace);
       }
       await batch.commit(noResult: true);
     });
-    return {'inserted': mappedRecords.length, 'errors': errors};
+    return {'inserted': dedupedRecords.length, 'errors': errors};
   } catch (batchError) {
     debugPrint(
         '[SYNC][sanidade] Batch falhou ($batchError). Inserindo individualmente...');
     final db = SQLiteManager.instance.database;
     int insertedCount = 0;
 
-    for (final mapped in mappedRecords) {
+    for (final mapped in dedupedRecords) {
       try {
         await db.insert('local_sanidade', mapped,
             conflictAlgorithm: ConflictAlgorithm.replace);
@@ -144,6 +151,31 @@ Future<Map<String, dynamic>> batchInsertLocalSanidade(
 
     return {'inserted': insertedCount, 'errors': errors};
   }
+}
+
+List<Map<String, dynamic>> _dedupMappedSanidade(
+  List<Map<String, dynamic>> records,
+) {
+  if (records.length < 2) return records;
+
+  final output = <Map<String, dynamic>>[];
+  final indexById = <String, int>{};
+  for (final record in records) {
+    final id = record['id_sanidade']?.toString().trim();
+    if (id == null || id.isEmpty) {
+      output.add(record);
+      continue;
+    }
+
+    final existingIndex = indexById[id];
+    if (existingIndex == null) {
+      indexById[id] = output.length;
+      output.add(record);
+    } else {
+      output[existingIndex] = record;
+    }
+  }
+  return output;
 }
 
 String _extractSanidadeId(dynamic record) {

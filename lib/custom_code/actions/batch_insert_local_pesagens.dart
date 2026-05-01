@@ -21,7 +21,7 @@ double? _toDouble(dynamic value) {
 }
 
 /// Normaliza datas ISO (ex: "2026-01-15T00:00:00+00:00") para "yyyy-MM-dd"
-/// para evitar duplicatas no índice UNIQUE (idRebanho, dataPesagem, tipo).
+/// para evitar duplicatas no índice UNIQUE legado de pesagens.
 String? _normalizeDateToYMD(dynamic value) {
   if (value == null || value == 'null') return null;
   final str = value.toString().trim();
@@ -34,6 +34,32 @@ String? _normalizeDateToYMD(dynamic value) {
     return '${dt.year.toString().padLeft(4, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
   }
   return str;
+}
+
+String _formatPesoKey(dynamic value) {
+  final parsed = _toDouble(value);
+  if (parsed == null) return '';
+  return parsed.toStringAsFixed(3);
+}
+
+String? _stablePesagemId(Map<String, dynamic> source) {
+  final explicit =
+      source['id_pesagem'] ?? source['idPesagem'] ?? source['idpesagem'];
+  final cleanedExplicit = _cleanNull(explicit);
+  if (cleanedExplicit != null) return cleanedExplicit;
+
+  final remoteId = _cleanNull(source['id']);
+  if (remoteId != null) return 'legacy_remote:$remoteId';
+
+  final idRebanho =
+      source['idRebanho'] ?? source['idrebanho'] ?? source['id_rebanho'];
+  final dataPesagem =
+      source['dataPesagem'] ?? source['datapesagem'] ?? source['data_pesagem'];
+  return 'legacy:${_cleanNull(idRebanho) ?? ''}|'
+      '${_normalizeDateToYMD(dataPesagem) ?? ''}|'
+      '${_cleanNull(source['tipo']) ?? ''}|'
+      '${_formatPesoKey(source['peso'])}|'
+      '${_cleanNull(source['created_at'] ?? source['createdAt']) ?? ''}';
 }
 
 Future<Map<String, dynamic>> batchInsertLocalPesagens(
@@ -49,6 +75,7 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
     try {
       final Map<String, dynamic> source = Map<String, dynamic>.from(records[i]);
       final Map<String, dynamic> mapped = {};
+      mapped['id_pesagem'] = _stablePesagemId(source);
 
       // Mapeamento específico Supabase -> SQLite (com fallback para snake_case)
       final idRebanho =
@@ -84,6 +111,9 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
       if (idPropriedade != null) {
         mapped['id_propriedade'] = _cleanNull(idPropriedade);
       }
+      mapped['sync_dirty'] = 0;
+      mapped['sync_op'] = null;
+      mapped['sync_updated_at'] = null;
 
       mappedRecords.add(mapped);
     } catch (e) {
@@ -94,24 +124,25 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
 
   // Tentar batch insert
   try {
+    final dedupedRecords = _dedupMappedPesagens(mappedRecords);
     final db = SQLiteManager.instance.database;
     await db.transaction((txn) async {
       final batch = txn.batch();
-      for (final mapped in mappedRecords) {
+      for (final mapped in dedupedRecords) {
         batch.insert('local_historico_pesagens', mapped,
             conflictAlgorithm: ConflictAlgorithm.replace);
       }
       await batch.commit(noResult: true);
     });
 
-    return {'inserted': mappedRecords.length, 'errors': errors};
+    return {'inserted': dedupedRecords.length, 'errors': errors};
   } catch (batchError) {
     debugPrint(
         '[SYNC][pesagens] Batch falhou ($batchError). Inserindo individualmente...');
     final db = SQLiteManager.instance.database;
     int insertedCount = 0;
 
-    for (final mapped in mappedRecords) {
+    for (final mapped in _dedupMappedPesagens(mappedRecords)) {
       try {
         await db.insert('local_historico_pesagens', mapped,
             conflictAlgorithm: ConflictAlgorithm.replace);
@@ -124,6 +155,23 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
 
     return {'inserted': insertedCount, 'errors': errors};
   }
+}
+
+List<Map<String, dynamic>> _dedupMappedPesagens(
+    List<Map<String, dynamic>> mappedRecords) {
+  final byKey = <String, Map<String, dynamic>>{};
+  for (final mapped in mappedRecords) {
+    final idPesagem = _cleanNull(mapped['id_pesagem']);
+    final fallback = [
+      _cleanNull(mapped['idRebanho']) ?? '',
+      _cleanNull(mapped['dataPesagem']) ?? '',
+      _cleanNull(mapped['tipo']) ?? '',
+      _formatPesoKey(mapped['peso']),
+      _cleanNull(mapped['created_at']) ?? '',
+    ].join('|');
+    byKey[idPesagem ?? fallback] = mapped;
+  }
+  return byKey.values.toList();
 }
 
 String _extractPesagemId(dynamic record) {

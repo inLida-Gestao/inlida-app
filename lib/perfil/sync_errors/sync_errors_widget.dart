@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '/components/sync_diagnostic_dialog.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/custom_code/actions/sync_error_log.dart';
 
@@ -109,6 +110,11 @@ class _SyncErrorsWidgetState extends State<SyncErrorsWidget> {
         ),
         actions: [
           IconButton(
+            tooltip: 'Log de sincronização',
+            icon: const Icon(Icons.bug_report_outlined),
+            onPressed: () => SyncDiagnosticDialog.show(context),
+          ),
+          IconButton(
             tooltip: 'Atualizar',
             icon: const Icon(Icons.refresh),
             onPressed: _reload,
@@ -169,8 +175,7 @@ class _SyncErrorsWidgetState extends State<SyncErrorsWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.check_circle_outline,
-                size: 72, color: theme.success),
+            Icon(Icons.check_circle_outline, size: 72, color: theme.success),
             const SizedBox(height: 16),
             Text(
               'Nenhum erro de sincronização',
@@ -181,8 +186,8 @@ class _SyncErrorsWidgetState extends State<SyncErrorsWidget> {
             Text(
               'Todos os seus registros foram enviados ao servidor com sucesso.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                  fontSize: 14, color: theme.secondaryText),
+              style:
+                  GoogleFonts.poppins(fontSize: 14, color: theme.secondaryText),
             ),
           ],
         ),
@@ -238,12 +243,10 @@ class _SyncErrorsWidgetState extends State<SyncErrorsWidget> {
       ),
       child: ExpansionTile(
         tilePadding: const EdgeInsets.symmetric(horizontal: 14),
-        childrenPadding:
-            const EdgeInsets.fromLTRB(14, 0, 14, 12),
+        childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
         title: Text(
           e.registroDescricao ?? e.registroId ?? 'Registro sem identificação',
-          style: GoogleFonts.poppins(
-              fontSize: 14, fontWeight: FontWeight.w600),
+          style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600),
         ),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 4),
@@ -253,8 +256,7 @@ class _SyncErrorsWidgetState extends State<SyncErrorsWidget> {
               if (e.campoProblema != null)
                 Text(
                   'Campo: ${e.campoLabel}',
-                  style: GoogleFonts.poppins(
-                      fontSize: 12, color: theme.error),
+                  style: GoogleFonts.poppins(fontSize: 12, color: theme.error),
                 ),
               Text(
                 e.mensagemAmigavel ?? 'Erro ao enviar para o servidor.',
@@ -270,8 +272,8 @@ class _SyncErrorsWidgetState extends State<SyncErrorsWidget> {
               'Operação: ${e.operacao} · Tentativas: ${e.tentativas}\n'
               'Primeira: ${df.format(e.primeiraOcorrencia)}\n'
               'Última: ${df.format(e.ultimaOcorrencia)}',
-              style: GoogleFonts.poppins(
-                  fontSize: 11, color: theme.secondaryText),
+              style:
+                  GoogleFonts.poppins(fontSize: 11, color: theme.secondaryText),
             ),
           ),
           const SizedBox(height: 8),

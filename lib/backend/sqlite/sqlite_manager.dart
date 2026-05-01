@@ -5,6 +5,7 @@ import 'queries/read.dart';
 import 'queries/update.dart';
 
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
 export 'queries/read.dart';
 export 'queries/update.dart';
 
@@ -111,19 +112,44 @@ class SQLiteManager {
 
   Future<List<BuscarRebanhoUPDATEDRow>> buscarRebanhoUPDATED({
     String? data,
+    String? userID,
   }) =>
       performBuscarRebanhoUPDATED(
         _database,
         data: data,
+        userID: userID,
       );
 
   Future<List<BuscarRebanhoPUTRow>> buscarRebanhoPUT({
     String? data,
+    String? userID,
   }) =>
       performBuscarRebanhoPUT(
         _database,
         data: data,
+        userID: userID,
       );
+
+  Future<bool> hasRebanhoDirtyLocalForUser({
+    required String userID,
+  }) async {
+    if (userID.trim().isEmpty) return false;
+    final rows = await _database.rawQuery('''
+      SELECT 1
+      FROM local_rebanho r
+      WHERE r.sync_dirty = 1
+        AND COALESCE(r.idRebanho, '') != ''
+        AND EXISTS (
+          SELECT 1
+          FROM local_propriedades p
+          WHERE p.idPropriedade = r.idPropriedade
+            AND (p.userID = ? OR p.usersID LIKE ?)
+            AND COALESCE(p.deletado, 'NAO') != 'SIM'
+        )
+      LIMIT 1
+    ''', [userID, '%$userID%']);
+    return rows.isNotEmpty;
+  }
 
   Future<List<QTDAnimaisPropriedadeRow>> qTDAnimaisPropriedade({
     String? idPropriedade,
@@ -165,9 +191,12 @@ class SQLiteManager {
         data: data,
       );
 
-  Future<List<BuscaHistPesagensUPDTRow>> buscaHistPesagensUPDT() =>
+  Future<List<BuscaHistPesagensUPDTRow>> buscaHistPesagensUPDT({
+    String? data,
+  }) =>
       performBuscaHistPesagensUPDT(
         _database,
+        data: data,
       );
 
   Future<List<ListarRebanhosProgenereRow>> listarRebanhosProgenere({
@@ -1201,6 +1230,7 @@ class SQLiteManager {
       );
 
   Future<void> addPesagem({
+    String? idPesagem,
     String? idRebanho,
     String? dataPesagem,
     String? tipo,
@@ -1209,8 +1239,10 @@ class SQLiteManager {
     String? createdat,
     String? idPropriedade,
   }) async {
+    final resolvedIdPesagem = idPesagem ?? 'uuid:${Uuid().v4()}';
     await performAddPesagem(
       _database,
+      idPesagem: resolvedIdPesagem,
       idRebanho: idRebanho,
       dataPesagem: dataPesagem,
       tipo: tipo,
@@ -1241,9 +1273,13 @@ LIMIT 1
 ''');
 
     if (existing.isNotEmpty) {
+      final syncUpdatedAt = DateTime.now()
+          .toIso8601String()
+          .substring(0, 19)
+          .replaceFirst('T', ' ');
       final setClause = dataPesagem != null
-          ? "peso = $peso, dataPesagem = '$dataPesagem'"
-          : "peso = $peso";
+          ? "peso = $peso, dataPesagem = '$dataPesagem', sync_dirty = 1, sync_op = 'upsert', sync_updated_at = '$syncUpdatedAt'"
+          : "peso = $peso, sync_dirty = 1, sync_op = 'upsert', sync_updated_at = '$syncUpdatedAt'";
       await _database.rawUpdate('''
 UPDATE local_historico_pesagens
 SET $setClause
@@ -1256,14 +1292,18 @@ AND deletado = 'NAO'
       final rebRows = await _database.rawQuery('''
 SELECT idPropriedade FROM local_rebanho WHERE idRebanho = '$idRebanho' LIMIT 1
 ''');
-      final idPropriedade = rebRows.isNotEmpty
-          ? rebRows.first['idPropriedade'] as String?
-          : null;
-      final now = DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+      final idPropriedade =
+          rebRows.isNotEmpty ? rebRows.first['idPropriedade'] as String? : null;
+      final now = DateTime.now()
+          .toIso8601String()
+          .substring(0, 19)
+          .replaceFirst('T', ' ');
       await performAddPesagem(
         _database,
+        idPesagem: 'uuid:${Uuid().v4()}',
         idRebanho: idRebanho,
-        dataPesagem: dataPesagem ?? DateTime.now().toIso8601String().substring(0, 10),
+        dataPesagem:
+            dataPesagem ?? DateTime.now().toIso8601String().substring(0, 10),
         tipo: tipo,
         peso: peso,
         deletado: 'NAO',

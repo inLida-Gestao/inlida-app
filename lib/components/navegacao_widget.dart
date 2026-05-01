@@ -248,112 +248,207 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                   SyncDiagnosticDialog.show(context);
                                 },
                                 child: FlutterFlowIconButton(
-                                borderRadius: 8.0,
-                                buttonSize: 40.0,
-                                fillColor: FlutterFlowTheme.of(context).primary,
-                                icon: Icon(
-                                  Icons.refresh_sharp,
-                                  color: FlutterFlowTheme.of(context).info,
-                                  size: 24.0,
-                                ),
-                                showLoadingIndicator: true,
-                                onPressed: () async {
-                                  // Evitar sync duplo (manual + auto) — oferece cancelar.
-                                  if (FFAppState().isSyncing) {
-                                    final messenger =
-                                        ScaffoldMessenger.of(context);
-                                    messenger.hideCurrentSnackBar();
-                                    messenger.showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Sincronização em andamento. Toque em CANCELAR se estiver travada.',
-                                          style: TextStyle(
-                                            color:
+                                  borderRadius: 8.0,
+                                  buttonSize: 40.0,
+                                  fillColor:
+                                      FlutterFlowTheme.of(context).primary,
+                                  icon: Icon(
+                                    Icons.refresh_sharp,
+                                    color: FlutterFlowTheme.of(context).info,
+                                    size: 24.0,
+                                  ),
+                                  showLoadingIndicator: true,
+                                  onPressed: () async {
+                                    // Evitar sync duplo (manual + auto) — oferece cancelar.
+                                    if (FFAppState().isSyncing) {
+                                      final messenger =
+                                          ScaffoldMessenger.of(context);
+                                      messenger.clearSnackBars();
+                                      messenger.showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Sincronização em andamento. Aguarde finalizar ou toque em CANCELAR.',
+                                            style: TextStyle(
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                            ),
+                                          ),
+                                          duration: const Duration(seconds: 6),
+                                          backgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .secondary,
+                                          action: SnackBarAction(
+                                            label: 'CANCELAR',
+                                            textColor:
                                                 FlutterFlowTheme.of(context)
                                                     .secondaryBackground,
+                                            onPressed: () {
+                                              messenger.clearSnackBars();
+                                              FFAppState().syncCancelRequested =
+                                                  true;
+                                              actions.SyncEngine.instance
+                                                  .cancel();
+                                              messenger.showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    'Cancelamento solicitado. Aguardando o passo atual encerrar...',
+                                                    style: TextStyle(
+                                                      color: FlutterFlowTheme
+                                                              .of(context)
+                                                          .secondaryBackground,
+                                                    ),
+                                                  ),
+                                                  duration: const Duration(
+                                                      seconds: 4),
+                                                  backgroundColor:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .secondary,
+                                                ),
+                                              );
+                                            },
                                           ),
                                         ),
-                                        duration: const Duration(seconds: 6),
-                                        backgroundColor:
-                                            FlutterFlowTheme.of(context)
-                                                .secondary,
-                                        action: SnackBarAction(
-                                          label: 'CANCELAR',
-                                          textColor:
+                                      );
+                                      return;
+                                    }
+                                    // B3 — usa SyncEngine (mutex global, watchdogs internos).
+                                    _model.temInternet =
+                                        await actions.checkInternetConnection();
+                                    if (_model.temInternet != true) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Você não está on-line, sincronize quando estiver on-line.',
+                                            style: TextStyle(
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 14.0,
+                                            ),
+                                          ),
+                                          duration: const Duration(
+                                              milliseconds: 4000),
+                                          backgroundColor:
                                               FlutterFlowTheme.of(context)
-                                                  .secondaryBackground,
-                                          onPressed: () {
-                                            actions.SyncEngine.instance
-                                                .cancel();
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Cancelamento solicitado. Aguardando o passo atual encerrar...',
-                                                  style: TextStyle(
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .secondaryBackground,
-                                                  ),
-                                                ),
-                                                duration: const Duration(
-                                                    seconds: 4),
-                                                backgroundColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondary,
-                                              ),
-                                            );
-                                          },
+                                                  .error,
                                         ),
+                                      );
+                                      return;
+                                    }
+                                    _model.userLogado =
+                                        await UsersTable().queryRows(
+                                      queryFn: (q) => q.eqOrNull(
+                                        'userID',
+                                        currentUserUid,
                                       ),
                                     );
-                                    return;
-                                  }
-                                  // B3 — usa SyncEngine (mutex global, watchdogs internos).
-                                  _model.temInternet =
-                                      await actions.checkInternetConnection();
-                                  if (_model.temInternet != true) {
+                                    final acesso =
+                                        _model.userLogado?.firstOrNull?.acesso;
+                                    if (acesso != 'Pago' &&
+                                        acesso != 'Gratis') {
+                                      FFAppState().clearUserData();
+                                      GoRouter.of(context).prepareAuthEvent();
+                                      await authManager.signOut();
+                                      GoRouter.of(context)
+                                          .clearRedirectLocation();
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Seu período de acesso grátis finalizou, assine um plano para continuar acessando.',
+                                              style: TextStyle(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                              ),
+                                            ),
+                                            duration: const Duration(
+                                                milliseconds: 4000),
+                                            backgroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .secondary,
+                                          ),
+                                        );
+                                      }
+                                      return;
+                                    }
+
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                          'Você não está on-line, sincronize quando estiver on-line.',
+                                          'Sincronização iniciada.',
                                           style: TextStyle(
                                             color: FlutterFlowTheme.of(context)
                                                 .secondaryBackground,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14.0,
                                           ),
                                         ),
                                         duration:
-                                            const Duration(milliseconds: 4000),
+                                            const Duration(milliseconds: 3000),
                                         backgroundColor:
-                                            FlutterFlowTheme.of(context).error,
+                                            FlutterFlowTheme.of(context)
+                                                .secondary,
                                       ),
                                     );
-                                    return;
-                                  }
-                                  _model.userLogado =
-                                      await UsersTable().queryRows(
-                                    queryFn: (q) => q.eqOrNull(
-                                      'userID',
-                                      currentUserUid,
-                                    ),
-                                  );
-                                  final acesso = _model
-                                      .userLogado?.firstOrNull?.acesso;
-                                  if (acesso != 'Pago' && acesso != 'Gratis') {
-                                    FFAppState().clearUserData();
-                                    GoRouter.of(context).prepareAuthEvent();
-                                    await authManager.signOut();
-                                    GoRouter.of(context).clearRedirectLocation();
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+
+                                    final result =
+                                        await actions.performManualSync(
+                                      context,
+                                      onProgress: (p) => safeSetState(() {}),
+                                    );
+                                    if (!context.mounted) return;
+                                    if (result.skipped) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         SnackBar(
                                           content: Text(
-                                            'Seu período de acesso grátis finalizou, assine um plano para continuar acessando.',
+                                            'Sincronização já em andamento...',
                                             style: TextStyle(
-                                              color: FlutterFlowTheme.of(context)
-                                                  .secondaryBackground,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                            ),
+                                          ),
+                                          duration: const Duration(
+                                              milliseconds: 2000),
+                                          backgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .secondary,
+                                        ),
+                                      );
+                                    } else if (result.cancelled) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Sincronização cancelada.',
+                                            style: TextStyle(
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                            ),
+                                          ),
+                                          duration: const Duration(
+                                              milliseconds: 3000),
+                                          backgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .secondary,
+                                        ),
+                                      );
+                                    } else if (!result.allSuccess) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Sincronização concluída com avisos. Verifique a tela de diagnóstico (segure o botão de sync).',
+                                            style: TextStyle(
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
                                             ),
                                           ),
                                           duration: const Duration(
@@ -363,105 +458,32 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                                   .secondary,
                                         ),
                                       );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Sincronização realizada com sucesso.',
+                                            style: TextStyle(
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                            ),
+                                          ),
+                                          duration: const Duration(
+                                              milliseconds: 3000),
+                                          backgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .secondary,
+                                        ),
+                                      );
+                                      if (context.mounted)
+                                        Navigator.pop(context);
                                     }
-                                    return;
-                                  }
 
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Sincronização iniciada.',
-                                        style: TextStyle(
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
-                                        ),
-                                      ),
-                                      duration:
-                                          const Duration(milliseconds: 3000),
-                                      backgroundColor:
-                                          FlutterFlowTheme.of(context).secondary,
-                                    ),
-                                  );
-
-                                  final result = await actions.performManualSync(
-                                    context,
-                                    onProgress: (p) => safeSetState(() {}),
-                                  );
-                                  if (!context.mounted) return;
-                                  if (result.skipped) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Sincronização já em andamento...',
-                                          style: TextStyle(
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryBackground,
-                                          ),
-                                        ),
-                                        duration: const Duration(
-                                            milliseconds: 2000),
-                                        backgroundColor:
-                                            FlutterFlowTheme.of(context)
-                                                .secondary,
-                                      ),
-                                    );
-                                  } else if (result.cancelled) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Sincronização cancelada.',
-                                          style: TextStyle(
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryBackground,
-                                          ),
-                                        ),
-                                        duration: const Duration(
-                                            milliseconds: 3000),
-                                        backgroundColor:
-                                            FlutterFlowTheme.of(context)
-                                                .secondary,
-                                      ),
-                                    );
-                                  } else if (!result.allSuccess) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Sincronização concluída com avisos. Verifique a tela de diagnóstico (segure o botão de sync).',
-                                          style: TextStyle(
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryBackground,
-                                          ),
-                                        ),
-                                        duration: const Duration(
-                                            milliseconds: 4000),
-                                        backgroundColor:
-                                            FlutterFlowTheme.of(context)
-                                                .secondary,
-                                      ),
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Sincronização realizada com sucesso.',
-                                          style: TextStyle(
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryBackground,
-                                          ),
-                                        ),
-                                        duration: const Duration(
-                                            milliseconds: 3000),
-                                        backgroundColor:
-                                            FlutterFlowTheme.of(context)
-                                                .secondary,
-                                      ),
-                                    );
-                                    if (context.mounted) Navigator.pop(context);
-                                  }
-
-                                  safeSetState(() {});
-                                },
-                              ),
+                                    safeSetState(() {});
+                                  },
+                                ),
                               ), // GestureDetector wrap (B6 long-press abre diagnóstico)
                               if (FFAppState().syncProgressPercent >= 0)
                                 Padding(

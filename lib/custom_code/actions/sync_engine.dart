@@ -110,8 +110,7 @@ class SyncEngine {
 
     if (trigger == SyncTrigger.autoReconnect) {
       final last = FFAppState().lastAutoSync;
-      if (last != null &&
-          DateTime.now().difference(last) < _minAutoInterval) {
+      if (last != null && DateTime.now().difference(last) < _minAutoInterval) {
         debugPrint(
             '[SYNC][engine] Intervalo mínimo de auto-sync não atingido.');
         return const SyncResult(skipped: true);
@@ -131,6 +130,10 @@ class SyncEngine {
       final progress = SyncProgress(p, l);
       state.syncProgressPercent = p;
       state.syncProgressLabel = l;
+      action_blocks.SyncTelemetry.log(
+        flow: 'engine',
+        message: 'Progresso $p% - $l',
+      );
       onProgress?.call(progress);
       if (!_progressController.isClosed) _progressController.add(progress);
     }
@@ -230,58 +233,62 @@ class SyncEngine {
     }
     if (state.syncCancelRequested) return const SyncResult(cancelled: true);
 
-    // PUSH paralelo dos módulos independentes.
-    final pushFutures = <Future<bool>>[];
-    final pushKeys = <String>[];
+    // PUSH sequencial. Em bases antigas pós-update, rodar rebanho/lotes/repro
+    // em paralelo concentrava SQLite + rede + serialização no mesmo momento e
+    // podia levar o SO a encerrar o app exatamente em 15%.
     if (hasPendingRebanho) {
-      pushKeys.add('rebanho');
-      pushFutures.add(_guard(
+      emit(15, 'Enviando rebanhos...');
+      rebanhoOk = await _guard(
         () => action_blocks.putUpdtRebanhos(context),
         'PUSH rebanhos',
         _pushModuleTimeout,
         false,
-      ));
+      );
+      if (state.syncCancelRequested) {
+        return SyncResult(
+          cancelled: true,
+          propOk: propOk,
+          rebanhoOk: rebanhoOk,
+        );
+      }
     }
     if (hasPendingLotes) {
-      pushKeys.add('lotes');
-      pushFutures.add(_guard(
+      emit(20, 'Enviando lotes...');
+      lotesOk = await _guard(
         () => action_blocks.putUpdtLotes(context),
         'PUSH lotes',
         _pushModuleTimeout,
         false,
-      ));
+      );
+      if (state.syncCancelRequested) {
+        return SyncResult(
+          cancelled: true,
+          propOk: propOk,
+          rebanhoOk: rebanhoOk,
+        );
+      }
     }
     if (hasPendingRepro) {
-      pushKeys.add('repro');
-      pushFutures.add(_guard(
+      emit(25, 'Enviando reprodução...');
+      reproOk = await _guard(
         () => action_blocks.putUpdtReproducao(context),
         'PUSH reproducao',
         _pushModuleTimeout,
         false,
-      ));
-    }
-
-    if (pushFutures.isNotEmpty) {
-      emit(15, 'Enviando rebanhos / lotes / reprodução...');
-      final results = await Future.wait(pushFutures);
-      for (var i = 0; i < pushKeys.length; i++) {
-        switch (pushKeys[i]) {
-          case 'rebanho':
-            rebanhoOk = results[i];
-            break;
-          case 'lotes':
-            lotesOk = results[i];
-            break;
-          case 'repro':
-            reproOk = results[i];
-            break;
-        }
+      );
+      if (state.syncCancelRequested) {
+        return SyncResult(
+          cancelled: true,
+          propOk: propOk,
+          rebanhoOk: rebanhoOk,
+          lotesOk: lotesOk,
+        );
       }
     }
     if (state.syncCancelRequested) return const SyncResult(cancelled: true);
 
     if (hasPendingSanidade) {
-      emit(25, 'Enviando sanidades...');
+      emit(30, 'Enviando sanidades...');
       sanidadeOk = await _guard(
         () => action_blocks.putUpdtSanidades(context),
         'PUSH sanidade',

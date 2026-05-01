@@ -34,6 +34,7 @@ class EditReproducaoRebanhoWidget extends StatefulWidget {
 class _EditReproducaoRebanhoWidgetState
     extends State<EditReproducaoRebanhoWidget> {
   late EditReproducaoRebanhoModel _model;
+  bool _isSaving = false;
 
   String? _normalizeRessincValue(String? value) {
     if (value == null) return null;
@@ -132,7 +133,8 @@ class _EditReproducaoRebanhoWidgetState
     DateTime? selectedDate,
     String? storedValue,
   }) {
-    final hasValue = selectedDate != null || _parseEditableDate(storedValue) != null;
+    final hasValue =
+        selectedDate != null || _parseEditableDate(storedValue) != null;
     return hasValue
         ? FlutterFlowTheme.of(context).secondaryText
         : const Color(0xFFBEBEBE);
@@ -314,7 +316,7 @@ class _EditReproducaoRebanhoWidgetState
                 final dataParto = _resolveDataParto(reproducao);
                 final partoConfirmado = _isPartoConfirmado(reproducao);
                 final diasEntreInseminacaoEParto = partoConfirmado
-                  ? _resolveDiasEntreInseminacaoEParto(reproducao)
+                    ? _resolveDiasEntreInseminacaoEParto(reproducao)
                     : null;
 
                 return Container(
@@ -392,48 +394,58 @@ class _EditReproducaoRebanhoWidgetState
                                         size: 20.0,
                                       ),
                                       onPressed: () async {
-                                        var confirmDialogResponse = await showDialog<bool>(
-                                              context: context,
-                                              builder: (alertDialogContext) {
-                                                return AlertDialog(
-                                                  title: const Text('Deletar reprodução'),
-                                                  content: const Text(
-                                                      'Deseja realmente apagar esse registro de reprodução? Esta ação não pode ser desfeita.'),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () => Navigator.pop(
-                                                          alertDialogContext, false),
-                                                      child: const Text('Não'),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(alertDialogContext, true),
-                                                      child: const Text('Sim'),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            ) ??
-                                            false;
+                                        var confirmDialogResponse =
+                                            await showDialog<bool>(
+                                                  context: context,
+                                                  builder:
+                                                      (alertDialogContext) {
+                                                    return AlertDialog(
+                                                      title: const Text(
+                                                          'Deletar reprodução'),
+                                                      content: const Text(
+                                                          'Deseja realmente apagar esse registro de reprodução? Esta ação não pode ser desfeita.'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  alertDialogContext,
+                                                                  false),
+                                                          child:
+                                                              const Text('Não'),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  alertDialogContext,
+                                                                  true),
+                                                          child:
+                                                              const Text('Sim'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                ) ??
+                                                false;
                                         if (confirmDialogResponse) {
-                                        if (!(FFAppState()
-                                                .dataDadosNaoSyncRepro !=
-                                            null)) {
-                                          FFAppState().dataDadosNaoSyncRepro =
-                                              getCurrentTimestamp;
-                                          safeSetState(() {});
-                                        }
-                                        await SQLiteManager.instance
-                                            .deleteReproducaoReb(
-                                          idReproducao: widget.idReproducao,
-                                          updatedat: dateTimeFormat(
-                                            "yyyy-MM-dd HH:mm:ss",
-                                            getCurrentTimestamp,
-                                            locale: FFLocalizations.of(context)
-                                                .languageCode,
-                                          ),
-                                        );
-                                        Navigator.pop(context);
+                                          if (!(FFAppState()
+                                                  .dataDadosNaoSyncRepro !=
+                                              null)) {
+                                            FFAppState().dataDadosNaoSyncRepro =
+                                                getCurrentTimestamp;
+                                            safeSetState(() {});
+                                          }
+                                          await SQLiteManager.instance
+                                              .deleteReproducaoReb(
+                                            idReproducao: widget.idReproducao,
+                                            updatedat: dateTimeFormat(
+                                              "yyyy-MM-dd HH:mm:ss",
+                                              getCurrentTimestamp,
+                                              locale:
+                                                  FFLocalizations.of(context)
+                                                      .languageCode,
+                                            ),
+                                          );
+                                          Navigator.pop(context);
                                         }
                                       },
                                     ),
@@ -1120,7 +1132,9 @@ class _EditReproducaoRebanhoWidgetState
                                         onTap: () async {
                                           final datePicked1Date =
                                               await showDatePicker(
-                                            initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                            initialEntryMode:
+                                                DatePickerEntryMode
+                                                    .calendarOnly,
                                             context: context,
                                             initialDate: getCurrentTimestamp,
                                             firstDate: DateTime(1900),
@@ -1215,13 +1229,13 @@ class _EditReproducaoRebanhoWidgetState
                                               children: [
                                                 Text(
                                                   _formatEditableDate(
-                                                  context,
-                                                  selectedDate:
-                                                    _model.datePicked1,
-                                                  storedValue: _model
-                                                    .editReproducao
-                                                    ?.firstOrNull
-                                                    ?.dataInseminacao,
+                                                    context,
+                                                    selectedDate:
+                                                        _model.datePicked1,
+                                                    storedValue: _model
+                                                        .editReproducao
+                                                        ?.firstOrNull
+                                                        ?.dataInseminacao,
                                                   ),
                                                   style:
                                                       FlutterFlowTheme.of(
@@ -1232,16 +1246,16 @@ class _EditReproducaoRebanhoWidgetState
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                      color: _editableDateColor(
-                                                        context,
-                                                        selectedDate:
-                                                          _model
-                                                            .datePicked1,
-                                                        storedValue: _model
-                                                          .editReproducao
-                                                          ?.firstOrNull
-                                                          ?.dataInseminacao,
-                                                      ),
+                                                            color:
+                                                                _editableDateColor(
+                                                              context,
+                                                              selectedDate: _model
+                                                                  .datePicked1,
+                                                              storedValue: _model
+                                                                  .editReproducao
+                                                                  ?.firstOrNull
+                                                                  ?.dataInseminacao,
+                                                            ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
@@ -1589,7 +1603,9 @@ class _EditReproducaoRebanhoWidgetState
                                         onTap: () async {
                                           final datePicked2Date =
                                               await showDatePicker(
-                                            initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                            initialEntryMode:
+                                                DatePickerEntryMode
+                                                    .calendarOnly,
                                             context: context,
                                             initialDate: getCurrentTimestamp,
                                             firstDate: DateTime(1900),
@@ -1684,13 +1700,13 @@ class _EditReproducaoRebanhoWidgetState
                                               children: [
                                                 Text(
                                                   _formatEditableDate(
-                                                  context,
-                                                  selectedDate:
-                                                    _model.datePicked2,
-                                                  storedValue: _model
-                                                    .editReproducao
-                                                    ?.firstOrNull
-                                                    ?.dataPartidaSemen,
+                                                    context,
+                                                    selectedDate:
+                                                        _model.datePicked2,
+                                                    storedValue: _model
+                                                        .editReproducao
+                                                        ?.firstOrNull
+                                                        ?.dataPartidaSemen,
                                                   ),
                                                   style:
                                                       FlutterFlowTheme.of(
@@ -1701,16 +1717,16 @@ class _EditReproducaoRebanhoWidgetState
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                      color: _editableDateColor(
-                                                        context,
-                                                        selectedDate:
-                                                          _model
-                                                            .datePicked2,
-                                                        storedValue: _model
-                                                          .editReproducao
-                                                          ?.firstOrNull
-                                                          ?.dataPartidaSemen,
-                                                      ),
+                                                            color:
+                                                                _editableDateColor(
+                                                              context,
+                                                              selectedDate: _model
+                                                                  .datePicked2,
+                                                              storedValue: _model
+                                                                  .editReproducao
+                                                                  ?.firstOrNull
+                                                                  ?.dataPartidaSemen,
+                                                            ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
@@ -1991,7 +2007,9 @@ class _EditReproducaoRebanhoWidgetState
                                         onTap: () async {
                                           final datePicked3Date =
                                               await showDatePicker(
-                                            initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                            initialEntryMode:
+                                                DatePickerEntryMode
+                                                    .calendarOnly,
                                             context: context,
                                             initialDate: getCurrentTimestamp,
                                             firstDate: DateTime(1900),
@@ -2086,13 +2104,13 @@ class _EditReproducaoRebanhoWidgetState
                                               children: [
                                                 Text(
                                                   _formatEditableDate(
-                                                  context,
-                                                  selectedDate:
-                                                    _model.datePicked3,
-                                                  storedValue: _model
-                                                    .editReproducao
-                                                    ?.firstOrNull
-                                                    ?.dataInicial,
+                                                    context,
+                                                    selectedDate:
+                                                        _model.datePicked3,
+                                                    storedValue: _model
+                                                        .editReproducao
+                                                        ?.firstOrNull
+                                                        ?.dataInicial,
                                                   ),
                                                   style:
                                                       FlutterFlowTheme.of(
@@ -2103,16 +2121,16 @@ class _EditReproducaoRebanhoWidgetState
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                      color: _editableDateColor(
-                                                        context,
-                                                        selectedDate:
-                                                          _model
-                                                            .datePicked3,
-                                                        storedValue: _model
-                                                          .editReproducao
-                                                          ?.firstOrNull
-                                                          ?.dataInicial,
-                                                      ),
+                                                            color:
+                                                                _editableDateColor(
+                                                              context,
+                                                              selectedDate: _model
+                                                                  .datePicked3,
+                                                              storedValue: _model
+                                                                  .editReproducao
+                                                                  ?.firstOrNull
+                                                                  ?.dataInicial,
+                                                            ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
@@ -2180,7 +2198,9 @@ class _EditReproducaoRebanhoWidgetState
                                         onTap: () async {
                                           final datePicked4Date =
                                               await showDatePicker(
-                                            initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                            initialEntryMode:
+                                                DatePickerEntryMode
+                                                    .calendarOnly,
                                             context: context,
                                             initialDate: getCurrentTimestamp,
                                             firstDate: DateTime(1900),
@@ -2275,13 +2295,13 @@ class _EditReproducaoRebanhoWidgetState
                                               children: [
                                                 Text(
                                                   _formatEditableDate(
-                                                  context,
-                                                  selectedDate:
-                                                    _model.datePicked4,
-                                                  storedValue: _model
-                                                    .editReproducao
-                                                    ?.firstOrNull
-                                                    ?.dataFinal,
+                                                    context,
+                                                    selectedDate:
+                                                        _model.datePicked4,
+                                                    storedValue: _model
+                                                        .editReproducao
+                                                        ?.firstOrNull
+                                                        ?.dataFinal,
                                                   ),
                                                   style:
                                                       FlutterFlowTheme.of(
@@ -2292,16 +2312,16 @@ class _EditReproducaoRebanhoWidgetState
                                                                 FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                      color: _editableDateColor(
-                                                        context,
-                                                        selectedDate:
-                                                          _model
-                                                            .datePicked4,
-                                                        storedValue: _model
-                                                          .editReproducao
-                                                          ?.firstOrNull
-                                                          ?.dataFinal,
-                                                      ),
+                                                            color:
+                                                                _editableDateColor(
+                                                              context,
+                                                              selectedDate: _model
+                                                                  .datePicked4,
+                                                              storedValue: _model
+                                                                  .editReproducao
+                                                                  ?.firstOrNull
+                                                                  ?.dataFinal,
+                                                            ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
@@ -2399,8 +2419,7 @@ class _EditReproducaoRebanhoWidgetState
                                               initialValue: TextEditingValue(
                                                 text: _normalizeInputText(
                                                   containerBuscarReproducaoRowList
-                                                      .firstOrNull
-                                                      ?.inseminador,
+                                                      .firstOrNull?.inseminador,
                                                 ),
                                               ),
                                               optionsBuilder:
@@ -2658,7 +2677,7 @@ class _EditReproducaoRebanhoWidgetState
                                         side: BorderSide(
                                           width: 2,
                                           color: FlutterFlowTheme.of(context)
-                                            .alternate,
+                                              .alternate,
                                         ),
                                         activeColor:
                                             FlutterFlowTheme.of(context)
@@ -2841,7 +2860,9 @@ class _EditReproducaoRebanhoWidgetState
                                                 onTap: () async {
                                                   final datePicked5Date =
                                                       await showDatePicker(
-                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                    initialEntryMode:
+                                                        DatePickerEntryMode
+                                                            .calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -2958,13 +2979,13 @@ class _EditReproducaoRebanhoWidgetState
                                                       children: [
                                                         Text(
                                                           _formatEditableDate(
-                                                          context,
-                                                          selectedDate: _model
-                                                            .datePicked5,
-                                                          storedValue: _model
-                                                            .editReproducao
-                                                            ?.firstOrNull
-                                                            ?.dataStatus,
+                                                            context,
+                                                            selectedDate: _model
+                                                                .datePicked5,
+                                                            storedValue: _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataStatus,
                                                           ),
                                                           style: FlutterFlowTheme
                                                                   .of(context)
@@ -2973,16 +2994,17 @@ class _EditReproducaoRebanhoWidgetState
                                                                 fontFamily: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMediumFamily,
-                                                            color: _editableDateColor(
-                                                              context,
-                                                              selectedDate:
-                                                                _model
-                                                                  .datePicked5,
-                                                              storedValue: _model
-                                                                .editReproducao
-                                                                ?.firstOrNull
-                                                                ?.dataStatus,
-                                                            ),
+                                                                color:
+                                                                    _editableDateColor(
+                                                                  context,
+                                                                  selectedDate:
+                                                                      _model
+                                                                          .datePicked5,
+                                                                  storedValue: _model
+                                                                      .editReproducao
+                                                                      ?.firstOrNull
+                                                                      ?.dataStatus,
+                                                                ),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
                                                                     0.0,
@@ -3068,7 +3090,8 @@ class _EditReproducaoRebanhoWidgetState
                                                 ?.dataInseminacao);
                                         final datePicked6Date =
                                             await showDatePicker(
-                                          initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                          initialEntryMode:
+                                              DatePickerEntryMode.calendarOnly,
                                           context: context,
                                           initialDate: _model.datePicked6 ??
                                               (baseDate != null
@@ -3139,8 +3162,7 @@ class _EditReproducaoRebanhoWidgetState
                                         height: 56.0,
                                         decoration: BoxDecoration(
                                           color: const Color(0xFFF1F1F1),
-                                          borderRadius:
-                                              const BorderRadius.only(
+                                          borderRadius: const BorderRadius.only(
                                             bottomLeft: Radius.circular(6.0),
                                             bottomRight: Radius.circular(6.0),
                                             topLeft: Radius.circular(6.0),
@@ -3151,35 +3173,30 @@ class _EditReproducaoRebanhoWidgetState
                                           ),
                                         ),
                                         child: Padding(
-                                          padding:
-                                              const EdgeInsetsDirectional
-                                                  .fromSTEB(
-                                                  8.0, 0.0, 8.0, 0.0),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(8.0, 0.0, 8.0, 0.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.max,
                                             mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .spaceBetween,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
                                                 valueOrDefault<String>(
                                                   dateTimeFormat(
                                                     "d/M/y",
                                                     _model.datePicked6 ??
-                                                        functions.dataMais295(
-                                                            _model.datePicked1 !=
-                                                                    null
-                                                                ? _model
-                                                                    .datePicked1!
-                                                                : functions.converterParaData(
-                                                                    _model
-                                                                        .editReproducao
-                                                                        ?.firstOrNull
-                                                                        ?.dataInseminacao)!),
-                                                    locale:
-                                                        FFLocalizations.of(
-                                                                context)
-                                                            .languageCode,
+                                                        functions.dataMais295(_model
+                                                                    .datePicked1 !=
+                                                                null
+                                                            ? _model
+                                                                .datePicked1!
+                                                            : functions.converterParaData(_model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataInseminacao)!),
+                                                    locale: FFLocalizations.of(
+                                                            context)
+                                                        .languageCode,
                                                   ),
                                                   'Data da inseminação + 295 dias',
                                                 ),
@@ -3208,8 +3225,7 @@ class _EditReproducaoRebanhoWidgetState
                                               Icon(
                                                 Icons.calendar_month_rounded,
                                                 color:
-                                                    FlutterFlowTheme.of(
-                                                            context)
+                                                    FlutterFlowTheme.of(context)
                                                         .secondaryText,
                                                 size: 24.0,
                                               ),
@@ -3257,7 +3273,8 @@ class _EditReproducaoRebanhoWidgetState
                                       onTap: () async {
                                         final datePicked6Date =
                                             await showDatePicker(
-                                          initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                          initialEntryMode:
+                                              DatePickerEntryMode.calendarOnly,
                                           context: context,
                                           initialDate: getCurrentTimestamp,
                                           firstDate: DateTime(1900),
@@ -3367,8 +3384,8 @@ class _EditReproducaoRebanhoWidgetState
                                                               .bodyMediumFamily,
                                                       color: _editableDateColor(
                                                         context,
-                                                        selectedDate: _model
-                                                            .datePicked6,
+                                                        selectedDate:
+                                                            _model.datePicked6,
                                                         storedValue: _model
                                                             .editReproducao
                                                             ?.firstOrNull
@@ -3424,11 +3441,11 @@ class _EditReproducaoRebanhoWidgetState
                                         safeSetState(() => _model
                                             .checkboxParidaValue = newValue!);
                                       },
-                                        side: BorderSide(
+                                      side: BorderSide(
                                         width: 2,
                                         color: FlutterFlowTheme.of(context)
-                                          .accent4,
-                                        ),
+                                            .accent4,
+                                      ),
                                       activeColor:
                                           FlutterFlowTheme.of(context).primary,
                                       checkColor:
@@ -3487,7 +3504,8 @@ class _EditReproducaoRebanhoWidgetState
                                     onTap: () async {
                                       final datePicked7Date =
                                           await showDatePicker(
-                                        initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                        initialEntryMode:
+                                            DatePickerEntryMode.calendarOnly,
                                         context: context,
                                         initialDate: getCurrentTimestamp,
                                         firstDate: DateTime(1900),
@@ -3578,13 +3596,13 @@ class _EditReproducaoRebanhoWidgetState
                                           children: [
                                             Text(
                                               _formatEditableDate(
-                                              context,
-                                              selectedDate:
-                                                _model.datePicked7,
-                                              storedValue: _model
-                                                .editReproducao
-                                                ?.firstOrNull
-                                                ?.dataParto,
+                                                context,
+                                                selectedDate:
+                                                    _model.datePicked7,
+                                                storedValue: _model
+                                                    .editReproducao
+                                                    ?.firstOrNull
+                                                    ?.dataParto,
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -3594,15 +3612,15 @@ class _EditReproducaoRebanhoWidgetState
                                                         FlutterFlowTheme.of(
                                                                 context)
                                                             .bodyMediumFamily,
-                                                color: _editableDateColor(
-                                                  context,
-                                                  selectedDate:
-                                                    _model.datePicked7,
-                                                  storedValue: _model
-                                                    .editReproducao
-                                                    ?.firstOrNull
-                                                    ?.dataParto,
-                                                ),
+                                                    color: _editableDateColor(
+                                                      context,
+                                                      selectedDate:
+                                                          _model.datePicked7,
+                                                      storedValue: _model
+                                                          .editReproducao
+                                                          ?.firstOrNull
+                                                          ?.dataParto,
+                                                    ),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
                                                     fontWeight: FontWeight.w600,
@@ -3638,7 +3656,7 @@ class _EditReproducaoRebanhoWidgetState
                                     children: [
                                       TextSpan(
                                         text:
-                                          'Dias entre inseminação e parto: ',
+                                            'Dias entre inseminação e parto: ',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -3900,421 +3918,488 @@ class _EditReproducaoRebanhoWidgetState
                                       ),
                                       Expanded(
                                         child: FFButtonWidget(
-                                          onPressed: () async {
-                                            if (!(FFAppState()
-                                                    .dataDadosNaoSyncRepro !=
-                                                null)) {
-                                              FFAppState()
-                                                      .dataDadosNaoSyncRepro =
-                                                  getCurrentTimestamp;
-                                              safeSetState(() {});
-                                            }
-                                            _model.animalSelecionado =
-                                                await SQLiteManager.instance
-                                                    .buscarRebanho(
-                                              idRebanho: FFAppState()
-                                                  .matrizSelecionada
-                                                  .idRebanho,
-                                            );
-                                            if (_model.tipoReproducao ==
-                                                'Inseminação') {
-                                              await SQLiteManager.instance
-                                                  .uPDTReproducao(
-                                                tipoReproducao:
-                                                    _model.tipoReproducao,
-                                                scoreCorporal: _model.score,
-                                                dataInseminacao:
-                                                    _model.datePicked1 != null
-                                                        ? dateTimeFormat(
-                                                            "yyyy-MM-dd",
-                                                            _model.datePicked1,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          )
-                                                        : _model
-                                                            .editReproducao
+                                          onPressed: _isSaving
+                                              ? null
+                                              : () async {
+                                                  if (_isSaving) return;
+                                                  _isSaving = true;
+                                                  safeSetState(() {});
+                                                  try {
+                                                    if (!(FFAppState()
+                                                            .dataDadosNaoSyncRepro !=
+                                                        null)) {
+                                                      FFAppState()
+                                                              .dataDadosNaoSyncRepro =
+                                                          getCurrentTimestamp;
+                                                      safeSetState(() {});
+                                                    }
+                                                    _model.animalSelecionado =
+                                                        await SQLiteManager
+                                                            .instance
+                                                            .buscarRebanho(
+                                                      idRebanho: FFAppState()
+                                                          .matrizSelecionada
+                                                          .idRebanho,
+                                                    );
+                                                    if (_model.tipoReproducao ==
+                                                        'Inseminação') {
+                                                      await SQLiteManager
+                                                          .instance
+                                                          .uPDTReproducao(
+                                                        tipoReproducao: _model
+                                                            .tipoReproducao,
+                                                        scoreCorporal:
+                                                            _model.score,
+                                                        dataInseminacao: _model
+                                                                    .datePicked1 !=
+                                                                null
+                                                            ? dateTimeFormat(
+                                                                "yyyy-MM-dd",
+                                                                _model
+                                                                    .datePicked1,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              )
+                                                            : _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataInseminacao,
+                                                        dataPartidaSemen: _model
+                                                                    .datePicked2 !=
+                                                                null
+                                                            ? dateTimeFormat(
+                                                                "yyyy-MM-dd",
+                                                                _model
+                                                                    .datePicked2,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              )
+                                                            : _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataPartidaSemen,
+                                                        partidaSemen:
+                                                            _model.partidaSemen,
+                                                        previsaoParto: _model
+                                                                    .datePicked6 !=
+                                                                null
+                                                            ? dateTimeFormat(
+                                                                "yyyy-MM-dd",
+                                                                _model
+                                                                    .datePicked6!,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              )
+                                                            : _model.datePicked1 !=
+                                                                    null
+                                                                ? dateTimeFormat(
+                                                                    "yyyy-MM-dd",
+                                                                    functions.dataMais295(
+                                                                        _model
+                                                                            .datePicked1!),
+                                                                    locale: FFLocalizations.of(
+                                                                            context)
+                                                                        .languageCode,
+                                                                  )
+                                                                : _model
+                                                                    .editReproducao
+                                                                    ?.firstOrNull
+                                                                    ?.previsaoParto,
+                                                        idLote: _model
+                                                            .animalSelecionado
                                                             ?.firstOrNull
-                                                            ?.dataInseminacao,
-                                                dataPartidaSemen:
-                                                    _model.datePicked2 != null
-                                                        ? dateTimeFormat(
-                                                            "yyyy-MM-dd",
-                                                            _model.datePicked2,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          )
-                                                        : _model
-                                                            .editReproducao
+                                                            ?.loteID,
+                                                        dataInicial: _model
+                                                                    .datePicked3 !=
+                                                                null
+                                                            ? dateTimeFormat(
+                                                                "yyyy-MM-dd",
+                                                                _model
+                                                                    .datePicked3,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              )
+                                                            : _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataInicial,
+                                                        dataFinal: _model
+                                                                    .datePicked4 !=
+                                                                null
+                                                            ? dateTimeFormat(
+                                                                "yyyy-MM-dd",
+                                                                _model
+                                                                    .datePicked4,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              )
+                                                            : _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataFinal,
+                                                        inseminador: _model
+                                                            .textFieldInseminadorTextController
+                                                            .text,
+                                                        anotacoes: _model
+                                                            .textFieldAnotacoesTextController
+                                                            .text,
+                                                        idReproducao:
+                                                            widget.idReproducao,
+                                                        deletado: 'NAO',
+                                                        updatedAt:
+                                                            dateTimeFormat(
+                                                          "yyyy-MM-dd HH:mm:ss",
+                                                          getCurrentTimestamp,
+                                                          locale:
+                                                              FFLocalizations.of(
+                                                                      context)
+                                                                  .languageCode,
+                                                        ),
+                                                        numMatriz: FFAppState()
+                                                            .matrizSelecionada
+                                                            .numAnimal,
+                                                        nomeMatriz: FFAppState()
+                                                            .matrizSelecionada
+                                                            .nomeAnimal,
+                                                        nascimentoMatriz:
+                                                            FFAppState()
+                                                                .matrizSelecionada
+                                                                .dataNascAnimal,
+                                                        numReprodutor: FFAppState()
+                                                            .reprodutorSelecionado
+                                                            .numAnimal,
+                                                        nomeReprodutor: FFAppState()
+                                                            .reprodutorSelecionado
+                                                            .nomeAnimal,
+                                                        nascimentoReprodutor:
+                                                            FFAppState()
+                                                                .reprodutorSelecionado
+                                                                .dataNascAnimal,
+                                                        loteNome: _model
+                                                            .animalSelecionado
                                                             ?.firstOrNull
-                                                            ?.dataPartidaSemen,
-                                                partidaSemen:
-                                                    _model.partidaSemen,
-                                                previsaoParto: _model
-                                                            .datePicked6 !=
-                                                        null
-                                                    ? dateTimeFormat(
-                                                        "yyyy-MM-dd",
-                                                        _model.datePicked6!,
-                                                        locale:
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      )
-                                                    : _model.datePicked1 !=
-                                                            null
-                                                        ? dateTimeFormat(
-                                                            "yyyy-MM-dd",
-                                                            functions
-                                                                .dataMais295(
+                                                            ?.loteNome,
+                                                        statusReproducao:
+                                                            valueOrDefault<
+                                                                String>(
+                                                          _model
+                                                              .dropdownStatusValue,
+                                                          'Não diagnosticado',
+                                                        ),
+                                                        dataStatus: _model
+                                                                    .datePicked5 !=
+                                                                null
+                                                            ? dateTimeFormat(
+                                                                "yyyy-MM-dd",
+                                                                _model
+                                                                    .datePicked5,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              )
+                                                            : _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataStatus,
+                                                        racaMatriz: FFAppState()
+                                                            .matrizSelecionada
+                                                            .racaAnimal,
+                                                        racaReprodutor: FFAppState()
+                                                            .reprodutorSelecionado
+                                                            .racaAnimal,
+                                                        chipReprodutor: FFAppState()
+                                                            .reprodutorSelecionado
+                                                            .chip,
+                                                        chipMatriz: FFAppState()
+                                                            .matrizSelecionada
+                                                            .chip,
+                                                        ressinc: valueOrDefault<
+                                                            String>(
+                                                          _model
+                                                              .dropdownRessincValue,
+                                                          '-',
+                                                        ),
+                                                        parida: (_model.checkboxParidaValue ??
                                                                     _model
-                                                                        .datePicked1!),
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          )
-                                                        : _model
-                                                            .editReproducao
-                                                            ?.firstOrNull
-                                                            ?.previsaoParto,
-                                                idLote: _model.animalSelecionado
-                                                    ?.firstOrNull?.loteID,
-                                                dataInicial:
-                                                    _model.datePicked3 != null
-                                                        ? dateTimeFormat(
-                                                            "yyyy-MM-dd",
-                                                            _model.datePicked3,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          )
-                                                        : _model
-                                                            .editReproducao
-                                                            ?.firstOrNull
-                                                            ?.dataInicial,
-                                                dataFinal: _model.datePicked4 !=
-                                                        null
-                                                    ? dateTimeFormat(
-                                                        "yyyy-MM-dd",
-                                                        _model.datePicked4,
-                                                        locale:
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      )
-                                                    : _model
-                                                        .editReproducao
-                                                        ?.firstOrNull
-                                                        ?.dataFinal,
-                                                inseminador: _model
-                                                    .textFieldInseminadorTextController
-                                                    .text,
-                                                anotacoes: _model
-                                                    .textFieldAnotacoesTextController
-                                                    .text,
-                                                idReproducao:
-                                                    widget.idReproducao,
-                                                deletado: 'NAO',
-                                                updatedAt: dateTimeFormat(
-                                                  "yyyy-MM-dd HH:mm:ss",
-                                                  getCurrentTimestamp,
-                                                  locale: FFLocalizations.of(
-                                                          context)
-                                                      .languageCode,
-                                                ),
-                                                numMatriz: FFAppState()
-                                                    .matrizSelecionada
-                                                    .numAnimal,
-                                                nomeMatriz: FFAppState()
-                                                    .matrizSelecionada
-                                                    .nomeAnimal,
-                                                nascimentoMatriz: FFAppState()
-                                                    .matrizSelecionada
-                                                    .dataNascAnimal,
-                                                numReprodutor: FFAppState()
-                                                    .reprodutorSelecionado
-                                                    .numAnimal,
-                                                nomeReprodutor: FFAppState()
-                                                    .reprodutorSelecionado
-                                                    .nomeAnimal,
-                                                nascimentoReprodutor:
-                                                    FFAppState()
-                                                        .reprodutorSelecionado
-                                                        .dataNascAnimal,
-                                                loteNome: _model
-                                                    .animalSelecionado
-                                                    ?.firstOrNull
-                                                    ?.loteNome,
-                                                statusReproducao:
-                                                    valueOrDefault<String>(
-                                                  _model.dropdownStatusValue,
-                                                  'Não diagnosticado',
-                                                ),
-                                                dataStatus:
-                                                    _model.datePicked5 != null
-                                                        ? dateTimeFormat(
-                                                            "yyyy-MM-dd",
-                                                            _model.datePicked5,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          )
-                                                        : _model
-                                                            .editReproducao
-                                                            ?.firstOrNull
-                                                            ?.dataStatus,
-                                                racaMatriz: FFAppState()
-                                                    .matrizSelecionada
-                                                    .racaAnimal,
-                                                racaReprodutor: FFAppState()
-                                                    .reprodutorSelecionado
-                                                    .racaAnimal,
-                                                chipReprodutor: FFAppState()
-                                                    .reprodutorSelecionado
-                                                    .chip,
-                                                chipMatriz: FFAppState()
-                                                    .matrizSelecionada
-                                                    .chip,
-                                                ressinc: valueOrDefault<String>(
-                                                  _model.dropdownRessincValue,
-                                                  '-',
-                                                ),
-                                                parida:
-                                                    (_model.checkboxParidaValue ??
+                                                                        .parida) ==
+                                                                true
+                                                            ? 'Sim'
+                                                            : 'Não',
+                                                        dataParto: _model
+                                                                    .datePicked7 !=
+                                                                null
+                                                            ? dateTimeFormat(
+                                                                "yyyy-MM-dd",
                                                                 _model
-                                                                    .parida) ==
-                                                            true
-                                                        ? 'Sim'
-                                                        : 'Não',
-                                                dataParto: _model.datePicked7 !=
-                                                        null
-                                                    ? dateTimeFormat(
-                                                        "yyyy-MM-dd",
-                                                        _model.datePicked7,
-                                                        locale:
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      )
-                                                    : _model
-                                                        .editReproducao
-                                                        ?.firstOrNull
-                                                        ?.dataParto,
-                                                idrebanhomatriz: FFAppState()
-                                                    .matrizSelecionada
-                                                    .idRebanho,
-                                                idrebanhoreprodutor:
-                                                    FFAppState()
-                                                        .reprodutorSelecionado
-                                                        .idRebanho,
-                                                gnrh: valueOrDefault<String>(
-                                                  _model.dropdownGnrhValue,
-                                                  'Não',
-                                                ),
-                                                cio: valueOrDefault<String>(
-                                                  _model.dropdownCioValue,
-                                                  'Não',
-                                                ),
-                                              );
-                                            } else {
-                                              await SQLiteManager.instance
-                                                  .uPDTReproducaoMonta(
-                                                tipoReproducao:
-                                                    _model.tipoReproducao,
-                                                scoreCorporal: _model.score,
-                                                dataPartidaSemen:
-                                                    _model.datePicked2 != null
-                                                        ? dateTimeFormat(
-                                                            "yyyy-MM-dd",
-                                                            _model.datePicked2,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          )
-                                                        : _model
-                                                            .editReproducao
-                                                            ?.firstOrNull
-                                                            ?.dataPartidaSemen,
-                                                partidaSemen:
-                                                    _model.partidaSemen,
-                                                previsaoParto:
-                                                    _model.datePicked6 != null
-                                                        ? dateTimeFormat(
-                                                            "yyyy-MM-dd",
-                                                            _model.datePicked6,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          )
-                                                        : _model
-                                                            .editReproducao
-                                                            ?.firstOrNull
-                                                            ?.previsaoParto,
-                                                idLote: _model.animalSelecionado
-                                                    ?.firstOrNull?.loteID,
-                                                dataInicial:
-                                                    _model.datePicked3 != null
-                                                        ? dateTimeFormat(
-                                                            "yyyy-MM-dd",
-                                                            _model.datePicked3,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          )
-                                                        : _model
-                                                            .editReproducao
-                                                            ?.firstOrNull
-                                                            ?.dataInicial,
-                                                dataFinal: _model.datePicked4 !=
-                                                        null
-                                                    ? dateTimeFormat(
-                                                        "yyyy-MM-dd",
-                                                        _model.datePicked4,
-                                                        locale:
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      )
-                                                    : _model
-                                                        .editReproducao
-                                                        ?.firstOrNull
-                                                        ?.dataFinal,
-                                                anotacoes: _model
-                                                    .textFieldAnotacoesTextController
-                                                    .text,
-                                                idReproducao:
-                                                    widget.idReproducao,
-                                                deletado: 'NAO',
-                                                updatedAt: dateTimeFormat(
-                                                  "yyyy-MM-dd HH:mm:ss",
-                                                  getCurrentTimestamp,
-                                                  locale: FFLocalizations.of(
-                                                          context)
-                                                      .languageCode,
-                                                ),
-                                                numMatriz: FFAppState()
-                                                    .matrizSelecionada
-                                                    .numAnimal,
-                                                nomeMatriz: FFAppState()
-                                                    .matrizSelecionada
-                                                    .nomeAnimal,
-                                                nascimentoMatriz: FFAppState()
-                                                    .matrizSelecionada
-                                                    .dataNascAnimal,
-                                                numReprodutor: FFAppState()
-                                                    .reprodutorSelecionado
-                                                    .numAnimal,
-                                                nomeReprodutor: FFAppState()
-                                                    .reprodutorSelecionado
-                                                    .nomeAnimal,
-                                                nascimentoReprodutor:
-                                                    FFAppState()
-                                                        .reprodutorSelecionado
-                                                        .dataNascAnimal,
-                                                loteNome: _model
-                                                    .animalSelecionado
-                                                    ?.firstOrNull
-                                                    ?.loteNome,
-                                                statusReproducao:
-                                                    valueOrDefault<String>(
-                                                  _model.dropdownStatusValue,
-                                                  'Não diagnosticado',
-                                                ),
-                                                dataStatus:
-                                                    _model.datePicked5 != null
-                                                        ? dateTimeFormat(
-                                                            "yyyy-MM-dd",
-                                                            _model.datePicked5,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          )
-                                                        : _model
-                                                            .editReproducao
-                                                            ?.firstOrNull
-                                                            ?.dataStatus,
-                                                racaMatriz: FFAppState()
-                                                    .matrizSelecionada
-                                                    .racaAnimal,
-                                                racaReprodutor: FFAppState()
-                                                    .reprodutorSelecionado
-                                                    .racaAnimal,
-                                                chipReprodutor: FFAppState()
-                                                    .reprodutorSelecionado
-                                                    .chip,
-                                                chipMatriz: FFAppState()
-                                                    .matrizSelecionada
-                                                    .chip,
-                                                ressinc: valueOrDefault<String>(
-                                                  _model.dropdownRessincValue,
-                                                  '-',
-                                                ),
-                                                parida:
-                                                    (_model.checkboxParidaValue ??
+                                                                    .datePicked7,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              )
+                                                            : _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataParto,
+                                                        idrebanhomatriz:
+                                                            FFAppState()
+                                                                .matrizSelecionada
+                                                                .idRebanho,
+                                                        idrebanhoreprodutor:
+                                                            FFAppState()
+                                                                .reprodutorSelecionado
+                                                                .idRebanho,
+                                                        gnrh: valueOrDefault<
+                                                            String>(
+                                                          _model
+                                                              .dropdownGnrhValue,
+                                                          'Não',
+                                                        ),
+                                                        cio: valueOrDefault<
+                                                            String>(
+                                                          _model
+                                                              .dropdownCioValue,
+                                                          'Não',
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      await SQLiteManager
+                                                          .instance
+                                                          .uPDTReproducaoMonta(
+                                                        tipoReproducao: _model
+                                                            .tipoReproducao,
+                                                        scoreCorporal:
+                                                            _model.score,
+                                                        dataPartidaSemen: _model
+                                                                    .datePicked2 !=
+                                                                null
+                                                            ? dateTimeFormat(
+                                                                "yyyy-MM-dd",
                                                                 _model
-                                                                    .parida) ==
-                                                            true
-                                                        ? 'Sim'
-                                                        : 'Não',
-                                                dataParto: _model.datePicked7 !=
-                                                        null
-                                                    ? dateTimeFormat(
-                                                        "yyyy-MM-dd",
-                                                        _model.datePicked7,
-                                                        locale:
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      )
-                                                    : _model
-                                                        .editReproducao
-                                                        ?.firstOrNull
-                                                        ?.dataParto,
-                                                idrebanhomatriz: FFAppState()
-                                                    .matrizSelecionada
-                                                    .idRebanho,
-                                                idrebanhoreprodutor:
-                                                    FFAppState()
-                                                        .reprodutorSelecionado
-                                                        .idRebanho,
-                                                gnrh: valueOrDefault<String>(
-                                                  _model.dropdownGnrhValue,
-                                                  'Não',
-                                                ),
-                                                cio: valueOrDefault<String>(
-                                                  _model.dropdownCioValue,
-                                                  'Não',
-                                                ),
-                                              );
-                                            }
+                                                                    .datePicked2,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              )
+                                                            : _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataPartidaSemen,
+                                                        partidaSemen:
+                                                            _model.partidaSemen,
+                                                        previsaoParto: _model
+                                                                    .datePicked6 !=
+                                                                null
+                                                            ? dateTimeFormat(
+                                                                "yyyy-MM-dd",
+                                                                _model
+                                                                    .datePicked6,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              )
+                                                            : _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.previsaoParto,
+                                                        idLote: _model
+                                                            .animalSelecionado
+                                                            ?.firstOrNull
+                                                            ?.loteID,
+                                                        dataInicial: _model
+                                                                    .datePicked3 !=
+                                                                null
+                                                            ? dateTimeFormat(
+                                                                "yyyy-MM-dd",
+                                                                _model
+                                                                    .datePicked3,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              )
+                                                            : _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataInicial,
+                                                        dataFinal: _model
+                                                                    .datePicked4 !=
+                                                                null
+                                                            ? dateTimeFormat(
+                                                                "yyyy-MM-dd",
+                                                                _model
+                                                                    .datePicked4,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              )
+                                                            : _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataFinal,
+                                                        anotacoes: _model
+                                                            .textFieldAnotacoesTextController
+                                                            .text,
+                                                        idReproducao:
+                                                            widget.idReproducao,
+                                                        deletado: 'NAO',
+                                                        updatedAt:
+                                                            dateTimeFormat(
+                                                          "yyyy-MM-dd HH:mm:ss",
+                                                          getCurrentTimestamp,
+                                                          locale:
+                                                              FFLocalizations.of(
+                                                                      context)
+                                                                  .languageCode,
+                                                        ),
+                                                        numMatriz: FFAppState()
+                                                            .matrizSelecionada
+                                                            .numAnimal,
+                                                        nomeMatriz: FFAppState()
+                                                            .matrizSelecionada
+                                                            .nomeAnimal,
+                                                        nascimentoMatriz:
+                                                            FFAppState()
+                                                                .matrizSelecionada
+                                                                .dataNascAnimal,
+                                                        numReprodutor: FFAppState()
+                                                            .reprodutorSelecionado
+                                                            .numAnimal,
+                                                        nomeReprodutor: FFAppState()
+                                                            .reprodutorSelecionado
+                                                            .nomeAnimal,
+                                                        nascimentoReprodutor:
+                                                            FFAppState()
+                                                                .reprodutorSelecionado
+                                                                .dataNascAnimal,
+                                                        loteNome: _model
+                                                            .animalSelecionado
+                                                            ?.firstOrNull
+                                                            ?.loteNome,
+                                                        statusReproducao:
+                                                            valueOrDefault<
+                                                                String>(
+                                                          _model
+                                                              .dropdownStatusValue,
+                                                          'Não diagnosticado',
+                                                        ),
+                                                        dataStatus: _model
+                                                                    .datePicked5 !=
+                                                                null
+                                                            ? dateTimeFormat(
+                                                                "yyyy-MM-dd",
+                                                                _model
+                                                                    .datePicked5,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              )
+                                                            : _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataStatus,
+                                                        racaMatriz: FFAppState()
+                                                            .matrizSelecionada
+                                                            .racaAnimal,
+                                                        racaReprodutor: FFAppState()
+                                                            .reprodutorSelecionado
+                                                            .racaAnimal,
+                                                        chipReprodutor: FFAppState()
+                                                            .reprodutorSelecionado
+                                                            .chip,
+                                                        chipMatriz: FFAppState()
+                                                            .matrizSelecionada
+                                                            .chip,
+                                                        ressinc: valueOrDefault<
+                                                            String>(
+                                                          _model
+                                                              .dropdownRessincValue,
+                                                          '-',
+                                                        ),
+                                                        parida: (_model.checkboxParidaValue ??
+                                                                    _model
+                                                                        .parida) ==
+                                                                true
+                                                            ? 'Sim'
+                                                            : 'Não',
+                                                        dataParto: _model
+                                                                    .datePicked7 !=
+                                                                null
+                                                            ? dateTimeFormat(
+                                                                "yyyy-MM-dd",
+                                                                _model
+                                                                    .datePicked7,
+                                                                locale: FFLocalizations.of(
+                                                                        context)
+                                                                    .languageCode,
+                                                              )
+                                                            : _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataParto,
+                                                        idrebanhomatriz:
+                                                            FFAppState()
+                                                                .matrizSelecionada
+                                                                .idRebanho,
+                                                        idrebanhoreprodutor:
+                                                            FFAppState()
+                                                                .reprodutorSelecionado
+                                                                .idRebanho,
+                                                        gnrh: valueOrDefault<
+                                                            String>(
+                                                          _model
+                                                              .dropdownGnrhValue,
+                                                          'Não',
+                                                        ),
+                                                        cio: valueOrDefault<
+                                                            String>(
+                                                          _model
+                                                              .dropdownCioValue,
+                                                          'Não',
+                                                        ),
+                                                      );
+                                                    }
 
-                                            await action_blocks
-                                                .qTDReproducoes(context);
-                                            FFAppState().update(() {});
-                                            Navigator.pop(context);
+                                                    await action_blocks
+                                                        .qTDReproducoes(
+                                                            context);
+                                                    FFAppState().update(() {});
+                                                    Navigator.pop(context);
 
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Reprodução em animal editada com sucesso.',
-                                                  style: TextStyle(
-                                                    color: FlutterFlowTheme.of(
+                                                    ScaffoldMessenger.of(
                                                             context)
-                                                        .secondaryBackground,
-                                                  ),
-                                                ),
-                                                duration: const Duration(
-                                                    milliseconds: 4000),
-                                                backgroundColor:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondary,
-                                              ),
-                                            );
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                        content: Text(
+                                                          'Reprodução em animal editada com sucesso.',
+                                                          style: TextStyle(
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondaryBackground,
+                                                          ),
+                                                        ),
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    4000),
+                                                        backgroundColor:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .secondary,
+                                                      ),
+                                                    );
 
-                                            safeSetState(() {});
-                                          },
+                                                    safeSetState(() {});
+                                                  } finally {
+                                                    _isSaving = false;
+                                                    if (mounted) {
+                                                      safeSetState(() {});
+                                                    }
+                                                  }
+                                                },
                                           text: 'Salvar',
                                           options: FFButtonOptions(
                                             height: 56.0,

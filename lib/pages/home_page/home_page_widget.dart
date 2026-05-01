@@ -82,83 +82,95 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         await Future.wait([
           Future(() async {
             if (FFAppState().firstRunUserEmail != currentUserEmail) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Sincronização iniciada, os dados estão sendo baixados você pode continuar usando o app normalmente.',
-                    style: TextStyle(
-                      color: FlutterFlowTheme.of(context).secondaryBackground,
+              FFAppState().isSyncing = true;
+              FFAppState().syncCancelRequested = false;
+              safeSetState(() {});
+              try {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Sincronização iniciada, os dados estão sendo baixados você pode continuar usando o app normalmente.',
+                      style: TextStyle(
+                        color: FlutterFlowTheme.of(context).secondaryBackground,
+                      ),
                     ),
+                    duration: const Duration(milliseconds: 6000),
+                    backgroundColor: FlutterFlowTheme.of(context).secondary,
                   ),
-                  duration: const Duration(milliseconds: 6000),
-                  backgroundColor: FlutterFlowTheme.of(context).secondary,
-                ),
-              );
-              FFAppState().propriedadesChangeDateTime =
-                  DateTime.fromMillisecondsSinceEpoch(1495616760000);
-              FFAppState().rebanhosChangeDateTime =
-                  DateTime.fromMillisecondsSinceEpoch(1528129140000);
-              FFAppState().lotesChangeDateTime =
-                  DateTime.fromMillisecondsSinceEpoch(1497268200000);
-              FFAppState().reproducaoChangeDateTime =
-                  DateTime.fromMillisecondsSinceEpoch(1497796620000);
-              FFAppState().sanidadeChangeDateTime =
-                  DateTime.fromMillisecondsSinceEpoch(1498343520000);
-              FFAppState().pesagensChangeDateTime =
-                  DateTime.fromMillisecondsSinceEpoch(1505578800000);
-              FFAppState().animaisRegistrados = 0;
-              FFAppState().countReproducoes = 0;
-              FFAppState().countInseminacoes = 0;
-              FFAppState().countMontaNatural = 0;
-              FFAppState().qtdTratamento = 0;
-              FFAppState().qtdAnimaisPropriedade = 0;
-              FFAppState().qtdLotesAtivos = 0;
-              FFAppState().qtdLotesInativos = 0;
-              FFAppState().qtdAnimaisLote = 0;
-              FFAppState().qtdSanidades = 0;
-              FFAppState().qtdVacinas = 0;
-              FFAppState().qtdProtocoloReprodutivo = 0;
-              FFAppState().qtdAntiparasitarios = 0;
-              FFAppState().lotesCadastrados = 0;
-              safeSetState(() {});
-              try {
-                await action_blocks.refreshPropriedades(context);
-              } catch (e) {
-                debugPrint('[SYNC][propriedades] Erro na home: $e');
+                );
+                FFAppState().propriedadesChangeDateTime =
+                    DateTime.fromMillisecondsSinceEpoch(1495616760000);
+                FFAppState().rebanhosChangeDateTime =
+                    DateTime.fromMillisecondsSinceEpoch(1528129140000);
+                FFAppState().lotesChangeDateTime =
+                    DateTime.fromMillisecondsSinceEpoch(1497268200000);
+                FFAppState().reproducaoChangeDateTime =
+                    DateTime.fromMillisecondsSinceEpoch(1497796620000);
+                FFAppState().sanidadeChangeDateTime =
+                    DateTime.fromMillisecondsSinceEpoch(1498343520000);
+                FFAppState().pesagensChangeDateTime =
+                    DateTime.fromMillisecondsSinceEpoch(1505578800000);
+                FFAppState().animaisRegistrados = 0;
+                FFAppState().countReproducoes = 0;
+                FFAppState().countInseminacoes = 0;
+                FFAppState().countMontaNatural = 0;
+                FFAppState().qtdTratamento = 0;
+                FFAppState().qtdAnimaisPropriedade = 0;
+                FFAppState().qtdLotesAtivos = 0;
+                FFAppState().qtdLotesInativos = 0;
+                FFAppState().qtdAnimaisLote = 0;
+                FFAppState().qtdSanidades = 0;
+                FFAppState().qtdVacinas = 0;
+                FFAppState().qtdProtocoloReprodutivo = 0;
+                FFAppState().qtdAntiparasitarios = 0;
+                FFAppState().lotesCadastrados = 0;
+                safeSetState(() {});
+                try {
+                  await action_blocks.refreshPropriedades(context);
+                } catch (e) {
+                  debugPrint('[SYNC][propriedades] Erro na home: $e');
+                }
+                try {
+                  await action_blocks.refreshLotes(context);
+                } catch (e) {
+                  debugPrint('[SYNC][lotes] Erro na home: $e');
+                }
+                try {
+                  await action_blocks.refreshRebanhoOtimizada(context);
+                } catch (e) {
+                  debugPrint('[SYNC][rebanho] Erro na home: $e');
+                }
+                debugPrint(
+                    '[SYNC][home] Iniciando refreshReproducaoOtimizada...');
+                try {
+                  await action_blocks.refreshReproducaoOtimizada(context);
+                } catch (e) {
+                  debugPrint('[SYNC][reproducao] Erro na home: $e');
+                }
+                debugPrint('[SYNC][home] Iniciando refreshPesagens...');
+                try {
+                  await action_blocks.refreshPesagens(context);
+                } catch (e) {
+                  debugPrint('[SYNC][pesagens] Erro na home: $e');
+                }
+                debugPrint('[SYNC][home] Iniciando refresSanidadeOtimizada...');
+                try {
+                  await action_blocks.refresSanidadeOtimizada(context);
+                } catch (e) {
+                  debugPrint('[SYNC][sanidade] Erro na home: $e');
+                }
+                debugPrint('[SYNC][home] Todas as syncs finalizadas.');
+                FFAppState().firstRunUserEmail = currentUserEmail;
+                FFAppState().ultimaSincronizacao = getCurrentTimestamp;
+                safeSetState(() {});
+              } finally {
+                FFAppState().isSyncing = false;
+                FFAppState().syncCancelRequested = false;
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                }
+                safeSetState(() {});
               }
-              try {
-                await action_blocks.refreshLotes(context);
-              } catch (e) {
-                debugPrint('[SYNC][lotes] Erro na home: $e');
-              }
-              try {
-                await action_blocks.refreshRebanhoOtimizada(context);
-              } catch (e) {
-                debugPrint('[SYNC][rebanho] Erro na home: $e');
-              }
-              debugPrint(
-                  '[SYNC][home] Iniciando refreshReproducaoOtimizada...');
-              try {
-                await action_blocks.refreshReproducaoOtimizada(context);
-              } catch (e) {
-                debugPrint('[SYNC][reproducao] Erro na home: $e');
-              }
-              debugPrint('[SYNC][home] Iniciando refreshPesagens...');
-              try {
-                await action_blocks.refreshPesagens(context);
-              } catch (e) {
-                debugPrint('[SYNC][pesagens] Erro na home: $e');
-              }
-              debugPrint('[SYNC][home] Iniciando refresSanidadeOtimizada...');
-              try {
-                await action_blocks.refresSanidadeOtimizada(context);
-              } catch (e) {
-                debugPrint('[SYNC][sanidade] Erro na home: $e');
-              }
-              debugPrint('[SYNC][home] Todas as syncs finalizadas.');
-              FFAppState().firstRunUserEmail = currentUserEmail;
-              FFAppState().ultimaSincronizacao = getCurrentTimestamp;
-              safeSetState(() {});
             }
             await action_blocks.animaisRegistrados(context);
           }),

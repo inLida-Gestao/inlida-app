@@ -29,6 +29,7 @@ class AddSanidadeLoteWidget extends StatefulWidget {
 
 class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
   late AddSanidadeLoteModel _model;
+  bool _isSaving = false;
 
   @override
   void setState(VoidCallback callback) {
@@ -528,7 +529,8 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                   highlightColor: Colors.transparent,
                                   onTap: () async {
                                     final datePickedDate = await showDatePicker(
-                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                      initialEntryMode:
+                                          DatePickerEntryMode.calendarOnly,
                                       context: context,
                                       initialDate: getCurrentTimestamp,
                                       firstDate: DateTime(1900),
@@ -2732,253 +2734,272 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                       ),
                       Expanded(
                         child: FFButtonWidget(
-                          onPressed: ((_model.dropDownLoteValue == null ||
-                                      _model.dropDownLoteValue == '') ||
-                                  (_model.datePicked == null) ||
-                                  (FFAppState().sanidade.isEmpty) ||
-                                  (FFAppState().sanidade.contains('Vacina') &&
-                                      !(_model.dropDownVacinaValue
-                                              ?.isNotEmpty ??
-                                          false)) ||
-                                  (FFAppState()
-                                          .sanidade
-                                          .contains('Antiparasitário') &&
-                                      !(_model.dropDownAntiparasitarioValue
-                                              ?.isNotEmpty ??
-                                          false)) ||
-                                  (FFAppState()
-                                          .sanidade
-                                          .contains('Tratamento') &&
-                                      !(_model.dropDownTratamentoValue
-                                              ?.isNotEmpty ??
-                                          false)) ||
-                                  (FFAppState()
-                                          .sanidade
-                                          .contains('Protocolo reprodutivo') &&
-                                      ((_model.dropDownProtocoloValue ==
-                                              null) ||
-                                          (_model.dropDownProtocoloValue ==
-                                              ''))))
+                          onPressed: (_isSaving ||
+                                  ((_model.dropDownLoteValue == null ||
+                                          _model.dropDownLoteValue == '') ||
+                                      (_model.datePicked == null) ||
+                                      (FFAppState().sanidade.isEmpty) ||
+                                      (FFAppState()
+                                              .sanidade
+                                              .contains('Vacina') &&
+                                          !(_model.dropDownVacinaValue?.isNotEmpty ??
+                                              false)) ||
+                                      (FFAppState()
+                                              .sanidade
+                                              .contains('Antiparasitário') &&
+                                          !(_model.dropDownAntiparasitarioValue
+                                                  ?.isNotEmpty ??
+                                              false)) ||
+                                      (FFAppState()
+                                              .sanidade
+                                              .contains('Tratamento') &&
+                                          !(_model.dropDownTratamentoValue
+                                                  ?.isNotEmpty ??
+                                              false)) ||
+                                      (FFAppState().sanidade.contains(
+                                              'Protocolo reprodutivo') &&
+                                          ((_model.dropDownProtocoloValue ==
+                                                  null) ||
+                                              (_model.dropDownProtocoloValue ==
+                                                  '')))))
                               ? null
                               : () async {
-                                  if (!(FFAppState().dataDadosNaoSyncSanidade !=
-                                      null)) {
-                                    FFAppState().dataDadosNaoSyncSanidade =
-                                        getCurrentTimestamp;
-                                    safeSetState(() {});
-                                  }
-                                  _model.loteSelecionado = await SQLiteManager
-                                      .instance
-                                      .buscarAnimaisDoLote(
-                                    loteid: _model.dropDownLoteValue,
-                                  );
-                                  _model.index = 0;
+                                  if (_isSaving) return;
+                                  _isSaving = true;
                                   safeSetState(() {});
-                                  if (_model.loteSelecionado == null ||
-                                      _model.loteSelecionado!.isEmpty) {
-                                    await showDialog(
-                                      context: context,
-                                      builder: (alertDialogContext) {
-                                        return AlertDialog(
-                                          title: const Text('Atenção'),
-                                          content: const Text(
-                                              'O lote selecionado não possui nenhum animal.'),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.pop(
-                                                  alertDialogContext),
-                                              child: const Text('Ok'),
-                                            ),
-                                          ],
-                                        );
-                                      },
+                                  try {
+                                    if (!(FFAppState()
+                                            .dataDadosNaoSyncSanidade !=
+                                        null)) {
+                                      FFAppState().dataDadosNaoSyncSanidade =
+                                          getCurrentTimestamp;
+                                      safeSetState(() {});
+                                    }
+                                    _model.loteSelecionado = await SQLiteManager
+                                        .instance
+                                        .buscarAnimaisDoLote(
+                                      loteid: _model.dropDownLoteValue,
                                     );
-                                    return;
-                                  }
-                                  if (_model.loteSelecionado!.isNotEmpty) {
-                                    while (_model.index <
-                                        _model.loteSelecionado!.length) {
-                                      await SQLiteManager.instance
-                                          .insertSanidadeAnimal(
-                                        idPropriedade: FFAppState()
-                                            .propriedadeSelecionada
-                                            .idPropriedade,
-                                        idRebanho: _model.loteSelecionado
-                                            ?.elementAtOrNull(_model.index)
-                                            ?.idRebanho,
-                                        dataSanidade: dateTimeFormat(
-                                          "yyyy-MM-dd",
-                                          _model.datePicked,
-                                          locale: FFLocalizations.of(context)
-                                              .languageCode,
-                                        ),
-                                        idSanidade: random_data.randomString(
-                                          20,
-                                          20,
-                                          true,
-                                          false,
-                                          true,
-                                        ),
-                                        updatedat: dateTimeFormat(
-                                          "yyyy-MM-dd HH:mm:ss",
-                                          getCurrentTimestamp,
-                                          locale: FFLocalizations.of(context)
-                                              .languageCode,
-                                        ),
-                                        deletado: 'NAO',
-                                        vacinacao: _model.dropDownVacinaValue !=
-                                                    null &&
-                                                (_model.dropDownVacinaValue)!
-                                                    .isNotEmpty
-                                            ? functions.converterListaParaJSON(
-                                                _model.dropDownVacinaValue
-                                                    ?.toList())
-                                            : 'null',
-                                        vacinacaoOutros: _model
-                                            .textFieldVacinaOutrosTextController
-                                            .text,
-                                        vacinacaoObs: _model
-                                            .textFieldVacinaObservacaoTextController
-                                            .text,
-                                        antiparasitario: _model
-                                                        .dropDownAntiparasitarioValue !=
-                                                    null &&
-                                                (_model.dropDownAntiparasitarioValue)!
-                                                    .isNotEmpty
-                                            ? functions.converterListaParaJSON(
-                                                _model
-                                                    .dropDownAntiparasitarioValue
-                                                    ?.toList())
-                                            : 'null',
-                                        antiparasitarioOutros: _model
-                                            .textFieldAntiparasitarioOutrosTextController
-                                            .text,
-                                        antiparasitarioObs: _model
-                                            .textFieldAntiparasitarioObservacaoTextController
-                                            .text,
-                                        tratamento: _model
-                                                        .dropDownTratamentoValue !=
-                                                    null &&
-                                                (_model.dropDownTratamentoValue)!
-                                                    .isNotEmpty
-                                            ? functions.converterListaParaJSON(
-                                                _model.dropDownTratamentoValue
-                                                    ?.toList())
-                                            : 'null',
-                                        tratamentoOutros: _model
-                                            .textFieldTratamentoOutrosTextController
-                                            .text,
-                                        tratamentoObs: _model
-                                            .textFieldTratamentoObservacaoTextController
-                                            .text,
-                                        protocoloReprodutivo: _model
-                                                        .dropDownProtocoloValue !=
-                                                    null &&
-                                                _model.dropDownProtocoloValue !=
-                                                    ''
-                                            ? _model.dropDownProtocoloValue
-                                            : 'null',
-                                        protocoloreprodutivoOutros: _model
-                                            .textFieldProtocoloOutrosTextController
-                                            .text,
-                                        protocoloreprodutivoObs: _model
-                                            .textFieldProtocoloObservacaoTextController
-                                            .text,
-                                        createdat: dateTimeFormat(
-                                          "yyyy-MM-dd HH:mm:ss",
-                                          getCurrentTimestamp,
-                                          locale: FFLocalizations.of(context)
-                                              .languageCode,
-                                        ),
-                                        protocolod0: _model.dropDownD0Value,
-                                        protocoloretirada:
-                                            _model.dropDownRetiradaValue,
-                                        protocoloiatf: _model.dropDownIATFValue,
+                                    _model.index = 0;
+                                    safeSetState(() {});
+                                    if (_model.loteSelecionado == null ||
+                                        _model.loteSelecionado!.isEmpty) {
+                                      await showDialog(
+                                        context: context,
+                                        builder: (alertDialogContext) {
+                                          return AlertDialog(
+                                            title: const Text('Atenção'),
+                                            content: const Text(
+                                                'O lote selecionado não possui nenhum animal.'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                    alertDialogContext),
+                                                child: const Text('Ok'),
+                                              ),
+                                            ],
+                                          );
+                                        },
                                       );
-                                      _model.index = _model.index + 1;
+                                      return;
+                                    }
+                                    if (_model.loteSelecionado!.isNotEmpty) {
+                                      while (_model.index <
+                                          _model.loteSelecionado!.length) {
+                                        await SQLiteManager.instance
+                                            .insertSanidadeAnimal(
+                                          idPropriedade: FFAppState()
+                                              .propriedadeSelecionada
+                                              .idPropriedade,
+                                          idRebanho: _model.loteSelecionado
+                                              ?.elementAtOrNull(_model.index)
+                                              ?.idRebanho,
+                                          dataSanidade: dateTimeFormat(
+                                            "yyyy-MM-dd",
+                                            _model.datePicked,
+                                            locale: FFLocalizations.of(context)
+                                                .languageCode,
+                                          ),
+                                          idSanidade: random_data.randomString(
+                                            20,
+                                            20,
+                                            true,
+                                            false,
+                                            true,
+                                          ),
+                                          updatedat: dateTimeFormat(
+                                            "yyyy-MM-dd HH:mm:ss",
+                                            getCurrentTimestamp,
+                                            locale: FFLocalizations.of(context)
+                                                .languageCode,
+                                          ),
+                                          deletado: 'NAO',
+                                          vacinacao: _model
+                                                          .dropDownVacinaValue !=
+                                                      null &&
+                                                  (_model.dropDownVacinaValue)!
+                                                      .isNotEmpty
+                                              ? functions
+                                                  .converterListaParaJSON(_model
+                                                      .dropDownVacinaValue
+                                                      ?.toList())
+                                              : 'null',
+                                          vacinacaoOutros: _model
+                                              .textFieldVacinaOutrosTextController
+                                              .text,
+                                          vacinacaoObs: _model
+                                              .textFieldVacinaObservacaoTextController
+                                              .text,
+                                          antiparasitario: _model
+                                                          .dropDownAntiparasitarioValue !=
+                                                      null &&
+                                                  (_model.dropDownAntiparasitarioValue)!
+                                                      .isNotEmpty
+                                              ? functions
+                                                  .converterListaParaJSON(_model
+                                                      .dropDownAntiparasitarioValue
+                                                      ?.toList())
+                                              : 'null',
+                                          antiparasitarioOutros: _model
+                                              .textFieldAntiparasitarioOutrosTextController
+                                              .text,
+                                          antiparasitarioObs: _model
+                                              .textFieldAntiparasitarioObservacaoTextController
+                                              .text,
+                                          tratamento: _model
+                                                          .dropDownTratamentoValue !=
+                                                      null &&
+                                                  (_model.dropDownTratamentoValue)!
+                                                      .isNotEmpty
+                                              ? functions
+                                                  .converterListaParaJSON(_model
+                                                      .dropDownTratamentoValue
+                                                      ?.toList())
+                                              : 'null',
+                                          tratamentoOutros: _model
+                                              .textFieldTratamentoOutrosTextController
+                                              .text,
+                                          tratamentoObs: _model
+                                              .textFieldTratamentoObservacaoTextController
+                                              .text,
+                                          protocoloReprodutivo: _model
+                                                          .dropDownProtocoloValue !=
+                                                      null &&
+                                                  _model.dropDownProtocoloValue !=
+                                                      ''
+                                              ? _model.dropDownProtocoloValue
+                                              : 'null',
+                                          protocoloreprodutivoOutros: _model
+                                              .textFieldProtocoloOutrosTextController
+                                              .text,
+                                          protocoloreprodutivoObs: _model
+                                              .textFieldProtocoloObservacaoTextController
+                                              .text,
+                                          createdat: dateTimeFormat(
+                                            "yyyy-MM-dd HH:mm:ss",
+                                            getCurrentTimestamp,
+                                            locale: FFLocalizations.of(context)
+                                                .languageCode,
+                                          ),
+                                          protocolod0: _model.dropDownD0Value,
+                                          protocoloretirada:
+                                              _model.dropDownRetiradaValue,
+                                          protocoloiatf:
+                                              _model.dropDownIATFValue,
+                                        );
+                                        _model.index = _model.index + 1;
+                                        safeSetState(() {});
+                                      }
+                                    }
+                                    safeSetState(() {
+                                      _model.dropDownLoteValueController
+                                          ?.reset();
+                                      _model.dropDownLoteValue = null;
+                                      _model.dropDownVacinaValueController
+                                          ?.reset();
+                                      _model.dropDownVacinaValue = null;
+                                      _model
+                                          .dropDownAntiparasitarioValueController
+                                          ?.reset();
+                                      _model.dropDownAntiparasitarioValue =
+                                          null;
+                                      _model.dropDownTratamentoValueController
+                                          ?.reset();
+                                      _model.dropDownTratamentoValue = null;
+                                      _model.dropDownProtocoloValueController
+                                          ?.reset();
+                                      _model.dropDownProtocoloValue = null;
+                                      _model.dropDownD0ValueController?.reset();
+                                      _model.dropDownD0Value = null;
+                                      _model.dropDownRetiradaValueController
+                                          ?.reset();
+                                      _model.dropDownRetiradaValue = null;
+                                      _model.dropDownIATFValueController
+                                          ?.reset();
+                                      _model.dropDownIATFValue = null;
+                                    });
+                                    safeSetState(() {
+                                      _model.textFieldVacinaOutrosTextController
+                                          ?.clear();
+                                      _model
+                                          .textFieldVacinaObservacaoTextController
+                                          ?.clear();
+                                      _model
+                                          .textFieldAntiparasitarioOutrosTextController
+                                          ?.clear();
+                                      _model
+                                          .textFieldAntiparasitarioObservacaoTextController
+                                          ?.clear();
+                                      _model
+                                          .textFieldTratamentoOutrosTextController
+                                          ?.clear();
+                                      _model
+                                          .textFieldTratamentoObservacaoTextController
+                                          ?.clear();
+                                      _model
+                                          .textFieldProtocoloOutrosTextController
+                                          ?.clear();
+                                      _model
+                                          .textFieldProtocoloObservacaoTextController
+                                          ?.clear();
+                                      _model
+                                          .textFieldPorcentagemLoteTextController
+                                          ?.clear();
+                                    });
+                                    FFAppState().sanidade = [];
+                                    FFAppState().vacinasCount = 0;
+                                    FFAppState().tratamentosCount = 0;
+                                    FFAppState().antiParasitarioCount = 0;
+                                    FFAppState().protocolosReproCount = 0;
+                                    safeSetState(() {});
+                                    await action_blocks.countSanidades(context);
+                                    await action_blocks.qTDSanidades(context);
+                                    FFAppState().update(() {});
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Sanidade adicionada com sucesso.',
+                                          style: TextStyle(
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground,
+                                          ),
+                                        ),
+                                        duration:
+                                            const Duration(milliseconds: 4000),
+                                        backgroundColor:
+                                            FlutterFlowTheme.of(context)
+                                                .secondary,
+                                      ),
+                                    );
+
+                                    safeSetState(() {});
+                                  } finally {
+                                    _isSaving = false;
+                                    if (mounted) {
                                       safeSetState(() {});
                                     }
                                   }
-                                  safeSetState(() {
-                                    _model.dropDownLoteValueController?.reset();
-                                    _model.dropDownLoteValue = null;
-                                    _model.dropDownVacinaValueController
-                                        ?.reset();
-                                    _model.dropDownVacinaValue = null;
-                                    _model
-                                        .dropDownAntiparasitarioValueController
-                                        ?.reset();
-                                    _model.dropDownAntiparasitarioValue = null;
-                                    _model.dropDownTratamentoValueController
-                                        ?.reset();
-                                    _model.dropDownTratamentoValue = null;
-                                    _model.dropDownProtocoloValueController
-                                        ?.reset();
-                                    _model.dropDownProtocoloValue = null;
-                                    _model.dropDownD0ValueController?.reset();
-                                    _model.dropDownD0Value = null;
-                                    _model.dropDownRetiradaValueController
-                                        ?.reset();
-                                    _model.dropDownRetiradaValue = null;
-                                    _model.dropDownIATFValueController?.reset();
-                                    _model.dropDownIATFValue = null;
-                                  });
-                                  safeSetState(() {
-                                    _model.textFieldVacinaOutrosTextController
-                                        ?.clear();
-                                    _model
-                                        .textFieldVacinaObservacaoTextController
-                                        ?.clear();
-                                    _model
-                                        .textFieldAntiparasitarioOutrosTextController
-                                        ?.clear();
-                                    _model
-                                        .textFieldAntiparasitarioObservacaoTextController
-                                        ?.clear();
-                                    _model
-                                        .textFieldTratamentoOutrosTextController
-                                        ?.clear();
-                                    _model
-                                        .textFieldTratamentoObservacaoTextController
-                                        ?.clear();
-                                    _model
-                                        .textFieldProtocoloOutrosTextController
-                                        ?.clear();
-                                    _model
-                                        .textFieldProtocoloObservacaoTextController
-                                        ?.clear();
-                                    _model
-                                        .textFieldPorcentagemLoteTextController
-                                        ?.clear();
-                                  });
-                                  FFAppState().sanidade = [];
-                                  FFAppState().vacinasCount = 0;
-                                  FFAppState().tratamentosCount = 0;
-                                  FFAppState().antiParasitarioCount = 0;
-                                  FFAppState().protocolosReproCount = 0;
-                                  safeSetState(() {});
-                                  await action_blocks.countSanidades(context);
-                                  await action_blocks.qTDSanidades(context);
-                                  FFAppState().update(() {});
-                                  Navigator.pop(context);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Sanidade adicionada com sucesso.',
-                                        style: TextStyle(
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
-                                        ),
-                                      ),
-                                      duration:
-                                          const Duration(milliseconds: 4000),
-                                      backgroundColor:
-                                          FlutterFlowTheme.of(context)
-                                              .secondary,
-                                    ),
-                                  );
-
-                                  safeSetState(() {});
                                 },
                           text: 'Salvar',
                           options: FFButtonOptions(

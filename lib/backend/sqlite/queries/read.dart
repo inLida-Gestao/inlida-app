@@ -413,10 +413,22 @@ class BuscarRebanhoRow extends SqliteRow {
 Future<List<BuscarRebanhoUPDATEDRow>> performBuscarRebanhoUPDATED(
   Database database, {
   String? data,
+  String? userID,
 }) {
+  final userFilter = _escapeSqlValue(userID ?? '');
   final query = '''
-SELECT * FROM local_rebanho
-WHERE datetime(updated_at, 'localtime') >= datetime('$data', 'localtime')
+SELECT r.* FROM local_rebanho r
+WHERE r.sync_dirty = 1
+AND r.sync_op IN ('update', 'delete')
+AND COALESCE(r.idRebanho, '') != ''
+AND '$userFilter' != ''
+AND EXISTS (
+  SELECT 1
+  FROM local_propriedades p
+  WHERE p.idPropriedade = r.idPropriedade
+    AND (p.userID = '$userFilter' OR COALESCE(p.usersID, '') LIKE '%$userFilter%')
+    AND COALESCE(p.deletado, 'NAO') != 'SIM'
+)
 
 ''';
   return _readQuery(database, query, (d) => BuscarRebanhoUPDATEDRow(d));
@@ -478,10 +490,23 @@ class BuscarRebanhoUPDATEDRow extends SqliteRow {
 Future<List<BuscarRebanhoPUTRow>> performBuscarRebanhoPUT(
   Database database, {
   String? data,
+  String? userID,
 }) {
+  final userFilter = _escapeSqlValue(userID ?? '');
   final query = '''
-SELECT * FROM local_rebanho
-WHERE datetime(created_at, 'localtime') >= datetime('$data', 'localtime')
+SELECT r.* FROM local_rebanho r
+WHERE r.sync_dirty = 1
+AND r.sync_op = 'insert'
+AND COALESCE(r.idRebanho, '') != ''
+AND COALESCE(r.deletado, 'NAO') != 'SIM'
+AND '$userFilter' != ''
+AND EXISTS (
+  SELECT 1
+  FROM local_propriedades p
+  WHERE p.idPropriedade = r.idPropriedade
+    AND (p.userID = '$userFilter' OR COALESCE(p.usersID, '') LIKE '%$userFilter%')
+    AND COALESCE(p.deletado, 'NAO') != 'SIM'
+)
 
 ''';
   return _readQuery(database, query, (d) => BuscarRebanhoPUTRow(d));
@@ -640,6 +665,7 @@ class BuscaHistPesagensRow extends SqliteRow {
   BuscaHistPesagensRow(super.data);
 
   String? get idRebanho => data['idRebanho'] as String?;
+  String? get idPesagem => data['id_pesagem'] as String?;
   String? get dataPesagem => data['dataPesagem'] as String?;
   String? get tipo => data['tipo'] as String?;
   double? get peso {
@@ -663,9 +689,26 @@ Future<List<BuscaHistPesagensPUTRow>> performBuscaHistPesagensPUT(
   Database database, {
   String? data,
 }) {
+  final dateFilter = _escapeSqlValue(data ?? '1970-01-01 00:00:00');
   final query = '''
 SELECT * FROM local_historico_pesagens
-WHERE datetime(created_at, 'localtime') >= datetime('$data', 'localtime')
+WHERE sync_dirty = 1
+AND (sync_op IS NULL OR sync_op != 'delete')
+AND (deletado IS NULL OR deletado = '' OR deletado != 'SIM')
+AND COALESCE(idRebanho, '') != ''
+AND COALESCE(dataPesagem, '') != ''
+AND COALESCE(tipo, '') != ''
+UNION ALL
+SELECT * FROM local_historico_pesagens
+WHERE sync_dirty IS NULL
+AND created_at IS NOT NULL
+AND created_at != ''
+AND created_at != 'null'
+AND datetime(created_at, 'localtime') >= datetime('$dateFilter', 'localtime')
+AND (deletado IS NULL OR deletado = '' OR deletado != 'SIM')
+AND COALESCE(idRebanho, '') != ''
+AND COALESCE(dataPesagem, '') != ''
+AND COALESCE(tipo, '') != ''
 ''';
   return _readQuery(database, query, (d) => BuscaHistPesagensPUTRow(d));
 }
@@ -674,6 +717,7 @@ class BuscaHistPesagensPUTRow extends SqliteRow {
   BuscaHistPesagensPUTRow(super.data);
 
   String? get idRebanho => data['idRebanho'] as String?;
+  String? get idPesagem => data['id_pesagem'] as String?;
   String? get dataPesagem => data['dataPesagem'] as String?;
   String? get tipo => data['tipo'] as String?;
   double? get peso {
@@ -694,11 +738,25 @@ class BuscaHistPesagensPUTRow extends SqliteRow {
 
 /// BEGIN BUSCA HIST PESAGENS UPDT
 Future<List<BuscaHistPesagensUPDTRow>> performBuscaHistPesagensUPDT(
-  Database database,
-) {
-  const query = '''
+  Database database, {
+  String? data,
+}) {
+  final dateFilter = _escapeSqlValue(data ?? '1970-01-01 00:00:00');
+  final query = '''
 SELECT * FROM local_historico_pesagens
 WHERE deletado = 'SIM'
+AND COALESCE(id_pesagem, '') != ''
+AND sync_dirty = 1
+AND sync_op = 'delete'
+UNION ALL
+SELECT * FROM local_historico_pesagens
+WHERE deletado = 'SIM'
+AND COALESCE(id_pesagem, '') != ''
+AND sync_dirty IS NULL
+AND created_at IS NOT NULL
+AND created_at != ''
+AND created_at != 'null'
+AND datetime(created_at, 'localtime') >= datetime('$dateFilter', 'localtime')
 ''';
   return _readQuery(database, query, (d) => BuscaHistPesagensUPDTRow(d));
 }
@@ -707,6 +765,7 @@ class BuscaHistPesagensUPDTRow extends SqliteRow {
   BuscaHistPesagensUPDTRow(super.data);
 
   String? get idRebanho => data['idRebanho'] as String?;
+  String? get idPesagem => data['id_pesagem'] as String?;
   String? get dataPesagem => data['dataPesagem'] as String?;
   String? get tipo => data['tipo'] as String?;
   double? get peso {
@@ -1063,6 +1122,7 @@ Future<List<ListarReproducoesRow>> performListarReproducoes(
   final query = '''
 SELECT * FROM local_reproducao
 WHERE id_propriedade = '$idPropriedade'
+AND COALESCE(deletado, 'NAO') != 'SIM'
 ''';
   return _readQuery(database, query, (d) => ListarReproducoesRow(d));
 }
@@ -1233,6 +1293,9 @@ Future<List<BuscarReproducaoRow>> performBuscarReproducao(
   final query = '''
 SELECT * FROM local_reproducao
 WHERE id_reproducao = '$idReproducao'
+AND COALESCE(deletado, 'NAO') != 'SIM'
+ORDER BY datetime(COALESCE(updated_at, created_at, '1970-01-01')) DESC, id DESC
+LIMIT 1
 ''';
   return _readQuery(database, query, (d) => BuscarReproducaoRow(d));
 }
@@ -1289,6 +1352,7 @@ Future<List<BuscarReproducaoPUTRow>> performBuscarReproducaoPUT(
   final query = '''
 SELECT * FROM local_reproducao
 WHERE datetime(created_at, 'localtime') >= datetime('$datePUT', 'localtime')
+AND COALESCE(deletado, 'NAO') != 'SIM'
 ''';
   return _readQuery(database, query, (d) => BuscarReproducaoPUTRow(d));
 }
@@ -1400,7 +1464,7 @@ Future<List<ListarSanidadesRow>> performListarSanidades(
   final query = '''
 SELECT * FROM local_sanidade
 WHERE id_propriedade = '$idPropriedade'
-AND deletado = 'NAO'
+AND COALESCE(deletado, 'NAO') != 'SIM'
 ''';
   return _readQuery(database, query, (d) => ListarSanidadesRow(d));
 }
@@ -1444,6 +1508,7 @@ Future<List<BuscarSanidadePUTRow>> performBuscarSanidadePUT(
   final query = '''
 SELECT * FROM local_sanidade
 WHERE datetime(created_at, 'localtime') >= datetime('$datePUT', 'localtime')
+AND COALESCE(deletado, 'NAO') != 'SIM'
 ''';
   return _readQuery(database, query, (d) => BuscarSanidadePUTRow(d));
 }
@@ -1591,6 +1656,7 @@ Future<List<BuscarSanidadesRebanhoRow>> performBuscarSanidadesRebanho(
   final query = '''
 SELECT * FROM local_sanidade
 WHERE id_rebanho = '$idRebanho'
+AND COALESCE(deletado, 'NAO') != 'SIM'
 ''';
   return _readQuery(database, query, (d) => BuscarSanidadesRebanhoRow(d));
 }
@@ -2202,7 +2268,7 @@ AND ('$protocolo' = '' OR ls.protocolo_reprodutivo LIKE '%$protocolo%')
 AND ('$idRebanho' = '' OR ls.id_rebanho = '$idRebanho')
 AND ('$dataSanidade' = '' OR ls.data_sanidade >= '$dataSanidade')
 AND ('$dataSanidadeFim' = '' OR ls.data_sanidade <= '$dataSanidadeFim')
-AND ls.deletado = 'NAO'
+AND COALESCE(ls.deletado, 'NAO') != 'SIM'
 ORDER BY ls.created_at DESC
 ''';
   return _readQuery(database, query, (d) => BuscaSanidadesPesqRow(d));
@@ -2268,7 +2334,7 @@ AND ('$protocolo' = '' OR protocolo_reprodutivo LIKE '%$protocolo%')
 AND ('$idRebanho' = '' OR id_rebanho = '$idRebanho')
 AND ('$dataSanidade' = '' OR data_sanidade >= '$dataSanidade')
 AND ('$dataSanidadeFim' = '' OR data_sanidade <= '$dataSanidadeFim')
-AND deletado = 'NAO'
+AND COALESCE(deletado, 'NAO') != 'SIM'
 ORDER BY created_at DESC
 LIMIT $limitRows OFFSET $offsetRows
 ''';
@@ -2317,7 +2383,7 @@ Future<List<QTDSanidadesRow>> performQTDSanidades(
   final query = '''
 SELECT * FROM local_sanidade
 WHERE id_propriedade = '$idPropriedade'
-AND deletado = 'NAO'
+AND COALESCE(deletado, 'NAO') != 'SIM'
 ''';
   return _readQuery(database, query, (d) => QTDSanidadesRow(d));
 }

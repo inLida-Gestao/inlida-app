@@ -29,6 +29,7 @@ class EditSanidadeAnimalWidget extends StatefulWidget {
 
 class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
   late EditSanidadeAnimalModel _model;
+  bool _isSaving = false;
 
   @override
   void setState(VoidCallback callback) {
@@ -197,57 +198,60 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                               size: 20.0,
                             ),
                             onPressed: () async {
-                              var confirmDialogResponse = await showDialog<bool>(
-                                    context: context,
-                                    builder: (alertDialogContext) {
-                                      return AlertDialog(
-                                        title: const Text('Deletar sanidade'),
-                                        content: const Text(
-                                            'Deseja realmente apagar esse registro de sanidade? Esta ação não pode ser desfeita.'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () => Navigator.pop(
-                                                alertDialogContext, false),
-                                            child: const Text('Não'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(alertDialogContext, true),
-                                            child: const Text('Sim'),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ) ??
-                                  false;
+                              var confirmDialogResponse =
+                                  await showDialog<bool>(
+                                        context: context,
+                                        builder: (alertDialogContext) {
+                                          return AlertDialog(
+                                            title:
+                                                const Text('Deletar sanidade'),
+                                            content: const Text(
+                                                'Deseja realmente apagar esse registro de sanidade? Esta ação não pode ser desfeita.'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                    alertDialogContext, false),
+                                                child: const Text('Não'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                    alertDialogContext, true),
+                                                child: const Text('Sim'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ) ??
+                                      false;
                               if (confirmDialogResponse) {
-                              if (!(FFAppState().dataDadosNaoSyncSanidade !=
-                                  null)) {
-                                FFAppState().dataDadosNaoSyncSanidade =
-                                    getCurrentTimestamp;
-                                safeSetState(() {});
-                              }
-                              await SQLiteManager.instance.deleteSanidade(
-                                idSanidade:
-                                    FFAppState().sanidadeSelecionada.idSanidade,
-                                updatedat: dateTimeFormat(
-                                  "yyyy-MM-dd HH:mm:ss",
-                                  getCurrentTimestamp,
-                                  locale:
-                                      FFLocalizations.of(context).languageCode,
-                                ),
-                              );
-                              unawaited(
-                                () async {
-                                  await action_blocks.qTDSanidades(context);
-                                }(),
-                              );
-                              unawaited(
-                                () async {
-                                  await action_blocks.countSanidades(context);
-                                }(),
-                              );
-                              Navigator.pop(context);
+                                if (!(FFAppState().dataDadosNaoSyncSanidade !=
+                                    null)) {
+                                  FFAppState().dataDadosNaoSyncSanidade =
+                                      getCurrentTimestamp;
+                                  safeSetState(() {});
+                                }
+                                await SQLiteManager.instance.deleteSanidade(
+                                  idSanidade: FFAppState()
+                                      .sanidadeSelecionada
+                                      .idSanidade,
+                                  updatedat: dateTimeFormat(
+                                    "yyyy-MM-dd HH:mm:ss",
+                                    getCurrentTimestamp,
+                                    locale: FFLocalizations.of(context)
+                                        .languageCode,
+                                  ),
+                                );
+                                unawaited(
+                                  () async {
+                                    await action_blocks.qTDSanidades(context);
+                                  }(),
+                                );
+                                unawaited(
+                                  () async {
+                                    await action_blocks.countSanidades(context);
+                                  }(),
+                                );
+                                Navigator.pop(context);
                               }
                             },
                           ),
@@ -403,7 +407,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                     onTap: () async {
                                       final datePickedDate =
                                           await showDatePicker(
-                                        initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                        initialEntryMode:
+                                            DatePickerEntryMode.calendarOnly,
                                         context: context,
                                         initialDate: getCurrentTimestamp,
                                         firstDate: DateTime(1900),
@@ -3113,192 +3118,230 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                         ),
                         Expanded(
                           child: FFButtonWidget(
-                            onPressed: () async {
-                              var confirmDialogResponse =
-                                  await showDialog<bool>(
-                                        context: context,
-                                        builder: (alertDialogContext) {
-                                          return AlertDialog(
-                                            title: const Text(
-                                                'Confirmar alterações'),
-                                            content: const Text(
-                                                'Deseja confirmar as alterações realizadas ?'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(
-                                                    alertDialogContext, false),
-                                                child: const Text('Não'),
+                            onPressed: _isSaving
+                                ? null
+                                : () async {
+                                    if (_isSaving) return;
+                                    _isSaving = true;
+                                    safeSetState(() {});
+                                    try {
+                                      var confirmDialogResponse =
+                                          await showDialog<bool>(
+                                                context: context,
+                                                builder: (alertDialogContext) {
+                                                  return AlertDialog(
+                                                    title: const Text(
+                                                        'Confirmar alterações'),
+                                                    content: const Text(
+                                                        'Deseja confirmar as alterações realizadas ?'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext,
+                                                                false),
+                                                        child:
+                                                            const Text('Não'),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                alertDialogContext,
+                                                                true),
+                                                        child:
+                                                            const Text('Sim'),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              ) ??
+                                              false;
+                                      if (confirmDialogResponse) {
+                                        if (!(FFAppState()
+                                                .dataDadosNaoSyncSanidade !=
+                                            null)) {
+                                          FFAppState()
+                                                  .dataDadosNaoSyncSanidade =
+                                              getCurrentTimestamp;
+                                          safeSetState(() {});
+                                        }
+                                        await SQLiteManager.instance
+                                            .uPDTSanidadeAnimal(
+                                          dataSanidade: _model.datePicked !=
+                                                  null
+                                              ? dateTimeFormat(
+                                                  "yyyy-MM-dd",
+                                                  _model.datePicked,
+                                                  locale: FFLocalizations.of(
+                                                          context)
+                                                      .languageCode,
+                                                )
+                                              : FFAppState()
+                                                  .sanidadeSelecionada
+                                                  .dataSanidade,
+                                          idSanidade: FFAppState()
+                                              .sanidadeSelecionada
+                                              .idSanidade,
+                                          updatedat: dateTimeFormat(
+                                            "yyyy-MM-dd HH:mm:ss",
+                                            getCurrentTimestamp,
+                                            locale: FFLocalizations.of(context)
+                                                .languageCode,
+                                          ),
+                                          vacinacao: valueOrDefault<String>(
+                                            () {
+                                              if (_model.dropDownVacinaValue !=
+                                                      null &&
+                                                  (_model.dropDownVacinaValue)!
+                                                      .isNotEmpty) {
+                                                return functions
+                                                    .converterListaParaJSON(
+                                                        _model
+                                                            .dropDownVacinaValue
+                                                            ?.toList());
+                                              } else if ((FFAppState()
+                                                          .sanidadeSelecionada
+                                                          .vacinacao ==
+                                                      'null') &&
+                                                  (_model.dropDownVacinaNullValue !=
+                                                          null &&
+                                                      (_model.dropDownVacinaNullValue)!
+                                                          .isNotEmpty)) {
+                                                return functions
+                                                    .converterListaParaJSON(_model
+                                                        .dropDownVacinaNullValue
+                                                        ?.toList());
+                                              } else {
+                                                return 'null';
+                                              }
+                                            }(),
+                                            'null',
+                                          ),
+                                          vacinacaoOutros: _model
+                                              .textFieldVacinaOutrosTextController
+                                              .text,
+                                          vacinacaoObs: _model
+                                              .textFieldVacinaObservacaoTextController
+                                              .text,
+                                          antiparasitario:
+                                              valueOrDefault<String>(
+                                            () {
+                                              if (_model.dropDownAntiparasitarioValue !=
+                                                      null &&
+                                                  (_model.dropDownAntiparasitarioValue)!
+                                                      .isNotEmpty) {
+                                                return functions
+                                                    .converterListaParaJSON(_model
+                                                        .dropDownAntiparasitarioValue
+                                                        ?.toList());
+                                              } else if ((FFAppState()
+                                                          .sanidadeSelecionada
+                                                          .antiparasitario ==
+                                                      'null') &&
+                                                  (_model.dropDownAntiparasitarioNullValue !=
+                                                          null &&
+                                                      (_model.dropDownAntiparasitarioNullValue)!
+                                                          .isNotEmpty)) {
+                                                return functions
+                                                    .converterListaParaJSON(_model
+                                                        .dropDownAntiparasitarioNullValue
+                                                        ?.toList());
+                                              } else {
+                                                return 'null';
+                                              }
+                                            }(),
+                                            'null',
+                                          ),
+                                          antiparasitarioOutros: _model
+                                              .textFieldAntiparasitarioOutrosTextController
+                                              .text,
+                                          antiparasitarioObs: _model
+                                              .textFieldAntiparasitarioObservacaoTextController
+                                              .text,
+                                          tratamento: valueOrDefault<String>(
+                                            () {
+                                              if (_model.dropDownTratamentoValue !=
+                                                      null &&
+                                                  (_model.dropDownTratamentoValue)!
+                                                      .isNotEmpty) {
+                                                return functions
+                                                    .converterListaParaJSON(_model
+                                                        .dropDownTratamentoValue
+                                                        ?.toList());
+                                              } else if ((FFAppState()
+                                                          .sanidadeSelecionada
+                                                          .tratamento ==
+                                                      'null') &&
+                                                  (_model.dropDownTratamentoNullValue !=
+                                                          null &&
+                                                      (_model.dropDownTratamentoNullValue)!
+                                                          .isNotEmpty)) {
+                                                return functions
+                                                    .converterListaParaJSON(_model
+                                                        .dropDownTratamentoNullValue
+                                                        ?.toList());
+                                              } else {
+                                                return 'null';
+                                              }
+                                            }(),
+                                            'null',
+                                          ),
+                                          tratamentoOutros: _model
+                                              .textFieldTratamentoOutrosTextController
+                                              .text,
+                                          tratamentoObs: _model
+                                              .textFieldTratamentoObservacaoTextController
+                                              .text,
+                                          protocoloReprodutivo:
+                                              valueOrDefault<String>(
+                                            _model.dropDownProtocoloValue,
+                                            'null',
+                                          ),
+                                          protocoloreprodutivoOutros: _model
+                                              .textFieldProtocoloOutrosTextController
+                                              .text,
+                                          protocoloreprodutivoObs: _model
+                                              .textFieldProtocoloObservacaoTextController
+                                              .text,
+                                          protocolod0: _model.dropDownD0Value,
+                                          protocoloretirada:
+                                              _model.dropDownRetiradaValue,
+                                          protocoloiatf:
+                                              _model.dropDownIATFValue,
+                                        );
+                                        FFAppState().sanidade = [];
+                                        FFAppState().vacinasCount = 0;
+                                        FFAppState().tratamentosCount = 0;
+                                        FFAppState().antiParasitarioCount = 0;
+                                        FFAppState().protocolosReproCount = 0;
+                                        safeSetState(() {});
+                                        Navigator.pop(context);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Sanidade editada com sucesso.',
+                                              style: TextStyle(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
                                               ),
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(
-                                                    alertDialogContext, true),
-                                                child: const Text('Sim'),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      ) ??
-                                      false;
-                              if (confirmDialogResponse) {
-                                if (!(FFAppState().dataDadosNaoSyncSanidade !=
-                                    null)) {
-                                  FFAppState().dataDadosNaoSyncSanidade =
-                                      getCurrentTimestamp;
-                                  safeSetState(() {});
-                                }
-                                await SQLiteManager.instance.uPDTSanidadeAnimal(
-                                  dataSanidade: _model.datePicked != null
-                                      ? dateTimeFormat(
-                                          "yyyy-MM-dd",
-                                          _model.datePicked,
-                                          locale: FFLocalizations.of(context)
-                                              .languageCode,
-                                        )
-                                      : FFAppState()
-                                          .sanidadeSelecionada
-                                          .dataSanidade,
-                                  idSanidade: FFAppState()
-                                      .sanidadeSelecionada
-                                      .idSanidade,
-                                  updatedat: dateTimeFormat(
-                                    "yyyy-MM-dd HH:mm:ss",
-                                    getCurrentTimestamp,
-                                    locale: FFLocalizations.of(context)
-                                        .languageCode,
-                                  ),
-                                  vacinacao: valueOrDefault<String>(
-                                    () {
-                                      if (_model.dropDownVacinaValue != null &&
-                                          (_model.dropDownVacinaValue)!
-                                              .isNotEmpty) {
-                                        return functions.converterListaParaJSON(
-                                            _model.dropDownVacinaValue
-                                                ?.toList());
-                                      } else if ((FFAppState()
-                                                  .sanidadeSelecionada
-                                                  .vacinacao ==
-                                              'null') &&
-                                          (_model.dropDownVacinaNullValue !=
-                                                  null &&
-                                              (_model.dropDownVacinaNullValue)!
-                                                  .isNotEmpty)) {
-                                        return functions.converterListaParaJSON(
-                                            _model.dropDownVacinaNullValue
-                                                ?.toList());
-                                      } else {
-                                        return 'null';
+                                            ),
+                                            duration: const Duration(
+                                                milliseconds: 4000),
+                                            backgroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .secondary,
+                                          ),
+                                        );
                                       }
-                                    }(),
-                                    'null',
-                                  ),
-                                  vacinacaoOutros: _model
-                                      .textFieldVacinaOutrosTextController.text,
-                                  vacinacaoObs: _model
-                                      .textFieldVacinaObservacaoTextController
-                                      .text,
-                                  antiparasitario: valueOrDefault<String>(
-                                    () {
-                                      if (_model.dropDownAntiparasitarioValue !=
-                                              null &&
-                                          (_model.dropDownAntiparasitarioValue)!
-                                              .isNotEmpty) {
-                                        return functions.converterListaParaJSON(
-                                            _model.dropDownAntiparasitarioValue
-                                                ?.toList());
-                                      } else if ((FFAppState()
-                                                  .sanidadeSelecionada
-                                                  .antiparasitario ==
-                                              'null') &&
-                                          (_model.dropDownAntiparasitarioNullValue !=
-                                                  null &&
-                                              (_model.dropDownAntiparasitarioNullValue)!
-                                                  .isNotEmpty)) {
-                                        return functions.converterListaParaJSON(
-                                            _model.dropDownAntiparasitarioNullValue
-                                                ?.toList());
-                                      } else {
-                                        return 'null';
+                                    } finally {
+                                      _isSaving = false;
+                                      if (mounted) {
+                                        safeSetState(() {});
                                       }
-                                    }(),
-                                    'null',
-                                  ),
-                                  antiparasitarioOutros: _model
-                                      .textFieldAntiparasitarioOutrosTextController
-                                      .text,
-                                  antiparasitarioObs: _model
-                                      .textFieldAntiparasitarioObservacaoTextController
-                                      .text,
-                                  tratamento: valueOrDefault<String>(
-                                    () {
-                                      if (_model.dropDownTratamentoValue !=
-                                              null &&
-                                          (_model.dropDownTratamentoValue)!
-                                              .isNotEmpty) {
-                                        return functions.converterListaParaJSON(
-                                            _model.dropDownTratamentoValue
-                                                ?.toList());
-                                      } else if ((FFAppState()
-                                                  .sanidadeSelecionada
-                                                  .tratamento ==
-                                              'null') &&
-                                          (_model.dropDownTratamentoNullValue !=
-                                                  null &&
-                                              (_model.dropDownTratamentoNullValue)!
-                                                  .isNotEmpty)) {
-                                        return functions.converterListaParaJSON(
-                                            _model.dropDownTratamentoNullValue
-                                                ?.toList());
-                                      } else {
-                                        return 'null';
-                                      }
-                                    }(),
-                                    'null',
-                                  ),
-                                  tratamentoOutros: _model
-                                      .textFieldTratamentoOutrosTextController
-                                      .text,
-                                  tratamentoObs: _model
-                                      .textFieldTratamentoObservacaoTextController
-                                      .text,
-                                  protocoloReprodutivo: valueOrDefault<String>(
-                                    _model.dropDownProtocoloValue,
-                                    'null',
-                                  ),
-                                  protocoloreprodutivoOutros: _model
-                                      .textFieldProtocoloOutrosTextController
-                                      .text,
-                                  protocoloreprodutivoObs: _model
-                                      .textFieldProtocoloObservacaoTextController
-                                      .text,
-                                  protocolod0: _model.dropDownD0Value,
-                                  protocoloretirada:
-                                      _model.dropDownRetiradaValue,
-                                  protocoloiatf: _model.dropDownIATFValue,
-                                );
-                                FFAppState().sanidade = [];
-                                FFAppState().vacinasCount = 0;
-                                FFAppState().tratamentosCount = 0;
-                                FFAppState().antiParasitarioCount = 0;
-                                FFAppState().protocolosReproCount = 0;
-                                safeSetState(() {});
-                                Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Sanidade editada com sucesso.',
-                                      style: TextStyle(
-                                        color: FlutterFlowTheme.of(context)
-                                            .secondaryBackground,
-                                      ),
-                                    ),
-                                    duration:
-                                        const Duration(milliseconds: 4000),
-                                    backgroundColor:
-                                        FlutterFlowTheme.of(context).secondary,
-                                  ),
-                                );
-                              }
-                            },
+                                    }
+                                  },
                             text: 'Salvar',
                             options: FFButtonOptions(
                               height: 56.0,
