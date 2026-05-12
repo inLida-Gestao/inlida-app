@@ -684,6 +684,44 @@ class BuscaHistPesagensRow extends SqliteRow {
 
 /// END BUSCA HIST PESAGENS
 
+/// BEGIN BUSCA HIST PESAGENS POR REBANHOS
+Future<List<BuscaHistPesagensRow>> performBuscaHistPesagensPorRebanhos(
+  Database database, {
+  List<String>? idRebanhos,
+}) async {
+  final ids = (idRebanhos ?? const <String>[])
+      .map((id) => id.trim())
+      .where((id) => id.isNotEmpty)
+      .toSet()
+      .toList();
+  if (ids.isEmpty) return const [];
+
+  final results = <BuscaHistPesagensRow>[];
+  const chunkSize = 400;
+  for (var start = 0; start < ids.length; start += chunkSize) {
+    final end = start + chunkSize < ids.length ? start + chunkSize : ids.length;
+    final chunk = ids.sublist(start, end);
+    final placeholders = List.filled(chunk.length, '?').join(',');
+    final rows = await database.rawQuery(
+      '''
+SELECT * FROM local_historico_pesagens
+WHERE idRebanho IN ($placeholders)
+AND (deletado = 'NAO' OR deletado IS NULL OR deletado = '')
+ORDER BY idRebanho ASC,
+         datetime(COALESCE(dataPesagem, '1970-01-01'), 'localtime') ASC,
+         datetime(COALESCE(created_at, '1970-01-01'), 'localtime') ASC,
+         id ASC
+''',
+      chunk,
+    );
+    results.addAll(rows.map((d) => BuscaHistPesagensRow(d)));
+  }
+
+  return results;
+}
+
+/// END BUSCA HIST PESAGENS POR REBANHOS
+
 /// BEGIN BUSCA HIST PESAGENS PUT
 Future<List<BuscaHistPesagensPUTRow>> performBuscaHistPesagensPUT(
   Database database, {
@@ -1029,10 +1067,32 @@ class BuscarRebanhoLoteRow extends SqliteRow {
 Future<List<BuscarLotePUTRow>> performBuscarLotePUT(
   Database database, {
   String? datePUT,
+  String? userID,
 }) {
+  final userFilter = (userID ?? '').trim().isEmpty
+      ? ''
+      : '''
+AND EXISTS (
+  SELECT 1
+  FROM local_propriedades p
+  WHERE p.idPropriedade = local_lotes.id_propriedade
+    AND (p.userID = '${_escapeSqlValue(userID!.trim())}'
+      OR p.usersID LIKE '%${_escapeSqlValue(userID.trim())}%')
+    AND COALESCE(p.deletado, 'NAO') != 'SIM'
+)
+''';
   final query = '''
 SELECT * FROM local_lotes
-WHERE datetime(created_at, 'localtime') >= datetime('$datePUT', 'localtime')
+WHERE COALESCE(id_lote, '') != ''
+AND COALESCE(deletado, 'NAO') != 'SIM'
+AND (
+  (sync_dirty = 1 AND sync_op = 'insert')
+  OR (
+    sync_dirty IS NULL
+    AND datetime(created_at, 'localtime') >= datetime('$datePUT', 'localtime')
+  )
+)
+$userFilter
 
 ''';
   return _readQuery(database, query, (d) => BuscarLotePUTRow(d));
@@ -1063,10 +1123,31 @@ class BuscarLotePUTRow extends SqliteRow {
 Future<List<BuscarLoteUPDTRow>> performBuscarLoteUPDT(
   Database database, {
   String? dateUPDT,
+  String? userID,
 }) {
+  final userFilter = (userID ?? '').trim().isEmpty
+      ? ''
+      : '''
+AND EXISTS (
+  SELECT 1
+  FROM local_propriedades p
+  WHERE p.idPropriedade = local_lotes.id_propriedade
+    AND (p.userID = '${_escapeSqlValue(userID!.trim())}'
+      OR p.usersID LIKE '%${_escapeSqlValue(userID.trim())}%')
+    AND COALESCE(p.deletado, 'NAO') != 'SIM'
+)
+''';
   final query = '''
 SELECT * FROM local_lotes
-WHERE datetime(updated_at, 'localtime') >= datetime('$dateUPDT', 'localtime')
+WHERE COALESCE(id_lote, '') != ''
+AND (
+  (sync_dirty = 1 AND sync_op IN ('update', 'delete'))
+  OR (
+    sync_dirty IS NULL
+    AND datetime(updated_at, 'localtime') >= datetime('$dateUPDT', 'localtime')
+  )
+)
+$userFilter
 
 ''';
   return _readQuery(database, query, (d) => BuscarLoteUPDTRow(d));

@@ -128,6 +128,11 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
+                          if (await action_blocks.blockIfAccountCanceled(
+                            context,
+                          )) {
+                            return;
+                          }
                           FFAppState().navegacaoDashboard = 'propriedades';
                           FFAppState().pagePropriedades = 'home';
                           _model.updatePage(() {});
@@ -196,6 +201,11 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
+                          if (await action_blocks.blockIfAccountCanceled(
+                            context,
+                          )) {
+                            return;
+                          }
                           await action_blocks.countLotesAtivoInativo(context);
                           FFAppState().navegacaoDashboard = 'lotes';
                           _model.updatePage(() {});
@@ -264,6 +274,11 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
+                          if (await action_blocks.blockIfAccountCanceled(
+                            context,
+                          )) {
+                            return;
+                          }
                           FFAppState().navegacaoDashboard = 'rebanhos';
                           _model.updatePage(() {});
                           await action_blocks.animaisRegistrados(context);
@@ -332,6 +347,11 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
+                          if (await action_blocks.blockIfAccountCanceled(
+                            context,
+                          )) {
+                            return;
+                          }
                           await action_blocks.qTDReproducoes(context);
                           FFAppState().navegacaoDashboard = 'reproducoes';
                           _model.updatePage(() {});
@@ -400,6 +420,11 @@ class _NavegarBottomWidgetState extends State<NavegarBottomWidget> {
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
+                          if (await action_blocks.blockIfAccountCanceled(
+                            context,
+                          )) {
+                            return;
+                          }
                           FFAppState().navegacaoDashboard = 'sanidade';
                           _model.updatePage(() {});
                           await action_blocks.countSanidades(context);

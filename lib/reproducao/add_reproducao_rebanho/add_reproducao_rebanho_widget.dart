@@ -74,6 +74,44 @@ class _AddReproducaoRebanhoWidgetState
     super.dispose();
   }
 
+  Widget _buildClearFieldButton(VoidCallback onPressed) {
+    return InkWell(
+      splashColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      onTap: onPressed,
+      child: SizedBox(
+        width: 24.0,
+        height: 24.0,
+        child: Icon(
+          Icons.close,
+          color: FlutterFlowTheme.of(context).accent3,
+          size: 22.0,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateTrailingIcons({
+    required bool showClearButton,
+    required VoidCallback onClear,
+    Color calendarColor = const Color(0xFF181818),
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (showClearButton) _buildClearFieldButton(onClear),
+        if (showClearButton) const SizedBox(width: 8.0),
+        Icon(
+          Icons.calendar_month_rounded,
+          color: calendarColor,
+          size: 24.0,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
@@ -1209,45 +1247,64 @@ class _AddReproducaoRebanhoWidgetState
                                   ),
                             ),
                           ),
-                          FlutterFlowDropDown<String>(
-                            controller: _model.dropdownGnrhValueController ??=
-                                FormFieldController<String>(null),
-                            options: const ['Sim', 'Não'],
-                            onChanged: (val) => safeSetState(
-                                () => _model.dropdownGnrhValue = val),
-                            width: double.infinity,
-                            height: 56.0,
-                            textStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .override(
-                                  fontFamily: FlutterFlowTheme.of(context)
-                                      .bodyMediumFamily,
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryText,
-                                  fontSize: 16.0,
-                                  letterSpacing: 0.0,
-                                  fontWeight: FontWeight.w600,
-                                  useGoogleFonts: !FlutterFlowTheme.of(context)
-                                      .bodyMediumIsCustom,
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Flexible(
+                                child: FlutterFlowDropDown<String>(
+                                  controller:
+                                      _model.dropdownGnrhValueController ??=
+                                          FormFieldController<String>(null),
+                                  options: const ['Sim', 'Não'],
+                                  onChanged: (val) => safeSetState(
+                                      () => _model.dropdownGnrhValue = val),
+                                  width: double.infinity,
+                                  height: 56.0,
+                                  textStyle: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: FlutterFlowTheme.of(context)
+                                            .bodyMediumFamily,
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryText,
+                                        fontSize: 16.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w600,
+                                        useGoogleFonts:
+                                            !FlutterFlowTheme.of(context)
+                                                .bodyMediumIsCustom,
+                                      ),
+                                  hintText: 'Escolha uma opção...',
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryText,
+                                    size: 24.0,
+                                  ),
+                                  fillColor:
+                                      FlutterFlowTheme.of(context).customColor3,
+                                  elevation: 2.0,
+                                  borderColor: Colors.transparent,
+                                  borderWidth: 0.0,
+                                  borderRadius: 8.0,
+                                  margin: const EdgeInsetsDirectional.fromSTEB(
+                                      12.0, 0.0, 12.0, 0.0),
+                                  hidesUnderline: true,
+                                  isOverButton: false,
+                                  isSearchable: false,
+                                  isMultiSelect: false,
                                 ),
-                            hintText: 'Escolha uma opção...',
-                            icon: Icon(
-                              Icons.keyboard_arrow_down_rounded,
-                              color: FlutterFlowTheme.of(context).secondaryText,
-                              size: 24.0,
-                            ),
-                            fillColor:
-                                FlutterFlowTheme.of(context).customColor3,
-                            elevation: 2.0,
-                            borderColor: Colors.transparent,
-                            borderWidth: 0.0,
-                            borderRadius: 8.0,
-                            margin: const EdgeInsetsDirectional.fromSTEB(
-                                12.0, 0.0, 12.0, 0.0),
-                            hidesUnderline: true,
-                            isOverButton: false,
-                            isSearchable: false,
-                            isMultiSelect: false,
+                              ),
+                              if (_model.dropdownGnrhValue != null &&
+                                  _model.dropdownGnrhValue != '')
+                                _buildClearFieldButton(() {
+                                  safeSetState(() {
+                                    _model.dropdownGnrhValueController?.value =
+                                        null;
+                                    _model.dropdownGnrhValue = null;
+                                  });
+                                }),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ].divide(const SizedBox(height: 8.0)),
                       ),
@@ -1277,45 +1334,64 @@ class _AddReproducaoRebanhoWidgetState
                                   ),
                             ),
                           ),
-                          FlutterFlowDropDown<String>(
-                            controller: _model.dropdownCioValueController ??=
-                                FormFieldController<String>(null),
-                            options: const ['Sim', 'Não'],
-                            onChanged: (val) => safeSetState(
-                                () => _model.dropdownCioValue = val),
-                            width: double.infinity,
-                            height: 56.0,
-                            textStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .override(
-                                  fontFamily: FlutterFlowTheme.of(context)
-                                      .bodyMediumFamily,
-                                  color: FlutterFlowTheme.of(context)
-                                      .secondaryText,
-                                  fontSize: 16.0,
-                                  letterSpacing: 0.0,
-                                  fontWeight: FontWeight.w600,
-                                  useGoogleFonts: !FlutterFlowTheme.of(context)
-                                      .bodyMediumIsCustom,
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Flexible(
+                                child: FlutterFlowDropDown<String>(
+                                  controller:
+                                      _model.dropdownCioValueController ??=
+                                          FormFieldController<String>(null),
+                                  options: const ['Sim', 'Não'],
+                                  onChanged: (val) => safeSetState(
+                                      () => _model.dropdownCioValue = val),
+                                  width: double.infinity,
+                                  height: 56.0,
+                                  textStyle: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: FlutterFlowTheme.of(context)
+                                            .bodyMediumFamily,
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryText,
+                                        fontSize: 16.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w600,
+                                        useGoogleFonts:
+                                            !FlutterFlowTheme.of(context)
+                                                .bodyMediumIsCustom,
+                                      ),
+                                  hintText: 'Escolha uma opção...',
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    color: FlutterFlowTheme.of(context)
+                                        .secondaryText,
+                                    size: 24.0,
+                                  ),
+                                  fillColor:
+                                      FlutterFlowTheme.of(context).customColor3,
+                                  elevation: 2.0,
+                                  borderColor: Colors.transparent,
+                                  borderWidth: 0.0,
+                                  borderRadius: 8.0,
+                                  margin: const EdgeInsetsDirectional.fromSTEB(
+                                      12.0, 0.0, 12.0, 0.0),
+                                  hidesUnderline: true,
+                                  isOverButton: false,
+                                  isSearchable: false,
+                                  isMultiSelect: false,
                                 ),
-                            hintText: 'Escolha uma opção...',
-                            icon: Icon(
-                              Icons.keyboard_arrow_down_rounded,
-                              color: FlutterFlowTheme.of(context).secondaryText,
-                              size: 24.0,
-                            ),
-                            fillColor:
-                                FlutterFlowTheme.of(context).customColor3,
-                            elevation: 2.0,
-                            borderColor: Colors.transparent,
-                            borderWidth: 0.0,
-                            borderRadius: 8.0,
-                            margin: const EdgeInsetsDirectional.fromSTEB(
-                                12.0, 0.0, 12.0, 0.0),
-                            hidesUnderline: true,
-                            isOverButton: false,
-                            isSearchable: false,
-                            isMultiSelect: false,
+                              ),
+                              if (_model.dropdownCioValue != null &&
+                                  _model.dropdownCioValue != '')
+                                _buildClearFieldButton(() {
+                                  safeSetState(() {
+                                    _model.dropdownCioValueController?.value =
+                                        null;
+                                    _model.dropdownCioValue = null;
+                                  });
+                                }),
+                            ].divide(const SizedBox(width: 8.0)),
                           ),
                         ].divide(const SizedBox(height: 8.0)),
                       ),
@@ -1480,10 +1556,14 @@ class _AddReproducaoRebanhoWidgetState
                                                         .bodyMediumIsCustom,
                                               ),
                                         ),
-                                        const Icon(
-                                          Icons.calendar_month_rounded,
-                                          color: Color(0xFF181818),
-                                          size: 24.0,
+                                        _buildDateTrailingIcons(
+                                          showClearButton:
+                                              _model.datePicked2 != null,
+                                          onClear: () {
+                                            safeSetState(() {
+                                              _model.datePicked2 = null;
+                                            });
+                                          },
                                         ),
                                       ],
                                     ),
@@ -2563,10 +2643,14 @@ class _AddReproducaoRebanhoWidgetState
                                                           .bodyMediumIsCustom,
                                                 ),
                                           ),
-                                          const Icon(
-                                            Icons.calendar_month_rounded,
-                                            color: Color(0xFF181818),
-                                            size: 24.0,
+                                          _buildDateTrailingIcons(
+                                            showClearButton:
+                                                _model.datePicked5 != null,
+                                            onClear: () {
+                                              safeSetState(() {
+                                                _model.datePicked5 = null;
+                                              });
+                                            },
                                           ),
                                         ],
                                       ),
@@ -2742,10 +2826,14 @@ class _AddReproducaoRebanhoWidgetState
                                                             .bodyMediumIsCustom,
                                                   ),
                                             ),
-                                            const Icon(
-                                              Icons.calendar_month_rounded,
-                                              color: Color(0xFF181818),
-                                              size: 24.0,
+                                            _buildDateTrailingIcons(
+                                              showClearButton:
+                                                  _model.datePicked6 != null,
+                                              onClear: () {
+                                                safeSetState(() {
+                                                  _model.datePicked6 = null;
+                                                });
+                                              },
                                             ),
                                           ],
                                         ),
@@ -3119,10 +3207,14 @@ class _AddReproducaoRebanhoWidgetState
                                                         .bodyMediumIsCustom,
                                               ),
                                         ),
-                                        const Icon(
-                                          Icons.calendar_month_rounded,
-                                          color: Color(0xFF181818),
-                                          size: 24.0,
+                                        _buildDateTrailingIcons(
+                                          showClearButton:
+                                              _model.datePicked7 != null,
+                                          onClear: () {
+                                            safeSetState(() {
+                                              _model.datePicked7 = null;
+                                            });
+                                          },
                                         ),
                                       ],
                                     ),

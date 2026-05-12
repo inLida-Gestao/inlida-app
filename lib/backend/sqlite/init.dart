@@ -197,6 +197,10 @@ Future<Database> initializeDatabaseFromDbFile(
         '[SQLite] Manutenção pesada de startup adiada para preservar abertura rápida.');
   }
 
+  // Local_lotes é pequeno; limpar duplicatas por id_lote antes do índice
+  // evita que bases antigas continuem duplicando a cada download.
+  await _dedupLotesPorIdLote(database);
+
   // Criar índices UNIQUE para suportar UPSERT incremental
   await _ensureUniqueBusinessKeys(database, allowHeavyIndexes: !largeStartupDb);
 
@@ -238,6 +242,11 @@ Future<void> _ensureLocalSchemaCompatibility(Database db) async {
       'data_morte': 'TEXT',
       'motivo_morte': 'TEXT',
       'categoria_matriz': 'TEXT',
+      'sync_dirty': 'INTEGER',
+      'sync_op': 'TEXT',
+      'sync_updated_at': 'TEXT',
+    },
+    'local_lotes': {
       'sync_dirty': 'INTEGER',
       'sync_op': 'TEXT',
       'sync_updated_at': 'TEXT',
@@ -625,6 +634,88 @@ Future<void> _ensureRebanhoIndexes(
     }
   }
   debugPrint('[SQLite] Índices de busca do rebanho verificados/criados.');
+}
+
+Future<void> _dedupLotesPorIdLote(Database db) async {
+  try {
+    final groups = await db.rawQuery('''
+      SELECT COALESCE(id_lote, '') AS idLote, COUNT(*) AS qtd
+      FROM local_lotes
+      WHERE COALESCE(id_lote, '') != ''
+        AND LOWER(COALESCE(id_lote, '')) != 'null'
+      GROUP BY COALESCE(id_lote, '')
+      HAVING COUNT(*) > 1
+    ''');
+    if (groups.isEmpty) {
+      debugPrint('[SQLite][dedupLotes] nenhuma duplicata por id_lote.');
+      return;
+    }
+
+    var removed = 0;
+    for (final group in groups) {
+      final idLote = group['idLote']?.toString();
+      if (idLote == null || idLote.isEmpty) continue;
+
+      final rows = await db.rawQuery('''
+        SELECT *
+        FROM local_lotes
+        WHERE id_lote = ?
+        ORDER BY
+          COALESCE(sync_dirty, 0) DESC,
+          datetime(COALESCE(sync_updated_at, updated_at, created_at), 'localtime') DESC,
+          id DESC
+      ''', [idLote]);
+      if (rows.length < 2) continue;
+
+      final keepId = rows.first['id'];
+      if (keepId == null) continue;
+
+      final merged = Map<String, Object?>.from(rows.first);
+      for (final duplicate in rows.skip(1)) {
+        for (final key in duplicate.keys) {
+          if (key == 'id') continue;
+          if (_normalize(merged[key]) == null &&
+              _normalize(duplicate[key]) != null) {
+            merged[key] = duplicate[key];
+          }
+        }
+      }
+
+      final dirtyRows = rows
+          .where((row) => row['sync_dirty'] == 1 || row['sync_dirty'] == '1')
+          .toList();
+      if (dirtyRows.isNotEmpty) {
+        final dirtyRow = dirtyRows.first;
+        merged['sync_dirty'] = 1;
+        merged['sync_op'] = _normalize(dirtyRow['sync_op']) ?? 'update';
+        merged['sync_updated_at'] = _normalize(dirtyRow['sync_updated_at']) ??
+            _normalize(dirtyRow['updated_at']) ??
+            _normalize(dirtyRow['created_at']);
+      }
+
+      merged.remove('id');
+      await db.update(
+        'local_lotes',
+        merged,
+        where: 'id = ?',
+        whereArgs: [keepId],
+      );
+      final duplicateIds =
+          rows.skip(1).map((row) => row['id']).whereType<int>().toList();
+      if (duplicateIds.isNotEmpty) {
+        final placeholders = List.filled(duplicateIds.length, '?').join(',');
+        removed += await db.delete(
+          'local_lotes',
+          where: 'id IN ($placeholders)',
+          whereArgs: duplicateIds,
+        );
+      }
+    }
+    debugPrint(
+        '[SQLite][dedupLotes] ${groups.length} grupo(s), $removed duplicata(s) removida(s).');
+  } catch (e, s) {
+    debugPrint('[SQLite][dedupLotes] erro ao limpar duplicatas: $e\n$s');
+  }
 }
 
 /// Cria índices UNIQUE nas colunas de chave de negócio para que

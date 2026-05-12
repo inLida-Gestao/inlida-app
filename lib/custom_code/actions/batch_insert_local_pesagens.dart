@@ -127,12 +127,9 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
     final dedupedRecords = _dedupMappedPesagens(mappedRecords);
     final db = SQLiteManager.instance.database;
     await db.transaction((txn) async {
-      final batch = txn.batch();
       for (final mapped in dedupedRecords) {
-        batch.insert('local_historico_pesagens', mapped,
-            conflictAlgorithm: ConflictAlgorithm.replace);
+        await _replaceLocalPesagem(txn, mapped);
       }
-      await batch.commit(noResult: true);
     });
 
     return {'inserted': dedupedRecords.length, 'errors': errors};
@@ -144,8 +141,7 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
 
     for (final mapped in _dedupMappedPesagens(mappedRecords)) {
       try {
-        await db.insert('local_historico_pesagens', mapped,
-            conflictAlgorithm: ConflictAlgorithm.replace);
+        await _replaceLocalPesagem(db, mapped);
         insertedCount++;
       } catch (e) {
         final id = mapped['idRebanho']?.toString() ?? 'desconhecido';
@@ -155,6 +151,50 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
 
     return {'inserted': insertedCount, 'errors': errors};
   }
+}
+
+Future<void> _replaceLocalPesagem(
+  DatabaseExecutor db,
+  Map<String, dynamic> mapped,
+) async {
+  final idPesagem = _cleanNull(mapped['id_pesagem']);
+  if (idPesagem != null) {
+    await db.delete(
+      'local_historico_pesagens',
+      where: 'id_pesagem = ? AND COALESCE(sync_dirty, 0) = 0',
+      whereArgs: [idPesagem],
+    );
+  }
+
+  final idRebanho = _cleanNull(mapped['idRebanho']);
+  final dataPesagem = _cleanNull(mapped['dataPesagem']);
+  final tipo = _cleanNull(mapped['tipo']);
+  final pesoKey = _formatPesoKey(mapped['peso']);
+  final createdAt = _cleanNull(mapped['created_at']);
+  if (idRebanho != null &&
+      dataPesagem != null &&
+      tipo != null &&
+      pesoKey.isNotEmpty &&
+      createdAt != null) {
+    await db.delete(
+      'local_historico_pesagens',
+      where: '''
+        idRebanho = ?
+        AND dataPesagem = ?
+        AND tipo = ?
+        AND printf('%.3f', CAST(peso AS REAL)) = ?
+        AND created_at = ?
+        AND COALESCE(sync_dirty, 0) = 0
+      ''',
+      whereArgs: [idRebanho, dataPesagem, tipo, pesoKey, createdAt],
+    );
+  }
+
+  await db.insert(
+    'local_historico_pesagens',
+    mapped,
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
 }
 
 List<Map<String, dynamic>> _dedupMappedPesagens(

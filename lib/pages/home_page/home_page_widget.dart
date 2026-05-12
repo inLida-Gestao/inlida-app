@@ -73,11 +73,21 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         nome: _model.userLogadoON?.firstOrNull?.nome,
         email: _model.userLogadoON?.firstOrNull?.email,
         foto: _model.userLogadoON?.firstOrNull?.foto,
+        id: currentUserUid,
         telefone: _model.userLogadoON?.firstOrNull?.telefone,
         permissao: _model.userLogadoON?.firstOrNull?.permissao,
+        acesso: _model.userLogadoON?.firstOrNull?.acesso,
       );
       safeSetState(() {});
-      if ((_model.userLogadoON?.firstOrNull?.acesso == 'Pago') ||
+      if (action_blocks
+          .isAccountAccessCanceled(_model.userLogadoON?.firstOrNull?.acesso)) {
+        FFAppState().update(() {
+          FFAppState().navegacaoDashboard = 'painel';
+          FFAppState().syncCancelRequested = true;
+          FFAppState().isSyncing = false;
+        });
+        await action_blocks.showAccountBlockedInformationDialog(context);
+      } else if ((_model.userLogadoON?.firstOrNull?.acesso == 'Pago') ||
           (_model.userLogadoON?.firstOrNull?.acesso == 'Gratis')) {
         await Future.wait([
           Future(() async {
@@ -215,6 +225,12 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           '[SYNC][auto] Supabase indisponível no warm-up — adiando sync.');
                       return;
                     }
+                    if (await action_blocks.blockIfAccountCanceled(
+                      context,
+                      refreshFromServer: true,
+                    )) {
+                      return;
+                    }
                     if (context.mounted) {
                       await actions.performAutoSync(context);
                       safeSetState(() {});
@@ -245,7 +261,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 ..foto = _model.userLogado?.firstOrNull?.foto
                 ..id = currentUserUid
                 ..telefone = _model.userLogado?.firstOrNull?.telefone
-                ..permissao = _model.userLogado?.firstOrNull?.permissao,
+                ..permissao = _model.userLogado?.firstOrNull?.permissao
+                ..acesso = _model.userLogado?.firstOrNull?.acesso,
             );
             safeSetState(() {});
           }),
@@ -316,17 +333,22 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         floatingActionButton: Visibility(
-          visible: (FFAppState().navegacaoDashboard == 'propriedades') ||
-              (FFAppState().navegacaoDashboard == 'rebanhos') ||
-              (FFAppState().navegacaoDashboard == 'lotes') ||
-              (FFAppState().navegacaoDashboard == 'reproducoes') ||
-              (FFAppState().navegacaoDashboard == 'sanidade'),
+          visible: !action_blocks
+                  .isAccountAccessCanceled(FFAppState().userLogado.acesso) &&
+              ((FFAppState().navegacaoDashboard == 'propriedades') ||
+                  (FFAppState().navegacaoDashboard == 'rebanhos') ||
+                  (FFAppState().navegacaoDashboard == 'lotes') ||
+                  (FFAppState().navegacaoDashboard == 'reproducoes') ||
+                  (FFAppState().navegacaoDashboard == 'sanidade')),
           child: Builder(
             builder: (context) => Padding(
               padding:
                   const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 24.0),
               child: FloatingActionButton(
                 onPressed: () async {
+                  if (await action_blocks.blockIfAccountCanceled(context)) {
+                    return;
+                  }
                   if (FFAppState().navegacaoDashboard == 'propriedades') {
                     FFAppState().cidadeSelecionada = '';
                     safeSetState(() {});

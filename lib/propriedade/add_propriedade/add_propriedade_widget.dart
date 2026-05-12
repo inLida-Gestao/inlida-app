@@ -1321,6 +1321,19 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                   (FFAppState().cidadeSelecionada == ''))
                               ? null
                               : () async {
+                                  final dataCriacao = getCurrentTimestamp;
+                                  final dataCriacaoFormatada = dateTimeFormat(
+                                    "yyyy-MM-dd HH:mm:ss",
+                                    dataCriacao,
+                                    locale: FFLocalizations.of(context)
+                                        .languageCode,
+                                  );
+                                  if (FFAppState().dataDadosNaoSyncProp ==
+                                      null) {
+                                    FFAppState().dataDadosNaoSyncProp =
+                                        dataCriacao;
+                                    safeSetState(() {});
+                                  }
                                   await SQLiteManager.instance
                                       .insertPropriedade(
                                     userID: currentUserUid,
@@ -1380,28 +1393,12 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                     ),
                                     nome: _model
                                         .nomePropriedadeTextController.text,
-                                    updatedat: dateTimeFormat(
-                                      "yyyy-MM-dd HH:mm:ss",
-                                      getCurrentTimestamp,
-                                      locale: FFLocalizations.of(context)
-                                          .languageCode,
-                                    ),
-                                    createdat: dateTimeFormat(
-                                      "yyyy-MM-dd HH:mm:ss",
-                                      getCurrentTimestamp,
-                                      locale: FFLocalizations.of(context)
-                                          .languageCode,
-                                    ),
+                                    updatedat: dataCriacaoFormatada,
+                                    createdat: dataCriacaoFormatada,
                                     usersID: ' ',
                                     rebanhosID: ' ',
                                     deletado: 'NAO',
                                   );
-                                  if (!(FFAppState().dataDadosNaoSyncProp !=
-                                      null)) {
-                                    FFAppState().dataDadosNaoSyncProp =
-                                        getCurrentTimestamp;
-                                    safeSetState(() {});
-                                  }
                                   FFAppState().cidadeSelecionada = '';
                                   safeSetState(() {});
                                   ScaffoldMessenger.of(context).showSnackBar(

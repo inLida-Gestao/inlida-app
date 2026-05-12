@@ -1,9 +1,11 @@
+import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/lotes/edit_lote/edit_lote_widget.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
+import 'dart:async';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,6 +13,64 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'view_lote_model.dart';
 export 'view_lote_model.dart';
+
+class _LoteGmdAnimalResult {
+  const _LoteGmdAnimalResult({
+    required this.animal,
+    this.pesoInicial,
+    this.pesoFinal,
+    this.dataInicial,
+    this.dataFinal,
+    this.diasAvaliados,
+    this.gmd,
+    this.motivoNaoCalculavel,
+  });
+
+  final RebanhoStruct animal;
+  final double? pesoInicial;
+  final double? pesoFinal;
+  final DateTime? dataInicial;
+  final DateTime? dataFinal;
+  final int? diasAvaliados;
+  final double? gmd;
+  final String? motivoNaoCalculavel;
+
+  bool get calculavel => gmd != null;
+}
+
+class _LoteGmdPesagem {
+  const _LoteGmdPesagem({
+    required this.data,
+    required this.peso,
+  });
+
+  final DateTime data;
+  final double peso;
+}
+
+class _LoteGmdCalculationResult {
+  const _LoteGmdCalculationResult({
+    required this.pesagensValidas,
+    required this.results,
+    required this.dataInicial,
+    required this.dataFinal,
+    required this.periodoInvalido,
+    required this.resultsCalculaveisCount,
+    this.gmdMedio,
+    this.pesoMedioInicial,
+    this.pesoMedioFinal,
+  });
+
+  final List<_LoteGmdPesagem> pesagensValidas;
+  final List<_LoteGmdAnimalResult> results;
+  final DateTime? dataInicial;
+  final DateTime? dataFinal;
+  final bool periodoInvalido;
+  final int resultsCalculaveisCount;
+  final double? gmdMedio;
+  final double? pesoMedioInicial;
+  final double? pesoMedioFinal;
+}
 
 class ViewLoteWidget extends StatefulWidget {
   const ViewLoteWidget({
@@ -27,6 +87,13 @@ class ViewLoteWidget extends StatefulWidget {
 class _ViewLoteWidgetState extends State<ViewLoteWidget>
     with TickerProviderStateMixin {
   late ViewLoteModel _model;
+  static const int _gmdLoteCalculationBatchSize = 60;
+  static const int _gmdLoteRowsPageSize = 50;
+
+  String? _gmdLoteCalculationKey;
+  Future<_LoteGmdCalculationResult>? _gmdLoteCalculationFuture;
+  int _gmdLoteProgressCurrent = 0;
+  int _gmdLoteProgressTotal = 0;
 
   @override
   void setState(VoidCallback callback) {
@@ -41,7 +108,7 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
 
     _model.tabBarController = TabController(
       vsync: this,
-      length: 2,
+      length: 3,
       initialIndex: 0,
     )..addListener(() => safeSetState(() {}));
 
@@ -66,6 +133,1124 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
     _model.maybeDispose();
 
     super.dispose();
+  }
+
+  DateTime _dateOnly(DateTime value) =>
+      DateTime(value.year, value.month, value.day);
+
+  String _normalizeIdRebanho(String? value) => value?.trim() ?? '';
+
+  bool _pesagemLoteAtiva(BuscaHistPesagensRow pesagem) =>
+      pesagem.deletado?.trim().toUpperCase() != 'SIM';
+
+  DateTime? _parseLoteDate(String? value) {
+    final trimmed = value?.trim();
+    if (trimmed == null ||
+        trimmed.isEmpty ||
+        trimmed.toLowerCase() == 'null' ||
+        trimmed == '-') {
+      return null;
+    }
+
+    final parsed = DateTime.tryParse(trimmed);
+    if (parsed != null) return parsed;
+
+    final parts = trimmed.split('/');
+    if (parts.length == 3) {
+      final day = int.tryParse(parts[0]);
+      final month = int.tryParse(parts[1]);
+      final year = int.tryParse(parts[2]);
+      if (day != null && month != null && year != null) {
+        return DateTime(year, month, day);
+      }
+    }
+
+    return null;
+  }
+
+  int _comparePesagensLote(BuscaHistPesagensRow a, BuscaHistPesagensRow b) {
+    final dataA = _parseLoteDate(a.dataPesagem);
+    final dataB = _parseLoteDate(b.dataPesagem);
+    final dataCompare =
+        (dataA ?? DateTime(1900)).compareTo(dataB ?? DateTime(1900));
+    if (dataCompare != 0) return dataCompare;
+
+    final createdA = DateTime.tryParse(a.createdAt ?? '');
+    final createdB = DateTime.tryParse(b.createdAt ?? '');
+    final createdCompare =
+        (createdA ?? DateTime(1900)).compareTo(createdB ?? DateTime(1900));
+    if (createdCompare != 0) return createdCompare;
+
+    return (a.id ?? 0).compareTo(b.id ?? 0);
+  }
+
+  String _gmdLoteAnimaisKey(List<RebanhoStruct> animais) {
+    final ids = animais
+        .map((animal) {
+          final id = _normalizeIdRebanho(animal.idRebanho);
+          if (id.isEmpty) return '';
+          return [
+            id,
+            animal.hasPesoAtual() ? animal.pesoAtual.toString() : '',
+            animal.dataUltimaPesagem,
+          ].join(':');
+        })
+        .where((v) => v.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+    return ids.join('|');
+  }
+
+  String _formatKg(double? value) {
+    if (value == null) return '-';
+    return '${value.toStringAsFixed(2).replaceAll('.', ',')} kg';
+  }
+
+  String _formatKgDia(double? value) {
+    if (value == null) return '-';
+    final prefix = value > 0 ? '+' : '';
+    return '$prefix${value.toStringAsFixed(3).replaceAll('.', ',')} kg/d';
+  }
+
+  String _formatGmdLoteDate(DateTime? value) {
+    if (value == null) return 'Selecionar';
+    return dateTimeFormat(
+      'd/M/y',
+      value,
+      locale: FFLocalizations.of(context).languageCode,
+    );
+  }
+
+  Color _gmdLoteColor(double? value) {
+    final theme = FlutterFlowTheme.of(context);
+    if (value == null || value == 0) return theme.accent3;
+    return value > 0 ? theme.success : theme.error;
+  }
+
+  double? _average(Iterable<double?> values) {
+    final list = values.whereType<double>().toList();
+    if (list.isEmpty) return null;
+    return list.reduce((a, b) => a + b) / list.length;
+  }
+
+  String _animalGmdLabel(RebanhoStruct animal) {
+    if (animal.numeroAnimal.trim().isNotEmpty) return animal.numeroAnimal;
+    if (animal.nome.trim().isNotEmpty) return animal.nome;
+    if (animal.chip.trim().isNotEmpty) return animal.chip;
+    return animal.idRebanho.trim().isNotEmpty ? animal.idRebanho : 'Animal';
+  }
+
+  Future<List<BuscaHistPesagensRow>> _loadPesagensDoLote(
+    List<RebanhoStruct> animais,
+  ) async {
+    final ids = animais
+        .map((animal) => _normalizeIdRebanho(animal.idRebanho))
+        .where((id) => id.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+
+    if (ids.isEmpty) return [];
+
+    final rows = await SQLiteManager.instance.buscaHistPesagensPorRebanhos(
+      idRebanhos: ids,
+    );
+    final pesagens = <BuscaHistPesagensRow>[];
+    final pesagensKeys = <String>{};
+    for (final row in rows) {
+      if (!_pesagemLoteAtiva(row)) continue;
+      final key = row.id != null
+          ? 'id:${row.id}'
+          : [
+              row.idRebanho,
+              row.idPesagem,
+              row.dataPesagem,
+              row.peso?.toString(),
+              row.createdAt,
+            ].join('|');
+      if (pesagensKeys.add(key)) {
+        pesagens.add(row);
+      }
+    }
+
+    return pesagens..sort(_comparePesagensLote);
+  }
+
+  Map<String, List<BuscaHistPesagensRow>> _indexPesagensGmdLote(
+    List<BuscaHistPesagensRow> pesagens,
+  ) {
+    final indexed = <String, List<BuscaHistPesagensRow>>{};
+    for (final pesagem in pesagens) {
+      final id = _normalizeIdRebanho(pesagem.idRebanho);
+      if (id.isEmpty || !_pesagemLoteAtiva(pesagem)) continue;
+      (indexed[id] ??= <BuscaHistPesagensRow>[]).add(pesagem);
+    }
+    for (final rows in indexed.values) {
+      rows.sort(_comparePesagensLote);
+    }
+    return indexed;
+  }
+
+  List<_LoteGmdPesagem> _buildPesagensGmdAnimal(
+    RebanhoStruct animal,
+    Map<String, List<BuscaHistPesagensRow>> pesagensPorAnimal,
+  ) {
+    final idRebanho = _normalizeIdRebanho(animal.idRebanho);
+    final porDia = <DateTime, _LoteGmdPesagem>{};
+
+    void addPesagem(DateTime? data, double? peso) {
+      if (data == null || peso == null || peso <= 0) return;
+      final dataDia = _dateOnly(data);
+      porDia[dataDia] = _LoteGmdPesagem(data: dataDia, peso: peso);
+    }
+
+    if (animal.hasPesoNascimento()) {
+      addPesagem(_parseLoteDate(animal.dataNascimento), animal.pesoNascimento);
+    }
+    if (animal.hasPesoDesmama()) {
+      addPesagem(_parseLoteDate(animal.dataDesmama), animal.pesoDesmama);
+    }
+    if (animal.hasPesoAtual()) {
+      addPesagem(_parseLoteDate(animal.dataUltimaPesagem), animal.pesoAtual);
+    }
+
+    final pesagensHistorico = idRebanho.isEmpty
+        ? const <BuscaHistPesagensRow>[]
+        : pesagensPorAnimal[idRebanho] ?? const <BuscaHistPesagensRow>[];
+    for (final pesagem in pesagensHistorico) {
+      if (_parseLoteDate(pesagem.dataPesagem) == null ||
+          pesagem.peso == null ||
+          !_pesagemLoteAtiva(pesagem)) {
+        continue;
+      }
+      addPesagem(_parseLoteDate(pesagem.dataPesagem), pesagem.peso);
+    }
+
+    return porDia.values.toList()..sort((a, b) => a.data.compareTo(b.data));
+  }
+
+  String _gmdLoteCalculationCacheKey(
+    List<RebanhoStruct> animais,
+    List<BuscaHistPesagensRow> pesagens,
+  ) {
+    final firstPesagem = pesagens.isNotEmpty ? pesagens.first : null;
+    final lastPesagem = pesagens.isNotEmpty ? pesagens.last : null;
+    final pesagensKey = [
+      firstPesagem?.id ?? '',
+      firstPesagem?.dataPesagem ?? '',
+      firstPesagem?.createdAt ?? '',
+      lastPesagem?.id ?? '',
+      lastPesagem?.dataPesagem ?? '',
+      lastPesagem?.createdAt ?? '',
+    ].join(':');
+    return [
+      _gmdLoteAnimaisKey(animais),
+      _model.gmdLoteDataInicial?.toIso8601String() ?? '',
+      _model.gmdLoteDataFinal?.toIso8601String() ?? '',
+      pesagens.length,
+      pesagensKey,
+    ].join('#');
+  }
+
+  Future<_LoteGmdCalculationResult> _calculateGmdLoteAsync(
+    List<RebanhoStruct> animais,
+    List<BuscaHistPesagensRow> pesagens,
+    String calculationKey,
+  ) async {
+    if (animais.isEmpty) {
+      return const _LoteGmdCalculationResult(
+        pesagensValidas: [],
+        results: [],
+        dataInicial: null,
+        dataFinal: null,
+        periodoInvalido: false,
+        resultsCalculaveisCount: 0,
+      );
+    }
+
+    final pesagensPorAnimal = _indexPesagensGmdLote(pesagens);
+    final pontosPorAnimal = <String, List<_LoteGmdPesagem>>{};
+    final todasPesagens = <_LoteGmdPesagem>[];
+    for (var index = 0; index < animais.length; index++) {
+      final animal = animais[index];
+      final idRebanho = _normalizeIdRebanho(animal.idRebanho);
+      final pontos = _buildPesagensGmdAnimal(animal, pesagensPorAnimal);
+      if (idRebanho.isNotEmpty) {
+        pontosPorAnimal[idRebanho] = pontos;
+      }
+      todasPesagens.addAll(pontos);
+
+      final shouldYield =
+          (index + 1) % _gmdLoteCalculationBatchSize == 0 ||
+              index == animais.length - 1;
+      if (shouldYield) {
+        await Future<void>.delayed(Duration.zero);
+      }
+    }
+    todasPesagens.sort((a, b) => a.data.compareTo(b.data));
+
+    if (todasPesagens.isEmpty) {
+      return _LoteGmdCalculationResult(
+        pesagensValidas: const [],
+        results: animais
+            .map((animal) => _LoteGmdAnimalResult(
+                  animal: animal,
+                  motivoNaoCalculavel: 'Sem pesagens cadastradas',
+                ))
+            .toList(),
+        dataInicial: null,
+        dataFinal: null,
+        periodoInvalido: false,
+        resultsCalculaveisCount: 0,
+      );
+    }
+
+    final dataInicial =
+        _dateOnly(_model.gmdLoteDataInicial ?? todasPesagens.first.data);
+    final dataFinal =
+        _dateOnly(_model.gmdLoteDataFinal ?? todasPesagens.last.data);
+
+    if (dataFinal.isBefore(dataInicial)) {
+      return _LoteGmdCalculationResult(
+        pesagensValidas: todasPesagens,
+        results: const [],
+        dataInicial: dataInicial,
+        dataFinal: dataFinal,
+        periodoInvalido: true,
+        resultsCalculaveisCount: 0,
+      );
+    }
+
+    final results = <_LoteGmdAnimalResult>[];
+    for (var index = 0; index < animais.length; index++) {
+      final animal = animais[index];
+      final idRebanho = _normalizeIdRebanho(animal.idRebanho);
+      if (idRebanho.isEmpty) {
+        results.add(_LoteGmdAnimalResult(
+          animal: animal,
+          motivoNaoCalculavel: 'Animal sem idRebanho',
+        ));
+      } else {
+        final animalPesagens =
+            (pontosPorAnimal[idRebanho] ?? const <_LoteGmdPesagem>[])
+            .where((pesagem) =>
+                !pesagem.data.isBefore(dataInicial) &&
+                !pesagem.data.isAfter(dataFinal))
+            .toList();
+
+        if (animalPesagens.length < 2) {
+          results.add(_LoteGmdAnimalResult(
+            animal: animal,
+            motivoNaoCalculavel: 'Menos de duas datas de pesagem no período',
+          ));
+        } else {
+          final inicial = animalPesagens[animalPesagens.length - 2];
+          final finalPesagem = animalPesagens.last;
+          final diasAvaliados =
+              finalPesagem.data.difference(inicial.data).inDays;
+
+          if (diasAvaliados <= 0) {
+            results.add(_LoteGmdAnimalResult(
+              animal: animal,
+              pesoInicial: inicial.peso,
+              pesoFinal: finalPesagem.peso,
+              dataInicial: inicial.data,
+              dataFinal: finalPesagem.data,
+              motivoNaoCalculavel: 'Pesagens na mesma data',
+            ));
+          } else {
+            results.add(_LoteGmdAnimalResult(
+              animal: animal,
+              pesoInicial: inicial.peso,
+              pesoFinal: finalPesagem.peso,
+              dataInicial: inicial.data,
+              dataFinal: finalPesagem.data,
+              diasAvaliados: diasAvaliados,
+              gmd: (finalPesagem.peso - inicial.peso) / diasAvaliados,
+            ));
+          }
+        }
+      }
+
+      final shouldYield =
+          (index + 1) % _gmdLoteCalculationBatchSize == 0 ||
+              index == animais.length - 1;
+      if (shouldYield) {
+        if (mounted && _gmdLoteCalculationKey == calculationKey) {
+          safeSetState(() {
+            _gmdLoteProgressCurrent = index + 1;
+            _gmdLoteProgressTotal = animais.length;
+          });
+        }
+        await Future<void>.delayed(Duration.zero);
+      }
+    }
+
+    final resultsCalculaveis = results.where((r) => r.calculavel).toList();
+    return _LoteGmdCalculationResult(
+      pesagensValidas: todasPesagens,
+      results: results,
+      dataInicial: dataInicial,
+      dataFinal: dataFinal,
+      periodoInvalido: false,
+      resultsCalculaveisCount: resultsCalculaveis.length,
+      gmdMedio: _average(resultsCalculaveis.map((r) => r.gmd)),
+      pesoMedioInicial: _average(resultsCalculaveis.map((r) => r.pesoInicial)),
+      pesoMedioFinal: _average(resultsCalculaveis.map((r) => r.pesoFinal)),
+    );
+  }
+
+  void _invalidateGmdLoteCalculation({bool resetVisibleRows = true}) {
+    _gmdLoteCalculationKey = null;
+    _gmdLoteCalculationFuture = null;
+    _gmdLoteProgressCurrent = 0;
+    _gmdLoteProgressTotal = 0;
+    if (resetVisibleRows) {
+      _model.gmdLoteVisibleRows = _gmdLoteRowsPageSize;
+    }
+  }
+
+  Future<_LoteGmdCalculationResult> _gmdLoteCalculationFor(
+    List<RebanhoStruct> animais,
+    List<BuscaHistPesagensRow> pesagens,
+  ) {
+    final key = _gmdLoteCalculationCacheKey(animais, pesagens);
+    if (_gmdLoteCalculationKey != key || _gmdLoteCalculationFuture == null) {
+      _gmdLoteCalculationKey = key;
+      _gmdLoteProgressCurrent = 0;
+      _gmdLoteProgressTotal = animais.length;
+      _model.gmdLoteVisibleRows = _gmdLoteRowsPageSize;
+      _gmdLoteCalculationFuture =
+          _calculateGmdLoteAsync(animais, pesagens, key);
+    }
+    return _gmdLoteCalculationFuture!;
+  }
+
+  Future<void> _pickGmdLoteDate({
+    required bool isStart,
+    required List<_LoteGmdPesagem> pesagens,
+  }) async {
+    final datas = pesagens.map((p) => _dateOnly(p.data)).toList()..sort();
+    final fallback = datas.isNotEmpty ? datas.first : getCurrentTimestamp;
+    final current =
+        isStart ? _model.gmdLoteDataInicial : _model.gmdLoteDataFinal;
+
+    final picked = await showDatePicker(
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
+      context: context,
+      initialDate:
+          current ?? (isStart || datas.isEmpty ? fallback : datas.last),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2050),
+      builder: (context, child) {
+        return wrapInMaterialDatePickerTheme(
+          context,
+          child!,
+          headerBackgroundColor: FlutterFlowTheme.of(context).primary,
+          headerForegroundColor: FlutterFlowTheme.of(context).info,
+          headerTextStyle: FlutterFlowTheme.of(context).headlineLarge.override(
+                fontFamily: FlutterFlowTheme.of(context).headlineLargeFamily,
+                fontSize: 32.0,
+                letterSpacing: 0.0,
+                fontWeight: FontWeight.w600,
+                useGoogleFonts:
+                    !FlutterFlowTheme.of(context).headlineLargeIsCustom,
+              ),
+          pickerBackgroundColor:
+              FlutterFlowTheme.of(context).secondaryBackground,
+          pickerForegroundColor: FlutterFlowTheme.of(context).primaryText,
+          selectedDateTimeBackgroundColor: FlutterFlowTheme.of(context).primary,
+          selectedDateTimeForegroundColor: FlutterFlowTheme.of(context).info,
+          actionButtonForegroundColor: FlutterFlowTheme.of(context).primaryText,
+          iconSize: 24.0,
+        );
+      },
+    );
+
+    if (picked == null) return;
+    safeSetState(() {
+      if (isStart) {
+        _model.gmdLoteDataInicial = _dateOnly(picked);
+      } else {
+        _model.gmdLoteDataFinal = _dateOnly(picked);
+      }
+      _invalidateGmdLoteCalculation();
+    });
+  }
+
+  Widget _buildGmdLoteDateFilter({
+    required String label,
+    required DateTime? value,
+    required VoidCallback onTap,
+  }) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 150.0, maxWidth: 260.0),
+      child: InkWell(
+        splashColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8.0),
+        child: Container(
+          height: 56.0,
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F1F1),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          padding: const EdgeInsetsDirectional.fromSTEB(12.0, 0.0, 12.0, 0.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily:
+                                FlutterFlowTheme.of(context).bodyMediumFamily,
+                            color: const Color(0xFF8E8E8E),
+                            fontSize: 12.0,
+                            letterSpacing: 0.0,
+                            fontWeight: FontWeight.w500,
+                            useGoogleFonts: !FlutterFlowTheme.of(context)
+                                .bodyMediumIsCustom,
+                          ),
+                    ),
+                    Text(
+                      _formatGmdLoteDate(value),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily:
+                                FlutterFlowTheme.of(context).bodyMediumFamily,
+                            color: value == null
+                                ? const Color(0xFFBEBEBE)
+                                : FlutterFlowTheme.of(context).secondaryText,
+                            fontSize: 14.0,
+                            letterSpacing: 0.0,
+                            fontWeight: FontWeight.w600,
+                            useGoogleFonts: !FlutterFlowTheme.of(context)
+                                .bodyMediumIsCustom,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.calendar_today_outlined,
+                color: Color(0xFF181818),
+                size: 18.0,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGmdLoteMetricCard({
+    required String label,
+    required String value,
+    Color? valueColor,
+  }) {
+    return Container(
+      width: double.infinity,
+      constraints: const BoxConstraints(minHeight: 80.0),
+      decoration: BoxDecoration(
+        color: FlutterFlowTheme.of(context).secondaryBackground,
+        boxShadow: const [
+          BoxShadow(
+            blurRadius: 4.0,
+            color: Color(0x1F000000),
+            offset: Offset(0.0, 2.0),
+          )
+        ],
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: const Color(0xFFEDEDED)),
+      ),
+      padding: const EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 12.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                  color: FlutterFlowTheme.of(context).accent3,
+                  fontSize: 12.0,
+                  letterSpacing: 0.0,
+                  fontWeight: FontWeight.w500,
+                  useGoogleFonts:
+                      !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                ),
+          ),
+          const SizedBox(height: 6.0),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                  color: valueColor ?? FlutterFlowTheme.of(context).primaryText,
+                  fontSize: 20.0,
+                  letterSpacing: 0.0,
+                  fontWeight: FontWeight.w700,
+                  useGoogleFonts:
+                      !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGmdLoteEmptyState({
+    required IconData icon,
+    required String title,
+    required String description,
+  }) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: FlutterFlowTheme.of(context).secondaryBackground,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: const Color(0xFFEDEDED)),
+      ),
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: FlutterFlowTheme.of(context).accent3, size: 36.0),
+          const SizedBox(height: 12.0),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                  color: FlutterFlowTheme.of(context).primaryText,
+                  fontSize: 16.0,
+                  letterSpacing: 0.0,
+                  fontWeight: FontWeight.w600,
+                  useGoogleFonts:
+                      !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                ),
+          ),
+          const SizedBox(height: 6.0),
+          Text(
+            description,
+            textAlign: TextAlign.center,
+            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                  color: FlutterFlowTheme.of(context).accent3,
+                  letterSpacing: 0.0,
+                  useGoogleFonts:
+                      !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGmdLoteTableCell(
+    String text, {
+    required double width,
+    bool isHeader = false,
+    Color? color,
+    FontWeight? fontWeight,
+  }) {
+    return SizedBox(
+      width: width,
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(12.0, 12.0, 12.0, 12.0),
+        child: Text(
+          text,
+          maxLines: isHeader ? 2 : 1,
+          overflow: TextOverflow.ellipsis,
+          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                color: color ??
+                    (isHeader
+                        ? FlutterFlowTheme.of(context).primaryText
+                        : FlutterFlowTheme.of(context).secondaryText),
+                fontSize: isHeader ? 13.0 : 14.0,
+                letterSpacing: 0.0,
+                fontWeight: fontWeight ??
+                    (isHeader ? FontWeight.w700 : FontWeight.w500),
+                useGoogleFonts:
+                    !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+              ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGmdLoteAnimalValues(List<_LoteGmdAnimalResult> results) {
+    final visibleCount = _model.gmdLoteVisibleRows < results.length
+        ? _model.gmdLoteVisibleRows
+        : results.length;
+    final visibleResults = results.take(visibleCount).toList();
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: FlutterFlowTheme.of(context).secondaryBackground,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: const Color(0xFFEDEDED)),
+      ),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Valores por animal',
+            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                  color: FlutterFlowTheme.of(context).primaryText,
+                  fontSize: 18.0,
+                  letterSpacing: 0.0,
+                  fontWeight: FontWeight.w600,
+                  useGoogleFonts:
+                      !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                ),
+          ),
+          const SizedBox(height: 4.0),
+          Text(
+            'Cada linha usa as duas últimas datas de pesagem válidas do animal dentro do período.',
+            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                  fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                  color: FlutterFlowTheme.of(context).accent3,
+                  letterSpacing: 0.0,
+                  useGoogleFonts:
+                      !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                ),
+          ),
+          const SizedBox(height: 16.0),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              width: 1080.0,
+              child: Column(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFF6F7F8),
+                      border: Border(
+                        bottom: BorderSide(color: Color(0xFFEDEDED)),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        _buildGmdLoteTableCell('Animal',
+                            width: 160.0, isHeader: true),
+                        _buildGmdLoteTableCell('Data inicial',
+                            width: 120.0, isHeader: true),
+                        _buildGmdLoteTableCell('Peso inicial',
+                            width: 130.0, isHeader: true),
+                        _buildGmdLoteTableCell('Data final',
+                            width: 120.0, isHeader: true),
+                        _buildGmdLoteTableCell('Peso final',
+                            width: 130.0, isHeader: true),
+                        _buildGmdLoteTableCell('Dias',
+                            width: 80.0, isHeader: true),
+                        _buildGmdLoteTableCell('GMD',
+                            width: 140.0, isHeader: true),
+                        _buildGmdLoteTableCell('Status',
+                            width: 200.0, isHeader: true),
+                      ],
+                    ),
+                  ),
+                  ListView.separated(
+                    padding: EdgeInsets.zero,
+                    primary: false,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: visibleResults.length,
+                    separatorBuilder: (_, __) =>
+                        const Divider(height: 1.0, color: Color(0xFFEDEDED)),
+                    itemBuilder: (context, index) {
+                      final result = visibleResults[index];
+                      return Row(
+                        children: [
+                          _buildGmdLoteTableCell(
+                            _animalGmdLabel(result.animal),
+                            width: 160.0,
+                            color: FlutterFlowTheme.of(context).primaryText,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          _buildGmdLoteTableCell(
+                              _formatGmdLoteDate(result.dataInicial),
+                              width: 120.0),
+                          _buildGmdLoteTableCell(_formatKg(result.pesoInicial),
+                              width: 130.0),
+                          _buildGmdLoteTableCell(
+                              _formatGmdLoteDate(result.dataFinal),
+                              width: 120.0),
+                          _buildGmdLoteTableCell(_formatKg(result.pesoFinal),
+                              width: 130.0),
+                          _buildGmdLoteTableCell(
+                              result.diasAvaliados?.toString() ?? '-',
+                              width: 80.0),
+                          _buildGmdLoteTableCell(
+                            _formatKgDia(result.gmd),
+                            width: 140.0,
+                            color: _gmdLoteColor(result.gmd),
+                            fontWeight: FontWeight.w700,
+                          ),
+                          _buildGmdLoteTableCell(
+                            result.calculavel
+                                ? 'Calculado'
+                                : result.motivoNaoCalculavel ??
+                                    'Não calculável',
+                            width: 200.0,
+                            color: result.calculavel
+                                ? FlutterFlowTheme.of(context).success
+                                : FlutterFlowTheme.of(context).accent3,
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (visibleCount < results.length) ...[
+            const SizedBox(height: 16.0),
+            Align(
+              alignment: Alignment.center,
+              child: TextButton(
+                onPressed: () {
+                  safeSetState(() {
+                    _model.gmdLoteVisibleRows += _gmdLoteRowsPageSize;
+                  });
+                },
+                child: Text(
+                  'Carregar mais (${results.length - visibleCount} restantes)',
+                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                        fontFamily:
+                            FlutterFlowTheme.of(context).bodyMediumFamily,
+                        color: FlutterFlowTheme.of(context).primary,
+                        letterSpacing: 0.0,
+                        fontWeight: FontWeight.w700,
+                        useGoogleFonts:
+                            !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                      ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGmdLoteContent({
+    required _LoteGmdCalculationResult calculation,
+  }) {
+    final pesagensValidas = calculation.pesagensValidas;
+    final dataInicial = calculation.dataInicial;
+    final dataFinal = calculation.dataFinal;
+    final periodoInvalido = calculation.periodoInvalido;
+    final results = calculation.results;
+
+    final content = <Widget>[
+      Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: FlutterFlowTheme.of(context).secondaryBackground,
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(color: const Color(0xFFEDEDED)),
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'GMD do lote',
+              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                    color: FlutterFlowTheme.of(context).primaryText,
+                    fontSize: 18.0,
+                    letterSpacing: 0.0,
+                    fontWeight: FontWeight.w600,
+                    useGoogleFonts:
+                        !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                  ),
+            ),
+            const SizedBox(height: 4.0),
+            Text(
+              'Média dos GMDs individuais calculados com as duas últimas datas de pesagem válidas de cada animal no período.',
+              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                    color: FlutterFlowTheme.of(context).accent3,
+                    letterSpacing: 0.0,
+                    useGoogleFonts:
+                        !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                  ),
+            ),
+            const SizedBox(height: 16.0),
+            Wrap(
+              spacing: 12.0,
+              runSpacing: 12.0,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                _buildGmdLoteDateFilter(
+                  label: 'Data inicial',
+                  value: dataInicial,
+                  onTap: () => _pickGmdLoteDate(
+                    isStart: true,
+                    pesagens: pesagensValidas,
+                  ),
+                ),
+                _buildGmdLoteDateFilter(
+                  label: 'Data final',
+                  value: dataFinal,
+                  onTap: () => _pickGmdLoteDate(
+                    isStart: false,
+                    pesagens: pesagensValidas,
+                  ),
+                ),
+                if (_model.gmdLoteDataInicial != null ||
+                    _model.gmdLoteDataFinal != null)
+                  TextButton(
+                    onPressed: () {
+                      safeSetState(() {
+                        _model.gmdLoteDataInicial = null;
+                        _model.gmdLoteDataFinal = null;
+                        _invalidateGmdLoteCalculation();
+                      });
+                    },
+                    child: const Text('Limpar filtros'),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ];
+
+    if (pesagensValidas.isEmpty) {
+      content.add(_buildGmdLoteEmptyState(
+        icon: Icons.monitor_weight_outlined,
+        title: 'Nenhuma pesagem encontrada',
+        description:
+            'Cadastre pelo menos duas pesagens para os animais deste lote para calcular o GMD.',
+      ));
+    } else if (periodoInvalido) {
+      content.add(_buildGmdLoteEmptyState(
+        icon: Icons.date_range_outlined,
+        title: 'Período inválido',
+        description:
+            'A data final precisa ser igual ou posterior à data inicial.',
+      ));
+    } else if (results.isEmpty) {
+      content.add(_buildGmdLoteEmptyState(
+        icon: Icons.table_chart_outlined,
+        title: 'Sem animais avaliáveis no período',
+        description:
+            'Cada animal precisa ter pelo menos duas datas de pesagem válidas no período.',
+      ));
+    } else {
+      content.addAll([
+        Text(
+          'Resumo do lote',
+          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                color: FlutterFlowTheme.of(context).primaryText,
+                fontSize: 18.0,
+                letterSpacing: 0.0,
+                fontWeight: FontWeight.w600,
+                useGoogleFonts:
+                    !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+              ),
+        ),
+        _buildGmdLoteMetricCard(
+          label: 'Número de animais avaliados',
+          value: results.length.toString(),
+        ),
+        _buildGmdLoteMetricCard(
+          label: 'Com GMD calculado',
+          value: calculation.resultsCalculaveisCount.toString(),
+        ),
+        _buildGmdLoteMetricCard(
+          label: 'GMD médio (kg/dia)',
+          value: _formatKgDia(calculation.gmdMedio),
+          valueColor: _gmdLoteColor(calculation.gmdMedio),
+        ),
+        _buildGmdLoteMetricCard(
+          label: 'Peso médio inicial',
+          value: _formatKg(calculation.pesoMedioInicial),
+        ),
+        _buildGmdLoteMetricCard(
+          label: 'Peso médio final',
+          value: _formatKg(calculation.pesoMedioFinal),
+        ),
+        _buildGmdLoteAnimalValues(results),
+      ]);
+    }
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: content
+              .expand((widget) => [widget, const SizedBox(height: 24.0)])
+              .toList()
+            ..removeLast(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGmdLoteProgressState(List<RebanhoStruct> animais) {
+    final total = _gmdLoteProgressTotal > 0
+        ? _gmdLoteProgressTotal
+        : animais.length;
+    final current = _gmdLoteProgressCurrent > total
+        ? total
+        : _gmdLoteProgressCurrent;
+    final progress = total > 0 ? current / total : null;
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 24.0),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: FlutterFlowTheme.of(context).secondaryBackground,
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(color: const Color(0xFFEDEDED)),
+          ),
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 42.0,
+                height: 42.0,
+                child: CircularProgressIndicator(
+                  value: progress,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    FlutterFlowTheme.of(context).primary,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              Text(
+                total > 0
+                    ? 'Calculando GMD: $current/$total animais'
+                    : 'Preparando cálculo do GMD...',
+                textAlign: TextAlign.center,
+                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                      color: FlutterFlowTheme.of(context).primaryText,
+                      fontSize: 16.0,
+                      letterSpacing: 0.0,
+                      fontWeight: FontWeight.w700,
+                      useGoogleFonts:
+                          !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                    ),
+              ),
+              const SizedBox(height: 6.0),
+              Text(
+                'A tela continuará responsiva enquanto o lote grande é processado em blocos.',
+                textAlign: TextAlign.center,
+                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                      fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                      color: FlutterFlowTheme.of(context).accent3,
+                      letterSpacing: 0.0,
+                      useGoogleFonts:
+                          !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGmdLoteTab(List<RebanhoStruct> animais) {
+    if (animais.isEmpty) {
+      return SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: _buildGmdLoteEmptyState(
+            icon: Icons.groups_outlined,
+            title: 'Nenhum animal no lote',
+            description:
+                'Adicione animais ao lote para acompanhar o ganho médio diário.',
+          ),
+        ),
+      );
+    }
+
+    final animaisKey = _gmdLoteAnimaisKey(animais);
+    if (_model.gmdLoteAnimaisKey != animaisKey) {
+      _model.gmdLoteAnimaisKey = animaisKey;
+      _model.gmdLotePesagensCompleter = null;
+      _invalidateGmdLoteCalculation();
+    }
+
+    return FutureBuilder<List<BuscaHistPesagensRow>>(
+      future: (_model.gmdLotePesagensCompleter ??=
+              Completer<List<BuscaHistPesagensRow>>()
+                ..complete(_loadPesagensDoLote(animais)))
+          .future,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: SizedBox(
+              width: 50.0,
+              height: 50.0,
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  FlutterFlowTheme.of(context).primary,
+                ),
+              ),
+            ),
+          );
+        }
+
+        return FutureBuilder<_LoteGmdCalculationResult>(
+          future: _gmdLoteCalculationFor(animais, snapshot.data!),
+          builder: (context, calculationSnapshot) {
+            if (calculationSnapshot.hasError) {
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: _buildGmdLoteEmptyState(
+                    icon: Icons.error_outline,
+                    title: 'Não foi possível calcular o GMD',
+                    description: calculationSnapshot.error.toString(),
+                  ),
+                ),
+              );
+            }
+            if (!calculationSnapshot.hasData) {
+              return _buildGmdLoteProgressState(animais);
+            }
+
+            return _buildGmdLoteContent(
+              calculation: calculationSnapshot.data!,
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -247,10 +1432,13 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
                             Tab(
                               text: 'Animais',
                             ),
+                            Tab(
+                              text: 'GMD',
+                            ),
                           ],
                           controller: _model.tabBarController,
                           onTap: (i) async {
-                            [() async {}, () async {}][i]();
+                            [() async {}, () async {}, () async {}][i]();
                           },
                         ),
                       ),
@@ -3101,6 +4289,7 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
                                 ],
                               ),
                             ),
+                            _buildGmdLoteTab(FFAppState().rebanhosLote),
                           ],
                         ),
                       ),

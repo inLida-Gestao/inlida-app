@@ -14,6 +14,10 @@ class ViewRebanhoModel extends FlutterFlowModel<ViewRebanhoWidget> {
 
   int index = 0;
 
+  DateTime? gmdDataInicial;
+
+  DateTime? gmdDataFinal;
+
   ///  State fields for stateful widgets in this component.
 
   // State field(s) for TabBar widget.

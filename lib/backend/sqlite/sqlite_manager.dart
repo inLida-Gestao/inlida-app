@@ -151,6 +151,64 @@ class SQLiteManager {
     return rows.isNotEmpty;
   }
 
+  Future<bool> hasLoteDirtyLocalForUser({
+    required String userID,
+  }) async {
+    if (userID.trim().isEmpty) return false;
+    try {
+      final rows = await _database.rawQuery('''
+        SELECT 1
+        FROM local_lotes l
+        WHERE l.sync_dirty = 1
+          AND COALESCE(l.id_lote, '') != ''
+          AND EXISTS (
+            SELECT 1
+            FROM local_propriedades p
+            WHERE p.idPropriedade = l.id_propriedade
+              AND (p.userID = ? OR p.usersID LIKE ?)
+              AND COALESCE(p.deletado, 'NAO') != 'SIM'
+          )
+        LIMIT 1
+      ''', [userID, '%$userID%']);
+      return rows.isNotEmpty;
+    } catch (e) {
+      debugPrint('[SQLite] Erro ao consultar lotes pendentes de sync: $e');
+      return false;
+    }
+  }
+
+  Future<bool> hasLoteChangedAfterForUser({
+    required String userID,
+    required DateTime? changedAfter,
+  }) async {
+    if (userID.trim().isEmpty || changedAfter == null) return false;
+    final marker =
+        changedAfter.toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+    try {
+      final rows = await _database.rawQuery('''
+        SELECT 1
+        FROM local_lotes l
+        WHERE COALESCE(l.id_lote, '') != ''
+          AND LOWER(COALESCE(l.id_lote, '')) != 'null'
+          AND (l.sync_dirty IS NULL OR l.sync_dirty = 1)
+          AND datetime(COALESCE(l.updated_at, l.created_at), 'localtime') >
+              datetime(?, 'localtime')
+          AND EXISTS (
+            SELECT 1
+            FROM local_propriedades p
+            WHERE p.idPropriedade = l.id_propriedade
+              AND (p.userID = ? OR p.usersID LIKE ?)
+              AND COALESCE(p.deletado, 'NAO') != 'SIM'
+          )
+        LIMIT 1
+      ''', [marker, userID, '%$userID%']);
+      return rows.isNotEmpty;
+    } catch (e) {
+      debugPrint('[SQLite] Erro ao consultar lotes recentes de sync: $e');
+      return false;
+    }
+  }
+
   Future<List<QTDAnimaisPropriedadeRow>> qTDAnimaisPropriedade({
     String? idPropriedade,
   }) =>
@@ -181,6 +239,14 @@ class SQLiteManager {
       performBuscaHistPesagens(
         _database,
         idRebanho: idRebanho,
+      );
+
+  Future<List<BuscaHistPesagensRow>> buscaHistPesagensPorRebanhos({
+    List<String>? idRebanhos,
+  }) =>
+      performBuscaHistPesagensPorRebanhos(
+        _database,
+        idRebanhos: idRebanhos,
       );
 
   Future<List<BuscaHistPesagensPUTRow>> buscaHistPesagensPUT({
@@ -263,18 +329,22 @@ class SQLiteManager {
 
   Future<List<BuscarLotePUTRow>> buscarLotePUT({
     String? datePUT,
+    String? userID,
   }) =>
       performBuscarLotePUT(
         _database,
         datePUT: datePUT,
+        userID: userID,
       );
 
   Future<List<BuscarLoteUPDTRow>> buscarLoteUPDT({
     String? dateUPDT,
+    String? userID,
   }) =>
       performBuscarLoteUPDT(
         _database,
         dateUPDT: dateUPDT,
+        userID: userID,
       );
 
   Future<List<CountLotesCadastradosRow>> countLotesCadastrados({

@@ -477,6 +477,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   telefone: _model.user?.firstOrNull?.telefone,
                                   permissao:
                                       _model.user?.firstOrNull?.permissao,
+                                  acesso: _model.user?.firstOrNull?.acesso,
                                 );
                                 safeSetState(() {});
 

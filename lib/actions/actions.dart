@@ -23,14 +23,155 @@ void _syncLog(String flow, String message) {
   debugPrint('[SYNC][$flow] $message');
 }
 
+const String _accountBlockedMessage =
+    'Sincronização interrompida: sua conta encontra-se bloqueada devido ao término do período de teste e/ou pagamentos pendentes.\n\n'
+    'Para restabelecer o serviço e continuar utilizando a plataforma, regularize sua assinatura.\n\n'
+    'Em caso de dúvidas, entre em contato pelo WhatsApp 📱 (19) 98423-1009 ou pelo e-mail ✉️ comercial@inlida.com.br';
+
+bool isAccountAccessCanceled(String? acesso) =>
+    acesso?.trim().toLowerCase() == 'cancelado';
+
+Future<String?> refreshCurrentUserAccess() async {
+  if (currentUserUid.trim().isEmpty) return FFAppState().userLogado.acesso;
+
+  final userRows = await UsersTable().queryRows(
+    queryFn: (q) => q.eqOrNull(
+      'userID',
+      currentUserUid,
+    ),
+  );
+  final user = userRows.firstOrNull;
+  if (user == null) return FFAppState().userLogado.acesso;
+
+  FFAppState().updateUserLogadoStruct(
+    (e) => e
+      ..nome = user.nome
+      ..email = user.email
+      ..foto = user.foto
+      ..id = currentUserUid
+      ..telefone = user.telefone
+      ..permissao = user.permissao
+      ..acesso = user.acesso,
+  );
+  return user.acesso;
+}
+
+Future<void> showAccountBlockedInformationDialog(BuildContext context) async {
+  if (!context.mounted) return;
+  await showDialog<void>(
+    context: context,
+    builder: (alertDialogContext) {
+      return AlertDialog(
+        title: const Text('Informação'),
+        content: const Text(_accountBlockedMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(alertDialogContext),
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Future<bool> blockIfAccountCanceled(
+  BuildContext context, {
+  bool refreshFromServer = false,
+  bool showDialog = true,
+}) async {
+  String? acesso = FFAppState().userLogado.acesso;
+  if (refreshFromServer) {
+    try {
+      acesso = await refreshCurrentUserAccess();
+    } catch (e) {
+      debugPrint('[ACESSO] Erro ao consultar acesso do usuário: $e');
+    }
+  }
+
+  if (!isAccountAccessCanceled(acesso)) return false;
+
+  FFAppState().update(() {
+    FFAppState().navegacaoDashboard = 'painel';
+    FFAppState().syncCancelRequested = true;
+    FFAppState().syncProgressPercent = -1;
+    FFAppState().syncProgressLabel = '';
+    FFAppState().isSyncing = false;
+  });
+
+  if (showDialog) {
+    await showAccountBlockedInformationDialog(context);
+  }
+  return true;
+}
+
 String? _descreverRebanhoBy(String? numero) {
   if (numero == null || numero.isEmpty) return null;
   return 'Animal nº $numero';
 }
 
+String? _descreverLoteBy(String? nome) {
+  final normalized = nome?.trim();
+  if (normalized == null || normalized.isEmpty) return null;
+  return normalized;
+}
+
 String? _descreverReproducaoBy(String? data) {
   if (data == null || data.isEmpty) return null;
   return 'Inseminação em $data';
+}
+
+int _loteRowRecencyScore(Map<String, dynamic> data) {
+  for (final key in const ['sync_updated_at', 'updated_at', 'created_at']) {
+    final raw = data[key]?.toString().trim();
+    if (raw == null || raw.isEmpty || raw.toLowerCase() == 'null') {
+      continue;
+    }
+    final parsed = DateTime.tryParse(
+      raw.contains('T') ? raw : raw.replaceFirst(' ', 'T'),
+    );
+    if (parsed != null) return parsed.millisecondsSinceEpoch;
+  }
+
+  final id = data['id'];
+  if (id is int) return id;
+  return int.tryParse(id?.toString() ?? '') ?? 0;
+}
+
+List<BuscarLotePUTRow> _dedupLotePutRows(List<BuscarLotePUTRow> rows) {
+  final byId = <String, BuscarLotePUTRow>{};
+  final withoutId = <BuscarLotePUTRow>[];
+  for (final row in rows) {
+    final id = row.idLote?.trim();
+    if (id == null || id.isEmpty) {
+      withoutId.add(row);
+      continue;
+    }
+    final previous = byId[id];
+    if (previous == null ||
+        _loteRowRecencyScore(row.data) >= _loteRowRecencyScore(previous.data)) {
+      byId[id] = row;
+    }
+  }
+  return [...withoutId, ...byId.values];
+}
+
+List<BuscarLoteUPDTRow> _dedupLoteUpdateRows(List<BuscarLoteUPDTRow> rows) {
+  final byId = <String, BuscarLoteUPDTRow>{};
+  final withoutId = <BuscarLoteUPDTRow>[];
+  for (final row in rows) {
+    final id = row.idLote?.trim();
+    if (id == null || id.isEmpty) {
+      withoutId.add(row);
+      continue;
+    }
+    final previous = byId[id];
+    if (previous == null ||
+        _loteRowRecencyScore(row.data) >= _loteRowRecencyScore(previous.data)) {
+      byId[id] = row;
+    }
+  }
+  return [...withoutId, ...byId.values];
 }
 
 /// Marca como resolvidos os erros pendentes de um registro específico
@@ -123,7 +264,9 @@ Future<bool> _updateRebanhoSupabaseById(
     throw ArgumentError('Payload de rebanho sem idRebanho para UPDATE.');
   }
 
-  final updatePayload = Map<String, dynamic>.from(payload)..remove('idRebanho');
+  final updatePayload = Map<String, dynamic>.from(payload)
+    ..remove('idRebanho')
+    ..remove('created_at');
   final updated = await _withTimeout(
     () => SupaFlow.client
         .from('rebanho')
@@ -134,6 +277,42 @@ Future<bool> _updateRebanhoSupabaseById(
     timeout: kSyncPageTimeout,
   );
   return updated.isNotEmpty;
+}
+
+Future<Set<String>> _buscarRebanhoIdsRemotos(
+  Iterable<String?> ids, {
+  required String label,
+}) async {
+  final validIds = ids
+      .whereType<String>()
+      .map((id) => id.trim())
+      .where((id) => id.isNotEmpty)
+      .toSet()
+      .toList();
+  if (validIds.isEmpty) return <String>{};
+
+  final found = <String>{};
+  const chunkSize = 200;
+  for (var start = 0; start < validIds.length; start += chunkSize) {
+    _throwIfCancelled(label);
+    final end = (start + chunkSize < validIds.length)
+        ? start + chunkSize
+        : validIds.length;
+    final chunk = validIds.sublist(start, end);
+    final rows = await _withTimeout(
+      () => SupaFlow.client
+          .from('rebanho')
+          .select('idRebanho')
+          .inFilter('idRebanho', chunk),
+      label: '$label.select(chunk=${chunk.length})',
+      timeout: kSyncPageTimeout,
+    );
+    for (final row in rows as List) {
+      final id = (row as Map)['idRebanho']?.toString().trim();
+      if (id != null && id.isNotEmpty) found.add(id);
+    }
+  }
+  return found;
 }
 
 /// UPDATE explícito de reprodução por id_reproducao.
@@ -182,6 +361,34 @@ Future<bool> _updateSanidadeSupabaseById(
         .eq('id_sanidade', idSanidade)
         .select('id_sanidade'),
     label: '$label.update(id_sanidade=$idSanidade)',
+    timeout: kSyncPageTimeout,
+  );
+  return updated.isNotEmpty;
+}
+
+/// UPDATE explícito de lote por id_lote.
+///
+/// Edição/deleção não deve virar INSERT silencioso: quando o registro remoto
+/// não existe, retornamos `false` para manter a pendência e exibir erro.
+Future<bool> _updateLoteSupabaseById(
+  Map<String, dynamic> payload, {
+  required String label,
+}) async {
+  final idLote = payload['id_lote']?.toString();
+  if (idLote == null || idLote.isEmpty) {
+    throw ArgumentError('Payload de lote sem id_lote para UPDATE.');
+  }
+
+  final updatePayload = Map<String, dynamic>.from(payload)
+    ..remove('id_lote')
+    ..remove('created_at');
+  final updated = await _withTimeout(
+    () => SupaFlow.client
+        .from('lotes')
+        .update(updatePayload)
+        .eq('id_lote', idLote)
+        .select('id_lote'),
+    label: '$label.update(id_lote=$idLote)',
     timeout: kSyncPageTimeout,
   );
   return updated.isNotEmpty;
@@ -311,6 +518,45 @@ Future<void> _clearLocalRebanhoSyncDirtyByIds(
   }
   _syncLog(label,
       'Marcador local de sync limpo para ${validIds.length} rebanho(s).');
+}
+
+Future<void> _clearLocalLoteSyncDirtyByIds(
+  Iterable<String?> ids, {
+  required String label,
+}) async {
+  final validIds = ids
+      .whereType<String>()
+      .map((id) => id.trim())
+      .where((id) => id.isNotEmpty)
+      .toSet()
+      .toList();
+  if (validIds.isEmpty) return;
+
+  final db = SQLiteManager.instance.database;
+  const chunkSize = 500;
+  for (var start = 0; start < validIds.length; start += chunkSize) {
+    final end = (start + chunkSize < validIds.length)
+        ? start + chunkSize
+        : validIds.length;
+    final chunk = validIds.sublist(start, end);
+    final placeholders = List.filled(chunk.length, '?').join(',');
+    final now = DateTime.now()
+        .toIso8601String()
+        .substring(0, 19)
+        .replaceFirst('T', ' ');
+    await db.rawUpdate(
+      '''
+      UPDATE local_lotes
+      SET sync_dirty = 0,
+          sync_op = NULL,
+          sync_updated_at = ?
+      WHERE id_lote IN ($placeholders)
+      ''',
+      [now, ...chunk],
+    );
+  }
+  _syncLog(
+      label, 'Marcador local de sync limpo para ${validIds.length} lote(s).');
 }
 
 // ============================================================================
@@ -495,6 +741,13 @@ Future<T> _retry<T>(
   // Preserva stack se possível.
   Error.throwWithStackTrace(lastError ?? StateError('retry falhou em $label'),
       lastStack ?? StackTrace.current);
+}
+
+bool _isDuplicateKeyError(Object error) {
+  final msg = error.toString().toLowerCase();
+  return msg.contains('23505') ||
+      msg.contains('duplicate key') ||
+      msg.contains('unique constraint');
 }
 
 int _safeTotalFromApi(dynamic body) {
@@ -1110,11 +1363,11 @@ Future<bool> putUpdtPropriedades(BuildContext context) async {
     }
 
     _syncLog('putUpdtPropriedades',
-        'Upsert em lote: ${payloads.length} registro(s) (INSERT=${localPut.length}, UPDATE=${localUpd.length}).');
+        'Upsert propriedade: ${payloads.length} registro(s) (INSERT=${localPut.length}, UPDATE=${localUpd.length}).');
 
     await _retry(
       () => _batchUpsertSupabase(
-        tableName: 'propriedade',
+        tableName: 'propriedades',
         rows: payloads,
         onConflict: 'idPropriedade',
         chunkSize: 200,
@@ -1286,10 +1539,13 @@ Future animaisPropriedade(BuildContext context) async {
   animais = await SQLiteManager.instance.qTDAnimaisPropriedade(
     idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
   );
-  FFAppState().qtdAnimaisPropriedade = valueOrDefault<int>(
+  final qtdAnimaisPropriedade = valueOrDefault<int>(
     animais.length,
     0,
   );
+  FFAppState().update(() {
+    FFAppState().qtdAnimaisPropriedade = qtdAnimaisPropriedade;
+  });
 }
 
 /// Filtra do `chunk` as pesagens que JÁ existem no Supabase, evitando
@@ -1538,44 +1794,171 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
     if (rebanhoInserts.isNotEmpty) {
       _syncLog('putUpdtRebanhos',
           'INSERT/UPSERT rebanho: ${rebanhoInserts.length} novo(s) ativo(s).');
-      try {
-        final insertStopwatch = Stopwatch()..start();
-        await _retry(
-          () => _batchUpsertSupabase(
-            tableName: 'rebanho',
-            rows: rebanhoInserts,
-            onConflict: 'idRebanho',
-            chunkSize: 200,
-            label: 'putUpdtRebanhos.rebanho.insert',
-          ),
-          label: 'putUpdtRebanhos.rebanho.insert.batchUpsert',
-          maxAttempts: 3,
+      final localPutById = <String, BuscarRebanhoPUTRow>{
+        for (final row in localPut)
+          if ((row.idRebanho ?? '').trim().isNotEmpty)
+            row.idRebanho!.trim(): row,
+      };
+      final syncedInsertIds = <String>{};
+
+      void markPayloadOk(Map<String, dynamic> payload) {
+        final id = payload['idRebanho']?.toString().trim();
+        if (id == null || id.isEmpty) return;
+        syncedInsertIds.add(id);
+        _markSyncOk('rebanho', id);
+      }
+
+      void recordPayloadError(
+        Object erro,
+        Map<String, dynamic> payload,
+      ) {
+        final id = payload['idRebanho']?.toString().trim();
+        final row = id == null ? null : localPutById[id];
+        _recordSyncError(
+          flow: 'putUpdtRebanhos',
+          modulo: 'rebanho',
+          operacao: 'insert',
+          erro: erro,
+          registroId: id,
+          registroDescricao: _descreverRebanhoBy(row?.numeroAnimal),
+          payload: payload,
         );
-        insertStopwatch.stop();
-        _syncLog('putUpdtRebanhos',
-            'INSERT/UPSERT rebanho concluído em ${insertStopwatch.elapsedMilliseconds}ms.');
-        await _clearLocalRebanhoSyncDirtyByIds(
+      }
+
+      final insertStopwatch = Stopwatch()..start();
+      Set<String> existingRemoteIds = <String>{};
+      try {
+        existingRemoteIds = await _buscarRebanhoIdsRemotos(
           rebanhoInserts.map((row) => row['idRebanho']?.toString()),
+          label: 'putUpdtRebanhos.rebanho.precheck',
+        );
+      } catch (e) {
+        if (e is SyncCancelledException) rethrow;
+        _syncLog('putUpdtRebanhos',
+            'Pré-checagem remota de rebanho falhou ($e). Seguindo com upsert idempotente.');
+      }
+
+      final payloadsToInsert = <Map<String, dynamic>>[];
+      final payloadsToUpdate = <Map<String, dynamic>>[];
+      for (final payload in rebanhoInserts) {
+        final id = payload['idRebanho']?.toString().trim();
+        if (id != null && id.isNotEmpty && existingRemoteIds.contains(id)) {
+          payloadsToUpdate.add(payload);
+        } else {
+          payloadsToInsert.add(payload);
+        }
+      }
+
+      if (payloadsToUpdate.isNotEmpty) {
+        _syncLog('putUpdtRebanhos',
+            '${payloadsToUpdate.length} rebanho(s) marcados como INSERT já existem no Supabase; recuperando como UPDATE.');
+      }
+      for (final payload in payloadsToUpdate) {
+        _throwIfCancelled('putUpdtRebanhos.insert.recoveryUpdate');
+        try {
+          final matched = await _retry(
+            () => _updateRebanhoSupabaseById(
+              payload,
+              label: 'putUpdtRebanhos.rebanho.insertRecovery.update',
+            ),
+            label:
+                'putUpdtRebanhos.rebanho.insertRecovery.update.${payload['idRebanho']}',
+            maxAttempts: 3,
+          );
+          if (matched) {
+            markPayloadOk(payload);
+          } else {
+            _syncLog('putUpdtRebanhos',
+                'Pré-checagem encontrou idRebanho=${payload['idRebanho']}, mas UPDATE não retornou linha; reenviando como INSERT.');
+            payloadsToInsert.add(payload);
+          }
+        } catch (e) {
+          if (e is SyncCancelledException) rethrow;
+          allSuccess = false;
+          recordPayloadError(e, payload);
+        }
+      }
+
+      if (payloadsToInsert.isNotEmpty) {
+        try {
+          await _retry(
+            () => _batchUpsertSupabase(
+              tableName: 'rebanho',
+              rows: payloadsToInsert,
+              onConflict: 'idRebanho',
+              chunkSize: 200,
+              label: 'putUpdtRebanhos.rebanho.insert',
+            ),
+            label: 'putUpdtRebanhos.rebanho.insert.batchUpsert',
+            maxAttempts: 3,
+          );
+          for (final payload in payloadsToInsert) {
+            markPayloadOk(payload);
+          }
+        } catch (batchError) {
+          if (batchError is SyncCancelledException) rethrow;
+          _syncLog('putUpdtRebanhos',
+              'Batch INSERT/UPSERT rebanho falhou ($batchError). Tentando recuperação registro a registro.');
+          for (final payload in payloadsToInsert) {
+            _throwIfCancelled('putUpdtRebanhos.insert.single');
+            try {
+              await _retry(
+                () => _batchUpsertSupabase(
+                  tableName: 'rebanho',
+                  rows: [payload],
+                  onConflict: 'idRebanho',
+                  chunkSize: 1,
+                  label: 'putUpdtRebanhos.rebanho.insert.single',
+                ),
+                label:
+                    'putUpdtRebanhos.rebanho.insert.single.${payload['idRebanho']}',
+                maxAttempts: 3,
+              );
+              markPayloadOk(payload);
+            } catch (singleError) {
+              if (singleError is SyncCancelledException) rethrow;
+              if (!_isDuplicateKeyError(singleError)) {
+                allSuccess = false;
+                recordPayloadError(singleError, payload);
+                continue;
+              }
+
+              try {
+                _syncLog('putUpdtRebanhos',
+                    'INSERT rebanho idRebanho=${payload['idRebanho']} retornou duplicidade; recuperando com UPDATE explícito.');
+                final matched = await _retry(
+                  () => _updateRebanhoSupabaseById(
+                    payload,
+                    label: 'putUpdtRebanhos.rebanho.duplicateRecovery.update',
+                  ),
+                  label:
+                      'putUpdtRebanhos.rebanho.duplicateRecovery.update.${payload['idRebanho']}',
+                  maxAttempts: 3,
+                );
+                if (matched) {
+                  markPayloadOk(payload);
+                } else {
+                  allSuccess = false;
+                  recordPayloadError(singleError, payload);
+                }
+              } catch (recoveryError) {
+                if (recoveryError is SyncCancelledException) rethrow;
+                allSuccess = false;
+                recordPayloadError(recoveryError, payload);
+              }
+            }
+          }
+        }
+      }
+
+      insertStopwatch.stop();
+      _syncLog('putUpdtRebanhos',
+          'INSERT/UPSERT rebanho concluído em ${insertStopwatch.elapsedMilliseconds}ms. sincronizados=${syncedInsertIds.length}/${rebanhoInserts.length}.');
+      if (syncedInsertIds.isNotEmpty) {
+        await _clearLocalRebanhoSyncDirtyByIds(
+          syncedInsertIds,
           label: 'putUpdtRebanhos.rebanho.insert',
         );
-        for (final row in localPut) {
-          _markSyncOk('rebanho', row.idRebanho);
-          // ignore: discarded_futures
-          actions.SyncErrorLog.autoResolverPorRegistro(
-              'rebanho', row.idRebanho);
-        }
-      } catch (e) {
-        allSuccess = false;
-        for (final r in localPut) {
-          _recordSyncError(
-            flow: 'putUpdtRebanhos',
-            modulo: 'rebanho',
-            operacao: 'insert',
-            erro: e,
-            registroId: r.idRebanho,
-            registroDescricao: _descreverRebanhoBy(r.numeroAnimal),
-          );
-        }
       }
     } else {
       _syncLog('putUpdtRebanhos', 'Sem INSERT/UPSERT de rebanho pendente.');
@@ -1622,18 +2005,25 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
           );
 
           if (!matched && !isDelete) {
-            allSuccess = false;
-            final error = StateError(
-                'UPDATE rebanho não encontrou idRebanho=${row.idRebanho} no Supabase; INSERT não executado para evitar duplicidade.');
-            _recordSyncError(
-              flow: 'putUpdtRebanhos',
-              modulo: 'rebanho',
-              operacao: 'update',
-              erro: error,
-              registroId: row.idRebanho,
-              registroDescricao: _descreverRebanhoBy(row.numeroAnimal),
+            final insertPayload =
+                _buildRebanhoPayload(row.data, isInsert: true);
+            _syncLog('putUpdtRebanhos',
+                'UPDATE rebanho não encontrou idRebanho=${row.idRebanho}; recuperando com UPSERT INSERT idempotente.');
+            await _retry(
+              () => _batchUpsertSupabase(
+                tableName: 'rebanho',
+                rows: [insertPayload],
+                onConflict: 'idRebanho',
+                chunkSize: 1,
+                label: 'putUpdtRebanhos.rebanho.recovery.insert',
+              ),
+              label: 'putUpdtRebanhos.rebanho.recovery.insert.${row.idRebanho}',
+              maxAttempts: 3,
             );
-            _syncLog('putUpdtRebanhos', error.message);
+            if (row.idRebanho != null && row.idRebanho!.isNotEmpty) {
+              updatedIds.add(row.idRebanho!);
+            }
+            _markSyncOk('rebanho', row.idRebanho);
             continue;
           }
 
@@ -1856,6 +2246,10 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
     }
     _syncLog('putUpdtRebanhos',
         '15% concluído em ${totalStopwatch.elapsedMilliseconds}ms. sucesso=$allSuccess');
+    if (allSuccess) {
+      // ignore: discarded_futures
+      actions.SyncErrorLog.autoResolverModulo('rebanho');
+    }
   } on SyncCancelledException catch (e) {
     allSuccess = false;
     _syncLog('putUpdtRebanhos', 'CANCELADO: $e');
@@ -1873,6 +2267,15 @@ Map<String, dynamic> _buildRebanhoPayload(
   Map<String, dynamic> raw, {
   required bool isInsert,
 }) {
+  String? normalizeNullableText(dynamic v) {
+    if (v == null) return null;
+    final s = v.toString().trim();
+    if (s.isEmpty || s.toLowerCase() == 'null' || s.toLowerCase() == 'n/a') {
+      return null;
+    }
+    return s;
+  }
+
   String? serializeDate(dynamic v) {
     if (v == null) return null;
     final s = v.toString().trim();
@@ -1882,6 +2285,10 @@ Map<String, dynamic> _buildRebanhoPayload(
     return supaSerialize<DateTime>(dt);
   }
 
+  final createdAt = serializeDate(raw['created_at']);
+  final updatedAt = serializeDate(raw['updated_at']) ??
+      createdAt ??
+      supaSerialize<DateTime>(getCurrentTimestamp);
   final payload = <String, dynamic>{
     'idRebanho': raw['idRebanho'],
     'idPropriedade': raw['idPropriedade'],
@@ -1895,7 +2302,7 @@ Map<String, dynamic> _buildRebanhoPayload(
     'pesoNascimento': raw['pesoNascimento'],
     'porte': raw['porte'],
     'raca': raw['raca'],
-    'loteID': raw['loteID'],
+    'loteID': normalizeNullableText(raw['loteID']),
     'dataEntradaLote': serializeDate(raw['dataEntradaLote']),
     'rebanhoIdMatriz': raw['rebanhoIdMatriz'],
     'rebanhoIdReprodutor': raw['rebanhoIdReprodutor'],
@@ -1906,7 +2313,7 @@ Map<String, dynamic> _buildRebanhoPayload(
     'origem': raw['origem'],
     'anotacoes': raw['anotacoes'],
     'deletado': raw['deletado'],
-    'loteNome': raw['loteNome'],
+    'loteNome': normalizeNullableText(raw['loteNome']),
     'tipo': raw['tipo'],
     'dataAcao': serializeDate(raw['dataAcao']),
     'valorCompra': raw['valorCompra'],
@@ -1925,13 +2332,22 @@ Map<String, dynamic> _buildRebanhoPayload(
     'movimentacao_entrada': serializeDate(raw['movimentacao_entrada']),
     'movimentacao_saida': serializeDate(raw['movimentacao_saida']),
     'data_morte': serializeDate(raw['data_morte']),
+    'updated_at': updatedAt,
   };
   if (isInsert) {
+    payload['created_at'] = createdAt ?? updatedAt;
     // Campos que só fazem sentido no INSERT (presentes em PUTRow apenas).
     payload['motivo_morte'] = raw['motivo_morte'];
     payload['categoria_matriz'] = raw['categoria_matriz'];
   }
-  payload.removeWhere((_, v) => v == null);
+  const keepNullOnUpdate = {
+    'loteID',
+    'loteNome',
+    'dataEntradaLote',
+  };
+  payload.removeWhere(
+    (key, v) => v == null && (isInsert || !keepNullOnUpdate.contains(key)),
+  );
   return payload;
 }
 
@@ -2170,78 +2586,225 @@ Future refreshLotes(BuildContext context) async {
 Future<bool> putUpdtLotes(BuildContext context) async {
   var allSuccess = true;
   final dataPendente = FFAppState().dataDadosNaoSyncLotes;
-  if (dataPendente == null) return true;
+  final hasDirtyLotes = await SQLiteManager.instance.hasLoteDirtyLocalForUser(
+    userID: currentUserUid,
+  );
+  final hasRecentLocalLotes =
+      await SQLiteManager.instance.hasLoteChangedAfterForUser(
+    userID: currentUserUid,
+    changedAfter: FFAppState().lotesChangeDateTime,
+  );
+  if (dataPendente == null && !hasDirtyLotes) {
+    // Se não há lote pendente, erros antigos desse módulo são obsoletos.
+    // ignore: discarded_futures
+    actions.SyncErrorLog.autoResolverModulo('lote');
+    return true;
+  }
 
   List<BuscarLotePUTRow> localPut = const [];
   List<BuscarLoteUPDTRow> localUpd = const [];
+  final syncedIds = <String>{};
 
   try {
     _throwIfCancelled('putUpdtLotes');
     final dateFilter = dateTimeFormat(
       "yyyy-MM-dd HH:mm:ss",
-      dataPendente,
+      dataPendente ?? DateTime(9999, 1, 1),
       locale: FFLocalizations.of(context).languageCode,
     );
+    _syncLog('putUpdtLotes',
+        '20% início. marker=$dateFilter, dirty_lotes=$hasDirtyLotes, recent_lotes=$hasRecentLocalLotes, user=$currentUserUid, online=${FFAppState().isOnline}');
 
-    localPut = await SQLiteManager.instance.buscarLotePUT(datePUT: dateFilter);
-    localUpd =
-        await SQLiteManager.instance.buscarLoteUPDT(dateUPDT: dateFilter);
+    localPut = await SQLiteManager.instance.buscarLotePUT(
+      datePUT: dateFilter,
+      userID: currentUserUid,
+    );
+    localUpd = await SQLiteManager.instance.buscarLoteUPDT(
+      dateUPDT: dateFilter,
+      userID: currentUserUid,
+    );
+
+    final putBeforeDedup = localPut.length;
+    localPut = _dedupLotePutRows(localPut);
+    final putDedupRemoved = putBeforeDedup - localPut.length;
+    if (putDedupRemoved > 0) {
+      _syncLog('putUpdtLotes',
+          'Dedup interno INSERT: $putDedupRemoved duplicata(s) por id_lote removidas.');
+    }
+
+    final updBeforeDedup = localUpd.length;
+    localUpd = _dedupLoteUpdateRows(localUpd);
+    final updDedupRemoved = updBeforeDedup - localUpd.length;
+    if (updDedupRemoved > 0) {
+      _syncLog('putUpdtLotes',
+          'Dedup interno UPDATE: $updDedupRemoved duplicata(s) por id_lote removidas.');
+    }
 
     if (localPut.isNotEmpty) {
       final insertedIds =
-          localPut.map((r) => r.idLote).whereType<String>().toSet();
+          localPut.map((r) => r.idLote?.trim()).whereType<String>().toSet();
       if (insertedIds.isNotEmpty) {
         final before = localUpd.length;
-        localUpd =
-            localUpd.where((r) => !insertedIds.contains(r.idLote)).toList();
+        localUpd = localUpd
+            .where((r) => !insertedIds.contains(r.idLote?.trim()))
+            .toList();
         final removed = before - localUpd.length;
-        if (removed > 0)
+        if (removed > 0) {
           _syncLog('putUpdtLotes',
               'Dedupe PUT/UPDT: $removed registro(s) removidos.');
+        }
       }
     }
 
-    final payloads = <Map<String, dynamic>>[];
+    final insertItems =
+        <({BuscarLotePUTRow row, Map<String, dynamic> payload})>[];
     for (final row in localPut) {
       _throwIfCancelled('putUpdtLotes');
-      payloads.add(_buildLotePayload(row.data, isInsert: true));
-    }
-    for (final row in localUpd) {
-      _throwIfCancelled('putUpdtLotes');
-      payloads.add(_buildLotePayload(row.data, isInsert: false));
+      insertItems.add(
+          (row: row, payload: _buildLotePayload(row.data, isInsert: true)));
     }
 
-    if (payloads.isEmpty) {
+    if (insertItems.isEmpty && localUpd.isEmpty) {
       _syncLog('putUpdtLotes', 'Nada para enviar.');
       return true;
     }
 
-    _syncLog('putUpdtLotes',
-        'Upsert em lote: ${payloads.length} (INSERT=${localPut.length}, UPDATE=${localUpd.length}).');
+    if (insertItems.isNotEmpty) {
+      final insertPayloads =
+          insertItems.map((item) => item.payload).toList(growable: false);
+      _syncLog('putUpdtLotes',
+          'UPSERT lote INSERT: ${insertPayloads.length} registro(s).');
+      try {
+        await _retry(
+          () => _batchUpsertSupabase(
+            tableName: 'lotes',
+            rows: insertPayloads,
+            onConflict: 'id_lote',
+            chunkSize: 200,
+            label: 'putUpdtLotes.insert',
+          ),
+          label: 'putUpdtLotes.insert.batchUpsert',
+          maxAttempts: 3,
+        );
+        for (final item in insertItems) {
+          final id = item.row.idLote;
+          if (id != null && id.isNotEmpty) {
+            syncedIds.add(id);
+          }
+          _markSyncOk('lote', id);
+        }
+      } catch (e, s) {
+        _syncLog('putUpdtLotes',
+            'ERRO no UPSERT em lote INSERT; tentando individual: $e\n$s');
+        for (final item in insertItems) {
+          _throwIfCancelled('putUpdtLotes.insert.individual');
+          try {
+            await _retry(
+              () => _batchUpsertSupabase(
+                tableName: 'lotes',
+                rows: [item.payload],
+                onConflict: 'id_lote',
+                chunkSize: 1,
+                label: 'putUpdtLotes.insert.individual',
+              ),
+              label: 'putUpdtLotes.insert.${item.row.idLote}',
+              maxAttempts: 3,
+            );
+            final id = item.row.idLote;
+            if (id != null && id.isNotEmpty) {
+              syncedIds.add(id);
+            }
+            _markSyncOk('lote', id);
+          } catch (rowError) {
+            allSuccess = false;
+            _recordSyncError(
+              flow: 'putUpdtLotes',
+              modulo: 'lote',
+              operacao: 'insert',
+              erro: rowError,
+              registroId: item.row.idLote,
+              registroDescricao: _descreverLoteBy(item.row.nome),
+              payload: item.payload,
+            );
+          }
+        }
+      }
+    }
 
-    await _retry(
-      () => _batchUpsertSupabase(
-        tableName: 'lotes',
-        rows: payloads,
-        onConflict: 'id_lote',
-        chunkSize: 200,
-        label: 'putUpdtLotes',
-      ),
-      label: 'putUpdtLotes.batchUpsert',
-      maxAttempts: 3,
-    );
-
-    for (final row in localPut) {
-      _markSyncOk('lote', row.idLote);
-      // ignore: discarded_futures
-      actions.SyncErrorLog.autoResolverPorRegistro('lote', row.idLote);
+    if (localUpd.isNotEmpty) {
+      _syncLog('putUpdtLotes',
+          'UPDATE explícito lote: ${localUpd.length} registro(s).');
     }
     for (final row in localUpd) {
-      _markSyncOk('lote', row.idLote);
-      // ignore: discarded_futures
-      actions.SyncErrorLog.autoResolverPorRegistro('lote', row.idLote);
+      _throwIfCancelled('putUpdtLotes.update');
+      final payload = _buildLotePayload(row.data, isInsert: false);
+      final isDelete = payload['deletado'] == 'SIM';
+      try {
+        final matched = await _retry(
+          () => _updateLoteSupabaseById(
+            payload,
+            label: 'putUpdtLotes.lote.update',
+          ),
+          label: 'putUpdtLotes.lote.update.${row.idLote}',
+          maxAttempts: 3,
+        );
+
+        if (!matched && !isDelete) {
+          final insertPayload = _buildLotePayload(row.data, isInsert: true);
+          _syncLog('putUpdtLotes',
+              'UPDATE lote não encontrou id_lote=${row.idLote}; recuperando com UPSERT INSERT idempotente.');
+          await _retry(
+            () => _batchUpsertSupabase(
+              tableName: 'lotes',
+              rows: [insertPayload],
+              onConflict: 'id_lote',
+              chunkSize: 1,
+              label: 'putUpdtLotes.recovery.insert',
+            ),
+            label: 'putUpdtLotes.recovery.insert.${row.idLote}',
+            maxAttempts: 3,
+          );
+          if (row.idLote != null && row.idLote!.isNotEmpty) {
+            syncedIds.add(row.idLote!);
+          }
+          _markSyncOk('lote', row.idLote);
+          continue;
+        }
+
+        if (!matched && isDelete) {
+          _syncLog('putUpdtLotes',
+              'DELETE remoto no-op: id_lote=${row.idLote} não existe mais no Supabase.');
+        }
+        if (row.idLote != null && row.idLote!.isNotEmpty) {
+          syncedIds.add(row.idLote!);
+        }
+        _markSyncOk('lote', row.idLote);
+      } catch (e) {
+        allSuccess = false;
+        _recordSyncError(
+          flow: 'putUpdtLotes',
+          modulo: 'lote',
+          operacao: 'update',
+          erro: e,
+          registroId: row.idLote,
+          registroDescricao: _descreverLoteBy(row.nome),
+          payload: payload,
+        );
+      }
     }
-    _syncLog('putUpdtLotes', 'Upload concluído.');
+
+    if (syncedIds.isNotEmpty) {
+      await _clearLocalLoteSyncDirtyByIds(
+        syncedIds,
+        label: 'putUpdtLotes',
+      );
+    }
+    _syncLog('putUpdtLotes',
+        'Upload concluído. sucesso=$allSuccess enviados=${syncedIds.length}.');
+    if (allSuccess) {
+      // ignore: discarded_futures
+      actions.SyncErrorLog.autoResolverModulo('lote');
+    }
   } on SyncCancelledException catch (e) {
     allSuccess = false;
     _syncLog('putUpdtLotes', 'CANCELADO: $e');
@@ -2288,6 +2851,14 @@ Map<String, dynamic> _buildLotePayload(
   Map<String, dynamic> raw, {
   required bool isInsert,
 }) {
+  dynamic value(List<String> keys) {
+    for (final key in keys) {
+      final v = raw[key];
+      if (v != null) return v;
+    }
+    return null;
+  }
+
   String? serializeDate(dynamic v) {
     if (v == null) return null;
     final s = v.toString().trim();
@@ -2297,22 +2868,30 @@ Map<String, dynamic> _buildLotePayload(
     return supaSerialize<DateTime>(dt);
   }
 
+  final createdAt = serializeDate(value(['created_at', 'createdAt']));
+  final updatedAt = serializeDate(value(['updated_at', 'updatedAt'])) ??
+      createdAt ??
+      supaSerialize<DateTime>(getCurrentTimestamp);
+
   final payload = <String, dynamic>{
-    'id_lote': raw['idLote'],
-    'id_propriedade': raw['idPropriedade'],
-    'id_animais': raw['idAnimais'],
-    'nome': raw['nome'],
-    'anotacoes': raw['anotacoes'],
-    'ativo': raw['ativo'],
-    'motivo': raw['motivo'],
-    'data_motivo': serializeDate(raw['dataMotivo']),
-    'deletado': raw['deletado'],
-    'data_entrada_piquete': serializeDate(raw['dataEntradaPiquete']),
-    'data_saida_piquete': serializeDate(raw['dataSaidaPiquete']),
-    'valorVenda': raw['valorVenda'],
+    'id_lote': value(['id_lote', 'idLote']),
+    'id_propriedade': value(['id_propriedade', 'idPropriedade']),
+    'id_animais': value(['id_animais', 'idAnimais']),
+    'nome': value(['nome']),
+    'anotacoes': value(['anotacoes']),
+    'ativo': value(['ativo']),
+    'motivo': value(['motivo']),
+    'data_motivo': serializeDate(value(['data_motivo', 'dataMotivo'])),
+    'deletado': value(['deletado']),
+    'data_entrada_piquete':
+        serializeDate(value(['data_entrada_piquete', 'dataEntradaPiquete'])),
+    'data_saida_piquete':
+        serializeDate(value(['data_saida_piquete', 'dataSaidaPiquete'])),
+    'valorVenda': value(['valorVenda', 'valor_venda']),
+    'updated_at': updatedAt,
   };
-  if (!isInsert) {
-    payload['updated_at'] = serializeDate(raw['updated_at']);
+  if (isInsert) {
+    payload['created_at'] = createdAt ?? updatedAt;
   }
   payload.removeWhere((_, v) => v == null);
   return payload;
@@ -3033,7 +3612,6 @@ Future refreshRebanhoOtimizada(BuildContext context) async {
   try {
     _syncLog('rebanho', 'Iniciando verificação do change tracker...');
     List<RebanhoChangeTrackerRow>? lastChangeResultt;
-    ApiCallResponse? propriedadessO;
     ApiCallResponse? qtdRebanhosO;
     ApiCallResponse? rebanhosAPIO;
 
@@ -3112,12 +3690,12 @@ Future refreshRebanhoOtimizada(BuildContext context) async {
 
       try {
         final propertyIds = preflightPropertyIds ??
-            _safePropertyIds((propriedadessO = await SupabaseFunctionsGroup
-                    .buscarPropriedadesUserCall
-                    .call(
-              pUserId: currentUserUid,
-            ))
-                .jsonBody);
+            _safePropertyIds(
+              (await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+                pUserId: currentUserUid,
+              ))
+                  .jsonBody,
+            );
         _syncLog('rebanho', 'Propriedades encontradas: ${propertyIds.length}.');
 
         if (propertyIds.isEmpty) {
@@ -3314,38 +3892,89 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
     }
     final remoteLastChange = lastChangeResultO?.firstOrNull?.lastChange;
     final localLastChange = FFAppState().reproducaoChangeDateTime;
-    final shouldSync = remoteLastChange == null ||
+    var shouldSync = remoteLastChange == null ||
         localLastChange == null ||
         remoteLastChange.isAfter(localLastChange);
     _syncLog('reproducao',
         'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
 
+    List<String>? preflightPropertyIds;
+    var forceCompleteBecauseIncomplete = false;
+    if (!shouldSync) {
+      try {
+        final propriedades = await _withTimeout(
+          () => SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+            pUserId: currentUserUid,
+          ),
+          label: 'reproducao.preflight.buscarPropriedadesUser',
+          timeout: kSyncPageTimeout,
+        );
+        preflightPropertyIds = _safePropertyIds(propriedades.jsonBody);
+        if (preflightPropertyIds.isNotEmpty) {
+          final fullCountResponse = await _withTimeout(
+            () => SupabaseFunctionsGroup.qTDReproducoesCall.call(
+              pIdsPropriedadesList: preflightPropertyIds,
+            ),
+            label: 'reproducao.preflight.qTDReproducoes',
+            timeout: kSyncPageTimeout,
+          );
+          final fullRemoteCount = _safeTotalFromApi(fullCountResponse.jsonBody);
+          final localCount = await _countLocalRowsForProperties(
+            'local_reproducao',
+            'id_propriedade',
+            preflightPropertyIds,
+            extraWhere: "AND COALESCE(deletado, 'NAO') != 'SIM'",
+          );
+          _syncLog('reproducao',
+              'Conferência de completude: local=$localCount remoto_completo=$fullRemoteCount.');
+          if (_localDataLooksIncomplete(
+            localCount: localCount,
+            remoteTotal: fullRemoteCount,
+          )) {
+            shouldSync = true;
+            forceCompleteBecauseIncomplete = true;
+            _syncLog('reproducao',
+                'Base local incompleta para as propriedades do usuário. Forçando sincronização COMPLETA de reprodução.');
+          }
+        }
+      } catch (e, s) {
+        _syncLog('reproducao',
+            'Falha ao conferir completude local; mantendo decisão original: $e\n$s');
+      }
+    }
+
     if (shouldSync) {
-      final isFirst = _isFirstSync(localLastChange) ||
+      var isFirst = forceCompleteBecauseIncomplete ||
+          _isFirstSync(localLastChange) ||
           await _isLocalTableEmpty('local_reproducao');
       _syncLog('reproducao',
           'Iniciando sincronização ${isFirst ? "COMPLETA (primeiro sync)" : "INCREMENTAL"}.');
       var syncOk = true;
       final List<Map<String, String>> syncErrors = [];
       int totalInserted = 0;
+      var paginationComplete = true;
       FFAppState().indexReproPaginacao = 0;
       FFAppState().visibilidadeProgressBarRepro = true;
       FFAppState().update(() {});
 
-      final String? updatedAfter = (!isFirst && localLastChange != null)
+      String? updatedAfter = (!isFirst && localLastChange != null)
           ? localLastChange.toUtc().toIso8601String()
           : null;
 
       try {
-        propriedades = await _withTimeout(
-          () => SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
-            pUserId: currentUserUid,
-          ),
-          label: 'reproducao.buscarPropriedadesUser',
-          timeout: kSyncPageTimeout,
-        );
-
-        final propertyIds = _safePropertyIds(propriedades?.jsonBody);
+        List<String> propertyIds;
+        if (preflightPropertyIds != null) {
+          propertyIds = preflightPropertyIds;
+        } else {
+          propriedades = await _withTimeout(
+            () => SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+              pUserId: currentUserUid,
+            ),
+            label: 'reproducao.buscarPropriedadesUser',
+            timeout: kSyncPageTimeout,
+          );
+          propertyIds = _safePropertyIds(propriedades?.jsonBody);
+        }
         _syncLog(
             'reproducao', 'Propriedades encontradas: ${propertyIds.length}.');
 
@@ -3353,6 +3982,34 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
           _syncLog(
               'reproducao', 'Nenhuma propriedade encontrada. Abortando sync.');
           return;
+        }
+
+        if (!isFirst) {
+          final fullCountResponse = await _withTimeout(
+            () => SupabaseFunctionsGroup.qTDReproducoesCall.call(
+              pIdsPropriedadesList: propertyIds,
+            ),
+            label: 'reproducao.qTDReproducoes.fullCheck',
+            timeout: kSyncPageTimeout,
+          );
+          final fullRemoteCount = _safeTotalFromApi(fullCountResponse.jsonBody);
+          final localCount = await _countLocalRowsForProperties(
+            'local_reproducao',
+            'id_propriedade',
+            propertyIds,
+            extraWhere: "AND COALESCE(deletado, 'NAO') != 'SIM'",
+          );
+          _syncLog('reproducao',
+              'Conferência de completude: local=$localCount remoto_completo=$fullRemoteCount.');
+          if (_localDataLooksIncomplete(
+            localCount: localCount,
+            remoteTotal: fullRemoteCount,
+          )) {
+            isFirst = true;
+            updatedAfter = null;
+            _syncLog('reproducao',
+                'Base local incompleta detectada durante sync. Trocando incremental por COMPLETA.');
+          }
         }
 
         if (updatedAfter != null) {
@@ -3431,6 +4088,11 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
             if (pageRecords.isEmpty) {
               _syncLog('reproducao',
                   'Página vazia recebida antes do total esperado. Encerrando paginação.');
+              paginationComplete = false;
+              syncErrors.add({
+                'id': 'página offset=$offsetAtual',
+                'error': 'Página vazia antes de baixar o total esperado',
+              });
               break;
             }
 
@@ -3449,9 +4111,9 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
 
             FFAppState().indexReproPaginacao =
                 FFAppState().indexReproPaginacao + pageRecords.length;
-            if (pageRecords.length < 999) {
+            if (pageRecords.length < pageSize) {
               _syncLog('reproducao',
-                  'Última página detectada (tamanho < 999). Encerrando paginação.');
+                  'Última página detectada (tamanho < pageSize=$pageSize). Encerrando paginação.');
               break;
             }
           } on TimeoutException catch (e) {
@@ -3463,6 +4125,7 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
             });
             // A8: não avançamos offset cegamente; quebra o loop para não
             // pular registros remotos que ainda não chegaram.
+            paginationComplete = false;
             break;
           } catch (e, s) {
             _syncLog('reproducao',
@@ -3472,6 +4135,7 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
               'error': 'Erro na requisição ou processamento: $e',
             });
             // A8: quebra em vez de incrementar 999 e mascarar erro.
+            paginationComplete = false;
             break;
           }
         }
@@ -3486,7 +4150,7 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
           _syncLog(
               'reproducao', 'Total de erros acumulados: ${syncErrors.length}.');
         }
-        if (totalInserted > 0 || syncErrors.isEmpty) {
+        if (syncErrors.isEmpty && paginationComplete) {
           FFAppState().reproducaoChangeDateTime =
               remoteLastChange ?? DateTime.now();
         }
@@ -3839,45 +4503,104 @@ Future refresSanidadeOtimizada(BuildContext context) async {
     ApiCallResponse? sanidadesAPI;
 
     try {
-      lastChangeResult = await SanidadeChangeTrackerTable().queryRows(
-        queryFn: (q) => q,
+      lastChangeResult = await _withTimeout(
+        () => SanidadeChangeTrackerTable().queryRows(queryFn: (q) => q),
+        label: 'sanidade.changeTracker.queryRows',
+        timeout: kSyncLightTimeout,
       );
+    } on TimeoutException catch (e, s) {
+      _syncLog('sanidade', 'TIMEOUT ao consultar change tracker: $e\n$s');
+      lastChangeResult = [];
     } catch (e, s) {
       _syncLog('sanidade', 'ERRO ao consultar change tracker: $e\n$s');
       lastChangeResult = [];
     }
-    final remoteLastChange = lastChangeResult.firstOrNull?.lastChange;
+    final remoteLastChange = lastChangeResult?.firstOrNull?.lastChange;
     final localLastChange = FFAppState().sanidadeChangeDateTime;
-    final shouldSync = remoteLastChange == null ||
+    var shouldSync = remoteLastChange == null ||
         localLastChange == null ||
         remoteLastChange.isAfter(localLastChange);
     _syncLog('sanidade',
         'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
 
+    List<String>? preflightPropertyIds;
+    var forceCompleteBecauseIncomplete = false;
+    if (!shouldSync) {
+      try {
+        final propriedades = await _withTimeout(
+          () => SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+            pUserId: currentUserUid,
+          ),
+          label: 'sanidade.preflight.buscarPropriedadesUser',
+          timeout: kSyncPageTimeout,
+        );
+        preflightPropertyIds = _safePropertyIds(propriedades.jsonBody);
+        if (preflightPropertyIds.isNotEmpty) {
+          final fullCountResponse = await _withTimeout(
+            () => SupabaseFunctionsGroup.qTDSanidadeCall.call(
+              pIdsPropriedadesList: preflightPropertyIds,
+            ),
+            label: 'sanidade.preflight.qTDSanidade',
+            timeout: kSyncPageTimeout,
+          );
+          final fullRemoteCount = _safeTotalFromApi(fullCountResponse.jsonBody);
+          final localCount = await _countLocalRowsForProperties(
+            'local_sanidade',
+            'id_propriedade',
+            preflightPropertyIds,
+            extraWhere: "AND COALESCE(deletado, 'NAO') != 'SIM'",
+          );
+          _syncLog('sanidade',
+              'Conferência de completude: local=$localCount remoto_completo=$fullRemoteCount.');
+          if (_localDataLooksIncomplete(
+            localCount: localCount,
+            remoteTotal: fullRemoteCount,
+          )) {
+            shouldSync = true;
+            forceCompleteBecauseIncomplete = true;
+            _syncLog('sanidade',
+                'Base local incompleta para as propriedades do usuário. Forçando sincronização COMPLETA de sanidade.');
+          }
+        }
+      } catch (e, s) {
+        _syncLog('sanidade',
+            'Falha ao conferir completude local; mantendo decisão original: $e\n$s');
+      }
+    }
+
     if (shouldSync) {
-      final isFirst = _isFirstSync(localLastChange) ||
+      var isFirst = forceCompleteBecauseIncomplete ||
+          _isFirstSync(localLastChange) ||
           await _isLocalTableEmpty('local_sanidade');
       _syncLog('sanidade',
           'Iniciando sincronização ${isFirst ? "COMPLETA (primeiro sync)" : "INCREMENTAL"}.');
       var syncOk = true;
       final List<Map<String, String>> syncErrors = [];
       int totalInserted = 0;
+      var paginationComplete = true;
       FFAppState().sanidadeIndex = 0;
       FFAppState().indexSanidadePaginacao = 0;
       FFAppState().visbilidadeProgressBarSan = true;
       FFAppState().update(() {});
 
-      final String? updatedAfter = (!isFirst && localLastChange != null)
+      String? updatedAfter = (!isFirst && localLastChange != null)
           ? localLastChange.toUtc().toIso8601String()
           : null;
 
       try {
-        propriedades =
-            await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
-          pUserId: currentUserUid,
-        );
-
-        final propertyIds = _safePropertyIds(propriedades.jsonBody);
+        List<String> propertyIds;
+        if (preflightPropertyIds != null) {
+          propertyIds = preflightPropertyIds;
+        } else {
+          propriedades = await _withTimeout(
+            () => SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+              pUserId: currentUserUid,
+            ),
+            label: 'sanidade.buscarPropriedadesUser',
+            timeout: kSyncPageTimeout,
+          );
+          propertyIds = _safePropertyIds(propriedades?.jsonBody);
+        }
         _syncLog(
             'sanidade', 'Propriedades encontradas: ${propertyIds.length}.');
 
@@ -3887,20 +4610,56 @@ Future refresSanidadeOtimizada(BuildContext context) async {
           return;
         }
 
+        if (!isFirst) {
+          final fullCountResponse = await _withTimeout(
+            () => SupabaseFunctionsGroup.qTDSanidadeCall.call(
+              pIdsPropriedadesList: propertyIds,
+            ),
+            label: 'sanidade.qTDSanidade.fullCheck',
+            timeout: kSyncPageTimeout,
+          );
+          final fullRemoteCount = _safeTotalFromApi(fullCountResponse.jsonBody);
+          final localCount = await _countLocalRowsForProperties(
+            'local_sanidade',
+            'id_propriedade',
+            propertyIds,
+            extraWhere: "AND COALESCE(deletado, 'NAO') != 'SIM'",
+          );
+          _syncLog('sanidade',
+              'Conferência de completude: local=$localCount remoto_completo=$fullRemoteCount.');
+          if (_localDataLooksIncomplete(
+            localCount: localCount,
+            remoteTotal: fullRemoteCount,
+          )) {
+            isFirst = true;
+            updatedAfter = null;
+            _syncLog('sanidade',
+                'Base local incompleta detectada durante sync. Trocando incremental por COMPLETA.');
+          }
+        }
+
         if (updatedAfter != null) {
-          qtdSanidades = await SupabaseFunctionsGroup.qTDSanidadeIncCall.call(
-            pIdsPropriedadesList: propertyIds,
-            pUpdatedAfter: updatedAfter,
+          qtdSanidades = await _withTimeout(
+            () => SupabaseFunctionsGroup.qTDSanidadeIncCall.call(
+              pIdsPropriedadesList: propertyIds,
+              pUpdatedAfter: updatedAfter,
+            ),
+            label: 'sanidade.qTDSanidadeInc',
+            timeout: kSyncPageTimeout,
           );
         } else {
-          qtdSanidades = await SupabaseFunctionsGroup.qTDSanidadeCall.call(
-            pIdsPropriedadesList: propertyIds,
+          qtdSanidades = await _withTimeout(
+            () => SupabaseFunctionsGroup.qTDSanidadeCall.call(
+              pIdsPropriedadesList: propertyIds,
+            ),
+            label: 'sanidade.qTDSanidade',
+            timeout: kSyncPageTimeout,
           );
         }
         _syncLog(
-            'sanidade', 'Resposta qtdSanidades raw: ${qtdSanidades.jsonBody}');
+            'sanidade', 'Resposta qtdSanidades raw: ${qtdSanidades?.jsonBody}');
 
-        final totalSanidades = _safeTotalFromApi(qtdSanidades.jsonBody);
+        final totalSanidades = _safeTotalFromApi(qtdSanidades?.jsonBody);
         FFAppState().totalSanidades = totalSanidades;
         _syncLog('sanidade',
             'Total remoto informado: $totalSanidades (${updatedAfter != null ? "incremental desde $updatedAfter" : "completo"}).');
@@ -3927,28 +4686,39 @@ Future refresSanidadeOtimizada(BuildContext context) async {
           final pageSize = await _adaptivePageSize();
           try {
             if (updatedAfter != null) {
-              sanidadesAPI =
-                  await SupabaseFunctionsGroup.buscarSanidadesIncCall.call(
-                pIdPropriedadeList: propertyIds,
-                pLimite: pageSize,
-                pOffset: offsetAtual,
-                pUpdatedAfter: updatedAfter,
+              sanidadesAPI = await _withTimeout(
+                () => SupabaseFunctionsGroup.buscarSanidadesIncCall.call(
+                  pIdPropriedadeList: propertyIds,
+                  pLimite: pageSize,
+                  pOffset: offsetAtual,
+                  pUpdatedAfter: updatedAfter,
+                ),
+                label: 'sanidade.buscarSanidadesInc(offset=$offsetAtual)',
+                timeout: kSyncPageTimeout,
               );
             } else {
-              sanidadesAPI =
-                  await SupabaseFunctionsGroup.buscarSanidadesCall.call(
-                pIdPropriedadeList: propertyIds,
-                pLimite: pageSize,
-                pOffset: offsetAtual,
+              sanidadesAPI = await _withTimeout(
+                () => SupabaseFunctionsGroup.buscarSanidadesCall.call(
+                  pIdPropriedadeList: propertyIds,
+                  pLimite: pageSize,
+                  pOffset: offsetAtual,
+                ),
+                label: 'sanidade.buscarSanidades(offset=$offsetAtual)',
+                timeout: kSyncPageTimeout,
               );
             }
 
-            final pageRecords = _safeRecordsFromApi(sanidadesAPI.jsonBody);
+            final pageRecords = _safeRecordsFromApi(sanidadesAPI?.jsonBody);
             _syncLog('sanidade',
                 'Página recebida. offset=$offsetAtual, tamanho=${pageRecords.length}.');
             if (pageRecords.isEmpty) {
               _syncLog('sanidade',
                   'Página vazia recebida antes do total esperado. Encerrando paginação.');
+              paginationComplete = false;
+              syncErrors.add({
+                'id': 'página offset=$offsetAtual',
+                'error': 'Página vazia antes de baixar o total esperado',
+              });
               break;
             }
 
@@ -3966,11 +4736,20 @@ Future refresSanidadeOtimizada(BuildContext context) async {
 
             FFAppState().indexSanidadePaginacao =
                 FFAppState().indexSanidadePaginacao + pageRecords.length;
-            if (pageRecords.length < 999) {
+            if (pageRecords.length < pageSize) {
               _syncLog('sanidade',
-                  'Última página detectada (tamanho < 999). Encerrando paginação.');
+                  'Última página detectada (tamanho < pageSize=$pageSize). Encerrando paginação.');
               break;
             }
+          } on TimeoutException catch (e) {
+            _syncLog('sanidade',
+                'TIMEOUT em página offset=$offsetAtual: $e. Abortando paginação.');
+            syncErrors.add({
+              'id': 'página offset=$offsetAtual',
+              'error': 'Timeout na requisição',
+            });
+            paginationComplete = false;
+            break;
           } catch (e, s) {
             _syncLog('sanidade',
                 'Erro ao processar página offset=$offsetAtual: $e\n$s');
@@ -3978,8 +4757,8 @@ Future refresSanidadeOtimizada(BuildContext context) async {
               'id': 'página offset=$offsetAtual',
               'error': 'Erro na requisição ou processamento: $e',
             });
-            FFAppState().indexSanidadePaginacao =
-                FFAppState().indexSanidadePaginacao + 999;
+            paginationComplete = false;
+            break;
           }
         }
 
@@ -3993,7 +4772,7 @@ Future refresSanidadeOtimizada(BuildContext context) async {
           _syncLog(
               'sanidade', 'Total de erros acumulados: ${syncErrors.length}.');
         }
-        if (totalInserted > 0 || syncErrors.isEmpty) {
+        if (syncErrors.isEmpty && paginationComplete) {
           FFAppState().sanidadeChangeDateTime =
               remoteLastChange ?? DateTime.now();
         }

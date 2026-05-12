@@ -61,8 +61,7 @@ class SyncErrorLog {
             'mensagem_amigavel': amigavel,
             'campo_problema': campo,
             'ultima_ocorrencia': agora,
-            'tentativas':
-                (existentes.first['tentativas'] as int? ?? 1) + 1,
+            'tentativas': (existentes.first['tentativas'] as int? ?? 1) + 1,
             if (payload != null) 'payload_json': jsonEncode(payload),
             if (registroDescricao != null)
               'registro_descricao': registroDescricao,
@@ -111,6 +110,27 @@ class SyncErrorLog {
     }
   }
 
+  /// Marca como resolvidos todos os erros ativos de um módulo.
+  ///
+  /// Usado quando o sync do módulo conclui sem pendências/falhas, para remover
+  /// erros históricos que ficaram na tela depois de uma correção de sync.
+  static Future<int> autoResolverModulo(String modulo) async {
+    if (modulo.trim().isEmpty) return 0;
+    try {
+      final db = SQLiteManager.instance.database;
+      final agora = DateTime.now().toIso8601String();
+      return await db.update(
+        'sync_error_log',
+        {'resolvido': 1, 'resolvido_em': agora},
+        where: 'modulo = ? AND resolvido = 0',
+        whereArgs: [modulo],
+      );
+    } catch (e) {
+      debugPrint('[SyncErrorLog] Falha ao auto-resolver módulo: $e');
+      return 0;
+    }
+  }
+
   /// Marca um erro como descartado pelo usuário.
   /// Não remove da fila local automaticamente — o caller decide.
   static Future<void> descartar(int id) async {
@@ -136,7 +156,8 @@ class SyncErrorLog {
       final db = SQLiteManager.instance.database;
       final rows = await db.query(
         'sync_error_log',
-        where: modulo == null ? 'resolvido = 0' : 'resolvido = 0 AND modulo = ?',
+        where:
+            modulo == null ? 'resolvido = 0' : 'resolvido = 0 AND modulo = ?',
         whereArgs: modulo == null ? null : [modulo],
         orderBy: 'ultima_ocorrencia DESC',
         limit: 500,
@@ -164,8 +185,7 @@ class SyncErrorLog {
   static Future<void> purgar() async {
     try {
       final db = SQLiteManager.instance.database;
-      final corte =
-          DateTime.now().subtract(_purgeAfter).toIso8601String();
+      final corte = DateTime.now().subtract(_purgeAfter).toIso8601String();
       await db.delete(
         'sync_error_log',
         where: 'resolvido != 0 AND resolvido_em < ?',
@@ -281,8 +301,7 @@ class SyncErrorLog {
     if (RegExp(r'check constraint').hasMatch(bruta)) {
       return 'Valor não atende a uma regra do servidor.';
     }
-    if (RegExp(r'permission denied|RLS|row-level security')
-        .hasMatch(bruta)) {
+    if (RegExp(r'permission denied|RLS|row-level security').hasMatch(bruta)) {
       return 'Sem permissão para gravar este registro.';
     }
     if (RegExp(r'TimeoutException|deadline|timed out|Read timed out')
@@ -339,9 +358,9 @@ class SyncErrorEntry {
         mensagemErro: (r['mensagem_erro'] as String?) ?? '',
         mensagemAmigavel: r['mensagem_amigavel'] as String?,
         payloadJson: r['payload_json'] as String?,
-        primeiraOcorrencia: DateTime.tryParse(
-                (r['primeira_ocorrencia'] as String?) ?? '') ??
-            DateTime.now(),
+        primeiraOcorrencia:
+            DateTime.tryParse((r['primeira_ocorrencia'] as String?) ?? '') ??
+                DateTime.now(),
         ultimaOcorrencia:
             DateTime.tryParse((r['ultima_ocorrencia'] as String?) ?? '') ??
                 DateTime.now(),

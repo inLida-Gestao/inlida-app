@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import '/backend/sqlite/sqlite_manager.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'view_lote_widget.dart' show ViewLoteWidget;
 import 'package:flutter/material.dart';
@@ -6,6 +9,16 @@ class ViewLoteModel extends FlutterFlowModel<ViewLoteWidget> {
   ///  Local state fields for this component.
 
   int mostrarAnimais = 5;
+
+  DateTime? gmdLoteDataInicial;
+
+  DateTime? gmdLoteDataFinal;
+
+  String? gmdLoteAnimaisKey;
+
+  Completer<List<BuscaHistPesagensRow>>? gmdLotePesagensCompleter;
+
+  int gmdLoteVisibleRows = 50;
 
   ///  State fields for stateful widgets in this component.
 

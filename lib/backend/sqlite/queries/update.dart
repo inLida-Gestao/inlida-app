@@ -778,13 +778,30 @@ Future performInsertLote(
   String? updatedat,
   double? valorVenda,
 }) {
-  final query = '''
-INSERT INTO local_lotes (id_propriedade, id_animais, nome, anotacoes, ativo,
-motivo, data_motivo, id_lote, deletado, created_at, updated_at, valorVenda)
-VALUES ('$idPropriedade', '$idAnimais', '$nome', '$anotacoes', '$ativo', '$motivo', '$dataMotivo', 
-'$idLote', '$deletado', '$createdat', '$updatedat', $valorVenda)
+  const query = '''
+INSERT INTO local_lotes (
+  id_propriedade, id_animais, nome, anotacoes, ativo, motivo, data_motivo,
+  id_lote, deletado, created_at, updated_at, valorVenda,
+  sync_dirty, sync_op, sync_updated_at
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'insert', ?)
 ''';
-  return database.rawQuery(query);
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  return database.rawInsert(query, [
+    idPropriedade,
+    idAnimais,
+    nome,
+    anotacoes,
+    ativo,
+    motivo,
+    dataMotivo,
+    idLote,
+    deletado,
+    createdat,
+    updatedat,
+    valorVenda,
+    syncUpdatedAt,
+  ]);
 }
 
 /// END INSERT LOTE
@@ -841,13 +858,35 @@ Future performUPDTLote(
   String? idLote,
   double? valorVenda,
 }) {
-  final query = '''
+  const query = '''
 UPDATE local_lotes
-SET id_animais = '$idAnimais', nome = '$nome', anotacoes = '$anotacoes', ativo = '$ativo', motivo = '$motivo',
-data_motivo = '{dataMotivo}', updated_at = '$updatedat', valorVenda = $valorVenda
-WHERE id_lote = '$idLote'
+SET id_animais = ?,
+    nome = ?,
+    anotacoes = ?,
+    ativo = ?,
+    motivo = ?,
+    data_motivo = ?,
+    updated_at = ?,
+    valorVenda = ?,
+    sync_dirty = 1,
+    sync_op = CASE WHEN sync_op = 'insert' THEN 'insert' ELSE 'update' END,
+    sync_updated_at = ?
+WHERE id_lote = ?
 ''';
-  return database.rawQuery(query);
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  return database.rawUpdate(query, [
+    idAnimais,
+    nome,
+    anotacoes,
+    ativo,
+    motivo,
+    dataMotivo,
+    updatedat,
+    valorVenda,
+    syncUpdatedAt,
+    idLote,
+  ]);
 }
 
 /// END UPDT LOTE
@@ -1469,12 +1508,23 @@ Future performUPDTLoteRebanho(
   String? updatedat,
   String? idLote,
 }) {
-  final query = '''
+  const query = '''
 UPDATE local_lotes
-SET id_animais = '$idAnimais', updated_at = '$updatedat'
-WHERE id_lote = '$idLote'
+SET id_animais = ?,
+    updated_at = ?,
+    sync_dirty = 1,
+    sync_op = CASE WHEN sync_op = 'insert' THEN 'insert' ELSE 'update' END,
+    sync_updated_at = ?
+WHERE id_lote = ?
 ''';
-  return database.rawQuery(query);
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  return database.rawUpdate(query, [
+    idAnimais,
+    updatedat,
+    syncUpdatedAt,
+    idLote,
+  ]);
 }
 
 /// END UPDT LOTEREBANHO
@@ -1515,12 +1565,22 @@ Future performDeleteLote(
   String? idLote,
   String? updatedat,
 }) {
-  final query = '''
+  const query = '''
 UPDATE local_lotes
-SET deletado = 'SIM', updated_at = '$updatedat'
-WHERE id_lote = '$idLote'
+SET deletado = 'SIM',
+    updated_at = ?,
+    sync_dirty = 1,
+    sync_op = 'delete',
+    sync_updated_at = ?
+WHERE id_lote = ?
 ''';
-  return database.rawQuery(query);
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  return database.rawUpdate(query, [
+    updatedat,
+    syncUpdatedAt,
+    idLote,
+  ]);
 }
 
 /// END DELETE LOTE

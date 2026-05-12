@@ -35,6 +35,10 @@ class _EditReproducaoRebanhoWidgetState
     extends State<EditReproducaoRebanhoWidget> {
   late EditReproducaoRebanhoModel _model;
   bool _isSaving = false;
+  bool _dataPartidaSemenCleared = false;
+  bool _dataStatusCleared = false;
+  bool _previsaoPartoCleared = false;
+  bool _dataPartoCleared = false;
 
   String? _normalizeRessincValue(String? value) {
     if (value == null) return null;
@@ -115,7 +119,12 @@ class _EditReproducaoRebanhoWidgetState
     DateTime? selectedDate,
     String? storedValue,
     String placeholder = 'Selecione uma data',
+    bool cleared = false,
   }) {
+    if (cleared) {
+      return placeholder;
+    }
+
     final effectiveDate = selectedDate ?? _parseEditableDate(storedValue);
     if (effectiveDate == null) {
       return placeholder;
@@ -132,12 +141,19 @@ class _EditReproducaoRebanhoWidgetState
     BuildContext context, {
     DateTime? selectedDate,
     String? storedValue,
+    bool cleared = false,
   }) {
-    final hasValue =
-        selectedDate != null || _parseEditableDate(storedValue) != null;
+    final hasValue = !cleared &&
+        (selectedDate != null || _parseEditableDate(storedValue) != null);
     return hasValue
         ? FlutterFlowTheme.of(context).secondaryText
         : const Color(0xFFBEBEBE);
+  }
+
+  bool _hasEditableDateValue(DateTime? selectedDate, String? storedValue,
+      {bool cleared = false}) {
+    return !cleared &&
+        (selectedDate != null || _parseEditableDate(storedValue) != null);
   }
 
   String _buildReprodutorLabel(
@@ -279,6 +295,44 @@ class _EditReproducaoRebanhoWidgetState
     _model.maybeDispose();
 
     super.dispose();
+  }
+
+  Widget _buildClearFieldButton(VoidCallback onPressed) {
+    return InkWell(
+      splashColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      onTap: onPressed,
+      child: SizedBox(
+        width: 24.0,
+        height: 24.0,
+        child: Icon(
+          Icons.close,
+          color: FlutterFlowTheme.of(context).accent3,
+          size: 22.0,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateTrailingIcons({
+    required bool showClearButton,
+    required VoidCallback onClear,
+    Color calendarColor = const Color(0xFF181818),
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (showClearButton) _buildClearFieldButton(onClear),
+        if (showClearButton) const SizedBox(width: 8.0),
+        Icon(
+          Icons.calendar_month_rounded,
+          color: calendarColor,
+          size: 24.0,
+        ),
+      ],
+    );
   }
 
   @override
@@ -1427,55 +1481,75 @@ class _EditReproducaoRebanhoWidgetState
                                           ),
                                     ),
                                   ),
-                                  FlutterFlowDropDown<String>(
-                                    controller:
-                                        _model.dropdownGnrhValueController ??=
-                                            FormFieldController<String>(
-                                      _model.dropdownGnrhValue ??=
-                                          _normalizeSimNaoValue(
-                                              containerBuscarReproducaoRowList
-                                                  .firstOrNull?.gnrh),
-                                    ),
-                                    options: const ['Sim', 'Não'],
-                                    onChanged: (val) => safeSetState(
-                                        () => _model.dropdownGnrhValue = val),
-                                    width: double.infinity,
-                                    height: 56.0,
-                                    textStyle: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          fontFamily:
+                                  Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        child: FlutterFlowDropDown<String>(
+                                          controller: _model
+                                                  .dropdownGnrhValueController ??=
+                                              FormFieldController<String>(
+                                            _model.dropdownGnrhValue ??=
+                                                _normalizeSimNaoValue(
+                                                    containerBuscarReproducaoRowList
+                                                        .firstOrNull?.gnrh),
+                                          ),
+                                          options: const ['Sim', 'Não'],
+                                          onChanged: (val) => safeSetState(() =>
+                                              _model.dropdownGnrhValue = val),
+                                          height: 56.0,
+                                          textStyle: FlutterFlowTheme.of(
+                                                  context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
+                                                fontSize: 16.0,
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w600,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMediumIsCustom,
+                                              ),
+                                          hintText: 'Escolha uma opção...',
+                                          icon: Icon(
+                                            Icons.keyboard_arrow_down_rounded,
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
+                                            size: 24.0,
+                                          ),
+                                          fillColor:
                                               FlutterFlowTheme.of(context)
-                                                  .bodyMediumFamily,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          fontSize: 16.0,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.w600,
-                                          useGoogleFonts:
-                                              !FlutterFlowTheme.of(context)
-                                                  .bodyMediumIsCustom,
+                                                  .customColor3,
+                                          elevation: 2.0,
+                                          borderColor: Colors.transparent,
+                                          borderWidth: 0.0,
+                                          borderRadius: 8.0,
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(12.0, 0.0, 12.0, 0.0),
+                                          hidesUnderline: true,
+                                          isOverButton: false,
+                                          isSearchable: false,
+                                          isMultiSelect: false,
                                         ),
-                                    hintText: 'Escolha uma opção...',
-                                    icon: Icon(
-                                      Icons.keyboard_arrow_down_rounded,
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryText,
-                                      size: 24.0,
-                                    ),
-                                    fillColor: FlutterFlowTheme.of(context)
-                                        .customColor3,
-                                    elevation: 2.0,
-                                    borderColor: Colors.transparent,
-                                    borderWidth: 0.0,
-                                    borderRadius: 8.0,
-                                    margin:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                    hidesUnderline: true,
-                                    isOverButton: false,
-                                    isSearchable: false,
-                                    isMultiSelect: false,
+                                      ),
+                                      if (_model.dropdownGnrhValue != null &&
+                                          _model.dropdownGnrhValue != '')
+                                        _buildClearFieldButton(() {
+                                          safeSetState(() {
+                                            _model.dropdownGnrhValueController
+                                                ?.value = null;
+                                            _model.dropdownGnrhValue = null;
+                                          });
+                                        }),
+                                    ].divide(const SizedBox(width: 8.0)),
                                   ),
                                 ].divide(const SizedBox(height: 8.0)),
                               ),
@@ -1507,55 +1581,75 @@ class _EditReproducaoRebanhoWidgetState
                                           ),
                                     ),
                                   ),
-                                  FlutterFlowDropDown<String>(
-                                    controller:
-                                        _model.dropdownCioValueController ??=
-                                            FormFieldController<String>(
-                                      _model.dropdownCioValue ??=
-                                          _normalizeSimNaoValue(
-                                              containerBuscarReproducaoRowList
-                                                  .firstOrNull?.cio),
-                                    ),
-                                    options: const ['Sim', 'Não'],
-                                    onChanged: (val) => safeSetState(
-                                        () => _model.dropdownCioValue = val),
-                                    width: double.infinity,
-                                    height: 56.0,
-                                    textStyle: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          fontFamily:
+                                  Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        child: FlutterFlowDropDown<String>(
+                                          controller: _model
+                                                  .dropdownCioValueController ??=
+                                              FormFieldController<String>(
+                                            _model.dropdownCioValue ??=
+                                                _normalizeSimNaoValue(
+                                                    containerBuscarReproducaoRowList
+                                                        .firstOrNull?.cio),
+                                          ),
+                                          options: const ['Sim', 'Não'],
+                                          onChanged: (val) => safeSetState(() =>
+                                              _model.dropdownCioValue = val),
+                                          height: 56.0,
+                                          textStyle: FlutterFlowTheme.of(
+                                                  context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
+                                                fontSize: 16.0,
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w600,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMediumIsCustom,
+                                              ),
+                                          hintText: 'Escolha uma opção...',
+                                          icon: Icon(
+                                            Icons.keyboard_arrow_down_rounded,
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
+                                            size: 24.0,
+                                          ),
+                                          fillColor:
                                               FlutterFlowTheme.of(context)
-                                                  .bodyMediumFamily,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryText,
-                                          fontSize: 16.0,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.w600,
-                                          useGoogleFonts:
-                                              !FlutterFlowTheme.of(context)
-                                                  .bodyMediumIsCustom,
+                                                  .customColor3,
+                                          elevation: 2.0,
+                                          borderColor: Colors.transparent,
+                                          borderWidth: 0.0,
+                                          borderRadius: 8.0,
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(12.0, 0.0, 12.0, 0.0),
+                                          hidesUnderline: true,
+                                          isOverButton: false,
+                                          isSearchable: false,
+                                          isMultiSelect: false,
                                         ),
-                                    hintText: 'Escolha uma opção...',
-                                    icon: Icon(
-                                      Icons.keyboard_arrow_down_rounded,
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryText,
-                                      size: 24.0,
-                                    ),
-                                    fillColor: FlutterFlowTheme.of(context)
-                                        .customColor3,
-                                    elevation: 2.0,
-                                    borderColor: Colors.transparent,
-                                    borderWidth: 0.0,
-                                    borderRadius: 8.0,
-                                    margin:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            12.0, 0.0, 12.0, 0.0),
-                                    hidesUnderline: true,
-                                    isOverButton: false,
-                                    isSearchable: false,
-                                    isMultiSelect: false,
+                                      ),
+                                      if (_model.dropdownCioValue != null &&
+                                          _model.dropdownCioValue != '')
+                                        _buildClearFieldButton(() {
+                                          safeSetState(() {
+                                            _model.dropdownCioValueController
+                                                ?.value = null;
+                                            _model.dropdownCioValue = null;
+                                          });
+                                        }),
+                                    ].divide(const SizedBox(width: 8.0)),
                                   ),
                                 ].divide(const SizedBox(height: 8.0)),
                               ),
@@ -1659,6 +1753,7 @@ class _EditReproducaoRebanhoWidgetState
 
                                           if (datePicked2Date != null) {
                                             safeSetState(() {
+                                              _dataPartidaSemenCleared = false;
                                               _model.datePicked2 = DateTime(
                                                 datePicked2Date.year,
                                                 datePicked2Date.month,
@@ -1707,6 +1802,8 @@ class _EditReproducaoRebanhoWidgetState
                                                         .editReproducao
                                                         ?.firstOrNull
                                                         ?.dataPartidaSemen,
+                                                    cleared:
+                                                        _dataPartidaSemenCleared,
                                                   ),
                                                   style:
                                                       FlutterFlowTheme.of(
@@ -1726,6 +1823,8 @@ class _EditReproducaoRebanhoWidgetState
                                                                   .editReproducao
                                                                   ?.firstOrNull
                                                                   ?.dataPartidaSemen,
+                                                              cleared:
+                                                                  _dataPartidaSemenCleared,
                                                             ),
                                                             fontSize: 16.0,
                                                             letterSpacing: 0.0,
@@ -1737,10 +1836,24 @@ class _EditReproducaoRebanhoWidgetState
                                                                     .bodyMediumIsCustom,
                                                           ),
                                                 ),
-                                                const Icon(
-                                                  Icons.calendar_month_rounded,
-                                                  color: Color(0xFF181818),
-                                                  size: 24.0,
+                                                _buildDateTrailingIcons(
+                                                  showClearButton:
+                                                      _hasEditableDateValue(
+                                                    _model.datePicked2,
+                                                    _model
+                                                        .editReproducao
+                                                        ?.firstOrNull
+                                                        ?.dataPartidaSemen,
+                                                    cleared:
+                                                        _dataPartidaSemenCleared,
+                                                  ),
+                                                  onClear: () {
+                                                    safeSetState(() {
+                                                      _model.datePicked2 = null;
+                                                      _dataPartidaSemenCleared =
+                                                          true;
+                                                    });
+                                                  },
                                                 ),
                                               ],
                                             ),
@@ -2927,6 +3040,8 @@ class _EditReproducaoRebanhoWidgetState
 
                                                   if (datePicked5Date != null) {
                                                     safeSetState(() {
+                                                      _dataStatusCleared =
+                                                          false;
                                                       _model.datePicked5 =
                                                           DateTime(
                                                         datePicked5Date.year,
@@ -2986,6 +3101,8 @@ class _EditReproducaoRebanhoWidgetState
                                                                 .editReproducao
                                                                 ?.firstOrNull
                                                                 ?.dataStatus,
+                                                            cleared:
+                                                                _dataStatusCleared,
                                                           ),
                                                           style: FlutterFlowTheme
                                                                   .of(context)
@@ -3004,6 +3121,8 @@ class _EditReproducaoRebanhoWidgetState
                                                                       .editReproducao
                                                                       ?.firstOrNull
                                                                       ?.dataStatus,
+                                                                  cleared:
+                                                                      _dataStatusCleared,
                                                                 ),
                                                                 fontSize: 16.0,
                                                                 letterSpacing:
@@ -3017,12 +3136,25 @@ class _EditReproducaoRebanhoWidgetState
                                                                         .bodyMediumIsCustom,
                                                               ),
                                                         ),
-                                                        const Icon(
-                                                          Icons
-                                                              .calendar_month_rounded,
-                                                          color:
-                                                              Color(0xFF181818),
-                                                          size: 24.0,
+                                                        _buildDateTrailingIcons(
+                                                          showClearButton:
+                                                              _hasEditableDateValue(
+                                                            _model.datePicked5,
+                                                            _model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataStatus,
+                                                            cleared:
+                                                                _dataStatusCleared,
+                                                          ),
+                                                          onClear: () {
+                                                            safeSetState(() {
+                                                              _model.datePicked5 =
+                                                                  null;
+                                                              _dataStatusCleared =
+                                                                  true;
+                                                            });
+                                                          },
                                                         ),
                                                       ],
                                                     ),
@@ -3149,6 +3281,7 @@ class _EditReproducaoRebanhoWidgetState
 
                                         if (datePicked6Date != null) {
                                           safeSetState(() {
+                                            _previsaoPartoCleared = false;
                                             _model.datePicked6 = DateTime(
                                               datePicked6Date.year,
                                               datePicked6Date.month,
@@ -3182,22 +3315,25 @@ class _EditReproducaoRebanhoWidgetState
                                             children: [
                                               Text(
                                                 valueOrDefault<String>(
-                                                  dateTimeFormat(
-                                                    "d/M/y",
-                                                    _model.datePicked6 ??
-                                                        functions.dataMais295(_model
-                                                                    .datePicked1 !=
-                                                                null
-                                                            ? _model
-                                                                .datePicked1!
-                                                            : functions.converterParaData(_model
-                                                                .editReproducao
-                                                                ?.firstOrNull
-                                                                ?.dataInseminacao)!),
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
+                                                  _previsaoPartoCleared
+                                                      ? null
+                                                      : dateTimeFormat(
+                                                          "d/M/y",
+                                                          _model.datePicked6 ??
+                                                              functions.dataMais295(_model
+                                                                          .datePicked1 !=
+                                                                      null
+                                                                  ? _model
+                                                                      .datePicked1!
+                                                                  : functions.converterParaData(_model
+                                                                      .editReproducao
+                                                                      ?.firstOrNull
+                                                                      ?.dataInseminacao)!),
+                                                          locale:
+                                                              FFLocalizations.of(
+                                                                      context)
+                                                                  .languageCode,
+                                                        ),
                                                   'Data da inseminação + 295 dias',
                                                 ),
                                                 style: FlutterFlowTheme.of(
@@ -3208,8 +3344,10 @@ class _EditReproducaoRebanhoWidgetState
                                                           FlutterFlowTheme.of(
                                                                   context)
                                                               .bodyMediumFamily,
-                                                      color:
-                                                          FlutterFlowTheme.of(
+                                                      color: _previsaoPartoCleared
+                                                          ? const Color(
+                                                              0xFFBEBEBE)
+                                                          : FlutterFlowTheme.of(
                                                                   context)
                                                               .secondaryText,
                                                       fontSize: 16.0,
@@ -3222,12 +3360,19 @@ class _EditReproducaoRebanhoWidgetState
                                                               .bodyMediumIsCustom,
                                                     ),
                                               ),
-                                              Icon(
-                                                Icons.calendar_month_rounded,
-                                                color:
+                                              _buildDateTrailingIcons(
+                                                showClearButton:
+                                                    !_previsaoPartoCleared,
+                                                onClear: () {
+                                                  safeSetState(() {
+                                                    _model.datePicked6 = null;
+                                                    _previsaoPartoCleared =
+                                                        true;
+                                                  });
+                                                },
+                                                calendarColor:
                                                     FlutterFlowTheme.of(context)
                                                         .secondaryText,
-                                                size: 24.0,
                                               ),
                                             ],
                                           ),
@@ -3558,6 +3703,7 @@ class _EditReproducaoRebanhoWidgetState
 
                                       if (datePicked7Date != null) {
                                         safeSetState(() {
+                                          _dataPartoCleared = false;
                                           _model.datePicked7 = DateTime(
                                             datePicked7Date.year,
                                             datePicked7Date.month,
@@ -3603,6 +3749,7 @@ class _EditReproducaoRebanhoWidgetState
                                                     .editReproducao
                                                     ?.firstOrNull
                                                     ?.dataParto,
+                                                cleared: _dataPartoCleared,
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -3620,6 +3767,8 @@ class _EditReproducaoRebanhoWidgetState
                                                           .editReproducao
                                                           ?.firstOrNull
                                                           ?.dataParto,
+                                                      cleared:
+                                                          _dataPartoCleared,
                                                     ),
                                                     fontSize: 16.0,
                                                     letterSpacing: 0.0,
@@ -3630,10 +3779,20 @@ class _EditReproducaoRebanhoWidgetState
                                                             .bodyMediumIsCustom,
                                                   ),
                                             ),
-                                            const Icon(
-                                              Icons.calendar_month_rounded,
-                                              color: Color(0xFF181818),
-                                              size: 24.0,
+                                            _buildDateTrailingIcons(
+                                              showClearButton:
+                                                  _hasEditableDateValue(
+                                                _model.datePicked7,
+                                                _model.editReproducao
+                                                    ?.firstOrNull?.dataParto,
+                                                cleared: _dataPartoCleared,
+                                              ),
+                                              onClear: () {
+                                                safeSetState(() {
+                                                  _model.datePicked7 = null;
+                                                  _dataPartoCleared = true;
+                                                });
+                                              },
                                             ),
                                           ],
                                         ),
@@ -3965,49 +4124,48 @@ class _EditReproducaoRebanhoWidgetState
                                                                 .editReproducao
                                                                 ?.firstOrNull
                                                                 ?.dataInseminacao,
-                                                        dataPartidaSemen: _model
-                                                                    .datePicked2 !=
-                                                                null
-                                                            ? dateTimeFormat(
-                                                                "yyyy-MM-dd",
-                                                                _model
-                                                                    .datePicked2,
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              )
-                                                            : _model
-                                                                .editReproducao
-                                                                ?.firstOrNull
-                                                                ?.dataPartidaSemen,
+                                                        dataPartidaSemen:
+                                                            _dataPartidaSemenCleared
+                                                                ? null
+                                                                : _model.datePicked2 !=
+                                                                        null
+                                                                    ? dateTimeFormat(
+                                                                        "yyyy-MM-dd",
+                                                                        _model
+                                                                            .datePicked2,
+                                                                        locale:
+                                                                            FFLocalizations.of(context).languageCode,
+                                                                      )
+                                                                    : _model
+                                                                        .editReproducao
+                                                                        ?.firstOrNull
+                                                                        ?.dataPartidaSemen,
                                                         partidaSemen:
                                                             _model.partidaSemen,
-                                                        previsaoParto: _model
-                                                                    .datePicked6 !=
-                                                                null
-                                                            ? dateTimeFormat(
-                                                                "yyyy-MM-dd",
-                                                                _model
-                                                                    .datePicked6!,
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              )
-                                                            : _model.datePicked1 !=
-                                                                    null
-                                                                ? dateTimeFormat(
-                                                                    "yyyy-MM-dd",
-                                                                    functions.dataMais295(
+                                                        previsaoParto:
+                                                            _previsaoPartoCleared
+                                                                ? null
+                                                                : _model.datePicked6 !=
+                                                                        null
+                                                                    ? dateTimeFormat(
+                                                                        "yyyy-MM-dd",
                                                                         _model
-                                                                            .datePicked1!),
-                                                                    locale: FFLocalizations.of(
-                                                                            context)
-                                                                        .languageCode,
-                                                                  )
-                                                                : _model
-                                                                    .editReproducao
-                                                                    ?.firstOrNull
-                                                                    ?.previsaoParto,
+                                                                            .datePicked6!,
+                                                                        locale:
+                                                                            FFLocalizations.of(context).languageCode,
+                                                                      )
+                                                                    : _model.datePicked1 !=
+                                                                            null
+                                                                        ? dateTimeFormat(
+                                                                            "yyyy-MM-dd",
+                                                                            functions.dataMais295(_model.datePicked1!),
+                                                                            locale:
+                                                                                FFLocalizations.of(context).languageCode,
+                                                                          )
+                                                                        : _model
+                                                                            .editReproducao
+                                                                            ?.firstOrNull
+                                                                            ?.previsaoParto,
                                                         idLote: _model
                                                             .animalSelecionado
                                                             ?.firstOrNull
@@ -4091,21 +4249,22 @@ class _EditReproducaoRebanhoWidgetState
                                                               .dropdownStatusValue,
                                                           'Não diagnosticado',
                                                         ),
-                                                        dataStatus: _model
-                                                                    .datePicked5 !=
-                                                                null
-                                                            ? dateTimeFormat(
-                                                                "yyyy-MM-dd",
-                                                                _model
-                                                                    .datePicked5,
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              )
-                                                            : _model
-                                                                .editReproducao
-                                                                ?.firstOrNull
-                                                                ?.dataStatus,
+                                                        dataStatus:
+                                                            _dataStatusCleared
+                                                                ? null
+                                                                : _model.datePicked5 !=
+                                                                        null
+                                                                    ? dateTimeFormat(
+                                                                        "yyyy-MM-dd",
+                                                                        _model
+                                                                            .datePicked5,
+                                                                        locale:
+                                                                            FFLocalizations.of(context).languageCode,
+                                                                      )
+                                                                    : _model
+                                                                        .editReproducao
+                                                                        ?.firstOrNull
+                                                                        ?.dataStatus,
                                                         racaMatriz: FFAppState()
                                                             .matrizSelecionada
                                                             .racaAnimal,
@@ -4130,21 +4289,22 @@ class _EditReproducaoRebanhoWidgetState
                                                                 true
                                                             ? 'Sim'
                                                             : 'Não',
-                                                        dataParto: _model
-                                                                    .datePicked7 !=
-                                                                null
-                                                            ? dateTimeFormat(
-                                                                "yyyy-MM-dd",
-                                                                _model
-                                                                    .datePicked7,
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              )
-                                                            : _model
-                                                                .editReproducao
-                                                                ?.firstOrNull
-                                                                ?.dataParto,
+                                                        dataParto:
+                                                            _dataPartoCleared
+                                                                ? null
+                                                                : _model.datePicked7 !=
+                                                                        null
+                                                                    ? dateTimeFormat(
+                                                                        "yyyy-MM-dd",
+                                                                        _model
+                                                                            .datePicked7,
+                                                                        locale:
+                                                                            FFLocalizations.of(context).languageCode,
+                                                                      )
+                                                                    : _model
+                                                                        .editReproducao
+                                                                        ?.firstOrNull
+                                                                        ?.dataParto,
                                                         idrebanhomatriz:
                                                             FFAppState()
                                                                 .matrizSelecionada

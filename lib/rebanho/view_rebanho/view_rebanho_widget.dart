@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import '/auth/supabase_auth/auth_util.dart';
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
@@ -12,12 +14,101 @@ import '/rebanho/edit_rebanho/edit_rebanho_widget.dart';
 import '/rebanho/reproducoes_view_rebanho/reproducoes_view_rebanho_widget.dart';
 import '/sanidade/edit_sanidade_animal/edit_sanidade_animal_widget.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'view_rebanho_model.dart';
 export 'view_rebanho_model.dart';
+
+class _GmdEvolutionPoint {
+  const _GmdEvolutionPoint({
+    required this.current,
+    required this.previous,
+    required this.currentDate,
+    required this.previousDate,
+    required this.diasAvaliados,
+    required this.gmd,
+  });
+
+  final HistoricoPesagensStruct current;
+  final HistoricoPesagensStruct previous;
+  final DateTime currentDate;
+  final DateTime previousDate;
+  final int diasAvaliados;
+  final double? gmd;
+
+  bool get calculavel => gmd != null;
+}
+
+class _GmdLabelDotPainter extends FlDotPainter {
+  const _GmdLabelDotPainter({
+    required this.value,
+    required this.color,
+    this.radius = 13.0,
+  });
+
+  final double value;
+  final Color color;
+  final double radius;
+
+  @override
+  void draw(Canvas canvas, FlSpot spot, Offset offsetInCanvas) {
+    canvas.drawCircle(
+      offsetInCanvas,
+      radius,
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.fill,
+    );
+    canvas.drawCircle(
+      offsetInCanvas,
+      radius,
+      Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5,
+    );
+
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: value.toStringAsFixed(2).replaceAll('.', ','),
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 8.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      textDirection: ui.TextDirection.ltr,
+    )..layout();
+    textPainter.paint(
+      canvas,
+      offsetInCanvas - Offset(textPainter.width / 2, textPainter.height / 2),
+    );
+  }
+
+  @override
+  Size getSize(FlSpot spot) => Size(radius * 2, radius * 2);
+
+  @override
+  FlDotPainter lerp(FlDotPainter a, FlDotPainter b, double t) {
+    if (a is! _GmdLabelDotPainter || b is! _GmdLabelDotPainter) {
+      return b;
+    }
+    return _GmdLabelDotPainter(
+      value: ui.lerpDouble(a.value, b.value, t)!,
+      color: Color.lerp(a.color, b.color, t)!,
+      radius: ui.lerpDouble(a.radius, b.radius, t)!,
+    );
+  }
+
+  @override
+  Color get mainColor => color;
+
+  @override
+  List<Object?> get props => [value, color, radius];
+}
 
 class ViewRebanhoWidget extends StatefulWidget {
   const ViewRebanhoWidget({
@@ -82,10 +173,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
       return;
     }
 
-    _model.nAnimalTextController14?.text =
-        (rebanhoAtual.pesoAtual == null || rebanhoAtual.pesoAtual == 0.0)
-            ? 'N/A'
-            : (rebanhoAtual.pesoAtual == rebanhoAtual.pesoAtual!.truncateToDouble() ? rebanhoAtual.pesoAtual!.toInt().toString() : rebanhoAtual.pesoAtual.toString());
+    _model.nAnimalTextController14?.text = (rebanhoAtual.pesoAtual == null ||
+            rebanhoAtual.pesoAtual == 0.0)
+        ? 'N/A'
+        : (rebanhoAtual.pesoAtual == rebanhoAtual.pesoAtual!.truncateToDouble()
+            ? rebanhoAtual.pesoAtual!.toInt().toString()
+            : rebanhoAtual.pesoAtual.toString());
 
     _model.nAnimalOlocoTextController?.text =
         rebanhoAtual.dataUltimaPesagem == null ||
@@ -101,6 +194,806 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
     if (mounted) {
       safeSetState(() {});
     }
+  }
+
+  DateTime _dateOnly(DateTime value) =>
+      DateTime(value.year, value.month, value.day);
+
+  DateTime? _parsePesagemDate(HistoricoPesagensStruct pesagem) {
+    if (!pesagem.hasDataPesagem()) return null;
+    return functions.converterParaData(pesagem.dataPesagem);
+  }
+
+  double? _pesagemPeso(HistoricoPesagensStruct pesagem) {
+    if (!pesagem.hasPeso()) return null;
+    return pesagem.peso;
+  }
+
+  Color _gmdColor(double? value) {
+    final theme = FlutterFlowTheme.of(context);
+    if (value == null || value == 0) return theme.accent3;
+    return value > 0 ? theme.success : theme.error;
+  }
+
+  String _formatKg(double? value) {
+    if (value == null) return '-';
+    return '${value.toStringAsFixed(2).replaceAll('.', ',')} kg';
+  }
+
+  String _formatSignedKgDia(double? value) {
+    if (value == null) return '-';
+    final prefix = value > 0 ? '+' : '';
+    return '$prefix${value.toStringAsFixed(3).replaceAll('.', ',')} kg/d';
+  }
+
+  String _formatGmdDate(DateTime? value) {
+    if (value == null) return 'Selecionar';
+    return dateTimeFormat(
+      'd/M/y',
+      value,
+      locale: FFLocalizations.of(context).languageCode,
+    );
+  }
+
+  String _formatGmdAxisDate(DateTime? value) {
+    if (value == null) return '';
+    return dateTimeFormat(
+      'd/M/y',
+      value,
+      locale: FFLocalizations.of(context).languageCode,
+    );
+  }
+
+  List<_GmdEvolutionPoint> _buildGmdEvolution(
+    List<HistoricoPesagensStruct> pesagens,
+  ) {
+    final validas = pesagens.where((pesagem) {
+      final deletado = pesagem.deletado.trim().toUpperCase();
+      return deletado != 'SIM' &&
+          _parsePesagemDate(pesagem) != null &&
+          _pesagemPeso(pesagem) != null;
+    }).toList()
+      ..sort((a, b) => _parsePesagemDate(a)!.compareTo(_parsePesagemDate(b)!));
+
+    final pontos = <_GmdEvolutionPoint>[];
+    for (var index = 1; index < validas.length; index++) {
+      final previous = validas[index - 1];
+      final current = validas[index];
+      final previousDate = _dateOnly(_parsePesagemDate(previous)!);
+      final currentDate = _dateOnly(_parsePesagemDate(current)!);
+      final diasAvaliados = currentDate.difference(previousDate).inDays;
+      final pesoAnterior = _pesagemPeso(previous)!;
+      final pesoAtual = _pesagemPeso(current)!;
+      final gmd =
+          diasAvaliados > 0 ? (pesoAtual - pesoAnterior) / diasAvaliados : null;
+
+      pontos.add(
+        _GmdEvolutionPoint(
+          current: current,
+          previous: previous,
+          currentDate: currentDate,
+          previousDate: previousDate,
+          diasAvaliados: diasAvaliados,
+          gmd: gmd,
+        ),
+      );
+    }
+
+    return pontos;
+  }
+
+  Map<int, _GmdEvolutionPoint> _buildGmdByPesagemId(
+    List<HistoricoPesagensStruct> pesagens,
+  ) {
+    final pontos = _buildGmdEvolution(pesagens);
+    return {
+      for (final ponto in pontos)
+        if (ponto.current.hasId()) ponto.current.id: ponto,
+    };
+  }
+
+  List<_GmdEvolutionPoint> _filterGmdChartPoints(
+    List<_GmdEvolutionPoint> pontos,
+  ) {
+    if (pontos.isEmpty) return const [];
+
+    final dataInicial =
+        _dateOnly(_model.gmdDataInicial ?? pontos.first.currentDate);
+    final dataFinal = _dateOnly(_model.gmdDataFinal ?? pontos.last.currentDate);
+
+    if (dataFinal.isBefore(dataInicial)) return const [];
+
+    return pontos.where((ponto) {
+      final data = _dateOnly(ponto.currentDate);
+      return !data.isBefore(dataInicial) && !data.isAfter(dataFinal);
+    }).toList();
+  }
+
+  Future<void> _pickGmdDate({
+    required bool isStart,
+    required List<HistoricoPesagensStruct> pesagens,
+  }) async {
+    final datas = pesagens
+        .map(_parsePesagemDate)
+        .withoutNulls
+        .map(_dateOnly)
+        .toSet()
+        .toList()
+      ..sort();
+
+    final fallback = datas.isNotEmpty ? datas.first : DateTime.now();
+    final current = isStart ? _model.gmdDataInicial : _model.gmdDataFinal;
+    final picked = await showDatePicker(
+      context: context,
+      initialDate:
+          current ?? (isStart ? fallback : (datas.lastOrNull ?? fallback)),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2050),
+    );
+
+    if (picked == null) return;
+    setState(() {
+      if (isStart) {
+        _model.gmdDataInicial = _dateOnly(picked);
+      } else {
+        _model.gmdDataFinal = _dateOnly(picked);
+      }
+    });
+  }
+
+  Widget _buildGmdDateFilter({
+    required String label,
+    required DateTime? value,
+    required VoidCallback onTap,
+  }) {
+    final theme = FlutterFlowTheme.of(context);
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 150.0, maxWidth: 240.0),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8.0),
+        child: Container(
+          height: 48.0,
+          decoration: BoxDecoration(
+            color: theme.customColor8,
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(color: theme.alternate),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: theme.bodySmall.override(
+                        fontFamily: theme.bodySmallFamily,
+                        color: theme.accent3,
+                        letterSpacing: 0.0,
+                        useGoogleFonts: !theme.bodySmallIsCustom,
+                      ),
+                    ),
+                    Text(
+                      _formatGmdDate(value),
+                      style: theme.bodyMedium.override(
+                        fontFamily: theme.bodyMediumFamily,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.0,
+                        useGoogleFonts: !theme.bodyMediumIsCustom,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.calendar_today,
+                color: theme.primary,
+                size: 20.0,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGmdLegendItem({
+    required Color color,
+    required String label,
+    bool isLine = false,
+  }) {
+    final indicator = isLine
+        ? SizedBox(
+            width: 28.0,
+            height: 14.0,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(height: 2.0, color: color),
+                CircleAvatar(radius: 5.0, backgroundColor: color),
+              ],
+            ),
+          )
+        : Container(
+            width: 12.0,
+            height: 12.0,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(3.0),
+            ),
+          );
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        indicator,
+        const SizedBox(width: 6.0),
+        Text(
+          label,
+          style: FlutterFlowTheme.of(context).bodySmall.override(
+                fontFamily: FlutterFlowTheme.of(context).bodySmallFamily,
+                letterSpacing: 0.0,
+                useGoogleFonts: !FlutterFlowTheme.of(context).bodySmallIsCustom,
+              ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGmdComboChart(List<_GmdEvolutionPoint> pontos) {
+    final theme = FlutterFlowTheme.of(context);
+    final allPesagens = <HistoricoPesagensStruct>[
+      pontos.first.previous,
+      ...pontos.map((ponto) => ponto.current),
+    ];
+    final n = allPesagens.length;
+    final pesos = allPesagens.map(_pesagemPeso).withoutNulls.toList();
+    final maxPesoRaw = pesos.reduce((a, b) => a > b ? a : b);
+    final maxPesoBar = maxPesoRaw <= 0 ? 1.0 : maxPesoRaw * 1.3;
+    final gmdValues = pontos.map((ponto) => ponto.gmd).withoutNulls.toList();
+    final minGmd = gmdValues.reduce((a, b) => a < b ? a : b);
+    final maxGmd = gmdValues.reduce((a, b) => a > b ? a : b);
+    var minY = minGmd < 0 ? minGmd * 1.5 : -0.15;
+    var maxY = maxGmd > 0 ? maxGmd * 1.4 : 0.5;
+    if (minY >= maxY) {
+      minY = -0.5;
+      maxY = 1.0;
+    }
+
+    const leftReserved = 52.0;
+    const rightReserved = 54.0;
+    const bottomReserved = 62.0;
+    const labelStyle = TextStyle(fontSize: 10.0, color: Color(0xFF8E8E8E));
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final barWidth =
+            ((constraints.maxWidth - leftReserved - rightReserved) / n * 0.5)
+                .clamp(14.0, 48.0);
+        final minChartWidth = n * 90.0 + leftReserved + rightReserved;
+        final chartWidth = minChartWidth > constraints.maxWidth
+            ? minChartWidth
+            : constraints.maxWidth;
+
+        final barGroups = allPesagens.asMap().entries.map((entry) {
+          final peso = _pesagemPeso(entry.value) ?? 0.0;
+          return BarChartGroupData(
+            x: entry.key,
+            barRods: [
+              BarChartRodData(
+                toY: peso,
+                color: theme.primary.withValues(alpha: 0.8),
+                width: barWidth,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(4.0)),
+              ),
+            ],
+            showingTooltipIndicators: [0],
+          );
+        }).toList();
+
+        final gmdSpots = pontos
+            .asMap()
+            .entries
+            .map(
+                (entry) => FlSpot((entry.key + 1).toDouble(), entry.value.gmd!))
+            .toList();
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SizedBox(
+            width: chartWidth,
+            height: 340.0,
+            child: Stack(
+              children: [
+                BarChart(
+                  BarChartData(
+                    alignment: BarChartAlignment.spaceAround,
+                    minY: 0,
+                    maxY: maxPesoBar,
+                    barGroups: barGroups,
+                    barTouchData: BarTouchData(
+                      enabled: false,
+                      touchTooltipData: BarTouchTooltipData(
+                        getTooltipColor: (_) => Colors.transparent,
+                        tooltipPadding: EdgeInsets.zero,
+                        tooltipMargin: 6.0,
+                        getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                          return BarTooltipItem(
+                            '${rod.toY.toInt()} kg',
+                            TextStyle(
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.w700,
+                              color: theme.primary,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    titlesData: FlTitlesData(
+                      leftTitles: const AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: false,
+                          reservedSize: leftReserved,
+                        ),
+                      ),
+                      rightTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: rightReserved,
+                          getTitlesWidget: (value, meta) {
+                            if (value == meta.max || value == meta.min) {
+                              return const SizedBox.shrink();
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 6.0),
+                              child: Text(
+                                value.toInt().toString(),
+                                style:
+                                    labelStyle.copyWith(color: theme.primary),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: bottomReserved,
+                          getTitlesWidget: (value, meta) {
+                            final idx = value.round();
+                            if (idx < 0 || idx >= n) {
+                              return const SizedBox.shrink();
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Transform.rotate(
+                                angle: -0.55,
+                                child: Text(
+                                  _formatGmdAxisDate(
+                                      _parsePesagemDate(allPesagens[idx])),
+                                  style: labelStyle,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    gridData: FlGridData(
+                      show: true,
+                      drawVerticalLine: false,
+                      getDrawingHorizontalLine: (_) => const FlLine(
+                        color: Color(0xFFE0E0E0),
+                        strokeWidth: 1.0,
+                      ),
+                    ),
+                    borderData: FlBorderData(
+                      show: true,
+                      border: const Border(
+                        left: BorderSide(color: Color(0xFFE0E0E0)),
+                        bottom: BorderSide(color: Color(0xFFE0E0E0)),
+                        right: BorderSide(color: Color(0xFFE0E0E0)),
+                      ),
+                    ),
+                  ),
+                ),
+                LineChart(
+                  LineChartData(
+                    minX: -0.5,
+                    maxX: n - 0.5,
+                    minY: minY,
+                    maxY: maxY,
+                    backgroundColor: Colors.transparent,
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: gmdSpots,
+                        isCurved: true,
+                        curveSmoothness: 0.2,
+                        color: theme.success,
+                        barWidth: 2.5,
+                        isStrokeCapRound: true,
+                        preventCurveOverShooting: true,
+                        belowBarData: BarAreaData(show: false),
+                        dotData: FlDotData(
+                          show: true,
+                          getDotPainter: (spot, percent, barData, index) {
+                            final gmd = gmdSpots[index].y;
+                            return _GmdLabelDotPainter(
+                              value: gmd,
+                              color: _gmdColor(gmd),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                    lineTouchData: LineTouchData(
+                      enabled: true,
+                      handleBuiltInTouches: true,
+                      touchTooltipData: LineTouchTooltipData(
+                        fitInsideHorizontally: true,
+                        fitInsideVertically: true,
+                        maxContentWidth: 160.0,
+                        tooltipPadding: const EdgeInsets.symmetric(
+                          horizontal: 12.0,
+                          vertical: 8.0,
+                        ),
+                        getTooltipColor: (_) => Colors.black87,
+                        getTooltipItems: (touchedSpots) {
+                          return touchedSpots.map((spot) {
+                            final index = spot.x.toInt() - 1;
+                            if (index < 0 || index >= pontos.length) {
+                              return null;
+                            }
+                            final ponto = pontos[index];
+                            return LineTooltipItem(
+                              '${_formatGmdAxisDate(ponto.currentDate)}\n'
+                              'GMD: ${_formatSignedKgDia(ponto.gmd)}\n'
+                              'Peso: ${_formatKg(_pesagemPeso(ponto.current))}\n'
+                              '${ponto.diasAvaliados} dias',
+                              const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            );
+                          }).toList();
+                        },
+                      ),
+                    ),
+                    titlesData: FlTitlesData(
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: leftReserved,
+                          getTitlesWidget: (value, meta) {
+                            if (value == meta.max || value == meta.min) {
+                              return const SizedBox.shrink();
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 6.0),
+                              child: Text(
+                                value.toStringAsFixed(2).replaceAll('.', ','),
+                                style: labelStyle,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: false,
+                          reservedSize: rightReserved,
+                        ),
+                      ),
+                      topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      bottomTitles: const AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: false,
+                          reservedSize: bottomReserved,
+                        ),
+                      ),
+                    ),
+                    gridData: const FlGridData(show: false),
+                    extraLinesData: ExtraLinesData(
+                      horizontalLines: [
+                        HorizontalLine(
+                          y: 0.0,
+                          color: theme.accent3.withValues(alpha: 0.5),
+                          strokeWidth: 1.5,
+                          dashArray: [6, 4],
+                        ),
+                      ],
+                    ),
+                    borderData: FlBorderData(show: false),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGmdStatCard({
+    required Widget icon,
+    required String label,
+    required String value,
+    required Color valueColor,
+    String? subValue,
+  }) {
+    final theme = FlutterFlowTheme.of(context);
+
+    return SizedBox(
+      width: double.infinity,
+      height: 80.0,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
+        decoration: BoxDecoration(
+          color: theme.customColor8,
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(color: theme.alternate),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            icon,
+            const SizedBox(width: 10.0),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.bodySmall.override(
+                      fontFamily: theme.bodySmallFamily,
+                      color: theme.accent3,
+                      letterSpacing: 0.0,
+                      useGoogleFonts: !theme.bodySmallIsCustom,
+                    ),
+                  ),
+                  Text(
+                    value,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.bodyMedium.override(
+                      fontFamily: theme.bodyMediumFamily,
+                      color: valueColor,
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.0,
+                      useGoogleFonts: !theme.bodyMediumIsCustom,
+                    ),
+                  ),
+                  if (subValue != null)
+                    Text(
+                      subValue,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.bodySmall.override(
+                        fontFamily: theme.bodySmallFamily,
+                        color: theme.accent3,
+                        letterSpacing: 0.0,
+                        useGoogleFonts: !theme.bodySmallIsCustom,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGmdSummary(List<_GmdEvolutionPoint> pontos) {
+    final gmdVals = pontos.map((ponto) => ponto.gmd).withoutNulls.toList();
+    final gmdMedio = gmdVals.isEmpty
+        ? null
+        : gmdVals.reduce((a, b) => a + b) / gmdVals.length;
+    final firstPesagem = pontos.first.previous;
+    final lastPesagem = pontos.last.current;
+    final pesoInicial = _pesagemPeso(firstPesagem);
+    final pesoAtual = _pesagemPeso(lastPesagem);
+    final variacaoPeso = pesoInicial != null && pesoAtual != null
+        ? pesoAtual - pesoInicial
+        : null;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildGmdStatCard(
+          icon: Icon(Icons.show_chart, color: _gmdColor(gmdMedio), size: 26.0),
+          label: 'GMD médio geral',
+          value: _formatSignedKgDia(gmdMedio),
+          valueColor: _gmdColor(gmdMedio),
+        ),
+        _buildGmdStatCard(
+          icon: Icon(
+            Icons.monitor_weight_outlined,
+            color: FlutterFlowTheme.of(context).primary,
+            size: 26.0,
+          ),
+          label: 'Peso inicial',
+          value: _formatKg(pesoInicial),
+          valueColor: FlutterFlowTheme.of(context).primary,
+          subValue: _formatGmdAxisDate(_parsePesagemDate(firstPesagem)),
+        ),
+        _buildGmdStatCard(
+          icon: Icon(
+            Icons.monitor_weight,
+            color: FlutterFlowTheme.of(context).primary,
+            size: 26.0,
+          ),
+          label: 'Peso atual',
+          value: _formatKg(pesoAtual),
+          valueColor: FlutterFlowTheme.of(context).primary,
+          subValue: _formatGmdAxisDate(_parsePesagemDate(lastPesagem)),
+        ),
+        _buildGmdStatCard(
+          icon: Icon(
+            variacaoPeso != null && variacaoPeso < 0
+                ? Icons.trending_down
+                : Icons.trending_up,
+            color: _gmdColor(variacaoPeso),
+            size: 26.0,
+          ),
+          label: 'Variação de peso',
+          value: variacaoPeso != null
+              ? '${variacaoPeso > 0 ? '+' : ''}${variacaoPeso.toStringAsFixed(2).replaceAll('.', ',')} kg'
+              : '-',
+          valueColor: _gmdColor(variacaoPeso),
+          subValue:
+              '(${_formatGmdAxisDate(_parsePesagemDate(firstPesagem))} a ${_formatGmdAxisDate(_parsePesagemDate(lastPesagem))})',
+        ),
+      ].divide(const SizedBox(height: 12.0)),
+    );
+  }
+
+  Widget _buildGmdInfoMessage(String message) {
+    final theme = FlutterFlowTheme.of(context);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: theme.customColor7,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: theme.success.withValues(alpha: 0.35)),
+      ),
+      child: Text(
+        message,
+        style: theme.bodyMedium.override(
+          fontFamily: theme.bodyMediumFamily,
+          color: theme.primaryText,
+          letterSpacing: 0.0,
+          useGoogleFonts: !theme.bodyMediumIsCustom,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGmdCard(List<HistoricoPesagensStruct> pesagens) {
+    final theme = FlutterFlowTheme.of(context);
+    final pontos = _buildGmdEvolution(pesagens);
+    final dataInicial = pontos.isNotEmpty
+        ? _dateOnly(_model.gmdDataInicial ?? pontos.first.currentDate)
+        : null;
+    final dataFinal = pontos.isNotEmpty
+        ? _dateOnly(_model.gmdDataFinal ?? pontos.last.currentDate)
+        : null;
+    final periodoInvalido = dataInicial != null &&
+        dataFinal != null &&
+        dataFinal.isBefore(dataInicial);
+    final pontosFiltrados = periodoInvalido
+        ? <_GmdEvolutionPoint>[]
+        : _filterGmdChartPoints(pontos)
+            .where((ponto) => ponto.calculavel)
+            .toList();
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: theme.secondaryBackground,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: theme.alternate),
+      ),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Evolução do GMD e do peso',
+            style: theme.bodyMedium.override(
+              fontFamily: theme.bodyMediumFamily,
+              fontSize: 17.0,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.0,
+              useGoogleFonts: !theme.bodyMediumIsCustom,
+            ),
+          ),
+          const SizedBox(height: 4.0),
+          Text(
+            'Acompanhe o ganho médio diário e a evolução do peso nas pesagens realizadas.',
+            style: theme.bodySmall.override(
+              fontFamily: theme.bodySmallFamily,
+              color: theme.accent3,
+              letterSpacing: 0.0,
+              useGoogleFonts: !theme.bodySmallIsCustom,
+            ),
+          ),
+          const SizedBox(height: 16.0),
+          Wrap(
+            spacing: 12.0,
+            runSpacing: 12.0,
+            children: [
+              _buildGmdDateFilter(
+                label: 'Data inicial',
+                value: dataInicial,
+                onTap: () => _pickGmdDate(isStart: true, pesagens: pesagens),
+              ),
+              _buildGmdDateFilter(
+                label: 'Data final',
+                value: dataFinal,
+                onTap: () => _pickGmdDate(isStart: false, pesagens: pesagens),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16.0),
+          Wrap(
+            spacing: 16.0,
+            runSpacing: 8.0,
+            children: [
+              _buildGmdLegendItem(
+                color: theme.success,
+                label: 'GMD (kg/d)',
+                isLine: true,
+              ),
+              _buildGmdLegendItem(
+                color: theme.primary,
+                label: 'Peso (kg)',
+              ),
+            ],
+          ),
+          const SizedBox(height: 16.0),
+          if (pontos.isEmpty)
+            _buildGmdInfoMessage(
+              'É necessário ter pelo menos duas pesagens com data e peso para montar a evolução do GMD.',
+            )
+          else if (periodoInvalido)
+            _buildGmdInfoMessage(
+              'A data final deve ser igual ou posterior à data inicial.',
+            )
+          else if (pontosFiltrados.isEmpty)
+            _buildGmdInfoMessage(
+              'Não há pontos de GMD calculáveis no período selecionado.',
+            )
+          else ...[
+            _buildGmdComboChart(pontosFiltrados),
+            const SizedBox(height: 16.0),
+            _buildGmdSummary(pontosFiltrados),
+          ],
+        ],
+      ),
+    );
   }
 
   @override
@@ -2085,7 +2978,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                 TextEditingController(
                                                                           text:
                                                                               valueOrDefault<String>(
-                                                                            () { final v = containerBuscarRebanhoRowList.firstOrNull?.pesoNascimento; return v == null ? null : (v == v.truncateToDouble() ? v.toInt().toString() : v.toString()); }(),
+                                                                            () {
+                                                                              final v = containerBuscarRebanhoRowList.firstOrNull?.pesoNascimento;
+                                                                              return v == null ? null : (v == v.truncateToDouble() ? v.toInt().toString() : v.toString());
+                                                                            }(),
                                                                             'N/A',
                                                                           ),
                                                                         ),
@@ -4066,7 +4962,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               TextEditingController(
                                                                         text: valueOrDefault<
                                                                             String>(
-                                                                          () { final v = containerBuscarRebanhoRowList.firstOrNull?.pesoDesmama; return v == null ? null : (v == v.truncateToDouble() ? v.toInt().toString() : v.toString()); }(),
+                                                                          () {
+                                                                            final v =
+                                                                                containerBuscarRebanhoRowList.firstOrNull?.pesoDesmama;
+                                                                            return v == null
+                                                                                ? null
+                                                                                : (v == v.truncateToDouble() ? v.toInt().toString() : v.toString());
+                                                                          }(),
                                                                           'N/A',
                                                                         ),
                                                                       ),
@@ -4474,7 +5376,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               TextEditingController(
                                                                         text: valueOrDefault<
                                                                             String>(
-                                                                          () { final v = containerBuscarRebanhoRowList.firstOrNull?.pesoAtual; return v == null ? null : (v == v.truncateToDouble() ? v.toInt().toString() : v.toString()); }(),
+                                                                          () {
+                                                                            final v =
+                                                                                containerBuscarRebanhoRowList.firstOrNull?.pesoAtual;
+                                                                            return v == null
+                                                                                ? null
+                                                                                : (v == v.truncateToDouble() ? v.toInt().toString() : v.toString());
+                                                                          }(),
                                                                           'N/A',
                                                                         ),
                                                                       ),
@@ -4797,17 +5705,16 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .tertiary,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .tertiary,
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w600,
                                                           useGoogleFonts:
-                                                              !FlutterFlowTheme.of(
-                                                                      context)
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
                                                                   .bodyMediumIsCustom,
                                                         ),
                                                   ),
@@ -4847,8 +5754,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                     0.0,
                                                                     0.0),
                                                             child: SizedBox(
-                                                              width:
-                                                                  double.infinity,
+                                                              width: double
+                                                                  .infinity,
                                                               child:
                                                                   TextFormField(
                                                                 controller: _model
@@ -4859,14 +5766,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               ?.dataVenda !=
                                                                           null
                                                                       ? (dateTimeFormat(
-                                                                              'dd/MM/yyyy',
-                                                                              functions.converterParaData(
-                                                                                  containerBuscarRebanhoRowList
-                                                                                      .firstOrNull
-                                                                                      ?.dataVenda),
-                                                                              locale: FFLocalizations.of(context).languageCode,
-                                                                            ) 
-                                                                          )
+                                                                          'dd/MM/yyyy',
+                                                                          functions.converterParaData(containerBuscarRebanhoRowList
+                                                                              .firstOrNull
+                                                                              ?.dataVenda),
+                                                                          locale:
+                                                                              FFLocalizations.of(context).languageCode,
+                                                                        ))
                                                                       : 'N/A',
                                                                 ),
                                                                 focusNode: _model
@@ -4982,8 +5888,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                       ],
                                                     ),
                                                   ),
-                                                ].divide(
-                                                    const SizedBox(height: 8.0)),
+                                                ].divide(const SizedBox(
+                                                    height: 8.0)),
                                               ),
                                             if (containerBuscarRebanhoRowList
                                                     .firstOrNull
@@ -5004,17 +5910,16 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .tertiary,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .tertiary,
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w600,
                                                           useGoogleFonts:
-                                                              !FlutterFlowTheme.of(
-                                                                      context)
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
                                                                   .bodyMediumIsCustom,
                                                         ),
                                                   ),
@@ -5054,8 +5959,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                     0.0,
                                                                     0.0),
                                                             child: SizedBox(
-                                                              width:
-                                                                  double.infinity,
+                                                              width: double
+                                                                  .infinity,
                                                               child:
                                                                   TextFormField(
                                                                 controller: _model
@@ -5065,14 +5970,17 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               .firstOrNull
                                                                               ?.valorVenda !=
                                                                           null
-                                                                      ? NumberFormat.currency(
-                                                                              locale: 'pt_BR',
-                                                                              symbol: 'R\$ ',
-                                                                              decimalDigits: 2,
-                                                                            ).format(
-                                                                              containerBuscarRebanhoRowList
-                                                                                  .firstOrNull
-                                                                                  ?.valorVenda)
+                                                                      ? NumberFormat
+                                                                          .currency(
+                                                                          locale:
+                                                                              'pt_BR',
+                                                                          symbol:
+                                                                              'R\$ ',
+                                                                          decimalDigits:
+                                                                              2,
+                                                                        ).format(containerBuscarRebanhoRowList
+                                                                          .firstOrNull
+                                                                          ?.valorVenda)
                                                                       : 'N/A',
                                                                 ),
                                                                 focusNode: _model
@@ -5188,8 +6096,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                       ],
                                                     ),
                                                   ),
-                                                ].divide(
-                                                    const SizedBox(height: 8.0)),
+                                                ].divide(const SizedBox(
+                                                    height: 8.0)),
                                               ),
                                             if (containerBuscarRebanhoRowList
                                                     .firstOrNull
@@ -5210,17 +6118,16 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .tertiary,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .tertiary,
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w600,
                                                           useGoogleFonts:
-                                                              !FlutterFlowTheme.of(
-                                                                      context)
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
                                                                   .bodyMediumIsCustom,
                                                         ),
                                                   ),
@@ -5260,8 +6167,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                     0.0,
                                                                     0.0),
                                                             child: SizedBox(
-                                                              width:
-                                                                  double.infinity,
+                                                              width: double
+                                                                  .infinity,
                                                               child:
                                                                   TextFormField(
                                                                 controller: _model
@@ -5272,13 +6179,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               ?.dataMorte !=
                                                                           null
                                                                       ? (dateTimeFormat(
-                                                                              'dd/MM/yyyy',
-                                                                              functions.converterParaData(
-                                                                                  containerBuscarRebanhoRowList
-                                                                                      .firstOrNull
-                                                                                      ?.dataMorte),
-                                                                              locale: FFLocalizations.of(context).languageCode,
-                                                                            ))
+                                                                          'dd/MM/yyyy',
+                                                                          functions.converterParaData(containerBuscarRebanhoRowList
+                                                                              .firstOrNull
+                                                                              ?.dataMorte),
+                                                                          locale:
+                                                                              FFLocalizations.of(context).languageCode,
+                                                                        ))
                                                                       : 'N/A',
                                                                 ),
                                                                 focusNode: _model
@@ -5394,8 +6301,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                       ],
                                                     ),
                                                   ),
-                                                ].divide(
-                                                    const SizedBox(height: 8.0)),
+                                                ].divide(const SizedBox(
+                                                    height: 8.0)),
                                               ),
                                             if (containerBuscarRebanhoRowList
                                                     .firstOrNull
@@ -5416,17 +6323,16 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                               FlutterFlowTheme.of(
                                                                       context)
                                                                   .bodyMediumFamily,
-                                                          color:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .tertiary,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .tertiary,
                                                           fontSize: 16.0,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w600,
                                                           useGoogleFonts:
-                                                              !FlutterFlowTheme.of(
-                                                                      context)
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
                                                                   .bodyMediumIsCustom,
                                                         ),
                                                   ),
@@ -5466,8 +6372,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                     0.0,
                                                                     0.0),
                                                             child: SizedBox(
-                                                              width:
-                                                                  double.infinity,
+                                                              width: double
+                                                                  .infinity,
                                                               child:
                                                                   TextFormField(
                                                                 controller: _model
@@ -5475,9 +6381,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                     TextEditingController(
                                                                   text: valueOrDefault<
                                                                               String>(
-                                                                            containerBuscarRebanhoRowList
-                                                                                .firstOrNull
-                                                                                ?.motivoMorte,
+                                                                            containerBuscarRebanhoRowList.firstOrNull?.motivoMorte,
                                                                             'N/A',
                                                                           ) ==
                                                                           'null'
@@ -5603,8 +6507,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                       ],
                                                     ),
                                                   ),
-                                                ].divide(
-                                                    const SizedBox(height: 8.0)),
+                                                ].divide(const SizedBox(
+                                                    height: 8.0)),
                                               ),
                                             Column(
                                               mainAxisSize: MainAxisSize.max,
@@ -6296,8 +7200,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                               return const Center(
                                                 child: SizedBox(
                                                   height: 250.0,
-                                                  child:
-                                                      EmptyCriasWidget(),
+                                                  child: EmptyCriasWidget(),
                                                 ),
                                               );
                                             }
@@ -7020,212 +7923,266 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                 .toList()
                                                                 .sortedList(
                                                                     keyOf: (e) =>
-                                                                        functions
-                                                                            .converterParaData(e.dataPesagem) ?? DateTime(1900),
+                                                                        functions.converterParaData(e
+                                                                            .dataPesagem) ??
+                                                                        DateTime(
+                                                                            1900),
                                                                     desc: true)
                                                                 .toList();
-                                                            if (pesagem
-                                                                .isEmpty) {
-                                                              return const Center(
-                                                                child:
-                                                                    EmptyPesagemWidget(),
-                                                              );
-                                                            }
-
-                                                            return ListView
-                                                                .builder(
+                                                            final gmdPorPesagemId =
+                                                                _buildGmdByPesagemId(
+                                                                    pesagem);
+                                                            return ListView(
                                                               padding:
                                                                   EdgeInsets
                                                                       .zero,
-                                                              scrollDirection:
-                                                                  Axis.vertical,
-                                                              itemCount: pesagem
-                                                                  .length,
-                                                              itemBuilder: (context,
-                                                                  pesagemIndex) {
-                                                                final pesagemItem =
-                                                                    pesagem[
-                                                                        pesagemIndex];
-                                                                return Container(
-                                                                  width: double
-                                                                      .infinity,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .secondaryBackground,
-                                                                  ),
-                                                                  child: Column(
-                                                                    mainAxisSize:
-                                                                        MainAxisSize
-                                                                            .min,
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      Padding(
-                                                                        padding: const EdgeInsetsDirectional
-                                                                            .fromSTEB(
-                                                                            24.0,
-                                                                            12.0,
-                                                                            24.0,
-                                                                            12.0),
+                                                              children: [
+                                                                if (pesagem
+                                                                    .isEmpty)
+                                                                  const SizedBox(
+                                                                    height:
+                                                                        200.0,
+                                                                    child:
+                                                                        Center(
+                                                                      child:
+                                                                          EmptyPesagemWidget(),
+                                                                    ),
+                                                                  )
+                                                                else
+                                                                  ListView
+                                                                      .builder(
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .zero,
+                                                                    shrinkWrap:
+                                                                        true,
+                                                                    physics:
+                                                                        const NeverScrollableScrollPhysics(),
+                                                                    scrollDirection:
+                                                                        Axis.vertical,
+                                                                    itemCount:
+                                                                        pesagem
+                                                                            .length,
+                                                                    itemBuilder:
+                                                                        (context,
+                                                                            pesagemIndex) {
+                                                                      final pesagemItem =
+                                                                          pesagem[
+                                                                              pesagemIndex];
+                                                                      final gmdPonto = pesagemItem
+                                                                              .hasId()
+                                                                          ? gmdPorPesagemId[
+                                                                              pesagemItem.id]
+                                                                          : null;
+                                                                      return Container(
+                                                                        width: double
+                                                                            .infinity,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).secondaryBackground,
+                                                                        ),
                                                                         child:
-                                                                            Row(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.max,
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceBetween,
-                                                                          children: [
                                                                             Column(
-                                                                              mainAxisSize: MainAxisSize.min,
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: [
-                                                                                Text(
-                                                                                  '${valueOrDefault<String>(
-                                                                                    pesagemItem.peso == pesagemItem.peso.truncateToDouble() ? pesagemItem.peso.toInt().toString() : pesagemItem.peso.toString(),
-                                                                                    '0',
-                                                                                  )} KG',
-                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                        color: const Color(0xFF474747),
-                                                                                        fontSize: 16.0,
-                                                                                        letterSpacing: 0.0,
-                                                                                        fontWeight: FontWeight.w500,
-                                                                                        useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
-                                                                                      ),
-                                                                                ),
-                                                                                Text(
-                                                                                  dateTimeFormat(
-                                                                                    "d/M/y",
-                                                                                    functions.converterParaData(pesagemItem.dataPesagem),
-                                                                                    locale: FFLocalizations.of(context).languageCode,
-                                                                                  ),
-                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                        color: const Color(0xFF5F5F5F),
-                                                                                        letterSpacing: 0.0,
-                                                                                        useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
-                                                                                      ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                            if (pesagemItem.tipo ==
-                                                                                'Nascimento')
-                                                                              Container(
-                                                                                width: 100.0,
-                                                                                height: 24.0,
-                                                                                decoration: BoxDecoration(
-                                                                                  color: const Color(0xFFB1CC29),
-                                                                                  borderRadius: BorderRadius.circular(4.0),
-                                                                                ),
-                                                                                child: Align(
-                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
-                                                                                  child: Text(
-                                                                                    'Nascimento',
-                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                          color: Colors.white,
-                                                                                          letterSpacing: 0.0,
-                                                                                          useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.min,
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Padding(
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(24.0, 12.0, 24.0, 12.0),
+                                                                              child: Row(
+                                                                                mainAxisSize: MainAxisSize.max,
+                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                children: [
+                                                                                  Expanded(
+                                                                                    child: Column(
+                                                                                      mainAxisSize: MainAxisSize.min,
+                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                      children: [
+                                                                                        Text(
+                                                                                          '${valueOrDefault<String>(
+                                                                                            pesagemItem.peso == pesagemItem.peso.truncateToDouble() ? pesagemItem.peso.toInt().toString() : pesagemItem.peso.toString(),
+                                                                                            '0',
+                                                                                          )} KG',
+                                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                                color: const Color(0xFF474747),
+                                                                                                fontSize: 16.0,
+                                                                                                letterSpacing: 0.0,
+                                                                                                fontWeight: FontWeight.w500,
+                                                                                                useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                              ),
                                                                                         ),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            if (pesagemItem.tipo ==
-                                                                                'Desmama')
-                                                                              Container(
-                                                                                width: 100.0,
-                                                                                height: 24.0,
-                                                                                decoration: BoxDecoration(
-                                                                                  color: const Color(0xFFB1CC29),
-                                                                                  borderRadius: BorderRadius.circular(4.0),
-                                                                                ),
-                                                                                child: Align(
-                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
-                                                                                  child: Text(
-                                                                                    'Desmama',
-                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                          color: Colors.white,
-                                                                                          letterSpacing: 0.0,
-                                                                                          useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                        Text(
+                                                                                          dateTimeFormat(
+                                                                                            "d/M/y",
+                                                                                            functions.converterParaData(pesagemItem.dataPesagem),
+                                                                                            locale: FFLocalizations.of(context).languageCode,
+                                                                                          ),
+                                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                                color: const Color(0xFF5F5F5F),
+                                                                                                letterSpacing: 0.0,
+                                                                                                useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                              ),
                                                                                         ),
+                                                                                      ],
+                                                                                    ),
                                                                                   ),
-                                                                                ),
-                                                                              ),
-                                                                            InkWell(
-                                                                              splashColor: Colors.transparent,
-                                                                              focusColor: Colors.transparent,
-                                                                              hoverColor: Colors.transparent,
-                                                                              highlightColor: Colors.transparent,
-                                                                              onTap: () async {
-                                                                                var confirmDialogResponse = await showDialog<bool>(
-                                                                                      context: context,
-                                                                                      builder: (alertDialogContext) {
-                                                                                        return AlertDialog(
-                                                                                          title: const Text('Deletar pesagem'),
-                                                                                          content: const Text('Tem certeza que deseja deletar esta pesagem ?'),
-                                                                                          actions: [
-                                                                                            TextButton(
-                                                                                              onPressed: () => Navigator.pop(alertDialogContext, false),
-                                                                                              child: const Text('Não'),
-                                                                                            ),
-                                                                                            TextButton(
-                                                                                              onPressed: () => Navigator.pop(alertDialogContext, true),
-                                                                                              child: const Text('Sim'),
-                                                                                            ),
-                                                                                          ],
+                                                                                  if (pesagemItem.tipo == 'Nascimento')
+                                                                                    Container(
+                                                                                      width: 100.0,
+                                                                                      height: 24.0,
+                                                                                      decoration: BoxDecoration(
+                                                                                        color: const Color(0xFFB1CC29),
+                                                                                        borderRadius: BorderRadius.circular(4.0),
+                                                                                      ),
+                                                                                      child: Align(
+                                                                                        alignment: const AlignmentDirectional(0.0, 0.0),
+                                                                                        child: Text(
+                                                                                          'Nascimento',
+                                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                                color: Colors.white,
+                                                                                                letterSpacing: 0.0,
+                                                                                                useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                              ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  if (pesagemItem.tipo == 'Desmama')
+                                                                                    Container(
+                                                                                      width: 100.0,
+                                                                                      height: 24.0,
+                                                                                      decoration: BoxDecoration(
+                                                                                        color: const Color(0xFFB1CC29),
+                                                                                        borderRadius: BorderRadius.circular(4.0),
+                                                                                      ),
+                                                                                      child: Align(
+                                                                                        alignment: const AlignmentDirectional(0.0, 0.0),
+                                                                                        child: Text(
+                                                                                          'Desmama',
+                                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                                color: Colors.white,
+                                                                                                letterSpacing: 0.0,
+                                                                                                useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                              ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                    child: Column(
+                                                                                      mainAxisSize: MainAxisSize.min,
+                                                                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                                                                      children: [
+                                                                                        Text(
+                                                                                          'GMD',
+                                                                                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                                                                fontFamily: FlutterFlowTheme.of(context).bodySmallFamily,
+                                                                                                color: FlutterFlowTheme.of(context).accent3,
+                                                                                                fontSize: 11.0,
+                                                                                                letterSpacing: 0.0,
+                                                                                                useGoogleFonts: !FlutterFlowTheme.of(context).bodySmallIsCustom,
+                                                                                              ),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          _formatSignedKgDia(gmdPonto?.gmd),
+                                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                                color: _gmdColor(gmdPonto?.gmd),
+                                                                                                fontSize: 13.0,
+                                                                                                letterSpacing: 0.0,
+                                                                                                fontWeight: FontWeight.w600,
+                                                                                                useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                              ),
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                  InkWell(
+                                                                                    splashColor: Colors.transparent,
+                                                                                    focusColor: Colors.transparent,
+                                                                                    hoverColor: Colors.transparent,
+                                                                                    highlightColor: Colors.transparent,
+                                                                                    onTap: () async {
+                                                                                      var confirmDialogResponse = await showDialog<bool>(
+                                                                                            context: context,
+                                                                                            builder: (alertDialogContext) {
+                                                                                              return AlertDialog(
+                                                                                                title: const Text('Deletar pesagem'),
+                                                                                                content: const Text('Tem certeza que deseja deletar esta pesagem ?'),
+                                                                                                actions: [
+                                                                                                  TextButton(
+                                                                                                    onPressed: () => Navigator.pop(alertDialogContext, false),
+                                                                                                    child: const Text('Não'),
+                                                                                                  ),
+                                                                                                  TextButton(
+                                                                                                    onPressed: () => Navigator.pop(alertDialogContext, true),
+                                                                                                    child: const Text('Sim'),
+                                                                                                  ),
+                                                                                                ],
+                                                                                              );
+                                                                                            },
+                                                                                          ) ??
+                                                                                          false;
+                                                                                      if (confirmDialogResponse) {
+                                                                                        await SQLiteManager.instance.deletePesagem(
+                                                                                          idRebanho: pesagemItem.idRebanho,
+                                                                                          idPesagem: pesagemItem.id,
                                                                                         );
-                                                                                      },
-                                                                                    ) ??
-                                                                                    false;
-                                                                                if (confirmDialogResponse) {
-                                                                                  await SQLiteManager.instance.deletePesagem(
-                                                                                    idRebanho: pesagemItem.idRebanho,
-                                                                                    idPesagem: pesagemItem.id,
-                                                                                  );
-                                                                                  FFAppState().removeFromHistPesagens(HistoricoPesagensStruct(
-                                                                                    id: pesagemItem.id,
-                                                                                    idRebanho: pesagemItem.idRebanho,
-                                                                                    dataPesagem: pesagemItem.dataPesagem,
-                                                                                    tipo: pesagemItem.tipo,
-                                                                                    peso: pesagemItem.peso,
-                                                                                    deletado: pesagemItem.deletado,
-                                                                                    createdAt: pesagemItem.createdAt,
-                                                                                  ));
-                                                                                  await _refreshPesoAtualEDataUltimaPesagem();
-                                                                                  safeSetState(() {});
-                                                                                  if (!(FFAppState().dataDadosNaoSyncProp == null)) {
-                                                                                    FFAppState().dataDadosNaoSyncProp = getCurrentTimestamp;
-                                                                                    safeSetState(() {});
-                                                                                  }
-                                                                                }
-                                                                              },
-                                                                              child: FaIcon(
-                                                                                FontAwesomeIcons.trashAlt,
-                                                                                color: FlutterFlowTheme.of(context).error,
-                                                                                size: 16.0,
+                                                                                        FFAppState().removeFromHistPesagens(HistoricoPesagensStruct(
+                                                                                          id: pesagemItem.id,
+                                                                                          idRebanho: pesagemItem.idRebanho,
+                                                                                          dataPesagem: pesagemItem.dataPesagem,
+                                                                                          tipo: pesagemItem.tipo,
+                                                                                          peso: pesagemItem.peso,
+                                                                                          deletado: pesagemItem.deletado,
+                                                                                          createdAt: pesagemItem.createdAt,
+                                                                                        ));
+                                                                                        await _refreshPesoAtualEDataUltimaPesagem();
+                                                                                        safeSetState(() {});
+                                                                                        if (!(FFAppState().dataDadosNaoSyncProp == null)) {
+                                                                                          FFAppState().dataDadosNaoSyncProp = getCurrentTimestamp;
+                                                                                          safeSetState(() {});
+                                                                                        }
+                                                                                      }
+                                                                                    },
+                                                                                    child: FaIcon(
+                                                                                      FontAwesomeIcons.trashAlt,
+                                                                                      color: FlutterFlowTheme.of(context).error,
+                                                                                      size: 16.0,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
                                                                               ),
+                                                                            ),
+                                                                            const Divider(
+                                                                              height: 1.0,
+                                                                              thickness: 1.0,
+                                                                              color: Color(0xFFEDEDED),
                                                                             ),
                                                                           ],
                                                                         ),
-                                                                      ),
-                                                                      const Divider(
-                                                                        height:
-                                                                            1.0,
-                                                                        thickness:
-                                                                            1.0,
-                                                                        color: Color(
-                                                                            0xFFEDEDED),
-                                                                      ),
-                                                                    ],
+                                                                      );
+                                                                    },
                                                                   ),
-                                                                );
-                                                              },
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
+                                                                          24.0,
+                                                                          16.0,
+                                                                          24.0,
+                                                                          16.0),
+                                                                  child: _buildGmdCard(
+                                                                      pesagem),
+                                                                ),
+                                                              ],
                                                             );
                                                           },
                                                         ),
@@ -7324,7 +8281,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                   numAnimal: containerBuscarRebanhoRowList
                                       .firstOrNull?.numeroAnimal,
                                   createdAt: containerBuscarRebanhoRowList
-                                      .firstOrNull!.createdAt ?? '',
+                                          .firstOrNull!.createdAt ??
+                                      '',
                                   idRebanho: widget.idRebanho,
                                 ),
                               ),
@@ -7515,8 +8473,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                       children:
                                                                           [
                                                                         if (sanidadesItem.vacinacao != null &&
-                                                                            sanidadesItem.vacinacao != '' &&
-                                                                            sanidadesItem.vacinacao != 'null')
+                                                                            sanidadesItem.vacinacao !=
+                                                                                '' &&
+                                                                            sanidadesItem.vacinacao !=
+                                                                                'null')
                                                                           SingleChildScrollView(
                                                                             scrollDirection:
                                                                                 Axis.horizontal,
@@ -7584,8 +8544,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             ),
                                                                           ),
                                                                         if (sanidadesItem.antiparasitario != null &&
-                                                                            sanidadesItem.antiparasitario != '' &&
-                                                                            sanidadesItem.antiparasitario != 'null')
+                                                                            sanidadesItem.antiparasitario !=
+                                                                                '' &&
+                                                                            sanidadesItem.antiparasitario !=
+                                                                                'null')
                                                                           SingleChildScrollView(
                                                                             scrollDirection:
                                                                                 Axis.horizontal,
@@ -7652,9 +8614,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               ].divide(const SizedBox(width: 3.0)),
                                                                             ),
                                                                           ),
-                                                                        if (sanidadesItem.protocoloReprodutivo != null &&
-                                                                            sanidadesItem.protocoloReprodutivo != '' &&
-                                                                            sanidadesItem.protocoloReprodutivo != 'null' &&
+                                                                        if (sanidadesItem.protocoloReprodutivo !=
+                                                                                null &&
+                                                                            sanidadesItem.protocoloReprodutivo !=
+                                                                                '' &&
+                                                                            sanidadesItem.protocoloReprodutivo !=
+                                                                                'null' &&
                                                                             responsiveVisibility(
                                                                               context: context,
                                                                               phone: false,
@@ -7726,8 +8691,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             ),
                                                                           ),
                                                                         if (sanidadesItem.tratamento != null &&
-                                                                            sanidadesItem.tratamento != '' &&
-                                                                            sanidadesItem.tratamento != 'null')
+                                                                            sanidadesItem.tratamento !=
+                                                                                '' &&
+                                                                            sanidadesItem.tratamento !=
+                                                                                'null')
                                                                           SingleChildScrollView(
                                                                             scrollDirection:
                                                                                 Axis.horizontal,
@@ -7795,8 +8762,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                             ),
                                                                           ),
                                                                         if (sanidadesItem.protocoloReprodutivo != null &&
-                                                                            sanidadesItem.protocoloReprodutivo != '' &&
-                                                                            sanidadesItem.protocoloReprodutivo != 'null')
+                                                                            sanidadesItem.protocoloReprodutivo !=
+                                                                                '' &&
+                                                                            sanidadesItem.protocoloReprodutivo !=
+                                                                                'null')
                                                                           SingleChildScrollView(
                                                                             scrollDirection:
                                                                                 Axis.horizontal,

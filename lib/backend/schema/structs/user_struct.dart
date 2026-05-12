@@ -13,12 +13,14 @@ class UserStruct extends BaseStruct {
     String? id,
     String? telefone,
     String? permissao,
+    String? acesso,
   })  : _nome = nome,
         _email = email,
         _foto = foto,
         _id = id,
         _telefone = telefone,
-        _permissao = permissao;
+        _permissao = permissao,
+        _acesso = acesso;
 
   // "nome" field.
   String? _nome;
@@ -62,6 +64,13 @@ class UserStruct extends BaseStruct {
 
   bool hasPermissao() => _permissao != null;
 
+  // "acesso" field.
+  String? _acesso;
+  String get acesso => _acesso ?? '';
+  set acesso(String? val) => _acesso = val;
+
+  bool hasAcesso() => _acesso != null;
+
   static UserStruct fromMap(Map<String, dynamic> data) => UserStruct(
         nome: data['nome'] as String?,
         email: data['email'] as String?,
@@ -69,6 +78,7 @@ class UserStruct extends BaseStruct {
         id: data['id'] as String?,
         telefone: data['telefone'] as String?,
         permissao: data['permissao'] as String?,
+        acesso: data['acesso'] as String?,
       );
 
   static UserStruct? maybeFromMap(dynamic data) =>
@@ -81,6 +91,7 @@ class UserStruct extends BaseStruct {
         'id': _id,
         'telefone': _telefone,
         'permissao': _permissao,
+        'acesso': _acesso,
       }.withoutNulls;
 
   @override
@@ -107,6 +118,10 @@ class UserStruct extends BaseStruct {
         ),
         'permissao': serializeParam(
           _permissao,
+          ParamType.String,
+        ),
+        'acesso': serializeParam(
+          _acesso,
           ParamType.String,
         ),
       }.withoutNulls;
@@ -143,6 +158,11 @@ class UserStruct extends BaseStruct {
           ParamType.String,
           false,
         ),
+        acesso: deserializeParam(
+          data['acesso'],
+          ParamType.String,
+          false,
+        ),
       );
 
   @override
@@ -156,12 +176,13 @@ class UserStruct extends BaseStruct {
         foto == other.foto &&
         id == other.id &&
         telefone == other.telefone &&
-        permissao == other.permissao;
+        permissao == other.permissao &&
+        acesso == other.acesso;
   }
 
   @override
-  int get hashCode =>
-      const ListEquality().hash([nome, email, foto, id, telefone, permissao]);
+  int get hashCode => const ListEquality()
+      .hash([nome, email, foto, id, telefone, permissao, acesso]);
 }
 
 UserStruct createUserStruct({
@@ -171,6 +192,7 @@ UserStruct createUserStruct({
   String? id,
   String? telefone,
   String? permissao,
+  String? acesso,
 }) =>
     UserStruct(
       nome: nome,
@@ -179,4 +201,5 @@ UserStruct createUserStruct({
       id: id,
       telefone: telefone,
       permissao: permissao,
+      acesso: acesso,
     );

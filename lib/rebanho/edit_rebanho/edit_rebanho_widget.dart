@@ -6156,6 +6156,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   }
                                                 }
 
+                                                await Future.wait([
+                                                  action_blocks
+                                                      .animaisPropriedade(
+                                                          context),
+                                                  action_blocks
+                                                      .animaisRegistrados(
+                                                          context),
+                                                ]);
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   SnackBar(

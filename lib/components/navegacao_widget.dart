@@ -348,6 +348,13 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                     );
                                     final acesso =
                                         _model.userLogado?.firstOrNull?.acesso;
+                                    if (await action_blocks
+                                        .blockIfAccountCanceled(
+                                      context,
+                                      refreshFromServer: true,
+                                    )) {
+                                      return;
+                                    }
                                     if (acesso != 'Pago' &&
                                         acesso != 'Gratis') {
                                       FFAppState().clearUserData();
@@ -598,7 +605,11 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       hoverColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () async {
-                        if (_model.temNet!) {
+                        await action_blocks.blockIfAccountCanceled(
+                          context,
+                          refreshFromServer: _model.temNet == true,
+                        );
+                        if (_model.temNet == true) {
                           FFAppState().navegacaoDashboard = 'painel';
                           _model.updatePage(() {});
                           if (Scaffold.of(context).isDrawerOpen ||
@@ -710,6 +721,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       hoverColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () async {
+                        if (await action_blocks.blockIfAccountCanceled(
+                          context,
+                          refreshFromServer: _model.temNet == true,
+                        )) {
+                          return;
+                        }
                         FFAppState().navegacaoDashboard = 'propriedades';
                         FFAppState().pagePropriedades = 'home';
                         _model.updatePage(() {});
@@ -815,6 +832,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       hoverColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () async {
+                        if (await action_blocks.blockIfAccountCanceled(
+                          context,
+                          refreshFromServer: _model.temNet == true,
+                        )) {
+                          return;
+                        }
                         await action_blocks.countLotesAtivoInativo(context);
                         FFAppState().navegacaoDashboard = 'lotes';
                         _model.updatePage(() {});
@@ -918,6 +941,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       hoverColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () async {
+                        if (await action_blocks.blockIfAccountCanceled(
+                          context,
+                          refreshFromServer: _model.temNet == true,
+                        )) {
+                          return;
+                        }
                         FFAppState().navegacaoDashboard = 'rebanhos';
                         _model.updatePage(() {});
                         await action_blocks.animaisPropriedade(context);
@@ -1021,6 +1050,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       hoverColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () async {
+                        if (await action_blocks.blockIfAccountCanceled(
+                          context,
+                          refreshFromServer: _model.temNet == true,
+                        )) {
+                          return;
+                        }
                         await action_blocks.qTDReproducoes(context);
                         FFAppState().navegacaoDashboard = 'reproducoes';
                         _model.updatePage(() {});
@@ -1126,6 +1161,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       hoverColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () async {
+                        if (await action_blocks.blockIfAccountCanceled(
+                          context,
+                          refreshFromServer: _model.temNet == true,
+                        )) {
+                          return;
+                        }
                         FFAppState().navegacaoDashboard = 'sanidade';
                         _model.updatePage(() {});
                         unawaited(
@@ -1244,6 +1285,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
+                          if (await action_blocks.blockIfAccountCanceled(
+                            context,
+                            refreshFromServer: _model.temNet == true,
+                          )) {
+                            return;
+                          }
                           FFAppState().navegacaoDashboard = 'piquetes';
                           _model.updatePage(() {});
                           if (Scaffold.of(context).isDrawerOpen ||
@@ -1359,6 +1406,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                         hoverColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () async {
+                          if (await action_blocks.blockIfAccountCanceled(
+                            context,
+                            refreshFromServer: _model.temNet == true,
+                          )) {
+                            return;
+                          }
                           FFAppState().navegacaoDashboard = 'pastagem';
                           _model.updatePage(() {});
                           if (Scaffold.of(context).isDrawerOpen ||
@@ -1470,6 +1523,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       hoverColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () async {
+                        if (await action_blocks.blockIfAccountCanceled(
+                          context,
+                          refreshFromServer: _model.temNet == true,
+                        )) {
+                          return;
+                        }
                         FFAppState().navegacaoDashboard = 'minhaconta';
                         _model.updatePage(() {});
                         if (Scaffold.of(context).isDrawerOpen ||
@@ -1559,6 +1618,12 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                 currentUserUid,
                               ),
                             );
+                            if (await action_blocks.blockIfAccountCanceled(
+                              context,
+                              refreshFromServer: true,
+                            )) {
+                              return;
+                            }
                             if ((_model.userLogado?.firstOrNull?.acesso ==
                                     'Pago') ||
                                 (_model.userLogado?.firstOrNull?.acesso ==

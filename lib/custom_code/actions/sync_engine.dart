@@ -1,5 +1,7 @@
 // Automatic FlutterFlow imports
 import '/actions/actions.dart' as action_blocks;
+import '/auth/supabase_auth/auth_util.dart';
+import '/backend/sqlite/sqlite_manager.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 // Imports other custom actions
 // (none)
@@ -117,6 +119,15 @@ class SyncEngine {
       }
     }
 
+    if (await action_blocks.blockIfAccountCanceled(
+      context,
+      refreshFromServer: true,
+      showDialog: trigger != SyncTrigger.autoReconnect,
+    )) {
+      debugPrint('[SYNC][engine] Sync bloqueado por acesso cancelado.');
+      return const SyncResult(cancelled: true);
+    }
+
     _active = true;
     final state = FFAppState();
     state.isSyncing = true;
@@ -196,9 +207,18 @@ class SyncEngine {
     void Function(int, String) emit,
   ) async {
     final state = FFAppState();
+    final hasDirtyRebanho =
+        await SQLiteManager.instance.hasRebanhoDirtyLocalForUser(
+      userID: currentUserUid,
+    );
+    final hasDirtyLotes = await SQLiteManager.instance.hasLoteDirtyLocalForUser(
+      userID: currentUserUid,
+    );
     final hasPendingProp = state.dataDadosNaoSyncProp != null;
-    final hasPendingRebanho = state.dataDadosNaoSyncRebanho != null;
-    final hasPendingLotes = state.dataDadosNaoSyncLotes != null;
+    final hasPendingRebanho =
+        state.dataDadosNaoSyncRebanho != null || hasDirtyRebanho;
+    final hasPendingLotes =
+        state.dataDadosNaoSyncLotes != null || hasDirtyLotes;
     final hasPendingRepro = state.dataDadosNaoSyncRepro != null;
     final hasPendingSanidade = state.dataDadosNaoSyncSanidade != null;
     final hasAnyPending = hasPendingProp ||
@@ -209,7 +229,8 @@ class SyncEngine {
 
     debugPrint('[SYNC][engine] Pendentes: prop=$hasPendingProp, '
         'rebanhos=$hasPendingRebanho, lotes=$hasPendingLotes, '
-        'repro=$hasPendingRepro, sanidade=$hasPendingSanidade.');
+        'repro=$hasPendingRepro, sanidade=$hasPendingSanidade, '
+        'dirty_rebanho=$hasDirtyRebanho, dirty_lotes=$hasDirtyLotes.');
 
     // ───── PUSH phase ─────
     var propOk = true;
@@ -447,7 +468,22 @@ class SyncEngine {
 /// Wrapper retro-compatível usado pelo listener de connectivity em
 /// `home_page_widget`. Equivalente a `SyncEngine.instance.run(trigger=auto)`.
 Future<void> performAutoSync(BuildContext context) async {
+  if (await action_blocks.blockIfAccountCanceled(
+    context,
+    refreshFromServer: true,
+  )) {
+    debugPrint('[SYNC][auto] Sync bloqueado por acesso cancelado.');
+    return;
+  }
+
   final state = FFAppState();
+  final hasDirtyRebanho =
+      await SQLiteManager.instance.hasRebanhoDirtyLocalForUser(
+    userID: currentUserUid,
+  );
+  final hasDirtyLotes = await SQLiteManager.instance.hasLoteDirtyLocalForUser(
+    userID: currentUserUid,
+  );
 
   // Verificar se há algo para sincronizar — auto-sync NÃO faz PULL puro
   // (isso continua sendo responsabilidade do home_page initial load).
@@ -455,7 +491,9 @@ Future<void> performAutoSync(BuildContext context) async {
       state.dataDadosNaoSyncRebanho != null ||
       state.dataDadosNaoSyncLotes != null ||
       state.dataDadosNaoSyncRepro != null ||
-      state.dataDadosNaoSyncSanidade != null;
+      state.dataDadosNaoSyncSanidade != null ||
+      hasDirtyRebanho ||
+      hasDirtyLotes;
   if (!hasPending) {
     debugPrint('[SYNC][auto] Nenhum dado pendente para auto-sync.');
     return;

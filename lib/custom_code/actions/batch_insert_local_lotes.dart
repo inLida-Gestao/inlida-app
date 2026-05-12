@@ -8,9 +8,8 @@ import 'dart:convert';
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
-import 'package:sqflite/sqflite.dart';
-
-Future<Map<String, dynamic>> batchInsertLocalLotes(List<dynamic> records) async {
+Future<Map<String, dynamic>> batchInsertLocalLotes(
+    List<dynamic> records) async {
   if (records.isEmpty) {
     return {'inserted': 0, 'errors': <Map<String, String>>[]};
   }
@@ -24,80 +23,142 @@ Future<Map<String, dynamic>> batchInsertLocalLotes(List<dynamic> records) async 
       final Map<String, dynamic> source = Map<String, dynamic>.from(records[i]);
       final Map<String, dynamic> mapped = {};
 
-        if (source['id_propriedade'] != null) {
-          mapped['id_propriedade'] = _cleanNull(source['id_propriedade']);
-        }
-        if (source['id_animais'] != null) {
-          mapped['id_animais'] = _cleanNull(source['id_animais']);
-        }
-        if (source['nome'] != null) {
-          mapped['nome'] = _cleanNull(source['nome']);
-        }
-        if (source['anotacoes'] != null) {
-          mapped['anotacoes'] = _cleanNull(source['anotacoes']);
-        }
-        if (source['ativo'] != null) {
-          mapped['ativo'] = _cleanNull(source['ativo']);
-        }
-        if (source['motivo'] != null) {
-          mapped['motivo'] = _cleanNull(source['motivo']);
-        }
-        if (source['data_motivo'] != null) {
-          mapped['data_motivo'] = _cleanNull(source['data_motivo'].toString());
-        }
-        if (source['id_lote'] != null) {
-          mapped['id_lote'] = _cleanNull(source['id_lote']);
-        }
-        if (source['deletado'] != null) {
-          mapped['deletado'] = _cleanNull(source['deletado']);
-        }
-        if (source['created_at'] != null) {
-          mapped['created_at'] = _cleanNull(source['created_at'].toString());
-        }
-        if (source['updated_at'] != null) {
-          mapped['updated_at'] = _cleanNull(source['updated_at'].toString());
-        }
-        if (source['valorVenda'] != null) {
-          mapped['valorVenda'] = source['valorVenda'];
-        }
-        if (source['data_entrada_piquete'] != null) {
-          mapped['data_entrada_piquete'] =
-              _cleanNull(source['data_entrada_piquete'].toString());
-        }
-        if (source['data_saida_piquete'] != null) {
-          mapped['data_saida_piquete'] =
-              _cleanNull(source['data_saida_piquete'].toString());
-        }
+      if (source.containsKey('id_propriedade')) {
+        mapped['id_propriedade'] = _cleanNull(source['id_propriedade']);
+      }
+      if (source.containsKey('id_animais')) {
+        mapped['id_animais'] = _cleanNull(source['id_animais']);
+      }
+      if (source.containsKey('nome')) {
+        mapped['nome'] = _cleanNull(source['nome']);
+      }
+      if (source.containsKey('anotacoes')) {
+        mapped['anotacoes'] = _cleanNull(source['anotacoes']);
+      }
+      if (source.containsKey('ativo')) {
+        mapped['ativo'] = _cleanNull(source['ativo']);
+      }
+      if (source.containsKey('motivo')) {
+        mapped['motivo'] = _cleanNull(source['motivo']);
+      }
+      if (source.containsKey('data_motivo')) {
+        mapped['data_motivo'] = _cleanNull(source['data_motivo']?.toString());
+      }
+      if (source.containsKey('id_lote')) {
+        mapped['id_lote'] = _cleanNull(source['id_lote']);
+      }
+      if (source.containsKey('deletado')) {
+        mapped['deletado'] = _cleanNull(source['deletado']);
+      }
+      if (source.containsKey('created_at')) {
+        mapped['created_at'] = _cleanNull(source['created_at']?.toString());
+      }
+      if (source.containsKey('updated_at')) {
+        mapped['updated_at'] = _cleanNull(source['updated_at']?.toString());
+      }
+      if (source.containsKey('valorVenda')) {
+        mapped['valorVenda'] = source['valorVenda'];
+      }
+      if (source.containsKey('data_entrada_piquete')) {
+        mapped['data_entrada_piquete'] =
+            _cleanNull(source['data_entrada_piquete']?.toString());
+      }
+      if (source.containsKey('data_saida_piquete')) {
+        mapped['data_saida_piquete'] =
+            _cleanNull(source['data_saida_piquete']?.toString());
+      }
+      mapped['sync_dirty'] = 0;
+      mapped['sync_op'] = null;
+      mapped['sync_updated_at'] = null;
 
       mappedRecords.add(mapped);
     } catch (e) {
-      final id = (records[i] is Map ? records[i]['id_lote']?.toString() : null) ?? 'desconhecido';
+      final id =
+          (records[i] is Map ? records[i]['id_lote']?.toString() : null) ??
+              'desconhecido';
       errors.add({'id': id, 'error': 'Erro ao mapear: $e'});
     }
   }
 
-  // Fase 2: Tentar batch insert
+  // Fase 2: Fazer upsert manual por id_lote. Não depender de UNIQUE INDEX:
+  // bases antigas podem já ter duplicatas, fazendo o índice falhar.
   try {
     final db = SQLiteManager.instance.database;
+    int insertedCount = 0;
     await db.transaction((txn) async {
-      final batch = txn.batch();
       for (final mapped in mappedRecords) {
-        batch.insert('local_lotes', mapped,
-            conflictAlgorithm: ConflictAlgorithm.replace);
+        final idLote = mapped['id_lote']?.toString().trim();
+        if (idLote == null || idLote.isEmpty || idLote == 'null') {
+          errors.add({
+            'id': 'desconhecido',
+            'error': 'Registro de lote remoto sem id_lote',
+          });
+          continue;
+        }
+
+        final existingRows = await txn.query(
+          'local_lotes',
+          columns: ['id'],
+          where: 'id_lote = ?',
+          whereArgs: [idLote],
+          orderBy: 'id DESC',
+        );
+
+        if (existingRows.isEmpty) {
+          await txn.insert('local_lotes', mapped);
+          insertedCount++;
+          continue;
+        }
+
+        final keepId = existingRows.first['id'];
+        await txn.update(
+          'local_lotes',
+          mapped,
+          where: 'id = ?',
+          whereArgs: [keepId],
+        );
+        insertedCount++;
+
+        if (existingRows.length > 1) {
+          final duplicateIds = existingRows
+              .skip(1)
+              .map((row) => row['id'])
+              .whereType<int>()
+              .toList();
+          if (duplicateIds.isNotEmpty) {
+            final placeholders =
+                List.filled(duplicateIds.length, '?').join(',');
+            await txn.delete(
+              'local_lotes',
+              where: 'id IN ($placeholders)',
+              whereArgs: duplicateIds,
+            );
+          }
+        }
       }
-      await batch.commit(noResult: true);
     });
-    return {'inserted': mappedRecords.length, 'errors': errors};
+    return {'inserted': insertedCount, 'errors': errors};
   } catch (batchError) {
     debugPrint(
-        '[SYNC][lotes] Batch falhou ($batchError). Inserindo individualmente...');
+        '[SYNC][lotes] Upsert transacional falhou ($batchError). Inserindo individualmente...');
     final db = SQLiteManager.instance.database;
     int insertedCount = 0;
 
     for (final mapped in mappedRecords) {
       try {
-        await db.insert('local_lotes', mapped,
-            conflictAlgorithm: ConflictAlgorithm.replace);
+        final idLote = mapped['id_lote']?.toString().trim();
+        if (idLote == null || idLote.isEmpty || idLote == 'null') {
+          throw StateError('Registro de lote remoto sem id_lote');
+        }
+        final updated = await db.update(
+          'local_lotes',
+          mapped,
+          where: 'id_lote = ?',
+          whereArgs: [idLote],
+        );
+        if (updated == 0) {
+          await db.insert('local_lotes', mapped);
+        }
         insertedCount++;
       } catch (e) {
         final id = mapped['id_lote']?.toString() ?? 'desconhecido';
