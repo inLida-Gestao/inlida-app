@@ -12,6 +12,7 @@ import '/actions/actions.dart' as action_blocks;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -2626,14 +2627,7 @@ class _EditReproducaoRebanhoWidgetState
                                                       TextCapitalization
                                                           .characters,
                                                   inputFormatters: [
-                                                    TextInputFormatter
-                                                        .withFunction(
-                                                      (oldValue, newValue) =>
-                                                          newValue.copyWith(
-                                                        text: newValue.text
-                                                            .toUpperCase(),
-                                                      ),
-                                                    ),
+                                                    TextInputFormatter.withFunction((old, val) => val.copyWith(text: val.text.toUpperCase())),
                                                   ],
                                                   decoration: InputDecoration(
                                                     isDense: true,
