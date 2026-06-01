@@ -1522,12 +1522,6 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                       hoverColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () async {
-                        if (await action_blocks.blockIfAccountCanceled(
-                          context,
-                          refreshFromServer: _model.temNet == true,
-                        )) {
-                          return;
-                        }
                         FFAppState().navegacaoDashboard = 'minhaconta';
                         _model.updatePage(() {});
                         if (Scaffold.of(context).isDrawerOpen ||
