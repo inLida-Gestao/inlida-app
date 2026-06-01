@@ -2251,6 +2251,17 @@ class _AddReproducaoRebanhoWidgetState
                                                 onEditingComplete,
                                             autofocus: false,
                                             obscureText: false,
+                                            textCapitalization:
+                                          TextCapitalization.characters,
+                                            inputFormatters: [
+                                              TextInputFormatter.withFunction(
+                                          (oldValue, newValue) =>
+                                              newValue.copyWith(
+                                            text: newValue.text
+                                                .toUpperCase(),
+                                          ),
+                                              ),
+                                            ],
                                             decoration: InputDecoration(
                                               hintText: 'Informe um nome',
                                               hintStyle: FlutterFlowTheme.of(

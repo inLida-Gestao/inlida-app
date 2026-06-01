@@ -3092,6 +3092,19 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                       .textFieldInseminadorFocusNode,
                                                   autofocus: false,
                                                   obscureText: false,
+                                                  textCapitalization:
+                                                      TextCapitalization
+                                                          .characters,
+                                                  inputFormatters: [
+                                                    TextInputFormatter
+                                                        .withFunction(
+                                                      (oldValue, newValue) =>
+                                                          newValue.copyWith(
+                                                        text: newValue.text
+                                                            .toUpperCase(),
+                                                      ),
+                                                    ),
+                                                  ],
                                                   decoration: InputDecoration(
                                                     isDense: true,
                                                     labelStyle:
