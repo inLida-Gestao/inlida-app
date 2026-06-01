@@ -1395,33 +1395,53 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                             }
 
                                             FFAppState().clearUserData();
-                                            final user = await authManager
-                                                .createAccountWithEmail(
-                                              context,
-                                              _model.emailTextController.text,
-                                              _model.senhaTextController.text,
-                                            );
-                                            if (user == null) {
+                                            try {
+                                              final authResponse =
+                                                  await SupaFlow.client.auth
+                                                      .signUp(
+                                                email: _model
+                                                    .emailTextController.text,
+                                                password: _model
+                                                    .senhaTextController.text,
+                                                data: {
+                                                  'nome': _model
+                                                      .nomeTextController.text,
+                                                  'telefone': _model
+                                                      .telefoneTextController
+                                                      .text,
+                                                  'termos':
+                                                      _model.checkboxValue,
+                                                  'funcao': _model.funcaoValue,
+                                                },
+                                              );
+                                              if (authResponse.user == null) {
+                                                return;
+                                              }
+                                              final user = await authManager
+                                                  .signInWithEmail(
+                                                context,
+                                                _model.emailTextController.text,
+                                                _model.senhaTextController.text,
+                                              );
+                                              if (user == null) {
+                                                return;
+                                              }
+                                              if (context.mounted) {
+                                                context.pushNamedAuth(
+                                                    HomePageWidget.routeName,
+                                                    context.mounted);
+                                              }
+                                            } on AuthException catch (e) {
+                                              ScaffoldMessenger.of(context)
+                                                  .hideCurrentSnackBar();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Error: ${e.message}'),
+                                                ),
+                                              );
                                               return;
-                                            }
-
-                                            await UsersTable().insert({
-                                              'nome': _model
-                                                  .nomeTextController.text,
-                                              'email': _model
-                                                  .emailTextController.text,
-                                              'telefone': _model
-                                                  .telefoneTextController.text,
-                                              'termos': _model.checkboxValue,
-                                              'userID': currentUserUid,
-                                              'funcao': _model.funcaoValue,
-                                              'acesso': 'Gratis',
-                                            });
-
-                                            if (context.mounted) {
-                                              context.pushNamedAuth(
-                                                  HomePageWidget.routeName,
-                                                  context.mounted);
                                             }
                                           },
                                           text: 'Criar Conta',
