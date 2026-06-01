@@ -79,7 +79,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         acesso: _model.userLogadoON?.firstOrNull?.acesso,
       );
       safeSetState(() {});
-      if (action_blocks
+      final _userExists = (_model.userLogadoON?.isNotEmpty ?? false);
+      if (!_userExists) {
+        // Usuário autenticado mas sem registro na tabela users ainda
+        // (ex: cadastro incompleto). Redireciona sem mensagem de erro.
+        FFAppState().clearUserData();
+        GoRouter.of(context).prepareAuthEvent();
+        await authManager.signOut();
+        GoRouter.of(context).clearRedirectLocation();
+        navigate = () =>
+            context.goNamedAuth(TelaInicioWidget.routeName, context.mounted);
+      } else if (action_blocks
           .isAccountAccessCanceled(_model.userLogadoON?.firstOrNull?.acesso)) {
         FFAppState().update(() {
           FFAppState().navegacaoDashboard = 'painel';
