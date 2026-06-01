@@ -1418,18 +1418,10 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                               'acesso': 'Gratis',
                                             });
 
-                                            // Deslogar e exibir tela de confirmação
-                                            // aguardando contato do time comercial.
-                                            GoRouter.of(context)
-                                                .prepareAuthEvent();
-                                            await authManager.signOut();
-                                            GoRouter.of(context)
-                                                .clearRedirectLocation();
-
                                             if (context.mounted) {
-                                              context.goNamed(
-                                                  CadastroConcluidoWidget
-                                                      .routeName);
+                                              context.pushNamedAuth(
+                                                  HomePageWidget.routeName,
+                                                  context.mounted);
                                             }
                                           },
                                           text: 'Criar Conta',
