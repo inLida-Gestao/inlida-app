@@ -1306,10 +1306,11 @@ Future<List<BuscarLotesRow>> performBuscarLotes(
   final safeId =
       idPropriedade?.contains(',') == true ? idPropriedade : "'$idPropriedade'";
   final query = '''
-SELECT * FROM local_lotes
+SELECT id_lote, nome, id_animais FROM local_lotes
 WHERE ativo = 'Ativo'
 AND deletado = 'NAO'
 AND id_propriedade IN ($safeId)
+ORDER BY nome COLLATE NOCASE
 ''';
   return _readQuery(database, query, (d) => BuscarLotesRow(d));
 }

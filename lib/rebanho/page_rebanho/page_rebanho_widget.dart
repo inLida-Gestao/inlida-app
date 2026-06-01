@@ -1,5 +1,6 @@
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
+import '/backend/utils/lote_dropdown_utils.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -192,18 +193,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
       idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
     );
 
-    FFAppState().rebanhoLotesSelecionar = [];
+    FFAppState().rebanhoLotesSelecionar = buildRebanhoLoteOptions(lotesData);
     safeSetState(() {});
-
-    if (lotesData.isNotEmpty) {
-      for (final lote in lotesData) {
-        FFAppState().addToRebanhoLotesSelecionar(LocalLotesStruct(
-          idLote: lote.idLote,
-          nome: lote.nome,
-        ));
-      }
-      safeSetState(() {});
-    }
 
     if (!ctx.mounted) return;
 
@@ -1460,39 +1451,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         .idPropriedade,
                                                               );
                                                               FFAppState()
-                                                                  .rebanhoLotesSelecionar = [];
+                                                                      .rebanhoLotesSelecionar =
+                                                                  buildRebanhoLoteOptions(
+                                                                      _model
+                                                                          .lotes);
                                                               safeSetState(
                                                                   () {});
-                                                              if (_model.lotes!
-                                                                  .isNotEmpty) {
-                                                                while (_model
-                                                                        .index <
-                                                                    _model
-                                                                        .lotes!
-                                                                        .length) {
-                                                                  FFAppState()
-                                                                      .addToRebanhoLotesSelecionar(
-                                                                          LocalLotesStruct(
-                                                                    idLote: _model
-                                                                        .lotes
-                                                                        ?.elementAtOrNull(
-                                                                            _model.index)
-                                                                        ?.idLote,
-                                                                    nome: _model
-                                                                        .lotes
-                                                                        ?.elementAtOrNull(
-                                                                            _model.index)
-                                                                        ?.nome,
-                                                                  ));
-                                                                  safeSetState(
-                                                                      () {});
-                                                                  _model.index =
-                                                                      _model.index +
-                                                                          1;
-                                                                  safeSetState(
-                                                                      () {});
-                                                                }
-                                                              }
                                                               await showDialog(
                                                                 barrierColor: Colors
                                                                     .transparent,
@@ -2365,39 +2329,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                       .idPropriedade,
                                                             );
                                                             FFAppState()
-                                                                .rebanhoLotesSelecionar = [];
+                                                                    .rebanhoLotesSelecionar =
+                                                                buildRebanhoLoteOptions(
+                                                                    _model
+                                                                        .lotes2);
                                                             safeSetState(() {});
-                                                            if (_model.lotes2!
-                                                                .isNotEmpty) {
-                                                              while (_model
-                                                                      .index <
-                                                                  _model.lotes2!
-                                                                      .length) {
-                                                                FFAppState()
-                                                                    .addToRebanhoLotesSelecionar(
-                                                                        LocalLotesStruct(
-                                                                  idLote: _model
-                                                                      .lotes2
-                                                                      ?.elementAtOrNull(
-                                                                          _model
-                                                                              .index)
-                                                                      ?.idLote,
-                                                                  nome: _model
-                                                                      .lotes2
-                                                                      ?.elementAtOrNull(
-                                                                          _model
-                                                                              .index)
-                                                                      ?.nome,
-                                                                ));
-                                                                safeSetState(
-                                                                    () {});
-                                                                _model.index =
-                                                                    _model.index +
-                                                                        1;
-                                                                safeSetState(
-                                                                    () {});
-                                                              }
-                                                            }
                                                             await showDialog(
                                                               barrierColor: Colors
                                                                   .transparent,
@@ -3301,39 +3237,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                       .idPropriedade,
                                                             );
                                                             FFAppState()
-                                                                .rebanhoLotesSelecionar = [];
+                                                                    .rebanhoLotesSelecionar =
+                                                                buildRebanhoLoteOptions(
+                                                                    _model
+                                                                        .lotes3);
                                                             safeSetState(() {});
-                                                            if (_model.lotes3!
-                                                                .isNotEmpty) {
-                                                              while (_model
-                                                                      .index <
-                                                                  _model.lotes3!
-                                                                      .length) {
-                                                                FFAppState()
-                                                                    .addToRebanhoLotesSelecionar(
-                                                                        LocalLotesStruct(
-                                                                  idLote: _model
-                                                                      .lotes3
-                                                                      ?.elementAtOrNull(
-                                                                          _model
-                                                                              .index)
-                                                                      ?.idLote,
-                                                                  nome: _model
-                                                                      .lotes3
-                                                                      ?.elementAtOrNull(
-                                                                          _model
-                                                                              .index)
-                                                                      ?.nome,
-                                                                ));
-                                                                safeSetState(
-                                                                    () {});
-                                                                _model.index =
-                                                                    _model.index +
-                                                                        1;
-                                                                safeSetState(
-                                                                    () {});
-                                                              }
-                                                            }
                                                             await showDialog(
                                                               barrierColor: Colors
                                                                   .transparent,
@@ -4237,39 +4145,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                       .idPropriedade,
                                                             );
                                                             FFAppState()
-                                                                .rebanhoLotesSelecionar = [];
+                                                                    .rebanhoLotesSelecionar =
+                                                                buildRebanhoLoteOptions(
+                                                                    _model
+                                                                        .lotes4);
                                                             safeSetState(() {});
-                                                            if (_model.lotes4!
-                                                                .isNotEmpty) {
-                                                              while (_model
-                                                                      .index <
-                                                                  _model.lotes4!
-                                                                      .length) {
-                                                                FFAppState()
-                                                                    .addToRebanhoLotesSelecionar(
-                                                                        LocalLotesStruct(
-                                                                  idLote: _model
-                                                                      .lotes4
-                                                                      ?.elementAtOrNull(
-                                                                          _model
-                                                                              .index)
-                                                                      ?.idLote,
-                                                                  nome: _model
-                                                                      .lotes4
-                                                                      ?.elementAtOrNull(
-                                                                          _model
-                                                                              .index)
-                                                                      ?.nome,
-                                                                ));
-                                                                safeSetState(
-                                                                    () {});
-                                                                _model.index =
-                                                                    _model.index +
-                                                                        1;
-                                                                safeSetState(
-                                                                    () {});
-                                                              }
-                                                            }
                                                             await showDialog(
                                                               barrierColor: Colors
                                                                   .transparent,
@@ -5173,39 +5053,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                       .idPropriedade,
                                                             );
                                                             FFAppState()
-                                                                .rebanhoLotesSelecionar = [];
+                                                                    .rebanhoLotesSelecionar =
+                                                                buildRebanhoLoteOptions(
+                                                                    _model
+                                                                        .lotes5);
                                                             safeSetState(() {});
-                                                            if (_model.lotes5!
-                                                                .isNotEmpty) {
-                                                              while (_model
-                                                                      .index <
-                                                                  _model.lotes5!
-                                                                      .length) {
-                                                                FFAppState()
-                                                                    .addToRebanhoLotesSelecionar(
-                                                                        LocalLotesStruct(
-                                                                  idLote: _model
-                                                                      .lotes5
-                                                                      ?.elementAtOrNull(
-                                                                          _model
-                                                                              .index)
-                                                                      ?.idLote,
-                                                                  nome: _model
-                                                                      .lotes5
-                                                                      ?.elementAtOrNull(
-                                                                          _model
-                                                                              .index)
-                                                                      ?.nome,
-                                                                ));
-                                                                safeSetState(
-                                                                    () {});
-                                                                _model.index =
-                                                                    _model.index +
-                                                                        1;
-                                                                safeSetState(
-                                                                    () {});
-                                                              }
-                                                            }
                                                             await showDialog(
                                                               barrierColor: Colors
                                                                   .transparent,
@@ -6109,39 +5961,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                       .idPropriedade,
                                                             );
                                                             FFAppState()
-                                                                .rebanhoLotesSelecionar = [];
+                                                                    .rebanhoLotesSelecionar =
+                                                                buildRebanhoLoteOptions(
+                                                                    _model
+                                                                        .lotes6);
                                                             safeSetState(() {});
-                                                            if (_model.lotes6!
-                                                                .isNotEmpty) {
-                                                              while (_model
-                                                                      .index <
-                                                                  _model.lotes6!
-                                                                      .length) {
-                                                                FFAppState()
-                                                                    .addToRebanhoLotesSelecionar(
-                                                                        LocalLotesStruct(
-                                                                  idLote: _model
-                                                                      .lotes6
-                                                                      ?.elementAtOrNull(
-                                                                          _model
-                                                                              .index)
-                                                                      ?.idLote,
-                                                                  nome: _model
-                                                                      .lotes6
-                                                                      ?.elementAtOrNull(
-                                                                          _model
-                                                                              .index)
-                                                                      ?.nome,
-                                                                ));
-                                                                safeSetState(
-                                                                    () {});
-                                                                _model.index =
-                                                                    _model.index +
-                                                                        1;
-                                                                safeSetState(
-                                                                    () {});
-                                                              }
-                                                            }
                                                             await showDialog(
                                                               barrierColor: Colors
                                                                   .transparent,
@@ -7045,39 +6869,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                       .idPropriedade,
                                                             );
                                                             FFAppState()
-                                                                .rebanhoLotesSelecionar = [];
+                                                                    .rebanhoLotesSelecionar =
+                                                                buildRebanhoLoteOptions(
+                                                                    _model
+                                                                        .lotes7);
                                                             safeSetState(() {});
-                                                            if (_model.lotes7!
-                                                                .isNotEmpty) {
-                                                              while (_model
-                                                                      .index <
-                                                                  _model.lotes7!
-                                                                      .length) {
-                                                                FFAppState()
-                                                                    .addToRebanhoLotesSelecionar(
-                                                                        LocalLotesStruct(
-                                                                  idLote: _model
-                                                                      .lotes7
-                                                                      ?.elementAtOrNull(
-                                                                          _model
-                                                                              .index)
-                                                                      ?.idLote,
-                                                                  nome: _model
-                                                                      .lotes7
-                                                                      ?.elementAtOrNull(
-                                                                          _model
-                                                                              .index)
-                                                                      ?.nome,
-                                                                ));
-                                                                safeSetState(
-                                                                    () {});
-                                                                _model.index =
-                                                                    _model.index +
-                                                                        1;
-                                                                safeSetState(
-                                                                    () {});
-                                                              }
-                                                            }
                                                             await showDialog(
                                                               barrierColor: Colors
                                                                   .transparent,
@@ -7976,40 +7772,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                 .idPropriedade,
                                                           );
                                                           FFAppState()
-                                                              .rebanhoLotesSelecionar = [];
+                                                                  .rebanhoLotesSelecionar =
+                                                              buildRebanhoLoteOptions(
+                                                                  _model
+                                                                      .lotesPesq);
                                                           safeSetState(() {});
-                                                          if (_model.lotesPesq!
-                                                              .isNotEmpty) {
-                                                            while (_model
-                                                                    .index <
-                                                                _model
-                                                                    .lotesPesq!
-                                                                    .length) {
-                                                              FFAppState()
-                                                                  .addToRebanhoLotesSelecionar(
-                                                                      LocalLotesStruct(
-                                                                idLote: _model
-                                                                    .lotesPesq
-                                                                    ?.elementAtOrNull(
-                                                                        _model
-                                                                            .index)
-                                                                    ?.idLote,
-                                                                nome: _model
-                                                                    .lotesPesq
-                                                                    ?.elementAtOrNull(
-                                                                        _model
-                                                                            .index)
-                                                                    ?.nome,
-                                                              ));
-                                                              safeSetState(
-                                                                  () {});
-                                                              _model.index =
-                                                                  _model.index +
-                                                                      1;
-                                                              safeSetState(
-                                                                  () {});
-                                                            }
-                                                          }
                                                           await showDialog(
                                                             barrierColor: Colors
                                                                 .transparent,

@@ -154,19 +154,8 @@ class FFAppState extends ChangeNotifier {
           prefs.getInt('ff_lotesCadastrados') ?? _lotesCadastrados;
     });
     _safeInit(() {
-      _rebanhoLotesSelecionar = prefs
-              .getStringList('ff_rebanhoLotesSelecionar')
-              ?.map((x) {
-                try {
-                  return LocalLotesStruct.fromSerializableMap(jsonDecode(x));
-                } catch (e) {
-                  print("Can't decode persisted data type. Error: $e.");
-                  return null;
-                }
-              })
-              .withoutNulls
-              .toList() ??
-          _rebanhoLotesSelecionar;
+      _rebanhoLotesSelecionar = [];
+      prefs.remove('ff_rebanhoLotesSelecionar');
     });
     _safeInit(() {
       _qtdVacinas = prefs.getInt('ff_qtdVacinas') ?? _qtdVacinas;
@@ -1369,26 +1358,18 @@ class FFAppState extends ChangeNotifier {
   List<LocalLotesStruct> get rebanhoLotesSelecionar => _rebanhoLotesSelecionar;
   set rebanhoLotesSelecionar(List<LocalLotesStruct> value) {
     _rebanhoLotesSelecionar = value;
-    prefs.setStringList(
-        'ff_rebanhoLotesSelecionar', value.map((x) => x.serialize()).toList());
   }
 
   void addToRebanhoLotesSelecionar(LocalLotesStruct value) {
     rebanhoLotesSelecionar.add(value);
-    prefs.setStringList('ff_rebanhoLotesSelecionar',
-        _rebanhoLotesSelecionar.map((x) => x.serialize()).toList());
   }
 
   void removeFromRebanhoLotesSelecionar(LocalLotesStruct value) {
     rebanhoLotesSelecionar.remove(value);
-    prefs.setStringList('ff_rebanhoLotesSelecionar',
-        _rebanhoLotesSelecionar.map((x) => x.serialize()).toList());
   }
 
   void removeAtIndexFromRebanhoLotesSelecionar(int index) {
     rebanhoLotesSelecionar.removeAt(index);
-    prefs.setStringList('ff_rebanhoLotesSelecionar',
-        _rebanhoLotesSelecionar.map((x) => x.serialize()).toList());
   }
 
   void updateRebanhoLotesSelecionarAtIndex(
@@ -1396,15 +1377,11 @@ class FFAppState extends ChangeNotifier {
     LocalLotesStruct Function(LocalLotesStruct) updateFn,
   ) {
     rebanhoLotesSelecionar[index] = updateFn(_rebanhoLotesSelecionar[index]);
-    prefs.setStringList('ff_rebanhoLotesSelecionar',
-        _rebanhoLotesSelecionar.map((x) => x.serialize()).toList());
   }
 
   void insertAtIndexInRebanhoLotesSelecionar(
       int index, LocalLotesStruct value) {
     rebanhoLotesSelecionar.insert(index, value);
-    prefs.setStringList('ff_rebanhoLotesSelecionar',
-        _rebanhoLotesSelecionar.map((x) => x.serialize()).toList());
   }
 
   String _filtroReproducao = '';

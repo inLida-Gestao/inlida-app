@@ -1,6 +1,7 @@
 import '/auth/supabase_auth/auth_util.dart';
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
+import '/backend/utils/lote_dropdown_utils.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/rebanho/add_rebanho/add_rebanho_widget.dart';
@@ -98,25 +99,9 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                           idPropriedade:
                               FFAppState().propriedadeSelecionada.idPropriedade,
                         );
-                        FFAppState().rebanhoLotesSelecionar = [];
-                        _model.index = 0;
+                        FFAppState().rebanhoLotesSelecionar =
+                            buildRebanhoLoteOptions(_model.lotesRebNasc);
                         safeSetState(() {});
-                        if (_model.lotesRebNasc!.isNotEmpty) {
-                          while (_model.index < _model.lotesRebNasc!.length) {
-                            FFAppState()
-                                .addToRebanhoLotesSelecionar(LocalLotesStruct(
-                              idLote: _model.lotesRebNasc
-                                  ?.elementAtOrNull(_model.index)
-                                  ?.idLote,
-                              nome: _model.lotesRebNasc
-                                  ?.elementAtOrNull(_model.index)
-                                  ?.nome,
-                            ));
-                            safeSetState(() {});
-                            _model.index = _model.index + 1;
-                            safeSetState(() {});
-                          }
-                        }
                         FFAppState().matrizSelecionada =
                             AnimalSelecionadoStruct.fromSerializableMap(
                                 jsonDecode('{}'));
@@ -211,25 +196,9 @@ class _SubMenuRebanhoWidgetState extends State<SubMenuRebanhoWidget> {
                           idPropriedade:
                               FFAppState().propriedadeSelecionada.idPropriedade,
                         );
-                        FFAppState().rebanhoLotesSelecionar = [];
-                        _model.index = 0;
+                        FFAppState().rebanhoLotesSelecionar =
+                            buildRebanhoLoteOptions(_model.lotesReb);
                         safeSetState(() {});
-                        if (_model.lotesReb!.isNotEmpty) {
-                          while (_model.index < _model.lotesReb!.length) {
-                            FFAppState()
-                                .addToRebanhoLotesSelecionar(LocalLotesStruct(
-                              idLote: _model.lotesReb
-                                  ?.elementAtOrNull(_model.index)
-                                  ?.idLote,
-                              nome: _model.lotesReb
-                                  ?.elementAtOrNull(_model.index)
-                                  ?.nome,
-                            ));
-                            safeSetState(() {});
-                            _model.index = _model.index + 1;
-                            safeSetState(() {});
-                          }
-                        }
                         FFAppState().matrizSelecionada =
                             AnimalSelecionadoStruct.fromSerializableMap(
                                 jsonDecode('{}'));

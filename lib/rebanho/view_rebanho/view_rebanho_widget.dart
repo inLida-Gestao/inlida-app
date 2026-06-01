@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import '/auth/supabase_auth/auth_util.dart';
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
+import '/backend/utils/lote_dropdown_utils.dart';
 import '/components/empty_crias_widget.dart';
 import '/components/empty_pesagem_widget.dart';
 import '/components/empty_sanidade_widget.dart';
@@ -4089,23 +4090,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                 .toList()),
                                                                           );
                                                                           FFAppState().rebanhoLotesSelecionar =
-                                                                              [];
+                                                                              buildRebanhoLoteOptions(_model.lotes);
                                                                           safeSetState(
                                                                               () {});
-                                                                          if (_model
-                                                                              .lotes!
-                                                                              .isNotEmpty) {
-                                                                            while (_model.index <
-                                                                                _model.lotes!.length) {
-                                                                              FFAppState().addToRebanhoLotesSelecionar(LocalLotesStruct(
-                                                                                idLote: _model.lotes?.elementAtOrNull(_model.index)?.idLote,
-                                                                                nome: _model.lotes?.elementAtOrNull(_model.index)?.nome,
-                                                                              ));
-                                                                              safeSetState(() {});
-                                                                              _model.index = _model.index + 1;
-                                                                              safeSetState(() {});
-                                                                            }
-                                                                          }
                                                                           final matrizIdRebanho = containerBuscarRebanhoRowList
                                                                               .firstOrNull
                                                                               ?.rebanhoIdMatriz;
@@ -4565,23 +4552,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                                 functions.converterLista(_model.propriedades2?.map((e) => e.idPropriedade).withoutNulls.toList().toList()),
                                                                           );
                                                                           FFAppState().rebanhoLotesSelecionar =
-                                                                              [];
+                                                                              buildRebanhoLoteOptions(_model.lotes2);
                                                                           safeSetState(
                                                                               () {});
-                                                                          if (_model
-                                                                              .lotes2!
-                                                                              .isNotEmpty) {
-                                                                            while (_model.index <
-                                                                                _model.lotes2!.length) {
-                                                                              FFAppState().addToRebanhoLotesSelecionar(LocalLotesStruct(
-                                                                                idLote: _model.lotes2?.elementAtOrNull(_model.index)?.idLote,
-                                                                                nome: _model.lotes2?.elementAtOrNull(_model.index)?.nome,
-                                                                              ));
-                                                                              safeSetState(() {});
-                                                                              _model.index = _model.index + 1;
-                                                                              safeSetState(() {});
-                                                                            }
-                                                                          }
                                                                           final reprodutorIdRebanho = containerBuscarRebanhoRowList
                                                                               .firstOrNull
                                                                               ?.rebanhoIdReprodutor;
@@ -7018,40 +6991,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           .idPropriedade,
                                                                 );
                                                                 FFAppState()
-                                                                    .rebanhoLotesSelecionar = [];
+                                                                        .rebanhoLotesSelecionar =
+                                                                    buildRebanhoLoteOptions(
+                                                                        _model
+                                                                            .lotesRebView);
                                                                 safeSetState(
                                                                     () {});
-                                                                if (_model
-                                                                    .lotesRebView!
-                                                                    .isNotEmpty) {
-                                                                  while (_model
-                                                                          .index <
-                                                                      _model
-                                                                          .lotesRebView!
-                                                                          .length) {
-                                                                    FFAppState()
-                                                                        .addToRebanhoLotesSelecionar(
-                                                                            LocalLotesStruct(
-                                                                      idLote: _model
-                                                                          .lotesRebView
-                                                                          ?.elementAtOrNull(
-                                                                              _model.index)
-                                                                          ?.idLote,
-                                                                      nome: _model
-                                                                          .lotesRebView
-                                                                          ?.elementAtOrNull(
-                                                                              _model.index)
-                                                                          ?.nome,
-                                                                    ));
-                                                                    safeSetState(
-                                                                        () {});
-                                                                    _model.index =
-                                                                        _model.index +
-                                                                            1;
-                                                                    safeSetState(
-                                                                        () {});
-                                                                  }
-                                                                }
                                                                 final navigator =
                                                                     Navigator.of(
                                                                         context);

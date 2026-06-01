@@ -1,5 +1,6 @@
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
+import '/backend/utils/lote_dropdown_utils.dart';
 import '/components/saiba_mais_b_t_widget.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -1760,27 +1761,16 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                             String>(
                                                       _model.dPLoteValue ??= '',
                                                     ),
-                                                    options: List<String>.from(
-                                                        (FFAppState()
-                                                                .rebanhoLotesSelecionar
-                                                                .toList()
-                                                              ..sort((a, b) => a
-                                                                  .nome
-                                                                  .toLowerCase()
-                                                                  .compareTo(b.nome
-                                                                      .toLowerCase())))
-                                                            .map(
-                                                                (e) => e.idLote)
-                                                            .toList()),
-                                                    optionLabels: (FFAppState()
-                                                            .rebanhoLotesSelecionar
-                                                            .toList()
-                                                          ..sort((a, b) => a.nome
-                                                              .toLowerCase()
-                                                              .compareTo(b.nome
-                                                                  .toLowerCase())))
-                                                        .map((e) => e.nome)
-                                                        .toList(),
+                                                    options:
+                                                        rebanhoLoteOptionValues(
+                                                      FFAppState()
+                                                          .rebanhoLotesSelecionar,
+                                                    ),
+                                                    optionLabels:
+                                                        rebanhoLoteOptionLabels(
+                                                      FFAppState()
+                                                          .rebanhoLotesSelecionar,
+                                                    ),
                                                     onChanged: (val) =>
                                                         safeSetState(() =>
                                                             _model.dPLoteValue =
@@ -5576,14 +5566,12 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         .languageCode,
                                                   )}',
                                                   loteID: _model.dPLoteValue,
-                                                  loteNome: FFAppState()
-                                                      .rebanhoLotesSelecionar
-                                                      .where((e) =>
-                                                          e.idLote ==
-                                                          _model.dPLoteValue)
-                                                      .toList()
-                                                      .firstOrNull
-                                                      ?.nome,
+                                                  loteNome:
+                                                      rebanhoLoteNomeById(
+                                                    FFAppState()
+                                                        .rebanhoLotesSelecionar,
+                                                    _model.dPLoteValue,
+                                                  ),
                                                   dataVenda: dateTimeFormat(
                                                     "yyyy-MM-dd",
                                                     _model.datePicked6,
