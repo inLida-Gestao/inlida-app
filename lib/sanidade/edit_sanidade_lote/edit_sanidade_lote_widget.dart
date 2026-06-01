@@ -8,6 +8,7 @@ import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/instant_timer.dart';
 import '/sanidade/selecionar_sanidade/selecionar_sanidade_widget.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
+import '/actions/actions.dart' as action_blocks;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -226,6 +227,7 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                                       ) ??
                                       false;
                               if (confirmDialogResponse) {
+                                if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                 if (!(FFAppState().dataDadosNaoSyncProp !=
                                     null)) {
                                   FFAppState().dataDadosNaoSyncProp =
@@ -2231,6 +2233,7 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                                               ) ??
                                               false;
                                       if (confirmDialogResponse) {
+                                        if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                         if (!(FFAppState()
                                                 .dataDadosNaoSyncSanidade !=
                                             null)) {

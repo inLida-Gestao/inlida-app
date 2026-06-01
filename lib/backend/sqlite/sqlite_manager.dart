@@ -211,10 +211,26 @@ class SQLiteManager {
 
   Future<List<QTDAnimaisPropriedadeRow>> qTDAnimaisPropriedade({
     String? idPropriedade,
+    String? sexo,
+    String? categoria,
+    String? raca,
+    String? origem,
+    String? loteId,
+    String? statusReb,
+    String? dataNascInicio,
+    String? dataNascFim,
   }) =>
       performQTDAnimaisPropriedade(
         _database,
         idPropriedade: idPropriedade,
+        sexo: sexo,
+        categoria: categoria,
+        raca: raca,
+        origem: origem,
+        loteId: loteId,
+        statusReb: statusReb,
+        dataNascInicio: dataNascInicio,
+        dataNascFim: dataNascFim,
       );
 
   Future<List<QTDDeAnimaisGeralRow>> qTDDeAnimaisGeral({
@@ -381,6 +397,7 @@ class SQLiteManager {
     String? dataPrev,
     String? dataPrevFim,
     String? categoriaFiltro,
+    String? statusReproducaoFiltro,
   }) =>
       performQTDReproducoes(
         _database,
@@ -393,6 +410,7 @@ class SQLiteManager {
         dataPrev: dataPrev,
         dataPrevFim: dataPrevFim,
         categoriaFiltro: categoriaFiltro,
+        statusReproducaoFiltro: statusReproducaoFiltro,
       );
 
   Future<List<QTDInseminacaoRow>> qTDInseminacao({
@@ -505,10 +523,26 @@ class SQLiteManager {
 
   Future<List<QTDAnimaisTotalPropriedadeRow>> qTDAnimaisTotalPropriedade({
     String? idPropriedade,
+    String? sexo,
+    String? categoria,
+    String? raca,
+    String? origem,
+    String? loteId,
+    String? statusReb,
+    String? dataNascInicio,
+    String? dataNascFim,
   }) =>
       performQTDAnimaisTotalPropriedade(
         _database,
         idPropriedade: idPropriedade,
+        sexo: sexo,
+        categoria: categoria,
+        raca: raca,
+        origem: origem,
+        loteId: loteId,
+        statusReb: statusReb,
+        dataNascInicio: dataNascInicio,
+        dataNascFim: dataNascFim,
       );
 
   Future<List<BuscarCriasRebanhoReprodutorRow>> buscarCriasRebanhoReprodutor({
@@ -540,6 +574,7 @@ class SQLiteManager {
     String? dataPrevFim,
     String? dataHoje,
     String? categoriaFiltro,
+    String? statusReproducaoFiltro,
   }) =>
       performListarReproducoesPaginada(
         _database,
@@ -555,6 +590,7 @@ class SQLiteManager {
         dataPrevFim: dataPrevFim,
         dataHoje: dataHoje,
         categoriaFiltro: categoriaFiltro,
+        statusReproducaoFiltro: statusReproducaoFiltro,
       );
 
   Future<List<CountAnimaisLoteRow>> countAnimaisLote({
@@ -611,6 +647,7 @@ class SQLiteManager {
     String? dataPrevFim,
     String? dataHoje,
     String? categoriaFiltro,
+    String? statusReproducaoFiltro,
   }) =>
       performListarReproducoesPesq(
         _database,
@@ -625,6 +662,7 @@ class SQLiteManager {
         dataPrevFim: dataPrevFim,
         dataHoje: dataHoje,
         categoriaFiltro: categoriaFiltro,
+        statusReproducaoFiltro: statusReproducaoFiltro,
       );
 
   Future<List<BuscaSanidadesPesqRow>> buscaSanidadesPesq({
@@ -1322,7 +1360,9 @@ class SQLiteManager {
       idPropriedade: idPropriedade,
     );
 
-    await _syncUltimaPesagemNoRebanho(idRebanho);
+    if (tipo == 'Desmama' || tipo == 'Atual') {
+      await _syncUltimaPesagemNoRebanho(idRebanho);
+    }
   }
 
   /// Updates peso (and optionally dataPesagem) of an existing pesagem record
@@ -1381,6 +1421,9 @@ SELECT idPropriedade FROM local_rebanho WHERE idRebanho = '$idRebanho' LIMIT 1
         idPropriedade: idPropriedade,
       );
     }
+    if (tipo == 'Desmama' || tipo == 'Atual') {
+      await _syncUltimaPesagemNoRebanho(idRebanho);
+    }
   }
 
   Future<void> _syncUltimaPesagemNoRebanho(String? idRebanho) async {
@@ -1393,7 +1436,8 @@ SELECT peso, dataPesagem
 FROM local_historico_pesagens
 WHERE idRebanho = '$idRebanho'
 AND deletado = 'NAO'
-AND tipo = 'Atual'
+AND tipo IN ('Desmama', 'Atual')
+AND COALESCE(dataPesagem, '') != ''
 ORDER BY date(dataPesagem) DESC, datetime(created_at, 'localtime') DESC, id DESC
 LIMIT 1
 ''');

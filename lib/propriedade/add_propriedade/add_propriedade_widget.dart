@@ -9,6 +9,7 @@ import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/instant_timer.dart';
 import '/propriedade/popup_cidades/popup_cidades_widget.dart';
 import '/custom_code/actions/index.dart' as actions;
+import '/actions/actions.dart' as action_blocks;
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:aligned_dialog/aligned_dialog.dart';
@@ -1321,6 +1322,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                   (FFAppState().cidadeSelecionada == ''))
                               ? null
                               : () async {
+                                  if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                   final dataCriacao = getCurrentTimestamp;
                                   final dataCriacaoFormatada = dateTimeFormat(
                                     "yyyy-MM-dd HH:mm:ss",

@@ -16,13 +16,16 @@ class PopupRebanhosWidget extends StatefulWidget {
     this.sexo,
     bool? sanidade,
     bool? reproducao,
+    bool? permitirQualquerStatusFemea,
     this.tipoReproducao,
   })  : sanidade = sanidade ?? false,
-        reproducao = reproducao ?? false;
+        reproducao = reproducao ?? false,
+        permitirQualquerStatusFemea = permitirQualquerStatusFemea ?? false;
 
   final String? sexo;
   final bool sanidade;
   final bool reproducao;
+  final bool permitirQualquerStatusFemea;
   final String? tipoReproducao;
 
   @override
@@ -1930,7 +1933,9 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                           ? 'Touro'
                           : null,
                       statusRebanho: widget.sexo == 'Fêmea'
-                          ? 'Na propriedade'
+                          ? (widget.permitirQualquerStatusFemea
+                              ? null
+                              : 'Na propriedade')
                           : widget.sexo == 'Macho' &&
                                   widget.reproducao == true &&
                                   widget.tipoReproducao == 'Monta Natural'

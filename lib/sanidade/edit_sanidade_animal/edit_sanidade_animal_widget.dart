@@ -224,6 +224,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ) ??
                                       false;
                               if (confirmDialogResponse) {
+                                if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                 if (!(FFAppState().dataDadosNaoSyncSanidade !=
                                     null)) {
                                   FFAppState().dataDadosNaoSyncSanidade =
@@ -3157,6 +3158,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               ) ??
                                               false;
                                       if (confirmDialogResponse) {
+                                        if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                         if (!(FFAppState()
                                                 .dataDadosNaoSyncSanidade !=
                                             null)) {

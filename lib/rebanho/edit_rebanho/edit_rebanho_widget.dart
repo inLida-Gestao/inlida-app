@@ -66,6 +66,23 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     return functions.converterParaData(normalized);
   }
 
+  String? _formatDateForSql(
+    BuildContext context, {
+    DateTime? selectedDate,
+    String? storedValue,
+  }) {
+    final effectiveDate = selectedDate ?? _parseStoredDate(storedValue);
+    if (effectiveDate == null) {
+      return null;
+    }
+
+    return dateTimeFormat(
+      "yyyy-MM-dd",
+      effectiveDate,
+      locale: FFLocalizations.of(context).languageCode,
+    );
+  }
+
   String _formatEditableDate(
     BuildContext context, {
     DateTime? selectedDate,
@@ -317,6 +334,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                           ) ??
                           false;
                       if (confirmDialogResponse) {
+                        if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                         if (!(FFAppState().dataDadosNaoSyncRebanho != null)) {
                           FFAppState().dataDadosNaoSyncRebanho =
                               getCurrentTimestamp;
@@ -5455,6 +5473,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               _isSaving = true;
                                               safeSetState(() {});
                                               try {
+                                                if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                                 if (!await sanitizePesoControllersBeforeSave(
                                                     context, [
                                                   _model
@@ -5478,6 +5497,22 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     .rebanhoSelecionado
                                                     .loteId;
                                                 safeSetState(() {});
+                                                final dataDesmamaEfetiva =
+                                                    _formatDateForSql(
+                                                  context,
+                                                  selectedDate:
+                                                      _model.datePicked3,
+                                                  storedValue: FFAppState()
+                                                      .rebanhoSelecionado
+                                                      .dataDesmama,
+                                                );
+                                                final dataDesmamaOriginal =
+                                                    _formatDateForSql(
+                                                  context,
+                                                  storedValue: FFAppState()
+                                                      .rebanhoSelecionado
+                                                      .dataDesmama,
+                                                );
                                                 await SQLiteManager.instance
                                                     .uPDTRebanho(
                                                   numeroAnimal: _model
@@ -5594,28 +5629,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                               .rebanhoSelecionado
                                                               .dataEntradaLote
                                                           : ' '),
-                                                  dataDesmama: _model
-                                                              .datePicked3 !=
-                                                          null
-                                                      ? dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked3,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        )
-                                                      : dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          functions.converterParaData(
-                                                              FFAppState()
-                                                                  .rebanhoSelecionado
-                                                                  .dataDesmama),
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
+                                                  dataDesmama:
+                                                      dataDesmamaEfetiva ?? '',
                                                   pesoDesmama: _parsePeso(_model
                                                       .pesodadesmamaTextController
                                                       .text),
@@ -5893,10 +5908,14 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         .pesodadesmamaTextController
                                                         .text);
                                                 if (novoPesoDesmama != null &&
-                                                    FFAppState()
-                                                            .rebanhoSelecionado
-                                                            .pesoDesmama !=
-                                                        novoPesoDesmama) {
+                                                    dataDesmamaEfetiva !=
+                                                        null &&
+                                                    (FFAppState()
+                                                                .rebanhoSelecionado
+                                                                .pesoDesmama !=
+                                                            novoPesoDesmama ||
+                                                        dataDesmamaEfetiva !=
+                                                            dataDesmamaOriginal)) {
                                                   await SQLiteManager.instance
                                                       .updatePesagemByTipo(
                                                     idRebanho: FFAppState()
@@ -5905,17 +5924,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     tipo: 'Desmama',
                                                     peso: novoPesoDesmama,
                                                     dataPesagem:
-                                                        _model.datePicked3 !=
-                                                                null
-                                                            ? dateTimeFormat(
-                                                                "yyyy-MM-dd",
-                                                                _model
-                                                                    .datePicked3,
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              )
-                                                            : null,
+                                                        dataDesmamaEfetiva,
                                                   );
                                                 }
 

@@ -1,4 +1,5 @@
 import 'package:sqflite/sqflite.dart';
+import '/backend/utils/rebanho_status_utils.dart';
 
 /// BEGIN INSERTPROPRIEDADE
 Future performInsertPropriedade(
@@ -196,6 +197,7 @@ Future performInsertRebanho(
 }) {
   final syncUpdatedAt =
       DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  final safeStatusRebanho = normalizeRebanhoStatus(statusRebanho);
   final query = '''
 INSERT INTO local_rebanho (
     idPropriedade,
@@ -264,7 +266,7 @@ INSERT INTO local_rebanho (
     '$dataDesmama',
     $pesoDesmama,
     $pesoAtual,
-    '$statusRebanho',
+    '$safeStatusRebanho',
     '$origem',
     '$anotacoes',
     '$idRebanho',
@@ -376,6 +378,7 @@ Future performInsertRebanhoNascimento(
 }) {
   final syncUpdatedAt =
       DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  final safeStatusRebanho = normalizeRebanhoStatus(statusRebanho);
   final query = '''
 INSERT INTO local_rebanho (
     idPropriedade,
@@ -433,7 +436,7 @@ INSERT INTO local_rebanho (
     '$raca',
     'Nascimento',
     '$dataEntradaLote',
-    '$statusRebanho',
+    '$safeStatusRebanho',
     '$anotacoes',
     '$idRebanho',
     '$deletado',
@@ -489,6 +492,7 @@ Future performInsertRebanhoSemen(
 }) {
   final syncUpdatedAt =
       DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  final safeStatusRebanho = normalizeRebanhoStatus(statusRebanho);
   final query = '''
 INSERT INTO local_rebanho (
     idPropriedade,
@@ -524,7 +528,7 @@ INSERT INTO local_rebanho (
     '$updatedat',
     '$tipo',
     '$nomeConcat',
-    '$statusRebanho',
+    '$safeStatusRebanho',
     1,
     'insert',
     '$syncUpdatedAt'
@@ -659,6 +663,7 @@ WHERE idRebanho = ?
 ''';
   final syncUpdatedAt =
       DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  final safeStatusRebanho = normalizeRebanhoStatus(statusRebanho);
   return database.rawUpdate(query, [
     numeroAnimal,
     chip,
@@ -674,7 +679,7 @@ WHERE idRebanho = ?
     dataDesmama,
     pesoDesmama,
     pesoAtual,
-    statusRebanho,
+    safeStatusRebanho,
     origem,
     anotacoes,
     dataAcao,

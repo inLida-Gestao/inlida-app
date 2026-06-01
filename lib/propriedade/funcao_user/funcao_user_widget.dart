@@ -5,6 +5,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/custom_code/actions/index.dart' as actions;
+import '/actions/actions.dart' as action_blocks;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'funcao_user_model.dart';
@@ -84,6 +85,7 @@ class _FuncaoUserWidgetState extends State<FuncaoUserWidget> {
             ),
           );
         } else {
+          if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
           if (!(FFAppState().dataDadosNaoSyncProp != null)) {
             FFAppState().dataDadosNaoSyncProp = getCurrentTimestamp;
             safeSetState(() {});

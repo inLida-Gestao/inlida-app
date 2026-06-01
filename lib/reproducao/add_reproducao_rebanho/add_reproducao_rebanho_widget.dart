@@ -3442,6 +3442,7 @@ class _AddReproducaoRebanhoWidgetState
                                           _isSaving = true;
                                           safeSetState(() {});
                                           try {
+                                            if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                             if (!(FFAppState()
                                                     .dataDadosNaoSyncRepro !=
                                                 null)) {

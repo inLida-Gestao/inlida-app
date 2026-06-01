@@ -153,6 +153,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
       categoriaFiltro: FFAppState().filtroCategoriaReproducao.isNotEmpty
           ? FFAppState().filtroCategoriaReproducao.join(',')
           : '',
+      statusReproducaoFiltro:
+          FFAppState().filtroDiagnosticoReproducao.isNotEmpty
+              ? FFAppState().filtroDiagnosticoReproducao.join('|')
+              : '',
     );
 
     _model.countReproducoesFiltradas = result.length;
@@ -193,7 +197,8 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
         FFAppState().filtroDataReproducaoFim != null ||
         FFAppState().filtroDataParto != null ||
         FFAppState().filtroDataPartoFim != null ||
-        FFAppState().filtroCategoriaReproducao.isNotEmpty;
+        FFAppState().filtroCategoriaReproducao.isNotEmpty ||
+        FFAppState().filtroDiagnosticoReproducao.isNotEmpty;
   }
 
   int _totalReproducoesParaPaginacao() {
@@ -864,6 +869,41 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                             ),
                           ),
                         ),
+                      if (FFAppState().filtroDiagnosticoReproducao.isNotEmpty)
+                        Container(
+                          decoration: BoxDecoration(
+                            color: FlutterFlowTheme.of(context)
+                                .secondaryBackground,
+                            borderRadius: BorderRadius.circular(24.0),
+                            shape: BoxShape.rectangle,
+                            border: Border.all(
+                              color: const Color(0xFFBEBEBE),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                16.0, 8.0, 16.0, 8.0),
+                            child: Text(
+                              'Diagnóstico: ${FFAppState().filtroDiagnosticoReproducao.join(', ')}',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    font: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w500,
+                                      fontStyle: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .fontStyle,
+                                    ),
+                                    color: const Color(0xFF5F5F5F),
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.w500,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .fontStyle,
+                                  ),
+                            ),
+                          ),
+                        ),
                       Builder(
                         builder: (context) {
                           final filtroRepro =
@@ -962,6 +1002,13 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                 .filtroCategoriaReproducao
                                 .isNotEmpty
                             ? FFAppState().filtroCategoriaReproducao.join(',')
+                            : '',
+                        statusReproducaoFiltro: FFAppState()
+                                .filtroDiagnosticoReproducao
+                                .isNotEmpty
+                            ? FFAppState()
+                                .filtroDiagnosticoReproducao
+                                .join('|')
                             : '',
                       ),
                       builder: (context, snapshot) {
@@ -2014,6 +2061,13 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                 .filtroCategoriaReproducao
                                 .isNotEmpty
                             ? FFAppState().filtroCategoriaReproducao.join(',')
+                            : '',
+                        statusReproducaoFiltro: FFAppState()
+                                .filtroDiagnosticoReproducao
+                                .isNotEmpty
+                            ? FFAppState()
+                                .filtroDiagnosticoReproducao
+                                .join('|')
                             : '',
                       ),
                       builder: (context, snapshot) {

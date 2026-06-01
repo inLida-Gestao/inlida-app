@@ -30,6 +30,38 @@ String _buildSqlMultiValueCondition(String column, String? rawValue) {
   return '$column IN ($serializedValues)';
 }
 
+String _buildRebanhoFilterCondition({
+  String? sexo,
+  String? categoria,
+  String? raca,
+  String? origem,
+  String? loteId,
+  String? statusReb,
+  String? dataNascInicio,
+  String? dataNascFim,
+}) {
+  final sexoValue = sexo ?? '';
+  final categoriaValue = categoria ?? '';
+  final racaValue = raca ?? '';
+  final origemValue = origem ?? '';
+  final loteIdValue = loteId ?? '';
+  final dataNascInicioValue = dataNascInicio ?? '';
+  final dataNascFimValue = dataNascFim ?? '';
+  final statusCondition =
+      _buildSqlMultiValueCondition('statusRebanho', statusReb);
+
+  return '''
+AND ('$sexoValue' = '' OR sexo = '$sexoValue')
+AND ('$categoriaValue' = '' OR categoria = '$categoriaValue')
+AND ('$racaValue' = '' OR raca = '$racaValue')
+AND ('$origemValue' = '' OR origem = '$origemValue')
+AND ('$loteIdValue' = '' OR ('$loteIdValue' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteIdValue' != '' AND '$loteIdValue' != 'SEM_LOTE' AND loteID = '$loteIdValue'))
+AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
+AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
+AND $statusCondition
+''';
+}
+
 /// BEGIN LOCALCIDADES
 Future<List<LocalCidadesRow>> performLocalCidades(
   Database database, {
@@ -570,10 +602,29 @@ class BuscarRebanhoPUTRow extends SqliteRow {
 Future<List<QTDAnimaisPropriedadeRow>> performQTDAnimaisPropriedade(
   Database database, {
   String? idPropriedade,
+  String? sexo,
+  String? categoria,
+  String? raca,
+  String? origem,
+  String? loteId,
+  String? statusReb,
+  String? dataNascInicio,
+  String? dataNascFim,
 }) {
+  final filterCondition = _buildRebanhoFilterCondition(
+    sexo: sexo,
+    categoria: categoria,
+    raca: raca,
+    origem: origem,
+    loteId: loteId,
+    statusReb: statusReb,
+    dataNascInicio: dataNascInicio,
+    dataNascFim: dataNascFim,
+  );
   final query = '''
 SELECT * FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
+$filterCondition
 AND statusRebanho = 'Na propriedade'
 AND deletado = 'NAO'
 ''';
@@ -1285,6 +1336,7 @@ Future<List<QTDReproducoesRow>> performQTDReproducoes(
   String? dataPrev,
   String? dataPrevFim,
   String? categoriaFiltro,
+  String? statusReproducaoFiltro,
 }) {
   final tipoRepro0 = tipoRepro ?? '';
   final inseminador0 = inseminador ?? '';
@@ -1294,6 +1346,8 @@ Future<List<QTDReproducoesRow>> performQTDReproducoes(
   final dataPrev0 = dataPrev ?? '';
   final dataPrevFim0 = dataPrevFim ?? '';
   final categoriaFiltro0 = categoriaFiltro ?? '';
+  final statusReproducaoCondition =
+      _buildSqlMultiValueCondition('status_reproducao', statusReproducaoFiltro);
   final query = '''
 SELECT * FROM local_reproducao
 WHERE id_propriedade = '$idPropriedade'
@@ -1305,6 +1359,7 @@ AND ('$dataReproFim0' = '' OR date(data_inseminacao) <= date('$dataReproFim0'))
 AND ('$dataPrev0' = '' OR date(previsao_parto) >= date('$dataPrev0'))
 AND ('$dataPrevFim0' = '' OR date(previsao_parto) <= date('$dataPrevFim0'))
 AND ('$categoriaFiltro0' = '' OR categoria IN (${categoriaFiltro0.split(',').where((e) => e.isNotEmpty).map((e) => "'${e.trim()}'").join(',')}))
+AND $statusReproducaoCondition
 AND deletado = 'NAO'
 
 
@@ -1865,10 +1920,29 @@ class BuscaRebanhoPaginadaRow extends SqliteRow {
 Future<List<QTDAnimaisTotalPropriedadeRow>> performQTDAnimaisTotalPropriedade(
   Database database, {
   String? idPropriedade,
+  String? sexo,
+  String? categoria,
+  String? raca,
+  String? origem,
+  String? loteId,
+  String? statusReb,
+  String? dataNascInicio,
+  String? dataNascFim,
 }) {
+  final filterCondition = _buildRebanhoFilterCondition(
+    sexo: sexo,
+    categoria: categoria,
+    raca: raca,
+    origem: origem,
+    loteId: loteId,
+    statusReb: statusReb,
+    dataNascInicio: dataNascInicio,
+    dataNascFim: dataNascFim,
+  );
   final query = '''
 SELECT * FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
+$filterCondition
 AND deletado = 'NAO'
 ''';
   return _readQuery(database, query, (d) => QTDAnimaisTotalPropriedadeRow(d));
@@ -2003,7 +2077,10 @@ Future<List<ListarReproducoesPaginadaRow>> performListarReproducoesPaginada(
   String? dataPrevFim,
   String? dataHoje,
   String? categoriaFiltro,
+  String? statusReproducaoFiltro,
 }) {
+  final statusReproducaoCondition =
+      _buildSqlMultiValueCondition('status_reproducao', statusReproducaoFiltro);
   final query = '''
 SELECT * FROM local_reproducao
 WHERE id_propriedade = '$idPropriedade'
@@ -2015,6 +2092,7 @@ AND ('$dataReproFim' = '' OR date(data_inseminacao) <= date('$dataReproFim'))
 AND ('$dataPrev' = '' OR date(previsao_parto) >= date('$dataPrev'))
 AND ('$dataPrevFim' = '' OR date(previsao_parto) <= date('$dataPrevFim'))
 AND ('$categoriaFiltro' = '' OR categoria IN (${(categoriaFiltro ?? '').split(',').where((e) => e.isNotEmpty).map((e) => "'${e.trim()}'").join(',')}))
+AND $statusReproducaoCondition
 AND deletado = 'NAO'
 ORDER BY created_at DESC
 LIMIT $limitRep OFFSET $offsetRep
@@ -2250,7 +2328,10 @@ Future<List<ListarReproducoesPesqRow>> performListarReproducoesPesq(
   String? dataPrevFim,
   String? dataHoje,
   String? categoriaFiltro,
+  String? statusReproducaoFiltro,
 }) {
+  final statusReproducaoCondition = _buildSqlMultiValueCondition(
+      'a.status_reproducao', statusReproducaoFiltro);
   final query = '''
 SELECT * FROM local_reproducao a
 WHERE a.id_propriedade = '$idPropriedade'
@@ -2265,6 +2346,7 @@ AND ('$dataReproFim' = '' OR date(data_inseminacao) <= date('$dataReproFim'))
 AND ('$dataPrev' = '' OR date(previsao_parto) >= date('$dataPrev'))
 AND ('$dataPrevFim' = '' OR date(previsao_parto) <= date('$dataPrevFim'))
 AND ('$categoriaFiltro' = '' OR a.categoria IN (${(categoriaFiltro ?? '').split(',').where((e) => e.isNotEmpty).map((e) => "'${e.trim()}'").join(',')}))
+AND $statusReproducaoCondition
 AND deletado = 'NAO'
 ORDER BY created_at DESC
 --LIMIT 100

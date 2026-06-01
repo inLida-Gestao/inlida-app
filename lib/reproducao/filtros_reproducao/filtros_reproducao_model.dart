@@ -14,6 +14,9 @@ class FiltrosReproducaoModel extends FlutterFlowModel<FiltrosReproducaoWidget> {
   // State field(s) for DropDown widget - Categoria
   List<String> categoriasSelecionadas = [];
   bool? showCategoriaDropdown = false;
+  // State field(s) for DropDown widget - Diagnóstico
+  List<String> diagnosticosSelecionados = [];
+  bool? showDiagnosticoDropdown = false;
 
   @override
   void initState(BuildContext context) {}

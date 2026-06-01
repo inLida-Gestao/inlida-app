@@ -3653,6 +3653,7 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                 _isSaving = true;
                                                 safeSetState(() {});
                                                 try {
+                                                  if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                                   _model.lote =
                                                       await SQLiteManager
                                                           .instance

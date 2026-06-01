@@ -2768,6 +2768,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                   _isSaving = true;
                                   safeSetState(() {});
                                   try {
+                                    if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                     if (!(FFAppState()
                                             .dataDadosNaoSyncSanidade !=
                                         null)) {

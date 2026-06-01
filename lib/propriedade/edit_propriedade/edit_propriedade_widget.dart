@@ -9,6 +9,7 @@ import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/instant_timer.dart';
 import '/propriedade/popup_cidades/popup_cidades_widget.dart';
 import '/custom_code/actions/index.dart' as actions;
+import '/actions/actions.dart' as action_blocks;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
@@ -160,6 +161,7 @@ class _EditPropriedadeWidgetState extends State<EditPropriedadeWidget> {
                             ) ??
                             false;
                         if (confirmDialogResponse) {
+                        if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                         if (!(FFAppState().dataDadosNaoSyncProp != null)) {
                           FFAppState().dataDadosNaoSyncProp =
                               getCurrentTimestamp;
@@ -1399,6 +1401,7 @@ class _EditPropriedadeWidgetState extends State<EditPropriedadeWidget> {
                                 (_model.tFpastagemTextController.text == ''))
                             ? null
                             : () async {
+                                if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                 if (FFAppState()
                                         .propriedadeBuscada
                                         .atividades !=

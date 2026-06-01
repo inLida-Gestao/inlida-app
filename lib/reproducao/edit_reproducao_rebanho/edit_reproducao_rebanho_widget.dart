@@ -481,6 +481,7 @@ class _EditReproducaoRebanhoWidgetState
                                                 ) ??
                                                 false;
                                         if (confirmDialogResponse) {
+                                          if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                           if (!(FFAppState()
                                                   .dataDadosNaoSyncRepro !=
                                               null)) {
@@ -4084,6 +4085,7 @@ class _EditReproducaoRebanhoWidgetState
                                                   _isSaving = true;
                                                   safeSetState(() {});
                                                   try {
+                                                    if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                                     if (!(FFAppState()
                                                             .dataDadosNaoSyncRepro !=
                                                         null)) {

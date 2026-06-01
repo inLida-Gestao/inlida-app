@@ -1523,9 +1523,20 @@ Future buscaPropriedade(
 
 Future animaisRegistrados(BuildContext context) async {
   List<QTDAnimaisTotalPropriedadeRow>? qtdAnimais;
+  final aplicarFiltros = _hasFiltrosRebanhoCardsAtivos();
 
   qtdAnimais = await SQLiteManager.instance.qTDAnimaisTotalPropriedade(
     idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+    sexo: aplicarFiltros ? FFAppState().filtroSexoRebanho : '',
+    categoria: aplicarFiltros ? FFAppState().filtroCategoriasRebanho : '',
+    raca: aplicarFiltros ? FFAppState().filtroRaca : '',
+    origem: aplicarFiltros ? FFAppState().filtroOrigemRebanho : '',
+    loteId: aplicarFiltros ? FFAppState().filtroLoteRebanho : '',
+    statusReb: aplicarFiltros ? _statusRebanhoFiltroCards() : '',
+    dataNascInicio:
+        aplicarFiltros ? _dataNascimentoFiltroCards(inicio: true) : '',
+    dataNascFim:
+        aplicarFiltros ? _dataNascimentoFiltroCards(inicio: false) : '',
   );
   FFAppState().animaisRegistrados = valueOrDefault<int>(
     qtdAnimais.length,
@@ -1535,9 +1546,20 @@ Future animaisRegistrados(BuildContext context) async {
 
 Future animaisPropriedade(BuildContext context) async {
   List<QTDAnimaisPropriedadeRow>? animais;
+  final aplicarFiltros = _hasFiltrosRebanhoCardsAtivos();
 
   animais = await SQLiteManager.instance.qTDAnimaisPropriedade(
     idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+    sexo: aplicarFiltros ? FFAppState().filtroSexoRebanho : '',
+    categoria: aplicarFiltros ? FFAppState().filtroCategoriasRebanho : '',
+    raca: aplicarFiltros ? FFAppState().filtroRaca : '',
+    origem: aplicarFiltros ? FFAppState().filtroOrigemRebanho : '',
+    loteId: aplicarFiltros ? FFAppState().filtroLoteRebanho : '',
+    statusReb: aplicarFiltros ? _statusRebanhoFiltroCards() : '',
+    dataNascInicio:
+        aplicarFiltros ? _dataNascimentoFiltroCards(inicio: true) : '',
+    dataNascFim:
+        aplicarFiltros ? _dataNascimentoFiltroCards(inicio: false) : '',
   );
   final qtdAnimaisPropriedade = valueOrDefault<int>(
     animais.length,
@@ -1546,6 +1568,48 @@ Future animaisPropriedade(BuildContext context) async {
   FFAppState().update(() {
     FFAppState().qtdAnimaisPropriedade = qtdAnimaisPropriedade;
   });
+}
+
+bool _hasFiltrosRebanhoCardsAtivos() {
+  return FFAppState().filtroSexoRebanho != '' ||
+      FFAppState().filtroCategoriasRebanho != '' ||
+      FFAppState().filtroRaca != '' ||
+      FFAppState().filtroOrigemRebanho != '' ||
+      FFAppState().filtroLoteRebanho != '' ||
+      FFAppState().filtroDataNascimentoInicio != null ||
+      FFAppState().filtroDataNascimentoFim != null ||
+      _statusRebanhoFiltroCardsEhReal();
+}
+
+bool _statusRebanhoFiltroCardsEhReal() {
+  const defaultStatus = {'Na propriedade', 'Sêmen'};
+  final selected = FFAppState().filtroStatusRebanhoList.isNotEmpty
+      ? FFAppState().filtroStatusRebanhoList
+      : FFAppState()
+          .filtroStatusRebanho
+          .split('|')
+          .map((status) => status.trim())
+          .where((status) => status.isNotEmpty)
+          .toList();
+
+  return selected.isNotEmpty &&
+      (selected.length != defaultStatus.length ||
+          !selected.every(defaultStatus.contains));
+}
+
+String _statusRebanhoFiltroCards() {
+  if (FFAppState().filtroStatusRebanhoList.isNotEmpty) {
+    return FFAppState().filtroStatusRebanhoList.join('|');
+  }
+  return FFAppState().filtroStatusRebanho;
+}
+
+String _dataNascimentoFiltroCards({required bool inicio}) {
+  final data = inicio
+      ? FFAppState().filtroDataNascimentoInicio
+      : FFAppState().filtroDataNascimentoFim;
+  if (data == null) return '';
+  return dateTimeFormat('yyyy-MM-dd', data);
 }
 
 /// Filtra do `chunk` as pesagens que JÁ existem no Supabase, evitando

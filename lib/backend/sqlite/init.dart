@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '/backend/utils/rebanho_status_utils.dart';
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -167,6 +168,7 @@ Future<Database> initializeDatabaseFromDbFile(
   // Antes de qualquer query nova, garanta colunas adicionadas em versões
   // recentes para evitar crash na splash por "no such column".
   await _ensureLocalSchemaCompatibility(database);
+  await _normalizeInvalidRebanhoStatuses(database);
   await _backfillLocalRebanhoDirtyFlags(database, prefs);
   await _backfillLocalPesagemKeys(database, prefs);
   if (largeStartupDb) {
@@ -226,6 +228,26 @@ Future<Database> initializeDatabaseFromDbFile(
   }
 
   return database;
+}
+
+Future<void> _normalizeInvalidRebanhoStatuses(Database db) async {
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  final updated = await db.rawUpdate(
+    '''
+UPDATE local_rebanho
+SET statusRebanho = ?,
+    sync_dirty = 1,
+    sync_op = CASE WHEN sync_op = 'insert' THEN 'insert' ELSE 'update' END,
+    sync_updated_at = ?
+WHERE statusRebanho = 'Inativo'
+''',
+    [defaultRebanhoStatus, syncUpdatedAt],
+  );
+  if (updated > 0) {
+    debugPrint(
+        '[SQLite] $updated statusRebanho inválido(s) "Inativo" normalizado(s) para "$defaultRebanhoStatus".');
+  }
 }
 
 Future<void> _ensureLocalSchemaCompatibility(Database db) async {

@@ -99,6 +99,24 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
     safeSetState(() {});
   }
 
+  Future<void> _showAnimalsAddedDialog() async {
+    await showDialog<void>(
+      context: context,
+      builder: (alertDialogContext) {
+        return AlertDialog(
+          title: const Text('Informação'),
+          content: const Text('Animais adicionados ao lote.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(alertDialogContext),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showSaveErrorSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -114,67 +132,77 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
     );
   }
 
-  void _confirmAnimalsAlreadyInLot(
+  Future<void> _confirmAnimalsAlreadyInLot(
     List<RebanhoStruct> animais,
-  ) {
+  ) async {
     if (animais.isEmpty) {
       _applySelectedAnimalsToLot();
+      await _showAnimalsAddedDialog();
       return;
     }
 
-    showDialog<bool>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Animais já estão em outro lote'),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Os animais abaixo já estão vinculados a outro lote. Deseja adicioná-los mesmo assim?',
-                  ),
-                  const SizedBox(height: 16.0),
-                  ...animais.map(
-                    (animal) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Text(
-                        '${animal.numeroAnimal} • ${animal.nome} • Lote atual: ${_normalizeLoteNome(animal.loteNome)}',
+    final shouldApply = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) {
+            return AlertDialog(
+              title: const Text('Animais já estão em outro lote'),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Os animais abaixo já estão vinculados a outro lote. Deseja adicioná-los mesmo assim?',
                       ),
-                    ),
+                      const SizedBox(height: 16.0),
+                      ...animais.map(
+                        (animal) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Text(
+                            '${animal.numeroAnimal} • ${animal.nome} • Lote atual: ${_normalizeLoteNome(animal.loteNome)}',
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-                _applySelectedAnimalsToLot();
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: const Color(0xFF28A365),
-                foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-              child: const Text('Confirmar'),
-            ),
-          ],
-        );
-      },
-    );
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext, false),
+                  child: const Text('Cancelar'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext, true),
+                  style: TextButton.styleFrom(
+                    backgroundColor: const Color(0xFF28A365),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        16.0, 0.0, 16.0, 0.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: const Text('Confirmar'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (!shouldApply) {
+      return;
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    _applySelectedAnimalsToLot();
+    await _showAnimalsAddedDialog();
   }
 
   @override
@@ -410,6 +438,7 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                               ) ??
                                               false;
                                       if (confirmDialogResponse) {
+                                        if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                         if (!(FFAppState()
                                                 .dataDadosNaoSyncLotes !=
                                             null)) {
@@ -2766,7 +2795,7 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                     () async {
                                                                   final animaisEmOutrosLotes =
                                                                       _animalsInOtherLots();
-                                                                  _confirmAnimalsAlreadyInLot(
+                                                                  await _confirmAnimalsAlreadyInLot(
                                                                       animaisEmOutrosLotes);
                                                                 },
                                                                 text:
@@ -4299,6 +4328,7 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                 safeSetState(
                                                                     () {});
                                                                 try {
+                                                                  if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                                                   if (!(FFAppState()
                                                                           .dataDadosNaoSyncLotes !=
                                                                       null)) {

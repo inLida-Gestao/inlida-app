@@ -51,8 +51,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
     _model.pesquisarTextController ??= TextEditingController();
     _model.pesquisarFocusNode ??= FocusNode();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       _applyDefaultStatusFilters();
+      await _atualizarCardsRebanho();
       safeSetState(() {});
     });
   }
@@ -85,6 +86,13 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
     }
 
     return FFAppState().filtroStatusRebanho;
+  }
+
+  Future<void> _atualizarCardsRebanho() async {
+    await Future.wait([
+      action_blocks.animaisRegistrados(context),
+      action_blocks.animaisPropriedade(context),
+    ]);
   }
 
   String _dataNascInicioFilterValue() {
@@ -244,7 +252,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                       _model.pageNum = 1;
                       _model.offset = 0;
                       _model.pesquisarTextController?.clear();
-                      await action_blocks.animaisPropriedade(context);
+                      await _atualizarCardsRebanho();
                       safeSetState(() {});
                     },
                   ),
@@ -591,7 +599,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                     child: const FiltrosRebanhoWidget(),
                                   );
                                 },
-                              ).then((value) => safeSetState(() {}));
+                              ).then((value) async {
+                                _model.pageNum = 1;
+                                _model.offset = 0;
+                                await _atualizarCardsRebanho();
+                                safeSetState(() {});
+                              });
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -701,9 +714,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                 ),
                               ),
                               child: Padding(
-                                padding:
-                                    const EdgeInsetsDirectional.fromSTEB(
-                                        16.0, 8.0, 16.0, 8.0),
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    16.0, 8.0, 16.0, 8.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -8429,7 +8441,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                             ),
                             TextSpan(
                               text: valueOrDefault<String>(
-                                ((FFAppState().qtdAnimaisPropriedade /
+                                ((FFAppState().animaisRegistrados /
                                             (_model.limit!))
                                         .ceil())
                                     .toString(),

@@ -3,6 +3,7 @@ import '/backend/sqlite/sqlite_manager.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/actions/actions.dart' as action_blocks;
 import '/utils/peso_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -412,6 +413,7 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                     _isSaving = true;
                     safeSetState(() {});
                     try {
+                      if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                       await SQLiteManager.instance.addPesagem(
                         idRebanho: widget.idRebanho,
                         dataPesagem: dateTimeFormat(

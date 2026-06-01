@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '/backend/schema/structs/index.dart';
+import '/backend/utils/rebanho_status_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
@@ -99,7 +100,8 @@ class FFAppState extends ChangeNotifier {
     });
     _safeInit(() {
       _statusRebanho =
-          prefs.getStringList('ff_statusRebanho') ?? _statusRebanho;
+          sanitizeRebanhoStatusOptions(prefs.getStringList('ff_statusRebanho'));
+      prefs.setStringList('ff_statusRebanho', _statusRebanho);
     });
     _safeInit(() {
       _categoriasRebanhoFemea =
@@ -108,6 +110,15 @@ class FFAppState extends ChangeNotifier {
     });
     _safeInit(() {
       _raca = prefs.getStringList('ff_raca') ?? _raca;
+      if (!_raca.contains('Nelore Mocho')) {
+        final nelorePoIndex = _raca.indexOf('Nelore PO');
+        if (nelorePoIndex >= 0) {
+          _raca.insert(nelorePoIndex, 'Nelore Mocho');
+        } else {
+          _raca.add('Nelore Mocho');
+        }
+        prefs.setStringList('ff_raca', _raca);
+      }
     });
     _safeInit(() {
       _origemRebanho =
@@ -869,23 +880,16 @@ class FFAppState extends ChangeNotifier {
     filtrosAplicadosRebanho.insert(index, value);
   }
 
-  List<String> _statusRebanho = [
-    'Sêmen',
-    'Vendido',
-    'Na propriedade',
-    'Fora da propriedade',
-    'Morto',
-    'Movimentação'
-  ];
+  List<String> _statusRebanho = validRebanhoStatus.toList();
   List<String> get statusRebanho => _statusRebanho;
   set statusRebanho(List<String> value) {
-    _statusRebanho = value;
-    prefs.setStringList('ff_statusRebanho', value);
+    _statusRebanho = sanitizeRebanhoStatusOptions(value);
+    prefs.setStringList('ff_statusRebanho', _statusRebanho);
   }
 
   void addToStatusRebanho(String value) {
-    statusRebanho.add(value);
-    prefs.setStringList('ff_statusRebanho', _statusRebanho);
+    final sanitized = sanitizeRebanhoStatusOptions([...statusRebanho, value]);
+    statusRebanho = sanitized;
   }
 
   void removeFromStatusRebanho(String value) {
@@ -903,12 +907,12 @@ class FFAppState extends ChangeNotifier {
     String Function(String) updateFn,
   ) {
     statusRebanho[index] = updateFn(_statusRebanho[index]);
-    prefs.setStringList('ff_statusRebanho', _statusRebanho);
+    statusRebanho = _statusRebanho;
   }
 
   void insertAtIndexInStatusRebanho(int index, String value) {
     statusRebanho.insert(index, value);
-    prefs.setStringList('ff_statusRebanho', _statusRebanho);
+    statusRebanho = _statusRebanho;
   }
 
   String _filtroSexoRebanho = '';
@@ -991,6 +995,7 @@ class FFAppState extends ChangeNotifier {
     'Marchigiana',
     'Mestiço',
     'Nelore',
+    'Nelore Mocho',
     'Nelore PO',
     'Pardo Suíço (CORTE)',
     'Pardo Suíço (Leite)',
@@ -1474,6 +1479,20 @@ class FFAppState extends ChangeNotifier {
 
   void removeFromFiltroCategoriaReproducao(String value) {
     filtroCategoriaReproducao.remove(value);
+  }
+
+  List<String> _filtroDiagnosticoReproducao = [];
+  List<String> get filtroDiagnosticoReproducao => _filtroDiagnosticoReproducao;
+  set filtroDiagnosticoReproducao(List<String> value) {
+    _filtroDiagnosticoReproducao = value;
+  }
+
+  void addToFiltroDiagnosticoReproducao(String value) {
+    filtroDiagnosticoReproducao.add(value);
+  }
+
+  void removeFromFiltroDiagnosticoReproducao(String value) {
+    filtroDiagnosticoReproducao.remove(value);
   }
 
   String _filtroInseminador = '';

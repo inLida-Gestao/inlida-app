@@ -1,5 +1,6 @@
 // Automatic FlutterFlow imports
 import '/backend/sqlite/sqlite_manager.dart';
+import '/backend/utils/rebanho_status_utils.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 // Imports other custom actions
 // Imports custom functions
@@ -75,7 +76,7 @@ Future<Map<String, dynamic>> batchInsertLocalRebanho(
       }
       if (source['status'] != null) {
         mapped['statusRebanho'] =
-            _cleanNull(source['status']); // MAPEAMENTO CRÍTICO
+            normalizeRebanhoStatus(_cleanNull(source['status'])?.toString());
       }
       if (source['origem'] != null) {
         mapped['origem'] = _cleanNull(source['origem']);

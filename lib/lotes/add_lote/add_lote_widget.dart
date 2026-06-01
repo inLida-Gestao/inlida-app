@@ -3588,6 +3588,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                           _isSaving = true;
                                                           safeSetState(() {});
                                                           try {
+                                                            if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                                             if (!(FFAppState()
                                                                     .dataDadosNaoSyncLotes !=
                                                                 null)) {

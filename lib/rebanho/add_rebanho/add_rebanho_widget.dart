@@ -5322,6 +5322,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 _isSaving = true;
                                                 safeSetState(() {});
                                                 try {
+                                                if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                                 if (!await sanitizePesoControllersBeforeSave(
                                                     context, [
                                                   _model
@@ -5696,7 +5697,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       _model
                                                           .pesodadesmamaTextController
                                                           .text);
-                                                  if (pesoDesm != null && (_model.idRebanho ?? "").isNotEmpty) {
+                                                  if (pesoDesm != null && (_model.idRebanho ?? "").isNotEmpty && _model.datePicked3 != null) {
                                                     await SQLiteManager.instance
                                                         .updatePesagemByTipo(
                                                       idRebanho:
@@ -5706,8 +5707,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       dataPesagem:
                                                           dateTimeFormat(
                                                         "yyyy-MM-dd",
-                                                        _model.datePicked3 ??
-                                                            getCurrentTimestamp,
+                                                        _model.datePicked3,
                                                         locale:
                                                             FFLocalizations.of(
                                                                     context)

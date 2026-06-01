@@ -2464,6 +2464,7 @@ class _AddSanidadeAnimalWidgetState extends State<AddSanidadeAnimalWidget> {
                               _isSaving = true;
                               safeSetState(() {});
                               try {
+                                if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                 if (!(FFAppState().dataDadosNaoSyncSanidade !=
                                     null)) {
                                   FFAppState().dataDadosNaoSyncSanidade =

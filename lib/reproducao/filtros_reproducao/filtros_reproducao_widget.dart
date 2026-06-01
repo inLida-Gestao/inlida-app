@@ -18,6 +18,14 @@ class FiltrosReproducaoWidget extends StatefulWidget {
 
 class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
   late FiltrosReproducaoModel _model;
+  static const List<String> _diagnosticoOptions = [
+    'Não diagnosticado',
+    'Absorção',
+    'Aborto',
+    'Natimorto',
+    'Prenhez',
+    'Vazio',
+  ];
 
   @override
   void setState(VoidCallback callback) {
@@ -37,6 +45,9 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
     _model.categoriasSelecionadas =
         List<String>.from(FFAppState().filtroCategoriaReproducao);
     _model.showCategoriaDropdown = false;
+    _model.diagnosticosSelecionados =
+        List<String>.from(FFAppState().filtroDiagnosticoReproducao);
+    _model.showDiagnosticoDropdown = false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
@@ -99,9 +110,11 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                if (_model.showCategoriaDropdown ?? false) {
+                if ((_model.showCategoriaDropdown ?? false) ||
+                    (_model.showDiagnosticoDropdown ?? false)) {
                   safeSetState(() {
                     _model.showCategoriaDropdown = false;
+                    _model.showDiagnosticoDropdown = false;
                   });
                 }
               },
@@ -182,12 +195,15 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                 FFAppState().filtroPrevisaoPartoTxt = '';
                                 FFAppState().filtroDataHoje = null;
                                 FFAppState().filtroCategoriaReproducao = [];
+                                FFAppState().filtroDiagnosticoReproducao = [];
                                 _model.dataReproducaoInicio = null;
                                 _model.dataReproducaoFim = null;
                                 _model.dataPartoInicio = null;
                                 _model.dataPartoFim = null;
                                 _model.categoriasSelecionadas = [];
                                 _model.showCategoriaDropdown = false;
+                                _model.diagnosticosSelecionados = [];
+                                _model.showDiagnosticoDropdown = false;
                                 safeSetState(() {});
                                 Navigator.pop(context);
                               },
@@ -577,7 +593,9 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                               onTap: () async {
                                                 final picked =
                                                     await showDatePicker(
-                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                  initialEntryMode:
+                                                      DatePickerEntryMode
+                                                          .calendarOnly,
                                                   context: context,
                                                   initialDate: _model
                                                           .dataReproducaoInicio ??
@@ -748,7 +766,9 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                               onTap: () async {
                                                 final picked =
                                                     await showDatePicker(
-                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                  initialEntryMode:
+                                                      DatePickerEntryMode
+                                                          .calendarOnly,
                                                   context: context,
                                                   initialDate: _model
                                                           .dataReproducaoFim ??
@@ -943,7 +963,9 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                               onTap: () async {
                                                 final picked =
                                                     await showDatePicker(
-                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                  initialEntryMode:
+                                                      DatePickerEntryMode
+                                                          .calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       _model.dataPartoInicio ??
@@ -1112,7 +1134,9 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                               onTap: () async {
                                                 final picked =
                                                     await showDatePicker(
-                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                  initialEntryMode:
+                                                      DatePickerEntryMode
+                                                          .calendarOnly,
                                                   context: context,
                                                   initialDate:
                                                       _model.dataPartoFim ??
@@ -1304,6 +1328,8 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                             _model.showCategoriaDropdown =
                                                 !(_model.showCategoriaDropdown ??
                                                     false);
+                                            _model.showDiagnosticoDropdown =
+                                                false;
                                           });
                                         },
                                         child: Container(
@@ -1527,6 +1553,274 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                                             ),
                                                           ),
                                                         ))
+                                                    .toList(),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                    ].divide(const SizedBox(height: 8.0)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 24.0, 0.0, 0.0),
+                              child: Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryBackground,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      24.0, 0.0, 24.0, 0.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Diagnóstico',
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMediumFamily,
+                                              color: const Color(0xFF2F2F2F),
+                                              fontSize: 18.0,
+                                              letterSpacing: 0.0,
+                                              fontWeight: FontWeight.w500,
+                                              useGoogleFonts:
+                                                  !FlutterFlowTheme.of(context)
+                                                      .bodyMediumIsCustom,
+                                            ),
+                                      ),
+                                      InkWell(
+                                        splashColor: Colors.transparent,
+                                        focusColor: Colors.transparent,
+                                        hoverColor: Colors.transparent,
+                                        highlightColor: Colors.transparent,
+                                        onTap: () async {
+                                          safeSetState(() {
+                                            _model.showDiagnosticoDropdown =
+                                                !(_model.showDiagnosticoDropdown ??
+                                                    false);
+                                            _model.showCategoriaDropdown =
+                                                false;
+                                          });
+                                        },
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: 56.0,
+                                          decoration: BoxDecoration(
+                                            color: FlutterFlowTheme.of(context)
+                                                .customColor3,
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(12.0, 0.0, 12.0, 0.0),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    _model.diagnosticosSelecionados
+                                                            .isNotEmpty
+                                                        ? _model
+                                                            .diagnosticosSelecionados
+                                                            .join(', ')
+                                                        : 'Selecionar diagnósticos...',
+                                                    style:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium
+                                                            .override(
+                                                              fontFamily:
+                                                                  FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMediumFamily,
+                                                              color: _model
+                                                                      .diagnosticosSelecionados
+                                                                      .isNotEmpty
+                                                                  ? FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText
+                                                                  : FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .secondaryText,
+                                                              letterSpacing:
+                                                                  0.0,
+                                                              useGoogleFonts:
+                                                                  !FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMediumIsCustom,
+                                                            ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                Icon(
+                                                  (_model.showDiagnosticoDropdown ??
+                                                          false)
+                                                      ? Icons
+                                                          .keyboard_arrow_up_rounded
+                                                      : Icons
+                                                          .keyboard_arrow_down_rounded,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .secondaryText,
+                                                  size: 24.0,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      if (_model.showDiagnosticoDropdown ??
+                                          false)
+                                        Container(
+                                          constraints: const BoxConstraints(
+                                              maxHeight: 250.0),
+                                          decoration: BoxDecoration(
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground,
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            boxShadow: const [
+                                              BoxShadow(
+                                                blurRadius: 8.0,
+                                                color: Color(0x1A000000),
+                                                offset: Offset(0.0, 4.0),
+                                                spreadRadius: 0.0,
+                                              ),
+                                            ],
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: _diagnosticoOptions
+                                                    .map(
+                                                        (diagnostico) =>
+                                                            InkWell(
+                                                              splashColor: Colors
+                                                                  .transparent,
+                                                              focusColor: Colors
+                                                                  .transparent,
+                                                              hoverColor: Colors
+                                                                  .transparent,
+                                                              highlightColor:
+                                                                  Colors
+                                                                      .transparent,
+                                                              onTap: () async {
+                                                                safeSetState(
+                                                                    () {
+                                                                  if (_model
+                                                                      .diagnosticosSelecionados
+                                                                      .contains(
+                                                                          diagnostico)) {
+                                                                    _model
+                                                                        .diagnosticosSelecionados
+                                                                        .remove(
+                                                                            diagnostico);
+                                                                  } else {
+                                                                    _model
+                                                                        .diagnosticosSelecionados
+                                                                        .add(
+                                                                            diagnostico);
+                                                                  }
+                                                                  FFAppState()
+                                                                      .filtroDiagnosticoReproducao = List<
+                                                                          String>.from(
+                                                                      _model
+                                                                          .diagnosticosSelecionados);
+                                                                });
+                                                              },
+                                                              child: Container(
+                                                                width: double
+                                                                    .infinity,
+                                                                padding:
+                                                                    const EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                        12.0,
+                                                                        12.0,
+                                                                        12.0,
+                                                                        12.0),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: _model
+                                                                          .diagnosticosSelecionados
+                                                                          .contains(
+                                                                              diagnostico)
+                                                                      ? const Color(
+                                                                          0x1A28A365)
+                                                                      : Colors
+                                                                          .transparent,
+                                                                ),
+                                                                child: Row(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .max,
+                                                                  children: [
+                                                                    Container(
+                                                                      width:
+                                                                          20.0,
+                                                                      height:
+                                                                          20.0,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: _model.diagnosticosSelecionados.contains(diagnostico)
+                                                                            ? const Color(0xFF28A365)
+                                                                            : Colors.transparent,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(4.0),
+                                                                        border:
+                                                                            Border.all(
+                                                                          color: _model.diagnosticosSelecionados.contains(diagnostico)
+                                                                              ? const Color(0xFF28A365)
+                                                                              : FlutterFlowTheme.of(context).secondaryText,
+                                                                          width:
+                                                                              1.5,
+                                                                        ),
+                                                                      ),
+                                                                      child: _model.diagnosticosSelecionados.contains(
+                                                                              diagnostico)
+                                                                          ? const Icon(
+                                                                              Icons.check,
+                                                                              color: Colors.white,
+                                                                              size: 14.0)
+                                                                          : null,
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            10.0),
+                                                                    Text(
+                                                                      diagnostico,
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                            letterSpacing:
+                                                                                0.0,
+                                                                            useGoogleFonts:
+                                                                                !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                          ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ))
                                                     .toList(),
                                               ),
                                             ),
@@ -2177,11 +2471,13 @@ class _FiltrosReproducaoWidgetState extends State<FiltrosReproducaoWidget> {
                                         builder: (context) {
                                           final lote =
                                               optionsListarReproducoesRowList
-                                                  .where(
-                                                      (e) => e.loteNome != ' ')
-                                                  .toList()
-                                                  .map((e) => e.loteNome)
+                                                  .map(
+                                                      (e) => e.loteNome?.trim())
                                                   .withoutNulls
+                                                  .where((loteNome) =>
+                                                      loteNome.isNotEmpty &&
+                                                      loteNome.toLowerCase() !=
+                                                          'null')
                                                   .toList()
                                                   .unique((e) => e)
                                                   .toList();

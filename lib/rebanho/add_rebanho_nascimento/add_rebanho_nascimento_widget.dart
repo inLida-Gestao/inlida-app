@@ -2113,6 +2113,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                               child:
                                                                   PopupRebanhosWidget(
                                                                 sexo: 'Fêmea',
+                                                                permitirQualquerStatusFemea:
+                                                                    true,
                                                               ),
                                                             ),
                                                           );
@@ -3687,6 +3689,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                               _isSaving = true;
                                               safeSetState(() {});
                                               try {
+                                              if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
                                               if (!await sanitizePesoControllersBeforeSave(
                                                   context, [
                                                 _model
