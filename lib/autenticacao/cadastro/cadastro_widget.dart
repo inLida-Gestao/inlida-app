@@ -369,7 +369,7 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                'Telefone (Opcional)',
+                                                'Telefone',
                                                 style: FlutterFlowTheme.of(
                                                         context)
                                                     .bodyMedium

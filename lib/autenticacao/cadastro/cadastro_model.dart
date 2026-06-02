@@ -14,8 +14,12 @@ class CadastroModel extends FlutterFlowModel<CadastroWidget> {
   TextEditingController? nomeTextController;
   String? Function(BuildContext, String?)? nomeTextControllerValidator;
   String? _nomeTextControllerValidator(BuildContext context, String? val) {
-    if (val == null || val.isEmpty) {
+    final value = val?.trim() ?? '';
+    if (value.isEmpty) {
       return 'Campo obrigatório';
+    }
+    if (value.length < 4) {
+      return 'Digite pelo menos 4 caracteres';
     }
 
     return null;
@@ -26,6 +30,18 @@ class CadastroModel extends FlutterFlowModel<CadastroWidget> {
   TextEditingController? telefoneTextController;
   late MaskTextInputFormatter telefoneMask;
   String? Function(BuildContext, String?)? telefoneTextControllerValidator;
+  String? _telefoneTextControllerValidator(BuildContext context, String? val) {
+    final digits = telefoneMask.getUnmaskedText();
+    if (digits.isEmpty) {
+      return 'Campo obrigatório';
+    }
+    if (digits.length < 11) {
+      return 'Informe um telefone válido';
+    }
+
+    return null;
+  }
+
   // State field(s) for funcao widget.
   String? funcaoValue;
   FormFieldController<String>? funcaoValueController;
@@ -75,6 +91,7 @@ class CadastroModel extends FlutterFlowModel<CadastroWidget> {
   @override
   void initState(BuildContext context) {
     nomeTextControllerValidator = _nomeTextControllerValidator;
+    telefoneTextControllerValidator = _telefoneTextControllerValidator;
     emailTextControllerValidator = _emailTextControllerValidator;
     senhaVisibility = false;
     senhaTextControllerValidator = _senhaTextControllerValidator;
