@@ -243,20 +243,31 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                 child: FFButtonWidget(
                   onPressed: () async {
                     var shouldSetState = false;
-                    _model.user = await UsersTable().queryRows(
-                      queryFn: (q) => q.eqOrNull(
-                        'email',
-                        _model.emailPropriedadeTextController.text,
-                      ),
+                    final emailUsuario = _model
+                        .emailPropriedadeTextController.text
+                        .trim()
+                        .toLowerCase();
+                    final usuarioVinculoResult = await SupaFlow.client.rpc(
+                      'buscar_usuario_para_vinculo',
+                      params: {
+                        'p_email': emailUsuario,
+                      },
                     );
+                    final usuarioVinculoRows =
+                        (usuarioVinculoResult as List<dynamic>)
+                            .map((e) => Map<String, dynamic>.from(e as Map))
+                            .toList();
                     shouldSetState = true;
-                    if (_model.user!.isNotEmpty) {
+                    if (usuarioVinculoRows.isNotEmpty) {
+                      final usuarioVinculo = usuarioVinculoRows.first;
+                      final usuarioVinculoId =
+                          usuarioVinculo['user_id']?.toString() ?? '';
                       _model.userNaPropriedade =
                           await UsersPropriedadesTable().queryRows(
                         queryFn: (q) => q
                             .eqOrNull(
                               'email',
-                              _model.emailPropriedadeTextController.text,
+                              emailUsuario,
                             )
                             .eqOrNull(
                               'idPropriedade',
@@ -290,10 +301,10 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                           safeSetState(() {});
                         }
                         await UsersPropriedadesTable().insert({
-                          'user_id': _model.user?.firstOrNull?.userID,
-                          'nome': _model.user?.firstOrNull?.nome,
-                          'email': _model.user?.firstOrNull?.email,
-                          'foto': _model.user?.firstOrNull?.foto,
+                          'user_id': usuarioVinculoId,
+                          'nome': usuarioVinculo['nome'],
+                          'email': usuarioVinculo['email'] ?? emailUsuario,
+                          'foto': usuarioVinculo['foto'],
                           'permissao': 'Visualizador',
                           'deletado': 'NAO',
                           'idPropriedade': widget.idPropriedade,
@@ -304,10 +315,7 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                         );
                         shouldSetState = true;
                         if (_model.propriedade?.firstOrNull?.usersID == ' ') {
-                          _model.usersProp = _model.user!
-                              .map((e) => e.userID)
-                              .toList()
-                              .cast<String>();
+                          _model.usersProp = [usuarioVinculoId];
                           safeSetState(() {});
                           await SQLiteManager.instance.addUserNaPropriedade(
                             idPropriedade: widget.idPropriedade,
@@ -326,8 +334,7 @@ class _AddUsuarioWidgetState extends State<AddUsuarioWidget> {
                               .toList()
                               .cast<String>();
                           safeSetState(() {});
-                          _model
-                              .addToUsersProp(_model.user!.firstOrNull!.userID);
+                          _model.addToUsersProp(usuarioVinculoId);
                           safeSetState(() {});
                           await SQLiteManager.instance.addUserNaPropriedade(
                             idPropriedade: widget.idPropriedade,
