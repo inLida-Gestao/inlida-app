@@ -1426,6 +1426,24 @@ class _CadastroWidgetState extends State<CadastroWidget> {
                                               if (user == null) {
                                                 return;
                                               }
+                                              await SupaFlow.client
+                                                  .from('users')
+                                                  .upsert({
+                                                'userID': user.uid,
+                                                'nome': _model
+                                                    .nomeTextController.text
+                                                    .trim(),
+                                                'email': _model
+                                                    .emailTextController.text
+                                                    .trim()
+                                                    .toLowerCase(),
+                                                'telefone': _model
+                                                    .telefoneTextController.text
+                                                    .trim(),
+                                                'termos': _model.checkboxValue,
+                                                'funcao': _model.funcaoValue,
+                                                'acesso': 'Gratis',
+                                              });
                                               if (context.mounted) {
                                                 context.pushNamedAuth(
                                                     HomePageWidget.routeName,
