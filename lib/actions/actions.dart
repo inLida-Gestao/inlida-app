@@ -2396,12 +2396,12 @@ Map<String, dynamic> _buildRebanhoPayload(
     'movimentacao_entrada': serializeDate(raw['movimentacao_entrada']),
     'movimentacao_saida': serializeDate(raw['movimentacao_saida']),
     'data_morte': serializeDate(raw['data_morte']),
+    'motivo_morte': normalizeNullableText(raw['motivo_morte']),
     'updated_at': updatedAt,
   };
   if (isInsert) {
     payload['created_at'] = createdAt ?? updatedAt;
-    // Campos que só fazem sentido no INSERT (presentes em PUTRow apenas).
-    payload['motivo_morte'] = raw['motivo_morte'];
+    // Campo que só faz sentido no INSERT (presente em PUTRow apenas).
     payload['categoria_matriz'] = raw['categoria_matriz'];
   }
   const keepNullOnUpdate = {
