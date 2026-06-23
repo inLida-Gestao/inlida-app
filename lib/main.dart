@@ -26,19 +26,9 @@ void main() async {
   await appState.initializePersistedState();
 
   runApp(
-    Builder(
-      builder: (context) {
-        return MediaQuery(
-          data: MediaQuery.maybeOf(context)?.copyWith(
-                textScaler: const TextScaler.linear(1.0),
-              ) ??
-              const MediaQueryData(),
-          child: ChangeNotifierProvider(
-            create: (context) => appState,
-            child: const MyApp(),
-          ),
-        );
-      },
+    ChangeNotifierProvider(
+      create: (context) => appState,
+      child: const MyApp(),
     ),
   );
 }
@@ -133,6 +123,14 @@ class _MyAppState extends State<MyApp> {
       ),
       themeMode: _themeMode,
       routerConfig: _router,
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: const TextScaler.linear(1.0),
+          ),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

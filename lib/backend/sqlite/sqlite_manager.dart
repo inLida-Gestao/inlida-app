@@ -18,6 +18,23 @@ class SQLiteManager {
   static late Database _database;
   Database get database => _database;
 
+  Future<List<T>> _timedRebanhoQuery<T>(
+    String label,
+    Future<List<T>> Function() query,
+  ) async {
+    if (!kDebugMode) {
+      return query();
+    }
+
+    final stopwatch = Stopwatch()..start();
+    final rows = await query();
+    stopwatch.stop();
+    debugPrint(
+      '[SQLite][Rebanho] $label: ${rows.length} linhas em ${stopwatch.elapsedMilliseconds}ms',
+    );
+    return rows;
+  }
+
   static Future initialize() async {
     if (kIsWeb) {
       return;
@@ -97,18 +114,23 @@ class SQLiteManager {
   Future<List<ListarRebanhosRow>> listarRebanhos({
     String? idPropriedade,
   }) =>
-      performListarRebanhos(
-        _database,
-        idPropriedade: idPropriedade,
+      _timedRebanhoQuery(
+        'listarRebanhos',
+        () => performListarRebanhos(
+          _database,
+          idPropriedade: idPropriedade,
+        ),
       );
 
   Future<List<BuscarRebanhoRow>> buscarRebanho({
     String? idRebanho,
-  }) =>
-      performBuscarRebanho(
-        _database,
-        idRebanho: idRebanho,
-      );
+  }) async {
+    await _syncUltimaPesagemNoRebanho(idRebanho);
+    return performBuscarRebanho(
+      _database,
+      idRebanho: idRebanho,
+    );
+  }
 
   Future<List<BuscarRebanhoUPDATEDRow>> buscarRebanhoUPDATED({
     String? data,
@@ -506,19 +528,22 @@ class SQLiteManager {
     String? dataNascInicio,
     String? dataNascFim,
   }) =>
-      performBuscaRebanhoPaginada(
-        _database,
-        idPropriedade: idPropriedade,
-        limitReb: limitReb,
-        offsetReb: offsetReb,
-        sexo: sexo,
-        categoria: categoria,
-        raca: raca,
-        origem: origem,
-        loteId: loteId,
-        statusReb: statusReb,
-        dataNascInicio: dataNascInicio,
-        dataNascFim: dataNascFim,
+      _timedRebanhoQuery(
+        'buscaRebanhoPaginada',
+        () => performBuscaRebanhoPaginada(
+          _database,
+          idPropriedade: idPropriedade,
+          limitReb: limitReb,
+          offsetReb: offsetReb,
+          sexo: sexo,
+          categoria: categoria,
+          raca: raca,
+          origem: origem,
+          loteId: loteId,
+          statusReb: statusReb,
+          dataNascInicio: dataNascInicio,
+          dataNascFim: dataNascFim,
+        ),
       );
 
   Future<List<QTDAnimaisTotalPropriedadeRow>> qTDAnimaisTotalPropriedade({
@@ -620,20 +645,21 @@ class SQLiteManager {
     String? statusReb,
     String? dataNascInicio,
     String? dataNascFim,
-  }) =>
-      performBuscaRebanhoPaginadaPesquisa(
-        _database,
-        idPropriedade: idPropriedade,
-        sexo: sexo,
-        categoria: categoria,
-        raca: raca,
-        origem: origem,
-        loteId: loteId,
-        pesquisa: pesquisa,
-        statusReb: statusReb,
-        dataNascInicio: dataNascInicio,
-        dataNascFim: dataNascFim,
-      );
+  }) async {
+    return performBuscaRebanhoPaginadaPesquisa(
+      _database,
+      idPropriedade: idPropriedade,
+      sexo: sexo,
+      categoria: categoria,
+      raca: raca,
+      origem: origem,
+      loteId: loteId,
+      pesquisa: pesquisa,
+      statusReb: statusReb,
+      dataNascInicio: dataNascInicio,
+      dataNascFim: dataNascFim,
+    );
+  }
 
   Future<List<ListarReproducoesPesqRow>> listarReproducoesPesq({
     String? idPropriedade,
@@ -743,6 +769,14 @@ class SQLiteManager {
         loteID: loteID,
       );
 
+  Future<List<QtdReproducoesNoLoteRow>> qtdReproducoesNoLote({
+    String? loteID,
+  }) =>
+      performQtdReproducoesNoLote(
+        _database,
+        loteID: loteID,
+      );
+
   Future<List<BuscarAnimaisDoLoteRow>> buscarAnimaisDoLote({
     String? loteid,
   }) =>
@@ -764,19 +798,22 @@ class SQLiteManager {
     String? dataNascInicio,
     String? dataNascFim,
   }) =>
-      performRebanhoPagOrdNumCres(
-        _database,
-        idPropriedade: idPropriedade,
-        limitReb: limitReb,
-        offsetReb: offsetReb,
-        sexo: sexo,
-        categoria: categoria,
-        raca: raca,
-        origem: origem,
-        loteId: loteId,
-        statusReb: statusReb,
-        dataNascInicio: dataNascInicio,
-        dataNascFim: dataNascFim,
+      _timedRebanhoQuery(
+        'rebanhoPagOrdNumCres',
+        () => performRebanhoPagOrdNumCres(
+          _database,
+          idPropriedade: idPropriedade,
+          limitReb: limitReb,
+          offsetReb: offsetReb,
+          sexo: sexo,
+          categoria: categoria,
+          raca: raca,
+          origem: origem,
+          loteId: loteId,
+          statusReb: statusReb,
+          dataNascInicio: dataNascInicio,
+          dataNascFim: dataNascFim,
+        ),
       );
 
   Future<List<RebanhoPagOrdNumDescRow>> rebanhoPagOrdNumDesc({
@@ -792,19 +829,22 @@ class SQLiteManager {
     String? dataNascInicio,
     String? dataNascFim,
   }) =>
-      performRebanhoPagOrdNumDesc(
-        _database,
-        idPropriedade: idPropriedade,
-        limitReb: limitReb,
-        offsetReb: offsetReb,
-        sexo: sexo,
-        categoria: categoria,
-        raca: raca,
-        origem: origem,
-        loteId: loteId,
-        statusReb: statusReb,
-        dataNascInicio: dataNascInicio,
-        dataNascFim: dataNascFim,
+      _timedRebanhoQuery(
+        'rebanhoPagOrdNumDesc',
+        () => performRebanhoPagOrdNumDesc(
+          _database,
+          idPropriedade: idPropriedade,
+          limitReb: limitReb,
+          offsetReb: offsetReb,
+          sexo: sexo,
+          categoria: categoria,
+          raca: raca,
+          origem: origem,
+          loteId: loteId,
+          statusReb: statusReb,
+          dataNascInicio: dataNascInicio,
+          dataNascFim: dataNascFim,
+        ),
       );
 
   Future<List<RebanhoPagOrdNomCresRow>> rebanhoPagOrdNomCres({
@@ -820,19 +860,22 @@ class SQLiteManager {
     String? dataNascInicio,
     String? dataNascFim,
   }) =>
-      performRebanhoPagOrdNomCres(
-        _database,
-        idPropriedade: idPropriedade,
-        limitReb: limitReb,
-        offsetReb: offsetReb,
-        sexo: sexo,
-        categoria: categoria,
-        raca: raca,
-        origem: origem,
-        loteId: loteId,
-        statusReb: statusReb,
-        dataNascInicio: dataNascInicio,
-        dataNascFim: dataNascFim,
+      _timedRebanhoQuery(
+        'rebanhoPagOrdNomCres',
+        () => performRebanhoPagOrdNomCres(
+          _database,
+          idPropriedade: idPropriedade,
+          limitReb: limitReb,
+          offsetReb: offsetReb,
+          sexo: sexo,
+          categoria: categoria,
+          raca: raca,
+          origem: origem,
+          loteId: loteId,
+          statusReb: statusReb,
+          dataNascInicio: dataNascInicio,
+          dataNascFim: dataNascFim,
+        ),
       );
 
   Future<List<RebanhoPagOrdNomDescRow>> rebanhoPagOrdNomDesc({
@@ -848,19 +891,22 @@ class SQLiteManager {
     String? dataNascInicio,
     String? dataNascFim,
   }) =>
-      performRebanhoPagOrdNomDesc(
-        _database,
-        idPropriedade: idPropriedade,
-        limitReb: limitReb,
-        offsetReb: offsetReb,
-        sexo: sexo,
-        categoria: categoria,
-        raca: raca,
-        origem: origem,
-        loteId: loteId,
-        statusReb: statusReb,
-        dataNascInicio: dataNascInicio,
-        dataNascFim: dataNascFim,
+      _timedRebanhoQuery(
+        'rebanhoPagOrdNomDesc',
+        () => performRebanhoPagOrdNomDesc(
+          _database,
+          idPropriedade: idPropriedade,
+          limitReb: limitReb,
+          offsetReb: offsetReb,
+          sexo: sexo,
+          categoria: categoria,
+          raca: raca,
+          origem: origem,
+          loteId: loteId,
+          statusReb: statusReb,
+          dataNascInicio: dataNascInicio,
+          dataNascFim: dataNascFim,
+        ),
       );
 
   Future<List<RebanhoPagOrdDataCresRow>> rebanhoPagOrdDataCres({
@@ -876,19 +922,22 @@ class SQLiteManager {
     String? dataNascInicio,
     String? dataNascFim,
   }) =>
-      performRebanhoPagOrdDataCres(
-        _database,
-        idPropriedade: idPropriedade,
-        limitReb: limitReb,
-        offsetReb: offsetReb,
-        sexo: sexo,
-        categoria: categoria,
-        raca: raca,
-        origem: origem,
-        loteId: loteId,
-        statusReb: statusReb,
-        dataNascInicio: dataNascInicio,
-        dataNascFim: dataNascFim,
+      _timedRebanhoQuery(
+        'rebanhoPagOrdDataCres',
+        () => performRebanhoPagOrdDataCres(
+          _database,
+          idPropriedade: idPropriedade,
+          limitReb: limitReb,
+          offsetReb: offsetReb,
+          sexo: sexo,
+          categoria: categoria,
+          raca: raca,
+          origem: origem,
+          loteId: loteId,
+          statusReb: statusReb,
+          dataNascInicio: dataNascInicio,
+          dataNascFim: dataNascFim,
+        ),
       );
 
   Future<List<RebanhoPagOrdDataDescRow>> rebanhoPagOrdDataDesc({
@@ -904,19 +953,22 @@ class SQLiteManager {
     String? dataNascInicio,
     String? dataNascFim,
   }) =>
-      performRebanhoPagOrdDataDesc(
-        _database,
-        idPropriedade: idPropriedade,
-        limitReb: limitReb,
-        offsetReb: offsetReb,
-        sexo: sexo,
-        categoria: categoria,
-        raca: raca,
-        origem: origem,
-        loteId: loteId,
-        statusReb: statusReb,
-        dataNascInicio: dataNascInicio,
-        dataNascFim: dataNascFim,
+      _timedRebanhoQuery(
+        'rebanhoPagOrdDataDesc',
+        () => performRebanhoPagOrdDataDesc(
+          _database,
+          idPropriedade: idPropriedade,
+          limitReb: limitReb,
+          offsetReb: offsetReb,
+          sexo: sexo,
+          categoria: categoria,
+          raca: raca,
+          origem: origem,
+          loteId: loteId,
+          statusReb: statusReb,
+          dataNascInicio: dataNascInicio,
+          dataNascFim: dataNascFim,
+        ),
       );
 
   Future<List<ListarPropriedadesCrescNomeRow>> listarPropriedadesCrescNome({
@@ -1154,56 +1206,62 @@ class SQLiteManager {
     String? categoriamatriz,
     String? rebanhoIdMatriz,
     String? rebanhoIdReprodutor,
-  }) =>
-      performInsertRebanho(
-        _database,
-        idPropriedade: idPropriedade,
-        numeroAnimal: numeroAnimal,
-        chip: chip,
-        codRegistro: codRegistro,
-        nome: nome,
-        sexo: sexo,
-        categoria: categoria,
-        dataNascimento: dataNascimento,
-        pesoNascimento: pesoNascimento,
-        porte: porte,
-        raca: raca,
-        dataEntradaLote: dataEntradaLote,
-        dataDesmama: dataDesmama,
-        pesoDesmama: pesoDesmama,
-        pesoAtual: pesoAtual,
-        statusRebanho: statusRebanho,
-        origem: origem,
-        anotacoes: anotacoes,
-        idRebanho: idRebanho,
-        deletado: deletado,
-        createdat: createdat,
-        updatedat: updatedat,
-        tipo: tipo,
-        dataAcao: dataAcao,
-        valorCompra: valorCompra,
-        dataUltimaPesagem: dataUltimaPesagem,
-        nomeConcat: nomeConcat,
-        loteID: loteID,
-        loteNome: loteNome,
-        dataVenda: dataVenda,
-        valorVenda: valorVenda,
-        movimentacaoentrada: movimentacaoentrada,
-        numeroMatriz: numeroMatriz,
-        nomeMatriz: nomeMatriz,
-        dataNascMatriz: dataNascMatriz,
-        racaMatriz: racaMatriz,
-        numeroReprodutor: numeroReprodutor,
-        nomeReprodutor: nomeReprodutor,
-        dataNascReprodutor: dataNascReprodutor,
-        racaReprodutor: racaReprodutor,
-        movimentacaosaida: movimentacaosaida,
-        datamorte: datamorte,
-        motivomorte: motivomorte,
-        categoriamatriz: categoriamatriz,
-        rebanhoIdMatriz: rebanhoIdMatriz,
-        rebanhoIdReprodutor: rebanhoIdReprodutor,
-      );
+  }) async {
+    await performInsertRebanho(
+      _database,
+      idPropriedade: idPropriedade,
+      numeroAnimal: numeroAnimal,
+      chip: chip,
+      codRegistro: codRegistro,
+      nome: nome,
+      sexo: sexo,
+      categoria: categoria,
+      dataNascimento: dataNascimento,
+      pesoNascimento: pesoNascimento,
+      porte: porte,
+      raca: raca,
+      dataEntradaLote: dataEntradaLote,
+      dataDesmama: dataDesmama,
+      pesoDesmama: pesoDesmama,
+      pesoAtual: pesoAtual,
+      statusRebanho: statusRebanho,
+      origem: origem,
+      anotacoes: anotacoes,
+      idRebanho: idRebanho,
+      deletado: deletado,
+      createdat: createdat,
+      updatedat: updatedat,
+      tipo: tipo,
+      dataAcao: dataAcao,
+      valorCompra: valorCompra,
+      dataUltimaPesagem: dataUltimaPesagem,
+      nomeConcat: nomeConcat,
+      loteID: loteID,
+      loteNome: loteNome,
+      dataVenda: dataVenda,
+      valorVenda: valorVenda,
+      movimentacaoentrada: movimentacaoentrada,
+      numeroMatriz: numeroMatriz,
+      nomeMatriz: nomeMatriz,
+      dataNascMatriz: dataNascMatriz,
+      racaMatriz: racaMatriz,
+      numeroReprodutor: numeroReprodutor,
+      nomeReprodutor: nomeReprodutor,
+      dataNascReprodutor: dataNascReprodutor,
+      racaReprodutor: racaReprodutor,
+      movimentacaosaida: movimentacaosaida,
+      datamorte: datamorte,
+      motivomorte: motivomorte,
+      categoriamatriz: categoriamatriz,
+      rebanhoIdMatriz: rebanhoIdMatriz,
+      rebanhoIdReprodutor: rebanhoIdReprodutor,
+    );
+    await _upsertPesagemNascimentoSeInformada(
+      idRebanho: idRebanho,
+      dataNascimento: dataNascimento,
+      pesoNascimento: pesoNascimento,
+    );
+  }
 
   Future deletarTodosRebanhos() => performDeletarTodosRebanhos(
         _database,
@@ -1259,47 +1317,53 @@ class SQLiteManager {
     String? categoriamatriz,
     String? rebanhoIdMatriz,
     String? rebanhoIdReprodutor,
-  }) =>
-      performInsertRebanhoNascimento(
-        _database,
-        idPropriedade: idPropriedade,
-        numeroAnimal: numeroAnimal,
-        chip: chip,
-        codRegistro: codRegistro,
-        nome: nome,
-        sexo: sexo,
-        categoria: categoria,
-        dataNascimento: dataNascimento,
-        pesoNascimento: pesoNascimento,
-        porte: porte,
-        raca: raca,
-        dataEntradaLote: dataEntradaLote,
-        statusRebanho: statusRebanho,
-        anotacoes: anotacoes,
-        idRebanho: idRebanho,
-        deletado: deletado,
-        createdat: createdat,
-        updatedat: updatedat,
-        tipo: tipo,
-        loteNome: loteNome,
-        loteID: loteID,
-        dataVenda: dataVenda,
-        valorVenda: valorVenda,
-        numeroMatriz: numeroMatriz,
-        nomeMatriz: nomeMatriz,
-        dataNascMatriz: dataNascMatriz,
-        racaMatriz: racaMatriz,
-        numeroReprodutor: numeroReprodutor,
-        nomeReprodutor: nomeReprodutor,
-        dataNascReprodutor: dataNascReprodutor,
-        racaReprodutor: racaReprodutor,
-        movimentacaosaida: movimentacaosaida,
-        datamorte: datamorte,
-        motivomorte: motivomorte,
-        categoriamatriz: categoriamatriz,
-        rebanhoIdMatriz: rebanhoIdMatriz,
-        rebanhoIdReprodutor: rebanhoIdReprodutor,
-      );
+  }) async {
+    await performInsertRebanhoNascimento(
+      _database,
+      idPropriedade: idPropriedade,
+      numeroAnimal: numeroAnimal,
+      chip: chip,
+      codRegistro: codRegistro,
+      nome: nome,
+      sexo: sexo,
+      categoria: categoria,
+      dataNascimento: dataNascimento,
+      pesoNascimento: pesoNascimento,
+      porte: porte,
+      raca: raca,
+      dataEntradaLote: dataEntradaLote,
+      statusRebanho: statusRebanho,
+      anotacoes: anotacoes,
+      idRebanho: idRebanho,
+      deletado: deletado,
+      createdat: createdat,
+      updatedat: updatedat,
+      tipo: tipo,
+      loteNome: loteNome,
+      loteID: loteID,
+      dataVenda: dataVenda,
+      valorVenda: valorVenda,
+      numeroMatriz: numeroMatriz,
+      nomeMatriz: nomeMatriz,
+      dataNascMatriz: dataNascMatriz,
+      racaMatriz: racaMatriz,
+      numeroReprodutor: numeroReprodutor,
+      nomeReprodutor: nomeReprodutor,
+      dataNascReprodutor: dataNascReprodutor,
+      racaReprodutor: racaReprodutor,
+      movimentacaosaida: movimentacaosaida,
+      datamorte: datamorte,
+      motivomorte: motivomorte,
+      categoriamatriz: categoriamatriz,
+      rebanhoIdMatriz: rebanhoIdMatriz,
+      rebanhoIdReprodutor: rebanhoIdReprodutor,
+    );
+    await _upsertPesagemNascimentoSeInformada(
+      idRebanho: idRebanho,
+      dataNascimento: dataNascimento,
+      pesoNascimento: pesoNascimento,
+    );
+  }
 
   Future insertRebanhoSemen({
     String? idPropriedade,
@@ -1360,9 +1424,7 @@ class SQLiteManager {
       idPropriedade: idPropriedade,
     );
 
-    if (tipo == 'Desmama' || tipo == 'Atual') {
-      await _syncUltimaPesagemNoRebanho(idRebanho);
-    }
+    await _syncUltimaPesagemNoRebanho(idRebanho);
   }
 
   /// Updates peso (and optionally dataPesagem) of an existing pesagem record
@@ -1376,32 +1438,39 @@ class SQLiteManager {
     // Check if a record already exists
     final existing = await _database.rawQuery('''
 SELECT id FROM local_historico_pesagens
-WHERE idRebanho = '$idRebanho'
-AND tipo = '$tipo'
-AND deletado = 'NAO'
+WHERE idRebanho = ?
+AND tipo = ?
+AND COALESCE(deletado, 'NAO') != 'SIM'
 LIMIT 1
-''');
+''', [idRebanho, tipo]);
 
     if (existing.isNotEmpty) {
       final syncUpdatedAt = DateTime.now()
           .toIso8601String()
           .substring(0, 19)
           .replaceFirst('T', ' ');
-      final setClause = dataPesagem != null
-          ? "peso = $peso, dataPesagem = '$dataPesagem', sync_dirty = 1, sync_op = 'upsert', sync_updated_at = '$syncUpdatedAt'"
-          : "peso = $peso, sync_dirty = 1, sync_op = 'upsert', sync_updated_at = '$syncUpdatedAt'";
-      await _database.rawUpdate('''
+      if (dataPesagem != null) {
+        await _database.rawUpdate('''
 UPDATE local_historico_pesagens
-SET $setClause
-WHERE idRebanho = '$idRebanho'
-AND tipo = '$tipo'
-AND deletado = 'NAO'
-''');
+SET peso = ?, dataPesagem = ?, sync_dirty = 1, sync_op = 'upsert', sync_updated_at = ?
+WHERE idRebanho = ?
+AND tipo = ?
+AND COALESCE(deletado, 'NAO') != 'SIM'
+''', [peso, dataPesagem, syncUpdatedAt, idRebanho, tipo]);
+      } else {
+        await _database.rawUpdate('''
+UPDATE local_historico_pesagens
+SET peso = ?, sync_dirty = 1, sync_op = 'upsert', sync_updated_at = ?
+WHERE idRebanho = ?
+AND tipo = ?
+AND COALESCE(deletado, 'NAO') != 'SIM'
+''', [peso, syncUpdatedAt, idRebanho, tipo]);
+      }
     } else {
       // No record exists — get idPropriedade from rebanho and insert
       final rebRows = await _database.rawQuery('''
-SELECT idPropriedade FROM local_rebanho WHERE idRebanho = '$idRebanho' LIMIT 1
-''');
+SELECT idPropriedade FROM local_rebanho WHERE idRebanho = ? LIMIT 1
+''', [idRebanho]);
       final idPropriedade =
           rebRows.isNotEmpty ? rebRows.first['idPropriedade'] as String? : null;
       final now = DateTime.now()
@@ -1421,9 +1490,38 @@ SELECT idPropriedade FROM local_rebanho WHERE idRebanho = '$idRebanho' LIMIT 1
         idPropriedade: idPropriedade,
       );
     }
-    if (tipo == 'Desmama' || tipo == 'Atual') {
-      await _syncUltimaPesagemNoRebanho(idRebanho);
+    await _syncUltimaPesagemNoRebanho(idRebanho);
+  }
+
+  Future<void> _upsertPesagemNascimentoSeInformada({
+    String? idRebanho,
+    String? dataNascimento,
+    double? pesoNascimento,
+  }) async {
+    final normalizedIdRebanho = idRebanho?.trim() ?? '';
+    final normalizedDataNascimento = dataNascimento?.trim() ?? '';
+    final dataNascimentoValida = normalizedDataNascimento.isNotEmpty &&
+        normalizedDataNascimento.toLowerCase() != 'null' &&
+        normalizedDataNascimento != '-';
+
+    if (normalizedIdRebanho.isEmpty ||
+        !dataNascimentoValida ||
+        pesoNascimento == null) {
+      return;
     }
+
+    await updatePesagemByTipo(
+      idRebanho: normalizedIdRebanho,
+      tipo: 'Nascimento',
+      peso: pesoNascimento,
+      dataPesagem: normalizedDataNascimento,
+    );
+  }
+
+  Future<void> syncUltimaPesagemNoRebanho({
+    String? idRebanho,
+  }) async {
+    await _syncUltimaPesagemNoRebanho(idRebanho);
   }
 
   Future<void> _syncUltimaPesagemNoRebanho(String? idRebanho) async {
@@ -1434,17 +1532,31 @@ SELECT idPropriedade FROM local_rebanho WHERE idRebanho = '$idRebanho' LIMIT 1
     final ultimaPesagem = await _database.rawQuery('''
 SELECT peso, dataPesagem
 FROM local_historico_pesagens
-WHERE idRebanho = '$idRebanho'
-AND deletado = 'NAO'
-AND tipo IN ('Desmama', 'Atual')
+WHERE idRebanho = ?
+AND COALESCE(deletado, 'NAO') != 'SIM'
 AND COALESCE(dataPesagem, '') != ''
-ORDER BY date(dataPesagem) DESC, datetime(created_at, 'localtime') DESC, id DESC
+ORDER BY date(dataPesagem) DESC,
+         datetime(COALESCE(created_at, '1970-01-01'), 'localtime') DESC,
+         id DESC
 LIMIT 1
-''');
+''', [idRebanho]);
+
+    final rebanhoAtual = await _database.rawQuery('''
+SELECT pesoAtual, dataUltimaPesagem
+FROM local_rebanho
+WHERE idRebanho = ?
+LIMIT 1
+''', [idRebanho]);
 
     if (ultimaPesagem.isEmpty) {
-      await performUPDTPesoRebanho(
-        _database,
+      final current = rebanhoAtual.firstOrNull;
+      final currentPeso = current?['pesoAtual'];
+      final currentData = current?['dataUltimaPesagem']?.toString() ?? '';
+      if (currentPeso == null && currentData.isEmpty) {
+        return;
+      }
+
+      await _updatePesoRebanhoCache(
         peso: null,
         data: '',
         idRebanho: idRebanho,
@@ -1460,12 +1572,40 @@ LIMIT 1
             ? double.tryParse(rawPeso)
             : null;
     final dataPesagem = row['dataPesagem'] as String?;
+    final current = rebanhoAtual.firstOrNull;
+    final rawCurrentPeso = current?['pesoAtual'];
+    final currentPeso = rawCurrentPeso is num
+        ? rawCurrentPeso.toDouble()
+        : rawCurrentPeso is String
+            ? double.tryParse(rawCurrentPeso)
+            : null;
+    final currentData = current?['dataUltimaPesagem']?.toString() ?? '';
+    final nextData = dataPesagem ?? '';
 
-    await performUPDTPesoRebanho(
-      _database,
+    if (currentPeso == peso && currentData == nextData) {
+      return;
+    }
+
+    await _updatePesoRebanhoCache(
       peso: peso,
       data: dataPesagem,
       idRebanho: idRebanho,
+    );
+  }
+
+  Future<void> _updatePesoRebanhoCache({
+    double? peso,
+    String? data,
+    required String idRebanho,
+  }) async {
+    await _database.rawUpdate(
+      '''
+UPDATE local_rebanho
+SET pesoAtual = ?,
+    dataUltimaPesagem = ?
+WHERE idRebanho = ?
+''',
+      [peso, data ?? '', idRebanho],
     );
   }
 
@@ -1495,13 +1635,11 @@ LIMIT 1
     String? dataEntradaLote,
     String? dataDesmama,
     double? pesoDesmama,
-    double? pesoAtual,
     String? statusRebanho,
     String? origem,
     String? anotacoes,
     String? dataAcao,
     double? valorCompra,
-    String? dataUltimaPesagem,
     String? nomeConcat,
     String? idRebanho,
     String? updatedat,
@@ -1524,52 +1662,56 @@ LIMIT 1
     String? categoriamatriz,
     String? rebanhoIdMatriz,
     String? rebanhoIdReprodutor,
-  }) =>
-      performUPDTRebanho(
-        _database,
-        numeroAnimal: numeroAnimal,
-        chip: chip,
-        codRegistro: codRegistro,
-        nome: nome,
-        sexo: sexo,
-        categoria: categoria,
-        dataNascimento: dataNascimento,
-        pesoNascimento: pesoNascimento,
-        porte: porte,
-        raca: raca,
-        dataEntradaLote: dataEntradaLote,
-        dataDesmama: dataDesmama,
-        pesoDesmama: pesoDesmama,
-        pesoAtual: pesoAtual,
-        statusRebanho: statusRebanho,
-        origem: origem,
-        anotacoes: anotacoes,
-        dataAcao: dataAcao,
-        valorCompra: valorCompra,
-        dataUltimaPesagem: dataUltimaPesagem,
-        nomeConcat: nomeConcat,
-        idRebanho: idRebanho,
-        updatedat: updatedat,
-        loteNome: loteNome,
-        loteID: loteID,
-        movimentacaoentrada: movimentacaoentrada,
-        dataVenda: dataVenda,
-        valorVenda: valorVenda,
-        numeroMatriz: numeroMatriz,
-        dataNascMatriz: dataNascMatriz,
-        racaMatriz: racaMatriz,
-        numeroReprodutor: numeroReprodutor,
-        nomeReprodutor: nomeReprodutor,
-        dataNascReprodutor: dataNascReprodutor,
-        racaReprodutor: racaReprodutor,
-        nomeMatriz: nomeMatriz,
-        movimentacaosaida: movimentacaosaida,
-        datamorte: datamorte,
-        motivomorte: motivomorte,
-        categoriamatriz: categoriamatriz,
-        rebanhoIdMatriz: rebanhoIdMatriz,
-        rebanhoIdReprodutor: rebanhoIdReprodutor,
-      );
+  }) async {
+    await performUPDTRebanho(
+      _database,
+      numeroAnimal: numeroAnimal,
+      chip: chip,
+      codRegistro: codRegistro,
+      nome: nome,
+      sexo: sexo,
+      categoria: categoria,
+      dataNascimento: dataNascimento,
+      pesoNascimento: pesoNascimento,
+      porte: porte,
+      raca: raca,
+      dataEntradaLote: dataEntradaLote,
+      dataDesmama: dataDesmama,
+      pesoDesmama: pesoDesmama,
+      statusRebanho: statusRebanho,
+      origem: origem,
+      anotacoes: anotacoes,
+      dataAcao: dataAcao,
+      valorCompra: valorCompra,
+      nomeConcat: nomeConcat,
+      idRebanho: idRebanho,
+      updatedat: updatedat,
+      loteNome: loteNome,
+      loteID: loteID,
+      movimentacaoentrada: movimentacaoentrada,
+      dataVenda: dataVenda,
+      valorVenda: valorVenda,
+      numeroMatriz: numeroMatriz,
+      dataNascMatriz: dataNascMatriz,
+      racaMatriz: racaMatriz,
+      numeroReprodutor: numeroReprodutor,
+      nomeReprodutor: nomeReprodutor,
+      dataNascReprodutor: dataNascReprodutor,
+      racaReprodutor: racaReprodutor,
+      nomeMatriz: nomeMatriz,
+      movimentacaosaida: movimentacaosaida,
+      datamorte: datamorte,
+      motivomorte: motivomorte,
+      categoriamatriz: categoriamatriz,
+      rebanhoIdMatriz: rebanhoIdMatriz,
+      rebanhoIdReprodutor: rebanhoIdReprodutor,
+    );
+    await _upsertPesagemNascimentoSeInformada(
+      idRebanho: idRebanho,
+      dataNascimento: dataNascimento,
+      pesoNascimento: pesoNascimento,
+    );
+  }
 
   Future<void> deletePesagem({
     String? idRebanho,
@@ -1600,7 +1742,6 @@ LIMIT 1
 
   Future insertLote({
     String? idPropriedade,
-    String? idAnimais,
     String? nome,
     String? anotacoes,
     String? ativo,
@@ -1615,7 +1756,6 @@ LIMIT 1
       performInsertLote(
         _database,
         idPropriedade: idPropriedade,
-        idAnimais: idAnimais,
         nome: nome,
         anotacoes: anotacoes,
         ativo: ativo,
@@ -1649,7 +1789,6 @@ LIMIT 1
       );
 
   Future uPDTLote({
-    String? idAnimais,
     String? nome,
     String? anotacoes,
     String? ativo,
@@ -1661,7 +1800,6 @@ LIMIT 1
   }) =>
       performUPDTLote(
         _database,
-        idAnimais: idAnimais,
         nome: nome,
         anotacoes: anotacoes,
         ativo: ativo,
@@ -1769,7 +1907,6 @@ LIMIT 1
     String? dataPartidaSemen,
     int? partidaSemen,
     String? previsaoParto,
-    String? idLote,
     String? dataInicial,
     String? dataFinal,
     String? inseminador,
@@ -1783,7 +1920,6 @@ LIMIT 1
     String? numReprodutor,
     String? nomeReprodutor,
     String? nascimentoReprodutor,
-    String? loteNome,
     String? statusReproducao,
     String? dataStatus,
     String? racaMatriz,
@@ -1806,7 +1942,6 @@ LIMIT 1
         dataPartidaSemen: dataPartidaSemen,
         partidaSemen: partidaSemen,
         previsaoParto: previsaoParto,
-        idLote: idLote,
         dataInicial: dataInicial,
         dataFinal: dataFinal,
         inseminador: inseminador,
@@ -1820,7 +1955,6 @@ LIMIT 1
         numReprodutor: numReprodutor,
         nomeReprodutor: nomeReprodutor,
         nascimentoReprodutor: nascimentoReprodutor,
-        loteNome: loteNome,
         statusReproducao: statusReproducao,
         dataStatus: dataStatus,
         racaMatriz: racaMatriz,
@@ -2088,18 +2222,6 @@ LIMIT 1
         updatedat: updatedat,
       );
 
-  Future uPDTLoteRebanho({
-    String? idAnimais,
-    String? updatedat,
-    String? idLote,
-  }) =>
-      performUPDTLoteRebanho(
-        _database,
-        idAnimais: idAnimais,
-        updatedat: updatedat,
-        idLote: idLote,
-      );
-
   Future deletarLote({
     String? idLote,
   }) =>
@@ -2260,7 +2382,6 @@ LIMIT 1
     String? dataPartidaSemen,
     int? partidaSemen,
     String? previsaoParto,
-    String? idLote,
     String? dataInicial,
     String? dataFinal,
     String? anotacoes,
@@ -2273,7 +2394,6 @@ LIMIT 1
     String? numReprodutor,
     String? nomeReprodutor,
     String? nascimentoReprodutor,
-    String? loteNome,
     String? statusReproducao,
     String? dataStatus,
     String? racaMatriz,
@@ -2295,7 +2415,6 @@ LIMIT 1
         dataPartidaSemen: dataPartidaSemen,
         partidaSemen: partidaSemen,
         previsaoParto: previsaoParto,
-        idLote: idLote,
         dataInicial: dataInicial,
         dataFinal: dataFinal,
         anotacoes: anotacoes,
@@ -2308,7 +2427,6 @@ LIMIT 1
         numReprodutor: numReprodutor,
         nomeReprodutor: nomeReprodutor,
         nascimentoReprodutor: nascimentoReprodutor,
-        loteNome: loteNome,
         statusReproducao: statusReproducao,
         dataStatus: dataStatus,
         racaMatriz: racaMatriz,

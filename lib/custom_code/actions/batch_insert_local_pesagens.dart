@@ -174,6 +174,24 @@ Future<void> _replaceLocalPesagem(
   if (idRebanho != null &&
       dataPesagem != null &&
       tipo != null &&
+      pesoKey.isNotEmpty) {
+    await db.delete(
+      'local_historico_pesagens',
+      where: '''
+        idRebanho = ?
+        AND dataPesagem = ?
+        AND tipo = ?
+        AND printf('%.3f', CAST(peso AS REAL)) = ?
+        AND COALESCE(deletado, 'NAO') != 'SIM'
+        AND COALESCE(sync_op, '') != 'delete'
+      ''',
+      whereArgs: [idRebanho, dataPesagem, tipo, pesoKey],
+    );
+  }
+
+  if (idRebanho != null &&
+      dataPesagem != null &&
+      tipo != null &&
       pesoKey.isNotEmpty &&
       createdAt != null) {
     await db.delete(

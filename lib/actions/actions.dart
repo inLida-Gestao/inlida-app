@@ -481,6 +481,76 @@ Future<void> _clearLocalPesagemSyncDirtyByIds(
       'Marcador local de sync limpo para ${validIds.length} pesagem(ns).');
 }
 
+Future<void> _clearLocalPesagemSyncDirtyByPayloads(
+  Iterable<Map<String, dynamic>> payloads, {
+  required String label,
+}) async {
+  String? normDate(dynamic value) {
+    final raw = value?.toString().trim();
+    if (raw == null || raw.isEmpty || raw == 'null') return null;
+    return raw.length >= 10 ? raw.substring(0, 10) : raw;
+  }
+
+  String? normPeso(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toStringAsFixed(3);
+    final parsed = double.tryParse(value.toString().replaceAll(',', '.'));
+    return parsed?.toStringAsFixed(3);
+  }
+
+  final identities = <String, List<String>>{};
+  for (final payload in payloads) {
+    final idRebanho = payload['idRebanho']?.toString().trim();
+    final dataPesagem = normDate(payload['dataPesagem']);
+    final tipo = payload['tipo']?.toString().trim();
+    final peso = normPeso(payload['peso']);
+    if (idRebanho == null ||
+        idRebanho.isEmpty ||
+        dataPesagem == null ||
+        dataPesagem.isEmpty ||
+        tipo == null ||
+        tipo.isEmpty ||
+        peso == null ||
+        peso.isEmpty) {
+      continue;
+    }
+    identities['$idRebanho|$dataPesagem|$tipo|$peso'] = [
+      idRebanho,
+      dataPesagem,
+      tipo,
+      peso,
+    ];
+  }
+
+  if (identities.isEmpty) return;
+
+  final db = SQLiteManager.instance.database;
+  final now =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  var updated = 0;
+  for (final identity in identities.values) {
+    updated += await db.rawUpdate(
+      '''
+      UPDATE local_historico_pesagens
+      SET sync_dirty = 0,
+          sync_op = NULL,
+          sync_updated_at = ?
+      WHERE idRebanho = ?
+        AND substr(COALESCE(dataPesagem, ''), 1, 10) = ?
+        AND tipo = ?
+        AND printf('%.3f', CAST(peso AS REAL)) = ?
+        AND COALESCE(sync_op, '') != 'delete'
+      ''',
+      [now, ...identity],
+    );
+  }
+
+  if (updated > 0) {
+    _syncLog(label,
+        'Marcador local de sync limpo por identidade para $updated pesagem(ns).');
+  }
+}
+
 Future<void> _clearLocalRebanhoSyncDirtyByIds(
   Iterable<String?> ids, {
   required String label,
@@ -578,6 +648,8 @@ const Duration kSyncLightTimeout = Duration(seconds: 10);
 
 /// Tempo total máximo de uma sessão de sync (watchdog global).
 const Duration kSyncTotalBudget = Duration(minutes: 3);
+
+const String _reproLotSnapshotRepairPrefsKey = 'repro_lot_snapshot_repair_v1';
 
 Future<void>? _refreshPesagensInFlight;
 
@@ -981,6 +1053,118 @@ Future<ApiCallResponse> _buscarPesagensSemPropriedade({
         alwaysAllowBody: false,
       )
       .timeout(timeout);
+}
+
+Future<ApiCallResponse> _buscarPesagensRebanhoDireto({
+  required String idRebanho,
+  String? idPropriedade,
+  Duration timeout = const Duration(seconds: 12),
+}) {
+  final propertyId = idPropriedade?.trim();
+  return ApiManager.instance
+      .makeApiCall(
+        callName: 'Buscar Pesagens Rebanho Direto',
+        apiUrl:
+            '${SupabaseFunctionsGroup.getBaseUrl().replaceFirst('/rpc', '')}/historico_pesagens',
+        callType: ApiCallType.GET,
+        headers: SupabaseFunctionsGroup.headers,
+        params: {
+          'select':
+              'id,id_pesagem,idRebanho,dataPesagem,tipo,peso,deletado,created_at,updated_at,id_propriedade',
+          'idRebanho': 'eq.$idRebanho',
+          if (propertyId != null && propertyId.isNotEmpty)
+            'id_propriedade': 'eq.$propertyId',
+          'dataPesagem': 'not.is.null',
+          'tipo': 'not.is.null',
+          'peso': 'not.is.null',
+          'deletado': 'not.eq.SIM',
+          'order': 'dataPesagem.asc,created_at.asc,id.asc',
+          'limit': 100,
+        },
+        returnBody: true,
+        encodeBodyUtf8: false,
+        decodeUtf8: false,
+        cache: false,
+        isStreamingApi: false,
+        alwaysAllowBody: false,
+      )
+      .timeout(timeout);
+}
+
+Future<String?> _resolvePesagemPropertyId({
+  required String idRebanho,
+  String? idPropriedade,
+}) async {
+  final explicit = idPropriedade?.trim();
+  if (explicit != null && explicit.isNotEmpty) {
+    return explicit;
+  }
+
+  final selectedRebanhoProperty =
+      FFAppState().rebanhoSelecionado.idPropriedade.trim();
+  if (selectedRebanhoProperty.isNotEmpty &&
+      FFAppState().rebanhoSelecionado.idRebanho == idRebanho) {
+    return selectedRebanhoProperty;
+  }
+
+  try {
+    final localRows = await SQLiteManager.instance.buscarRebanho(
+      idRebanho: idRebanho,
+    );
+    final localProperty = localRows.firstOrNull?.idPropriedade?.trim();
+    if (localProperty != null && localProperty.isNotEmpty) {
+      return localProperty;
+    }
+  } catch (e) {
+    _syncLog('pesagens',
+        'Não foi possível resolver propriedade local para $idRebanho: $e');
+  }
+
+  final selectedProperty =
+      FFAppState().propriedadeSelecionada.idPropriedade.trim();
+  return selectedProperty.isEmpty ? null : selectedProperty;
+}
+
+Future<int> repararPesagensRebanhoLocal({
+  String? idRebanho,
+  String? idPropriedade,
+}) async {
+  final normalizedIdRebanho = idRebanho?.trim();
+  if (normalizedIdRebanho == null || normalizedIdRebanho.isEmpty) {
+    return 0;
+  }
+
+  try {
+    final resolvedPropertyId = await _resolvePesagemPropertyId(
+      idRebanho: normalizedIdRebanho,
+      idPropriedade: idPropriedade,
+    );
+    final response = await _buscarPesagensRebanhoDireto(
+      idRebanho: normalizedIdRebanho,
+      idPropriedade: resolvedPropertyId,
+    );
+    final records = _safeRecordsFromApi(response.jsonBody);
+    if (records.isEmpty) {
+      return 0;
+    }
+
+    final result = await actions.batchInsertLocalPesagens(records);
+    final errors = result['errors'] as List<Map<String, String>>? ?? [];
+    if (errors.isNotEmpty) {
+      _syncLog('pesagens',
+          'Reparo por animal encontrou ${errors.length} erro(s) para $normalizedIdRebanho.');
+    }
+
+    await SQLiteManager.instance.syncUltimaPesagemNoRebanho(
+      idRebanho: normalizedIdRebanho,
+    );
+
+    return result['inserted'] as int? ?? 0;
+  } catch (e, s) {
+    _syncLog('pesagens',
+        'Reparo por animal falhou para $normalizedIdRebanho: $e\n$s');
+    return 0;
+  }
 }
 
 class _PesagensSyncPageResult {
@@ -1539,7 +1723,7 @@ Future animaisRegistrados(BuildContext context) async {
         aplicarFiltros ? _dataNascimentoFiltroCards(inicio: false) : '',
   );
   FFAppState().animaisRegistrados = valueOrDefault<int>(
-    qtdAnimais.length,
+    qtdAnimais.firstOrNull?.total,
     0,
   );
 }
@@ -1562,7 +1746,7 @@ Future animaisPropriedade(BuildContext context) async {
         aplicarFiltros ? _dataNascimentoFiltroCards(inicio: false) : '',
   );
   final qtdAnimaisPropriedade = valueOrDefault<int>(
-    animais.length,
+    animais.firstOrNull?.total,
     0,
   );
   FFAppState().update(() {
@@ -1717,15 +1901,16 @@ List<Map<String, dynamic>> _dedupPesagemPayloads(
   var index = 0;
   for (final payload in payloads) {
     final idPesagem = payload['id_pesagem']?.toString();
-    final key = (idPesagem != null && idPesagem.isNotEmpty)
-        ? 'id:$idPesagem'
-        : (_pesagemPushKey(
-              payload['idRebanho']?.toString(),
-              payload['dataPesagem']?.toString(),
-              payload['tipo']?.toString(),
-              payload['peso'],
-            ) ??
-            'row:${index++}');
+    final logicalKey = _pesagemPushKey(
+      payload['idRebanho']?.toString(),
+      payload['dataPesagem']?.toString(),
+      payload['tipo']?.toString(),
+      payload['peso'],
+    );
+    final key = logicalKey ??
+        ((idPesagem != null && idPesagem.isNotEmpty)
+            ? 'id:$idPesagem'
+            : 'row:${index++}');
     byKey[key] = payload;
   }
   return byKey.values.toList();
@@ -2193,6 +2378,10 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
           pesInsertsDeduped.map((row) => row['id_pesagem']?.toString()),
           label: 'putUpdt_pesagens.upsert',
         );
+        await _clearLocalPesagemSyncDirtyByPayloads(
+          pesInsertsDeduped,
+          label: 'putUpdt_pesagens.upsert',
+        );
       } catch (e) {
         if (_isPesagemIdSchemaError(e)) {
           try {
@@ -2217,6 +2406,10 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
             }
             await _clearLocalPesagemSyncDirtyByIds(
               pesInsertsDeduped.map((row) => row['id_pesagem']?.toString()),
+              label: 'putUpdt_pesagens.insertLegacy',
+            );
+            await _clearLocalPesagemSyncDirtyByPayloads(
+              pesInsertsDeduped,
               label: 'putUpdt_pesagens.insertLegacy',
             );
           } catch (legacyError) {
@@ -2602,7 +2795,6 @@ Future refreshLotes(BuildContext context) async {
       for (final lote in lotes) {
         records.add({
           'id_propriedade': lote.idPropriedade,
-          'id_animais': lote.idAnimais,
           'nome': lote.nome,
           'anotacoes': lote.anotacoes,
           'ativo': lote.ativo,
@@ -2940,7 +3132,6 @@ Map<String, dynamic> _buildLotePayload(
   final payload = <String, dynamic>{
     'id_lote': value(['id_lote', 'idLote']),
     'id_propriedade': value(['id_propriedade', 'idPropriedade']),
-    'id_animais': value(['id_animais', 'idAnimais']),
     'nome': value(['nome']),
     'anotacoes': value(['anotacoes']),
     'ativo': value(['ativo']),
@@ -3297,7 +3488,6 @@ Map<String, dynamic> _buildReproducaoPayload(
     'data_partida_semen': dataPartidaSemen,
     'partida_semen': raw['partida_semen'] ?? 1,
     'previsao_parto': parseDate(raw['previsao_parto']),
-    'id_lote': nullableStr(raw['id_lote']),
     'data_inicial': parseDate(raw['data_inicial']),
     'data_final': parseDate(raw['data_final']),
     'status_reproducao': nullableStr(raw['status_reproducao']),
@@ -3312,7 +3502,6 @@ Map<String, dynamic> _buildReproducaoPayload(
     'numReprodutor': nullableStr(raw['numReprodutor']),
     'nomeReprodutor': nullableStr(raw['nomeReprodutor']),
     'nascimentoReprodutor': parseDate(raw['nascimentoReprodutor']),
-    'loteNome': nullableStr(raw['loteNome']),
     'data_status': parseDate(raw['data_status']),
     'chipReprodutor': nullableStr(raw['chipReprodutor']),
     'chipMatriz': nullableStr(raw['chipMatriz']),
@@ -3326,6 +3515,10 @@ Map<String, dynamic> _buildReproducaoPayload(
     'id_rebanho_matriz': nullableFk(raw['id_rebanho_matriz']),
     'id_rebanho_reprodutor': nullableFk(raw['id_rebanho_reprodutor']),
   };
+  if (isInsert) {
+    payload['id_lote'] = nullableStr(raw['id_lote']);
+    payload['loteNome'] = nullableStr(raw['loteNome']);
+  }
 
   // Remove chaves null para não sobrescrever valores remotos com null
   // em campos que não foram alterados off-line (comportamento conservador
@@ -3933,13 +4126,19 @@ Future refreshRebanhoOtimizada(BuildContext context) async {
   }
 }
 
-Future refreshReproducaoOtimizada(BuildContext context) async {
+Future refreshReproducaoOtimizada(
+  BuildContext context, {
+  bool allowLotSnapshotRepair = false,
+}) async {
   try {
     _syncLog('reproducao', 'Iniciando verificação do change tracker...');
     List<ReproducaoChangeTrackerRow>? lastChangeResultO;
     ApiCallResponse? propriedades;
     ApiCallResponse? qtdReproducoes;
     ApiCallResponse? reproducaoAPI;
+    final prefs = await SharedPreferences.getInstance();
+    final forceLotSnapshotRepair = allowLotSnapshotRepair &&
+        !(prefs.getBool(_reproLotSnapshotRepairPrefsKey) ?? false);
 
     try {
       lastChangeResultO = await _withTimeout(
@@ -3959,6 +4158,11 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
     var shouldSync = remoteLastChange == null ||
         localLastChange == null ||
         remoteLastChange.isAfter(localLastChange);
+    if (forceLotSnapshotRepair) {
+      shouldSync = true;
+      _syncLog('reproducao',
+          'Forçando pull completo único para reparar snapshot de lote da reprodução.');
+    }
     _syncLog('reproducao',
         'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
 
@@ -4008,7 +4212,8 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
     }
 
     if (shouldSync) {
-      var isFirst = forceCompleteBecauseIncomplete ||
+      var isFirst = forceLotSnapshotRepair ||
+          forceCompleteBecauseIncomplete ||
           _isFirstSync(localLastChange) ||
           await _isLocalTableEmpty('local_reproducao');
       _syncLog('reproducao',
@@ -4217,6 +4422,13 @@ Future refreshReproducaoOtimizada(BuildContext context) async {
         if (syncErrors.isEmpty && paginationComplete) {
           FFAppState().reproducaoChangeDateTime =
               remoteLastChange ?? DateTime.now();
+          if (forceLotSnapshotRepair) {
+            await prefs.setBool(_reproLotSnapshotRepairPrefsKey, true);
+            _syncLog('reproducao',
+                'Reparo único de snapshot de lote marcado como concluído.');
+            _syncLog('reproducao',
+                'Registros cujo lote já estava incorreto no Supabase não foram inferidos automaticamente.');
+          }
         }
         if (syncOk) {
           _syncLog('reproducao',

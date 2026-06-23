@@ -2267,61 +2267,68 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                       ],
                                                                                     ),
                                                                                   ),
-                                                                                  Text(
-                                                                                    '${valueOrDefault<String>(
-                                                                                      functions.converterJSONparaLista(loteItem.idAnimais!).length.toString(),
-                                                                                      '0',
-                                                                                    )} animais',
-                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                          fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                          color: const Color(0xFF5F5F5F),
-                                                                                          letterSpacing: 0.0,
-                                                                                          fontWeight: FontWeight.normal,
-                                                                                          useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
-                                                                                        ),
-                                                                                  ),
-                                                                                  if (valueOrDefault<int>(
-                                                                                        functions.converterJSONparaLista(loteItem.idAnimais!).length,
-                                                                                        0,
-                                                                                      ) ==
-                                                                                      0)
-                                                                                    FlutterFlowIconButton(
-                                                                                      borderRadius: 8.0,
-                                                                                      buttonSize: 30.0,
-                                                                                      fillColor: FlutterFlowTheme.of(context).error,
-                                                                                      icon: FaIcon(
-                                                                                        FontAwesomeIcons.solidTrashAlt,
-                                                                                        color: FlutterFlowTheme.of(context).info,
-                                                                                        size: 16.0,
-                                                                                      ),
-                                                                                      onPressed: () async {
-                                                                                        var confirmDialogResponse = await showDialog<bool>(
-                                                                                              context: context,
-                                                                                              builder: (alertDialogContext) {
-                                                                                                return AlertDialog(
-                                                                                                  title: const Text('Apagar lote'),
-                                                                                                  content: const Text('Tem certeza que deseja apagar este lote ?'),
-                                                                                                  actions: [
-                                                                                                    TextButton(
-                                                                                                      onPressed: () => Navigator.pop(alertDialogContext, false),
-                                                                                                      child: const Text('Não'),
-                                                                                                    ),
-                                                                                                    TextButton(
-                                                                                                      onPressed: () => Navigator.pop(alertDialogContext, true),
-                                                                                                      child: const Text('Sim'),
-                                                                                                    ),
-                                                                                                  ],
-                                                                                                );
-                                                                                              },
-                                                                                            ) ??
-                                                                                            false;
-                                                                                        if (confirmDialogResponse) {
-                                                                                          await SQLiteManager.instance.deletarLote(
-                                                                                            idLote: loteItem.idLote,
-                                                                                          );
-                                                                                        }
-                                                                                      },
+                                                                                  FutureBuilder<List<BuscarRebanhoLoteRow>>(
+                                                                                    future: SQLiteManager.instance.buscarRebanhoLote(
+                                                                                      idLote: loteItem.idLote,
                                                                                     ),
+                                                                                    builder: (context, snapshot) {
+                                                                                      final animaisCount = snapshot.data?.length;
+                                                                                      return Column(
+                                                                                        mainAxisSize: MainAxisSize.min,
+                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                        children: [
+                                                                                          Text(
+                                                                                            '${animaisCount?.toString() ?? '--'} animais',
+                                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                  fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                                  color: const Color(0xFF5F5F5F),
+                                                                                                  letterSpacing: 0.0,
+                                                                                                  fontWeight: FontWeight.normal,
+                                                                                                  useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                                ),
+                                                                                          ),
+                                                                                          if (animaisCount == 0)
+                                                                                            FlutterFlowIconButton(
+                                                                                              borderRadius: 8.0,
+                                                                                              buttonSize: 30.0,
+                                                                                              fillColor: FlutterFlowTheme.of(context).error,
+                                                                                              icon: FaIcon(
+                                                                                                FontAwesomeIcons.solidTrashAlt,
+                                                                                                color: FlutterFlowTheme.of(context).info,
+                                                                                                size: 16.0,
+                                                                                              ),
+                                                                                              onPressed: () async {
+                                                                                                var confirmDialogResponse = await showDialog<bool>(
+                                                                                                      context: context,
+                                                                                                      builder: (alertDialogContext) {
+                                                                                                        return AlertDialog(
+                                                                                                          title: const Text('Apagar lote'),
+                                                                                                          content: const Text('Tem certeza que deseja apagar este lote ?'),
+                                                                                                          actions: [
+                                                                                                            TextButton(
+                                                                                                              onPressed: () => Navigator.pop(alertDialogContext, false),
+                                                                                                              child: const Text('Não'),
+                                                                                                            ),
+                                                                                                            TextButton(
+                                                                                                              onPressed: () => Navigator.pop(alertDialogContext, true),
+                                                                                                              child: const Text('Sim'),
+                                                                                                            ),
+                                                                                                          ],
+                                                                                                        );
+                                                                                                      },
+                                                                                                    ) ??
+                                                                                                    false;
+                                                                                                if (confirmDialogResponse) {
+                                                                                                  await SQLiteManager.instance.deletarLote(
+                                                                                                    idLote: loteItem.idLote,
+                                                                                                  );
+                                                                                                }
+                                                                                              },
+                                                                                            ),
+                                                                                        ].divide(const SizedBox(height: 2.0)),
+                                                                                      );
+                                                                                    },
+                                                                                  ),
                                                                                 ].divide(const SizedBox(height: 2.0)),
                                                                               ),
                                                                             ),

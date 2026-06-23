@@ -52,10 +52,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
     _model.pesquisarTextController ??= TextEditingController();
     _model.pesquisarFocusNode ??= FocusNode();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _applyDefaultStatusFilters();
-      await _atualizarCardsRebanho();
-      safeSetState(() {});
+    _applyDefaultStatusFilters();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _atualizarCardsRebanho();
     });
   }
 
@@ -94,6 +93,141 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
       action_blocks.animaisRegistrados(context),
       action_blocks.animaisPropriedade(context),
     ]);
+  }
+
+  String _buscaRebanhoPaginadaCacheKey() {
+    final state = FFAppState();
+    return [
+      state.propriedadeSelecionada.idPropriedade,
+      _model.limit,
+      _model.offset,
+      state.filtroSexoRebanho,
+      state.filtroCategoriasRebanho,
+      state.filtroRaca,
+      state.filtroOrigemRebanho,
+      state.filtroLoteRebanho,
+      _statusFilterValue(),
+      _dataNascInicioFilterValue(),
+      _dataNascFimFilterValue(),
+      state.rebanhosChangeDateTime?.millisecondsSinceEpoch,
+    ].join('|');
+  }
+
+  Future<List<BuscaRebanhoPaginadaRow>> _buscaRebanhoPaginadaFuture() {
+    final cacheKey = _buscaRebanhoPaginadaCacheKey();
+    if (_model.buscaRebanhoPaginadaCacheKey != cacheKey ||
+        _model.buscaRebanhoPaginadaFuture == null) {
+      _model.buscaRebanhoPaginadaCacheKey = cacheKey;
+      _model.buscaRebanhoPaginadaFuture =
+          SQLiteManager.instance.buscaRebanhoPaginada(
+        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+        limitReb: _model.limit,
+        offsetReb: _model.offset,
+        sexo: FFAppState().filtroSexoRebanho,
+        categoria: FFAppState().filtroCategoriasRebanho,
+        raca: FFAppState().filtroRaca,
+        origem: FFAppState().filtroOrigemRebanho,
+        loteId: FFAppState().filtroLoteRebanho,
+        statusReb: _statusFilterValue(),
+        dataNascInicio: _dataNascInicioFilterValue(),
+        dataNascFim: _dataNascFimFilterValue(),
+      );
+    }
+    return _model.buscaRebanhoPaginadaFuture!;
+  }
+
+  String _searchTerm() => _model.pesquisarTextController.text.trim();
+
+  String _buscaRebanhoPesquisaCacheKey() {
+    final state = FFAppState();
+    return [
+      state.propriedadeSelecionada.idPropriedade,
+      _searchTerm(),
+      state.filtroSexoRebanho,
+      state.filtroCategoriasRebanho,
+      state.filtroRaca,
+      state.filtroOrigemRebanho,
+      state.filtroLoteRebanho,
+      _statusFilterValue(),
+      _dataNascInicioFilterValue(),
+      _dataNascFimFilterValue(),
+      state.rebanhosChangeDateTime?.millisecondsSinceEpoch,
+    ].join('|');
+  }
+
+  Future<List<BuscaRebanhoPaginadaPesquisaRow>> _buscaRebanhoPesquisaFuture() {
+    final cacheKey = _buscaRebanhoPesquisaCacheKey();
+    if (_model.buscaRebanhoPesquisaCacheKey != cacheKey ||
+        _model.buscaRebanhoPesquisaFuture == null) {
+      _model.buscaRebanhoPesquisaCacheKey = cacheKey;
+      _model.buscaRebanhoPesquisaFuture =
+          SQLiteManager.instance.buscaRebanhoPaginadaPesquisa(
+        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+        sexo: FFAppState().filtroSexoRebanho,
+        categoria: FFAppState().filtroCategoriasRebanho,
+        raca: FFAppState().filtroRaca,
+        origem: FFAppState().filtroOrigemRebanho,
+        loteId: FFAppState().filtroLoteRebanho,
+        pesquisa: _searchTerm(),
+        statusReb: _statusFilterValue(),
+        dataNascInicio: _dataNascInicioFilterValue(),
+        dataNascFim: _dataNascFimFilterValue(),
+      );
+    }
+    return _model.buscaRebanhoPesquisaFuture!;
+  }
+
+  String _buscaRebanhoOrdenadaCacheKey(String ordenacaoKey) {
+    final state = FFAppState();
+    return [
+      ordenacaoKey,
+      state.propriedadeSelecionada.idPropriedade,
+      _model.limit,
+      _model.offset,
+      state.filtroSexoRebanho,
+      state.filtroCategoriasRebanho,
+      state.filtroRaca,
+      state.filtroOrigemRebanho,
+      state.filtroLoteRebanho,
+      _statusFilterValue(),
+      _dataNascInicioFilterValue(),
+      _dataNascFimFilterValue(),
+      state.rebanhosChangeDateTime?.millisecondsSinceEpoch,
+    ].join('|');
+  }
+
+  Future<List<T>> _buscaRebanhoOrdenadaFuture<T>(
+    String ordenacaoKey,
+    Future<List<T>> Function() createFuture,
+  ) {
+    final cacheKey = _buscaRebanhoOrdenadaCacheKey(ordenacaoKey);
+    if (_model.buscaRebanhoOrdenadaCacheKey != cacheKey ||
+        _model.buscaRebanhoOrdenadaFuture == null) {
+      _model.buscaRebanhoOrdenadaCacheKey = cacheKey;
+      _model.buscaRebanhoOrdenadaFuture = createFuture();
+    }
+    return _model.buscaRebanhoOrdenadaFuture! as Future<List<T>>;
+  }
+
+  void _invalidateBuscaRebanhoPaginadaCache() {
+    _model.buscaRebanhoPaginadaCacheKey = null;
+    _model.buscaRebanhoPaginadaFuture = null;
+  }
+
+  void _invalidateBuscaRebanhoOrdenadaCache() {
+    _model.buscaRebanhoOrdenadaCacheKey = null;
+    _model.buscaRebanhoOrdenadaFuture = null;
+  }
+
+  void _invalidateRebanhoListCaches() {
+    _invalidateBuscaRebanhoPaginadaCache();
+    _invalidateBuscaRebanhoOrdenadaCache();
+    _invalidateBuscaRebanhoPesquisaCache();
+  }
+
+  void _invalidateBuscaRebanhoPesquisaCache() {
+    _model.buscaRebanhoPesquisaCacheKey = null;
+    _model.buscaRebanhoPesquisaFuture = null;
   }
 
   String _dataNascInicioFilterValue() {
@@ -213,6 +347,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
       },
     );
 
+    _invalidateRebanhoListCaches();
     safeSetState(() {});
   }
 
@@ -243,8 +378,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                       _model.pageNum = 1;
                       _model.offset = 0;
                       _model.pesquisarTextController?.clear();
-                      await _atualizarCardsRebanho();
+                      _invalidateRebanhoListCaches();
                       safeSetState(() {});
+                      await _atualizarCardsRebanho();
                     },
                   ),
                 ),
@@ -464,7 +600,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                     onChanged: (_) => EasyDebounce.debounce(
                       '_model.pesquisarTextController',
                       const Duration(milliseconds: 2000),
-                      () => safeSetState(() {}),
+                      () {
+                        _model.pageNum = 1;
+                        _model.offset = 0;
+                        _invalidateBuscaRebanhoPesquisaCache();
+                        safeSetState(() {});
+                      },
                     ),
                     autofocus: false,
                     obscureText: false,
@@ -531,6 +672,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                               ? InkWell(
                                   onTap: () async {
                                     _model.pesquisarTextController?.clear();
+                                    _model.pageNum = 1;
+                                    _model.offset = 0;
+                                    _invalidateBuscaRebanhoPesquisaCache();
                                     safeSetState(() {});
                                   },
                                   child: Icon(
@@ -593,8 +737,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                               ).then((value) async {
                                 _model.pageNum = 1;
                                 _model.offset = 0;
-                                await _atualizarCardsRebanho();
+                                _invalidateBuscaRebanhoPaginadaCache();
                                 safeSetState(() {});
+                                await _atualizarCardsRebanho();
                               });
                             },
                             child: Container(
@@ -917,27 +1062,14 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
               ),
               Builder(
                 builder: (context) {
-                  if ((_model.pesquisarTextController.text == '') &&
+                  if ((_searchTerm().isEmpty) &&
                       (FFAppState().ordenacaoRebanho == '') &&
                       (FFAppState().ordenacaoRebanhoTipo == '')) {
                     return Visibility(
                       visible: FFAppState().propriedadeSelecionada != null,
                       child: FutureBuilder<List<BuscaRebanhoPaginadaRow>>(
                         key: const ValueKey('sem_ord'),
-                        future: SQLiteManager.instance.buscaRebanhoPaginada(
-                          idPropriedade:
-                              FFAppState().propriedadeSelecionada.idPropriedade,
-                          limitReb: _model.limit,
-                          offsetReb: _model.offset,
-                          sexo: FFAppState().filtroSexoRebanho,
-                          categoria: FFAppState().filtroCategoriasRebanho,
-                          raca: FFAppState().filtroRaca,
-                          origem: FFAppState().filtroOrigemRebanho,
-                          loteId: FFAppState().filtroLoteRebanho,
-                          statusReb: _statusFilterValue(),
-                          dataNascInicio: _dataNascInicioFilterValue(),
-                          dataNascFim: _dataNascFimFilterValue(),
-                        ),
+                        future: _buscaRebanhoPaginadaFuture(),
                         builder: (context, snapshot) {
                           // Customize what your widget looks like when it's loading.
                           if (!snapshot.hasData) {
@@ -1761,24 +1893,28 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         },
                       ),
                     );
-                  } else if ((_model.pesquisarTextController.text == '') &&
+                  } else if ((_searchTerm().isEmpty) &&
                       (FFAppState().ordenacaoRebanho == 'crescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'numero')) {
                     return FutureBuilder<List<RebanhoPagOrdNumCresRow>>(
                       key: const ValueKey('ord_num_cres'),
-                      future: SQLiteManager.instance.rebanhoPagOrdNumCres(
-                        idPropriedade:
-                            FFAppState().propriedadeSelecionada.idPropriedade,
-                        limitReb: _model.limit,
-                        offsetReb: _model.offset,
-                        sexo: FFAppState().filtroSexoRebanho,
-                        categoria: FFAppState().filtroCategoriasRebanho,
-                        raca: FFAppState().filtroRaca,
-                        origem: FFAppState().filtroOrigemRebanho,
-                        loteId: FFAppState().filtroLoteRebanho,
-                        statusReb: _statusFilterValue(),
-                        dataNascInicio: _dataNascInicioFilterValue(),
-                        dataNascFim: _dataNascFimFilterValue(),
+                      future:
+                          _buscaRebanhoOrdenadaFuture<RebanhoPagOrdNumCresRow>(
+                        'ord_num_cres',
+                        () => SQLiteManager.instance.rebanhoPagOrdNumCres(
+                          idPropriedade:
+                              FFAppState().propriedadeSelecionada.idPropriedade,
+                          limitReb: _model.limit,
+                          offsetReb: _model.offset,
+                          sexo: FFAppState().filtroSexoRebanho,
+                          categoria: FFAppState().filtroCategoriasRebanho,
+                          raca: FFAppState().filtroRaca,
+                          origem: FFAppState().filtroOrigemRebanho,
+                          loteId: FFAppState().filtroLoteRebanho,
+                          statusReb: _statusFilterValue(),
+                          dataNascInicio: _dataNascInicioFilterValue(),
+                          dataNascFim: _dataNascFimFilterValue(),
+                        ),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -2669,24 +2805,28 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         );
                       },
                     );
-                  } else if ((_model.pesquisarTextController.text == '') &&
+                  } else if ((_searchTerm().isEmpty) &&
                       (FFAppState().ordenacaoRebanho == 'decrescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'numero')) {
                     return FutureBuilder<List<RebanhoPagOrdNumDescRow>>(
                       key: const ValueKey('ord_num_desc'),
-                      future: SQLiteManager.instance.rebanhoPagOrdNumDesc(
-                        idPropriedade:
-                            FFAppState().propriedadeSelecionada.idPropriedade,
-                        limitReb: _model.limit,
-                        offsetReb: _model.offset,
-                        sexo: FFAppState().filtroSexoRebanho,
-                        categoria: FFAppState().filtroCategoriasRebanho,
-                        raca: FFAppState().filtroRaca,
-                        origem: FFAppState().filtroOrigemRebanho,
-                        loteId: FFAppState().filtroLoteRebanho,
-                        statusReb: _statusFilterValue(),
-                        dataNascInicio: _dataNascInicioFilterValue(),
-                        dataNascFim: _dataNascFimFilterValue(),
+                      future:
+                          _buscaRebanhoOrdenadaFuture<RebanhoPagOrdNumDescRow>(
+                        'ord_num_desc',
+                        () => SQLiteManager.instance.rebanhoPagOrdNumDesc(
+                          idPropriedade:
+                              FFAppState().propriedadeSelecionada.idPropriedade,
+                          limitReb: _model.limit,
+                          offsetReb: _model.offset,
+                          sexo: FFAppState().filtroSexoRebanho,
+                          categoria: FFAppState().filtroCategoriasRebanho,
+                          raca: FFAppState().filtroRaca,
+                          origem: FFAppState().filtroOrigemRebanho,
+                          loteId: FFAppState().filtroLoteRebanho,
+                          statusReb: _statusFilterValue(),
+                          dataNascInicio: _dataNascInicioFilterValue(),
+                          dataNascFim: _dataNascFimFilterValue(),
+                        ),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -3577,24 +3717,28 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         );
                       },
                     );
-                  } else if ((_model.pesquisarTextController.text == '') &&
+                  } else if ((_searchTerm().isEmpty) &&
                       (FFAppState().ordenacaoRebanho == 'crescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'nome')) {
                     return FutureBuilder<List<RebanhoPagOrdNomCresRow>>(
                       key: const ValueKey('ord_nom_cres'),
-                      future: SQLiteManager.instance.rebanhoPagOrdNomCres(
-                        idPropriedade:
-                            FFAppState().propriedadeSelecionada.idPropriedade,
-                        limitReb: _model.limit,
-                        offsetReb: _model.offset,
-                        sexo: FFAppState().filtroSexoRebanho,
-                        categoria: FFAppState().filtroCategoriasRebanho,
-                        raca: FFAppState().filtroRaca,
-                        origem: FFAppState().filtroOrigemRebanho,
-                        loteId: FFAppState().filtroLoteRebanho,
-                        statusReb: _statusFilterValue(),
-                        dataNascInicio: _dataNascInicioFilterValue(),
-                        dataNascFim: _dataNascFimFilterValue(),
+                      future:
+                          _buscaRebanhoOrdenadaFuture<RebanhoPagOrdNomCresRow>(
+                        'ord_nom_cres',
+                        () => SQLiteManager.instance.rebanhoPagOrdNomCres(
+                          idPropriedade:
+                              FFAppState().propriedadeSelecionada.idPropriedade,
+                          limitReb: _model.limit,
+                          offsetReb: _model.offset,
+                          sexo: FFAppState().filtroSexoRebanho,
+                          categoria: FFAppState().filtroCategoriasRebanho,
+                          raca: FFAppState().filtroRaca,
+                          origem: FFAppState().filtroOrigemRebanho,
+                          loteId: FFAppState().filtroLoteRebanho,
+                          statusReb: _statusFilterValue(),
+                          dataNascInicio: _dataNascInicioFilterValue(),
+                          dataNascFim: _dataNascFimFilterValue(),
+                        ),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -4485,24 +4629,28 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         );
                       },
                     );
-                  } else if ((_model.pesquisarTextController.text == '') &&
+                  } else if ((_searchTerm().isEmpty) &&
                       (FFAppState().ordenacaoRebanho == 'decrescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'nome')) {
                     return FutureBuilder<List<RebanhoPagOrdNomDescRow>>(
                       key: const ValueKey('ord_nom_desc'),
-                      future: SQLiteManager.instance.rebanhoPagOrdNomDesc(
-                        idPropriedade:
-                            FFAppState().propriedadeSelecionada.idPropriedade,
-                        limitReb: _model.limit,
-                        offsetReb: _model.offset,
-                        sexo: FFAppState().filtroSexoRebanho,
-                        categoria: FFAppState().filtroCategoriasRebanho,
-                        raca: FFAppState().filtroRaca,
-                        origem: FFAppState().filtroOrigemRebanho,
-                        loteId: FFAppState().filtroLoteRebanho,
-                        statusReb: _statusFilterValue(),
-                        dataNascInicio: _dataNascInicioFilterValue(),
-                        dataNascFim: _dataNascFimFilterValue(),
+                      future:
+                          _buscaRebanhoOrdenadaFuture<RebanhoPagOrdNomDescRow>(
+                        'ord_nom_desc',
+                        () => SQLiteManager.instance.rebanhoPagOrdNomDesc(
+                          idPropriedade:
+                              FFAppState().propriedadeSelecionada.idPropriedade,
+                          limitReb: _model.limit,
+                          offsetReb: _model.offset,
+                          sexo: FFAppState().filtroSexoRebanho,
+                          categoria: FFAppState().filtroCategoriasRebanho,
+                          raca: FFAppState().filtroRaca,
+                          origem: FFAppState().filtroOrigemRebanho,
+                          loteId: FFAppState().filtroLoteRebanho,
+                          statusReb: _statusFilterValue(),
+                          dataNascInicio: _dataNascInicioFilterValue(),
+                          dataNascFim: _dataNascFimFilterValue(),
+                        ),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -5393,24 +5541,28 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         );
                       },
                     );
-                  } else if ((_model.pesquisarTextController.text == '') &&
+                  } else if ((_searchTerm().isEmpty) &&
                       (FFAppState().ordenacaoRebanho == 'crescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'nascimento')) {
                     return FutureBuilder<List<RebanhoPagOrdDataCresRow>>(
                       key: const ValueKey('ord_data_cres'),
-                      future: SQLiteManager.instance.rebanhoPagOrdDataCres(
-                        idPropriedade:
-                            FFAppState().propriedadeSelecionada.idPropriedade,
-                        limitReb: _model.limit,
-                        offsetReb: _model.offset,
-                        sexo: FFAppState().filtroSexoRebanho,
-                        categoria: FFAppState().filtroCategoriasRebanho,
-                        raca: FFAppState().filtroRaca,
-                        origem: FFAppState().filtroOrigemRebanho,
-                        loteId: FFAppState().filtroLoteRebanho,
-                        statusReb: _statusFilterValue(),
-                        dataNascInicio: _dataNascInicioFilterValue(),
-                        dataNascFim: _dataNascFimFilterValue(),
+                      future:
+                          _buscaRebanhoOrdenadaFuture<RebanhoPagOrdDataCresRow>(
+                        'ord_data_cres',
+                        () => SQLiteManager.instance.rebanhoPagOrdDataCres(
+                          idPropriedade:
+                              FFAppState().propriedadeSelecionada.idPropriedade,
+                          limitReb: _model.limit,
+                          offsetReb: _model.offset,
+                          sexo: FFAppState().filtroSexoRebanho,
+                          categoria: FFAppState().filtroCategoriasRebanho,
+                          raca: FFAppState().filtroRaca,
+                          origem: FFAppState().filtroOrigemRebanho,
+                          loteId: FFAppState().filtroLoteRebanho,
+                          statusReb: _statusFilterValue(),
+                          dataNascInicio: _dataNascInicioFilterValue(),
+                          dataNascFim: _dataNascFimFilterValue(),
+                        ),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -6301,24 +6453,28 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         );
                       },
                     );
-                  } else if ((_model.pesquisarTextController.text == '') &&
+                  } else if ((_searchTerm().isEmpty) &&
                       (FFAppState().ordenacaoRebanho == 'decrescente') &&
                       (FFAppState().ordenacaoRebanhoTipo == 'nascimento')) {
                     return FutureBuilder<List<RebanhoPagOrdDataDescRow>>(
                       key: const ValueKey('ord_data_desc'),
-                      future: SQLiteManager.instance.rebanhoPagOrdDataDesc(
-                        idPropriedade:
-                            FFAppState().propriedadeSelecionada.idPropriedade,
-                        limitReb: _model.limit,
-                        offsetReb: _model.offset,
-                        sexo: FFAppState().filtroSexoRebanho,
-                        categoria: FFAppState().filtroCategoriasRebanho,
-                        raca: FFAppState().filtroRaca,
-                        origem: FFAppState().filtroOrigemRebanho,
-                        loteId: FFAppState().filtroLoteRebanho,
-                        statusReb: _statusFilterValue(),
-                        dataNascInicio: _dataNascInicioFilterValue(),
-                        dataNascFim: _dataNascFimFilterValue(),
+                      future:
+                          _buscaRebanhoOrdenadaFuture<RebanhoPagOrdDataDescRow>(
+                        'ord_data_desc',
+                        () => SQLiteManager.instance.rebanhoPagOrdDataDesc(
+                          idPropriedade:
+                              FFAppState().propriedadeSelecionada.idPropriedade,
+                          limitReb: _model.limit,
+                          offsetReb: _model.offset,
+                          sexo: FFAppState().filtroSexoRebanho,
+                          categoria: FFAppState().filtroCategoriasRebanho,
+                          raca: FFAppState().filtroRaca,
+                          origem: FFAppState().filtroOrigemRebanho,
+                          loteId: FFAppState().filtroLoteRebanho,
+                          statusReb: _statusFilterValue(),
+                          dataNascInicio: _dataNascInicioFilterValue(),
+                          dataNascFim: _dataNascFimFilterValue(),
+                        ),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -7212,20 +7368,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                   } else {
                     return FutureBuilder<List<BuscaRebanhoPaginadaPesquisaRow>>(
                       key: const ValueKey('pesquisa'),
-                      future:
-                          SQLiteManager.instance.buscaRebanhoPaginadaPesquisa(
-                        idPropriedade:
-                            FFAppState().propriedadeSelecionada.idPropriedade,
-                        sexo: FFAppState().filtroSexoRebanho,
-                        categoria: FFAppState().filtroCategoriasRebanho,
-                        raca: FFAppState().filtroRaca,
-                        origem: FFAppState().filtroOrigemRebanho,
-                        loteId: FFAppState().filtroLoteRebanho,
-                        pesquisa: _model.pesquisarTextController.text,
-                        statusReb: _statusFilterValue(),
-                        dataNascInicio: _dataNascInicioFilterValue(),
-                        dataNascFim: _dataNascFimFilterValue(),
-                      ),
+                      future: _buscaRebanhoPesquisaFuture(),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
                         if (!snapshot.hasData) {
@@ -8145,7 +8288,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                   }
                 },
               ),
-              if (_model.pesquisarTextController.text == '')
+              if (_searchTerm().isEmpty)
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(
                       16.0, 0.0, 16.0, 0.0),

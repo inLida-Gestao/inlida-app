@@ -240,6 +240,7 @@ class FFAppState extends ChangeNotifier {
     _propriedadesOFF = [];
     _firstRunUserEmail = '';
     _pesagensChangeDateTime = null;
+    clearDashboardNavigationHistory();
 
     prefs.remove('ff_ultimaSincronizacao');
     prefs.remove('ff_propriedadeSelecionada');
@@ -263,9 +264,52 @@ class FFAppState extends ChangeNotifier {
   late SharedPreferences prefs;
 
   String _navegacaoDashboard = 'painel';
+  final List<String> _navegacaoDashboardHistory = [];
+  bool _isRestoringDashboardNavigation = false;
+  static const int _dashboardNavigationHistoryLimit = 25;
+
   String get navegacaoDashboard => _navegacaoDashboard;
   set navegacaoDashboard(String value) {
+    final nextValue = value.trim().isEmpty ? 'painel' : value;
+    if (_navegacaoDashboard == nextValue) {
+      return;
+    }
+    if (!_isRestoringDashboardNavigation && _navegacaoDashboard.isNotEmpty) {
+      _navegacaoDashboardHistory.add(_navegacaoDashboard);
+      if (_navegacaoDashboardHistory.length >
+          _dashboardNavigationHistoryLimit) {
+        _navegacaoDashboardHistory.removeAt(0);
+      }
+    }
+    _navegacaoDashboard = nextValue;
+  }
+
+  bool get canPopDashboardNavigation => _navegacaoDashboardHistory.isNotEmpty;
+
+  void clearDashboardNavigationHistory() {
+    _navegacaoDashboardHistory.clear();
+  }
+
+  bool popDashboardNavigation() {
+    while (_navegacaoDashboardHistory.isNotEmpty) {
+      final previous = _navegacaoDashboardHistory.removeLast();
+      if (previous == _navegacaoDashboard || previous.trim().isEmpty) {
+        continue;
+      }
+      _setDashboardFromBack(previous);
+      return true;
+    }
+    return false;
+  }
+
+  void setDashboardFromBack(String value) {
+    _setDashboardFromBack(value.trim().isEmpty ? 'painel' : value);
+  }
+
+  void _setDashboardFromBack(String value) {
+    _isRestoringDashboardNavigation = true;
     _navegacaoDashboard = value;
+    _isRestoringDashboardNavigation = false;
   }
 
   DateTime? _ultimaSincronizacao;

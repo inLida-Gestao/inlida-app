@@ -10,6 +10,7 @@ import '/sanidade/legenda_sanidade/legenda_sanidade_widget.dart';
 import '/sanidade/selecionar_sanidade/selecionar_sanidade_widget.dart';
 import 'dart:async';
 import '/actions/actions.dart' as action_blocks;
+import '/sanidade/sanidade_dropdown_options.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
@@ -224,7 +225,9 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                       ) ??
                                       false;
                               if (confirmDialogResponse) {
-                                if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                                if (await action_blocks.blockIfAccountCanceled(
+                                    context,
+                                    refreshFromServer: true)) return;
                                 if (!(FFAppState().dataDadosNaoSyncSanidade !=
                                     null)) {
                                   FFAppState().dataDadosNaoSyncSanidade =
@@ -752,19 +755,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                               .vacinacao) ??
                                                       [],
                                                 )),
-                                                options: const [
-                                                  'Aftosa',
-                                                  'Antitetânica',
-                                                  'Botulismo',
-                                                  'Brucelose',
-                                                  'Clostridiose',
-                                                  'Diarréia (BVD)',
-                                                  'Doença Respiratória (DBR)',
-                                                  'Leptospirose',
-                                                  'Parainfluenza e herpes',
-                                                  'Raiva',
-                                                  'Rinotraqueíte (IBR)'
-                                                ],
+                                                options: sanidadeVacinaOptions,
                                                 width: double.infinity,
                                                 height: 56.0,
                                                 textStyle: FlutterFlowTheme.of(
@@ -867,19 +858,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .dropDownVacinaNullValueController ??=
                                                     FormListFieldController<
                                                         String>(null),
-                                                options: const [
-                                                  'Aftosa',
-                                                  'Antitetânica',
-                                                  'Botulismo',
-                                                  'Brucelose',
-                                                  'Clostridiose',
-                                                  'Diarréia (BVD)',
-                                                  'Doença Respiratória (DBR)',
-                                                  'Leptospirose',
-                                                  'Parainfluenza e herpes',
-                                                  'Raiva',
-                                                  'Rinotraqueíte (IBR)'
-                                                ],
+                                                options: sanidadeVacinaOptions,
                                                 width: double.infinity,
                                                 height: 56.0,
                                                 textStyle: FlutterFlowTheme.of(
@@ -1273,18 +1252,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                             .antiparasitario) ??
                                                     [],
                                               )),
-                                              options: const [
-                                                'Abamectina',
-                                                'Albendazol',
-                                                'Babesiose (Tristeza Bovina) & Tripanossoma',
-                                                'Brinco mosquicida',
-                                                'Carrapaticida & Mosquicida (Pour ON)',
-                                                'Carrapaticida & Mosquicida (Pulverização)',
-                                                'Deltrametrina, Imidocarp, Nitroxinil & Triclorfon',
-                                                'Doramectina',
-                                                'Eprinomectina',
-                                                'Ivermectina'
-                                              ],
+                                              options:
+                                                  sanidadeAntiparasitarioOptions,
                                               width: double.infinity,
                                               height: 56.0,
                                               textStyle: FlutterFlowTheme.of(
@@ -1383,18 +1352,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .dropDownAntiparasitarioNullValueController ??=
                                                     FormListFieldController<
                                                         String>(null),
-                                                options: const [
-                                                  'Abamectina',
-                                                  'Albendazol',
-                                                  'Babesiose (Tristeza Bovina) & Tripanossoma',
-                                                  'Brinco mosquicida',
-                                                  'Carrapaticida & Mosquicida (Pour ON)',
-                                                  'Carrapaticida & Mosquicida (Pulverização)',
-                                                  'Deltrametrina, Imidocarp, Nitroxinil & Triclorfon',
-                                                  'Doramectina',
-                                                  'Eprinomectina',
-                                                  'Ivermectina'
-                                                ],
+                                                options:
+                                                    sanidadeAntiparasitarioOptions,
                                                 width: double.infinity,
                                                 height: 56.0,
                                                 textStyle: FlutterFlowTheme.of(
@@ -1784,17 +1743,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                             .tratamento) ??
                                                     [],
                                               )),
-                                              options: const [
-                                                'Anestésico, Sedativo & Similares',
-                                                'Analgésico',
-                                                'Anti-inflamatório',
-                                                'Anti-séptico',
-                                                'Castração Química',
-                                                'Complexo Vitamínico & Mineral',
-                                                'Homeopático',
-                                                'Hormônio',
-                                                'Antibiótico'
-                                              ],
+                                              options:
+                                                  sanidadeTratamentoOptions,
                                               width: double.infinity,
                                               height: 56.0,
                                               textStyle: FlutterFlowTheme.of(
@@ -1893,17 +1843,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .dropDownTratamentoNullValueController ??=
                                                     FormListFieldController<
                                                         String>(null),
-                                                options: const [
-                                                  'Anestésico, Sedativo & Similares',
-                                                  'Analgésico',
-                                                  'Anti-inflamatório',
-                                                  'Anti-séptico',
-                                                  'Castração Química',
-                                                  'Complexo Vitamínico & Mineral',
-                                                  'Homeopático',
-                                                  'Hormônio',
-                                                  'Antibiótico'
-                                                ],
+                                                options:
+                                                    sanidadeTratamentoOptions,
                                                 width: double.infinity,
                                                 height: 56.0,
                                                 textStyle: FlutterFlowTheme.of(
@@ -2289,12 +2230,7 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .sanidadeSelecionada
                                                         .protocoloReprodutivo,
                                               ),
-                                              options: const [
-                                                'D0-D7-D9',
-                                                'D0-D8-D10',
-                                                'D0-D9-D11',
-                                                'D0-D7-D9-D11'
-                                              ],
+                                              options: sanidadeProtocoloOptions,
                                               onChanged: (val) => safeSetState(
                                                   () => _model
                                                           .dropDownProtocoloValue =
@@ -2416,12 +2352,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .sanidadeSelecionada
                                                         .protocoloD0,
                                               ),
-                                              options: const [
-                                                'BE  + Implante novo',
-                                                'BE + Implante novo + PGF',
-                                                'BE  + Implante reuso',
-                                                'BE + Implante reuso + PGF'
-                                              ],
+                                              options:
+                                                  sanidadeProtocoloD0Options,
                                               onChanged: (val) => safeSetState(
                                                   () => _model.dropDownD0Value =
                                                       val),
@@ -2621,10 +2553,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                         .sanidadeSelecionada
                                                         .protocoloRetirada,
                                               ),
-                                              options: const [
-                                                'eCG + PGF + CE',
-                                                'eCG + PGR + CE + BE'
-                                              ],
+                                              options:
+                                                  sanidadeProtocoloRetiradaOptions,
                                               onChanged: (val) => safeSetState(
                                                   () => _model
                                                           .dropDownRetiradaValue =
@@ -2760,10 +2690,8 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                                           .sanidadeSelecionada
                                                           .protocoloIatf,
                                                 ),
-                                                options: const [
-                                                  'Com GnRH',
-                                                  'Sem GnRH'
-                                                ],
+                                                options:
+                                                    sanidadeProtocoloIatfOptions,
                                                 onChanged: (val) =>
                                                     safeSetState(() => _model
                                                             .dropDownIATFValue =
@@ -3158,7 +3086,10 @@ class _EditSanidadeAnimalWidgetState extends State<EditSanidadeAnimalWidget> {
                                               ) ??
                                               false;
                                       if (confirmDialogResponse) {
-                                        if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                                        if (await action_blocks
+                                            .blockIfAccountCanceled(context,
+                                                refreshFromServer: true))
+                                          return;
                                         if (!(FFAppState()
                                                 .dataDadosNaoSyncSanidade !=
                                             null)) {

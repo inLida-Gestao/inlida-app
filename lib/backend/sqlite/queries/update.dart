@@ -613,13 +613,11 @@ Future performUPDTRebanho(
   String? dataEntradaLote,
   String? dataDesmama,
   double? pesoDesmama,
-  double? pesoAtual,
   String? statusRebanho,
   String? origem,
   String? anotacoes,
   String? dataAcao,
   double? valorCompra,
-  String? dataUltimaPesagem,
   String? nomeConcat,
   String? idRebanho,
   String? updatedat,
@@ -648,9 +646,9 @@ UPDATE local_rebanho
 SET numeroAnimal = ?, chip = ?, codRegistro = ?, nome = ?, sexo = ?,
 categoria = ?, dataNascimento = ?, pesoNascimento = ?, porte = ?,
 raca = ?, dataEntradaLote = ?,
-dataDesmama = ?, pesoDesmama = ?, pesoAtual = ?, statusRebanho = ?,
-origem = ?, anotacoes = ?, dataAcao = ?, valorCompra = ?, 
-dataUltimaPesagem = ?, nomeConcat = ?, updated_at = ?, 
+dataDesmama = ?, pesoDesmama = ?, statusRebanho = ?,
+origem = ?, anotacoes = ?, dataAcao = ?, valorCompra = ?,
+nomeConcat = ?, updated_at = ?,
 loteNome = ?, loteID = ?, movimentacao_entrada = ?, dataVenda = ?,
 valorVenda = ?, numeroMatriz = ?, nomeMatriz = ?, dataNascMatriz = ?,
 racaMatriz = ?, numeroReprodutor = ?, nomeReprodutor = ?, dataNascReprodutor = ?,
@@ -678,13 +676,11 @@ WHERE idRebanho = ?
     dataEntradaLote,
     dataDesmama,
     pesoDesmama,
-    pesoAtual,
     safeStatusRebanho,
     origem,
     anotacoes,
     dataAcao,
     valorCompra,
-    dataUltimaPesagem,
     nomeConcat,
     updatedat,
     loteNome,
@@ -771,7 +767,6 @@ WHERE = '$idRebanho'
 Future performInsertLote(
   Database database, {
   String? idPropriedade,
-  String? idAnimais,
   String? nome,
   String? anotacoes,
   String? ativo,
@@ -785,16 +780,15 @@ Future performInsertLote(
 }) {
   const query = '''
 INSERT INTO local_lotes (
-  id_propriedade, id_animais, nome, anotacoes, ativo, motivo, data_motivo,
+  id_propriedade, nome, anotacoes, ativo, motivo, data_motivo,
   id_lote, deletado, created_at, updated_at, valorVenda,
   sync_dirty, sync_op, sync_updated_at
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'insert', ?)
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'insert', ?)
 ''';
   final syncUpdatedAt =
       DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
   return database.rawInsert(query, [
     idPropriedade,
-    idAnimais,
     nome,
     anotacoes,
     ativo,
@@ -853,7 +847,6 @@ DELETE FROM local_lotes
 /// BEGIN UPDT LOTE
 Future performUPDTLote(
   Database database, {
-  String? idAnimais,
   String? nome,
   String? anotacoes,
   String? ativo,
@@ -865,8 +858,7 @@ Future performUPDTLote(
 }) {
   const query = '''
 UPDATE local_lotes
-SET id_animais = ?,
-    nome = ?,
+SET nome = ?,
     anotacoes = ?,
     ativo = ?,
     motivo = ?,
@@ -881,7 +873,6 @@ WHERE id_lote = ?
   final syncUpdatedAt =
       DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
   return database.rawUpdate(query, [
-    idAnimais,
     nome,
     anotacoes,
     ativo,
@@ -1046,7 +1037,6 @@ Future performUPDTReproducao(
   String? dataPartidaSemen,
   int? partidaSemen,
   String? previsaoParto,
-  String? idLote,
   String? dataInicial,
   String? dataFinal,
   String? inseminador,
@@ -1060,7 +1050,6 @@ Future performUPDTReproducao(
   String? numReprodutor,
   String? nomeReprodutor,
   String? nascimentoReprodutor,
-  String? loteNome,
   String? statusReproducao,
   String? dataStatus,
   String? racaMatriz,
@@ -1083,7 +1072,6 @@ UPDATE local_reproducao SET
     data_partida_semen = '$dataPartidaSemen',
     partida_semen = $partidaSemen,
     previsao_parto = '$previsaoParto',
-    id_lote = '$idLote',
     data_inicial = '$dataInicial',
     data_final = '$dataFinal',
     inseminador = '$inseminador',
@@ -1096,7 +1084,6 @@ UPDATE local_reproducao SET
     numReprodutor = '$numReprodutor',
     nomeReprodutor = '$nomeReprodutor',
     nascimentoReprodutor = '$nascimentoReprodutor',
-    loteNome = '$loteNome',
     status_reproducao = '$statusReproducao',
     data_status = '$dataStatus',
     racaMatriz = '$racaMatriz',
@@ -1506,34 +1493,6 @@ WHERE idRebanho = ?
 
 /// END DELETE REBANHO
 
-/// BEGIN UPDT LOTEREBANHO
-Future performUPDTLoteRebanho(
-  Database database, {
-  String? idAnimais,
-  String? updatedat,
-  String? idLote,
-}) {
-  const query = '''
-UPDATE local_lotes
-SET id_animais = ?,
-    updated_at = ?,
-    sync_dirty = 1,
-    sync_op = CASE WHEN sync_op = 'insert' THEN 'insert' ELSE 'update' END,
-    sync_updated_at = ?
-WHERE id_lote = ?
-''';
-  final syncUpdatedAt =
-      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
-  return database.rawUpdate(query, [
-    idAnimais,
-    updatedat,
-    syncUpdatedAt,
-    idLote,
-  ]);
-}
-
-/// END UPDT LOTEREBANHO
-
 /// BEGIN DELETAR LOTE
 Future performDeletarLote(
   Database database, {
@@ -1797,7 +1756,6 @@ Future performUPDTReproducaoMonta(
   String? dataPartidaSemen,
   int? partidaSemen,
   String? previsaoParto,
-  String? idLote,
   String? dataInicial,
   String? dataFinal,
   String? anotacoes,
@@ -1810,7 +1768,6 @@ Future performUPDTReproducaoMonta(
   String? numReprodutor,
   String? nomeReprodutor,
   String? nascimentoReprodutor,
-  String? loteNome,
   String? statusReproducao,
   String? dataStatus,
   String? racaMatriz,
@@ -1832,7 +1789,6 @@ UPDATE local_reproducao SET
     data_partida_semen = '$dataPartidaSemen',
     partida_semen = $partidaSemen,
     previsao_parto = '$previsaoParto',
-    id_lote = '$idLote',
     data_inicial = '$dataInicial',
     data_final = '$dataFinal',
     anotacoes = '$anotacoes',
@@ -1844,7 +1800,6 @@ UPDATE local_reproducao SET
     numReprodutor = '$numReprodutor',
     nomeReprodutor = '$nomeReprodutor',
     nascimentoReprodutor = '$nascimentoReprodutor',
-    loteNome = '$loteNome',
     status_reproducao = '$statusReproducao',
     data_status = '$dataStatus',
     racaMatriz = '$racaMatriz',

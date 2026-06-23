@@ -7,6 +7,7 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/instant_timer.dart';
 import '/sanidade/selecionar_sanidade/selecionar_sanidade_widget.dart';
+import '/sanidade/sanidade_dropdown_options.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/actions/actions.dart' as action_blocks;
 import 'package:flutter/material.dart';
@@ -227,7 +228,9 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                                       ) ??
                                       false;
                               if (confirmDialogResponse) {
-                                if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                                if (await action_blocks.blockIfAccountCanceled(
+                                    context,
+                                    refreshFromServer: true)) return;
                                 if (!(FFAppState().dataDadosNaoSyncProp !=
                                     null)) {
                                   FFAppState().dataDadosNaoSyncProp =
@@ -844,19 +847,7 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                                                     .vacinacao) ??
                                             [],
                                       )),
-                                      options: const [
-                                        'Aftosa',
-                                        'Antitetânica',
-                                        'Botulismo',
-                                        'Brucelose',
-                                        'Clostridiose',
-                                        'Diarréia (BVD)',
-                                        'Doença Respiratória (DBR)',
-                                        'Leptospirose',
-                                        'Parainfluenza e herpes',
-                                        'Raiva',
-                                        'Rinotraqueíte (IBR)'
-                                      ],
+                                      options: sanidadeVacinaOptions,
                                       width: double.infinity,
                                       height: 56.0,
                                       textStyle: FlutterFlowTheme.of(context)
@@ -1188,18 +1179,7 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                                                     .antiparasitario) ??
                                             [],
                                       )),
-                                      options: const [
-                                        'Abamectina',
-                                        'Albendazol',
-                                        'Babesiose (Tristeza Bovina) & Tripanossoma',
-                                        'Brinco mosquicida',
-                                        'Carrapaticida & Mosquicida (Pour ON)',
-                                        'Carrapaticida & Mosquicida (Pulverização)',
-                                        'Deltrametrina, Imidocarp, Nitroxinil & Triclorfon',
-                                        'Doramectina',
-                                        'Eprinomectina',
-                                        'Ivermectina'
-                                      ],
+                                      options: sanidadeAntiparasitarioOptions,
                                       width: double.infinity,
                                       height: 56.0,
                                       textStyle: FlutterFlowTheme.of(context)
@@ -1530,17 +1510,7 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                                                     .tratamento) ??
                                             [],
                                       )),
-                                      options: const [
-                                        'Anestésico, Sedativo & Similares',
-                                        'Analgésico',
-                                        'Anti-inflamatório',
-                                        'Anti-séptico',
-                                        'Castração Química',
-                                        'Complexo Vitamínico & Mineral',
-                                        'Homeopático',
-                                        'Hormônio',
-                                        'Antibiótico'
-                                      ],
+                                      options: sanidadeTratamentoOptions,
                                       width: double.infinity,
                                       height: 56.0,
                                       textStyle: FlutterFlowTheme.of(context)
@@ -1874,13 +1844,8 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                                                     .protocoloReprodutivo) ??
                                             [],
                                       )),
-                                      options: const [
-                                        'Benzoato de estradiol',
-                                        'Progesterona',
-                                        'Gonadotrofina',
-                                        'Prostaglandina',
-                                        'Cipionato de estradiol'
-                                      ],
+                                      options:
+                                          sanidadeProtocoloComponentesOptions,
                                       width: double.infinity,
                                       height: 56.0,
                                       textStyle: FlutterFlowTheme.of(context)
@@ -2233,7 +2198,10 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                                               ) ??
                                               false;
                                       if (confirmDialogResponse) {
-                                        if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                                        if (await action_blocks
+                                            .blockIfAccountCanceled(context,
+                                                refreshFromServer: true))
+                                          return;
                                         if (!(FFAppState()
                                                 .dataDadosNaoSyncSanidade !=
                                             null)) {

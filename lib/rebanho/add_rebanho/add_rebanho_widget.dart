@@ -40,6 +40,67 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
 
   double? _parsePeso(String? rawValue) => parsePesoFormatado(rawValue);
 
+  String _normalizeInputText(String? value) {
+    if (value == null) return '';
+    final normalized = value.trim();
+    if (normalized.isEmpty) return '';
+
+    final lowercase = normalized.toLowerCase();
+    if (lowercase == 'null' || lowercase == 'n/a' || normalized == '-') {
+      return '';
+    }
+
+    return normalized;
+  }
+
+  String? _normalizeDropdownValue(String? value) {
+    final normalized = _normalizeInputText(value);
+    if (normalized.isEmpty) {
+      return null;
+    }
+
+    return normalized;
+  }
+
+  List<String> _categoriasPermitidasParaSexo(String? sexo) {
+    final sexoNormalizado = _normalizeInputText(sexo);
+    if (sexoNormalizado == 'Fêmea') {
+      return FFAppState().categoriasRebanhoFemea;
+    }
+    if (sexoNormalizado == 'Macho') {
+      return FFAppState().categoriasRebanhoMacho;
+    }
+    return const <String>[];
+  }
+
+  String? _categoriaSelecionadaParaSexo(String? sexo) {
+    final sexoNormalizado = _normalizeInputText(sexo);
+    if (sexoNormalizado == 'Macho') {
+      return _normalizeDropdownValue(
+        _model.dPCategoriaMachoValueController?.value ??
+            _model.dPCategoriaMachoValue,
+      );
+    }
+    if (sexoNormalizado == 'Fêmea') {
+      return _normalizeDropdownValue(
+        _model.dPCategoriaFemeaValueController?.value ??
+            _model.dPCategoriaFemeaValue,
+      );
+    }
+    return null;
+  }
+
+  bool _categoriaCondizComSexo(String? sexo, String? categoria) {
+    final categoriaNormalizada = _normalizeDropdownValue(categoria);
+    if (categoriaNormalizada == null) {
+      return false;
+    }
+
+    return _categoriasPermitidasParaSexo(sexo).any(
+      (item) => _normalizeInputText(item) == categoriaNormalizada,
+    );
+  }
+
   @override
   void setState(VoidCallback callback) {
     super.setState(callback);
@@ -1249,7 +1310,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 onTap: () async {
                                                   final datePicked1Date =
                                                       await showDatePicker(
-                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                    initialEntryMode:
+                                                        DatePickerEntryMode
+                                                            .calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -1458,46 +1521,84 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               child: SizedBox(
                                                 width: double.infinity,
                                                 child: TextFormField(
-                                                  controller: _model.pesonascimentoTextController,
+                                                  controller: _model
+                                                      .pesonascimentoTextController,
                                                   autofocus: false,
                                                   obscureText: false,
-                                                  keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                                                  keyboardType:
+                                                      const TextInputType
+                                                          .numberWithOptions(
+                                                          decimal: true,
+                                                          signed: false),
                                                   decoration: InputDecoration(
                                                     hintText: 'Peso do animal',
-                                                    hintStyle: FlutterFlowTheme.of(context).bodyMedium,
-                                                    enabledBorder: OutlineInputBorder(
+                                                    hintStyle:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium,
+                                                    enabledBorder:
+                                                        OutlineInputBorder(
                                                       borderSide: BorderSide(
-                                                        color: FlutterFlowTheme.of(context).alternate,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .alternate,
                                                         width: 2.0,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
-                                                    focusedBorder: OutlineInputBorder(
+                                                    focusedBorder:
+                                                        OutlineInputBorder(
                                                       borderSide: BorderSide(
-                                                        color: FlutterFlowTheme.of(context).primary,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primary,
                                                         width: 2.0,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
-                                                    errorBorder: OutlineInputBorder(
+                                                    errorBorder:
+                                                        OutlineInputBorder(
                                                       borderSide: BorderSide(
-                                                        color: FlutterFlowTheme.of(context).error,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .error,
                                                         width: 2.0,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
-                                                    focusedErrorBorder: OutlineInputBorder(
+                                                    focusedErrorBorder:
+                                                        OutlineInputBorder(
                                                       borderSide: BorderSide(
-                                                        color: FlutterFlowTheme.of(context).error,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .error,
                                                         width: 2.0,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
                                                     filled: true,
-                                                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                    fillColor: FlutterFlowTheme
+                                                            .of(context)
+                                                        .secondaryBackground,
                                                   ),
-                                                  style: FlutterFlowTheme.of(context).bodyMedium,
-                                                  validator: _model.pesonascimentoTextControllerValidator.asValidator(context),
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium,
+                                                  validator: _model
+                                                      .pesonascimentoTextControllerValidator
+                                                      .asValidator(context),
                                                 ),
                                               ),
                                             ),
@@ -1909,7 +2010,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 onTap: () async {
                                                   final datePicked2Date =
                                                       await showDatePicker(
-                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                    initialEntryMode:
+                                                        DatePickerEntryMode
+                                                            .calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -2405,6 +2508,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                         false,
                                                                     reproducao:
                                                                         false,
+                                                                    permitirQualquerStatusFemea:
+                                                                        true,
                                                                   ),
                                                                 ),
                                                               );
@@ -2989,7 +3094,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   onTap: () async {
                                                     final datePicked3Date =
                                                         await showDatePicker(
-                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                      initialEntryMode:
+                                                          DatePickerEntryMode
+                                                              .calendarOnly,
                                                       context: context,
                                                       initialDate:
                                                           getCurrentTimestamp,
@@ -3201,46 +3308,84 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               child: SizedBox(
                                                 width: double.infinity,
                                                 child: TextFormField(
-                                                  controller: _model.pesodadesmamaTextController,
+                                                  controller: _model
+                                                      .pesodadesmamaTextController,
                                                   autofocus: false,
                                                   obscureText: false,
-                                                  keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                                                  keyboardType:
+                                                      const TextInputType
+                                                          .numberWithOptions(
+                                                          decimal: true,
+                                                          signed: false),
                                                   decoration: InputDecoration(
                                                     hintText: 'Peso do animal',
-                                                    hintStyle: FlutterFlowTheme.of(context).bodyMedium,
-                                                    enabledBorder: OutlineInputBorder(
+                                                    hintStyle:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium,
+                                                    enabledBorder:
+                                                        OutlineInputBorder(
                                                       borderSide: BorderSide(
-                                                        color: FlutterFlowTheme.of(context).alternate,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .alternate,
                                                         width: 2.0,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
-                                                    focusedBorder: OutlineInputBorder(
+                                                    focusedBorder:
+                                                        OutlineInputBorder(
                                                       borderSide: BorderSide(
-                                                        color: FlutterFlowTheme.of(context).primary,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primary,
                                                         width: 2.0,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
-                                                    errorBorder: OutlineInputBorder(
+                                                    errorBorder:
+                                                        OutlineInputBorder(
                                                       borderSide: BorderSide(
-                                                        color: FlutterFlowTheme.of(context).error,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .error,
                                                         width: 2.0,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
-                                                    focusedErrorBorder: OutlineInputBorder(
+                                                    focusedErrorBorder:
+                                                        OutlineInputBorder(
                                                       borderSide: BorderSide(
-                                                        color: FlutterFlowTheme.of(context).error,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .error,
                                                         width: 2.0,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
                                                     filled: true,
-                                                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                    fillColor: FlutterFlowTheme
+                                                            .of(context)
+                                                        .secondaryBackground,
                                                   ),
-                                                  style: FlutterFlowTheme.of(context).bodyMedium,
-                                                  validator: _model.pesodadesmamaTextControllerValidator.asValidator(context),
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium,
+                                                  validator: _model
+                                                      .pesodadesmamaTextControllerValidator
+                                                      .asValidator(context),
                                                 ),
                                               ),
                                             ),
@@ -3285,87 +3430,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               hoverColor: Colors.transparent,
                                               highlightColor:
                                                   Colors.transparent,
-                                              onTap: () async {
-                                                final datePicked4Date =
-                                                    await showDatePicker(
-                                                  initialEntryMode: DatePickerEntryMode.calendarOnly,
-                                                  context: context,
-                                                  initialDate:
-                                                      getCurrentTimestamp,
-                                                  firstDate: DateTime(1900),
-                                                  lastDate: DateTime(2050),
-                                                  builder: (context, child) {
-                                                    return wrapInMaterialDatePickerTheme(
-                                                      context,
-                                                      child!,
-                                                      headerBackgroundColor:
-                                                          const Color(
-                                                              0xFF28A365),
-                                                      headerForegroundColor:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .info,
-                                                      headerTextStyle:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .headlineLarge
-                                                              .override(
-                                                                fontFamily: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .headlineLargeFamily,
-                                                                fontSize: 32.0,
-                                                                letterSpacing:
-                                                                    0.0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                useGoogleFonts:
-                                                                    !FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .headlineLargeIsCustom,
-                                                              ),
-                                                      pickerBackgroundColor:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .secondaryBackground,
-                                                      pickerForegroundColor:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .primaryText,
-                                                      selectedDateTimeBackgroundColor:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .primary,
-                                                      selectedDateTimeForegroundColor:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .info,
-                                                      actionButtonForegroundColor:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .primaryText,
-                                                      iconSize: 24.0,
-                                                    );
-                                                  },
-                                                );
-
-                                                if (datePicked4Date != null) {
-                                                  safeSetState(() {
-                                                    _model.datePicked4 =
-                                                        DateTime(
-                                                      datePicked4Date.year,
-                                                      datePicked4Date.month,
-                                                      datePicked4Date.day,
-                                                    );
-                                                  });
-                                                } else if (_model.datePicked4 !=
-                                                    null) {
-                                                  safeSetState(() {
-                                                    _model.datePicked4 =
-                                                        getCurrentTimestamp;
-                                                  });
-                                                }
-                                              },
+                                              onTap: null,
                                               child: Container(
                                                 width: double.infinity,
                                                 height: 56.0,
@@ -3396,15 +3461,18 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         child: Text(
                                                           valueOrDefault<
                                                               String>(
-                                                            dateTimeFormat(
-                                                              "dd/MM/yyyy",
-                                                              _model
-                                                                  .datePicked4,
-                                                              locale: FFLocalizations
-                                                                      .of(context)
-                                                                  .languageCode,
-                                                            ),
-                                                            'Selecione uma data',
+                                                            _model.datePicked4 ==
+                                                                    null
+                                                                ? 'Sem pesagem'
+                                                                : dateTimeFormat(
+                                                                    "dd/MM/yyyy",
+                                                                    _model
+                                                                        .datePicked4,
+                                                                    locale: FFLocalizations.of(
+                                                                            context)
+                                                                        .languageCode,
+                                                                  ),
+                                                            'Sem pesagem',
                                                           ),
                                                           style: FlutterFlowTheme
                                                                   .of(context)
@@ -3416,13 +3484,8 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                 color:
                                                                     valueOrDefault<
                                                                         Color>(
-                                                                  _model.datePicked4 ==
-                                                                          null
-                                                                      ? const Color(
-                                                                          0xFFBEBEBE)
-                                                                      : FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .secondaryText,
+                                                                  const Color(
+                                                                      0xFFBEBEBE),
                                                                   const Color(
                                                                       0xFFBEBEBE),
                                                                 ),
@@ -3440,8 +3503,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                         ),
                                                       ),
                                                       Icon(
-                                                        Icons
-                                                            .calendar_month_outlined,
+                                                        Icons.lock_outline,
                                                         color:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -3493,46 +3555,85 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                               child: SizedBox(
                                                 width: double.infinity,
                                                 child: TextFormField(
-                                                  controller: _model.pesoAtualTextController,
+                                                  controller: _model
+                                                      .pesoAtualTextController,
                                                   autofocus: false,
+                                                  readOnly: true,
                                                   obscureText: false,
-                                                  keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
+                                                  keyboardType:
+                                                      const TextInputType
+                                                          .numberWithOptions(
+                                                          decimal: true,
+                                                          signed: false),
                                                   decoration: InputDecoration(
-                                                    hintText: 'Peso do animal',
-                                                    hintStyle: FlutterFlowTheme.of(context).bodyMedium,
-                                                    enabledBorder: OutlineInputBorder(
+                                                    hintText: 'Sem pesagem',
+                                                    hintStyle:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMedium,
+                                                    enabledBorder:
+                                                        OutlineInputBorder(
                                                       borderSide: BorderSide(
-                                                        color: FlutterFlowTheme.of(context).alternate,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .alternate,
                                                         width: 2.0,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
-                                                    focusedBorder: OutlineInputBorder(
+                                                    focusedBorder:
+                                                        OutlineInputBorder(
                                                       borderSide: BorderSide(
-                                                        color: FlutterFlowTheme.of(context).primary,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primary,
                                                         width: 2.0,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
-                                                    errorBorder: OutlineInputBorder(
+                                                    errorBorder:
+                                                        OutlineInputBorder(
                                                       borderSide: BorderSide(
-                                                        color: FlutterFlowTheme.of(context).error,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .error,
                                                         width: 2.0,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
-                                                    focusedErrorBorder: OutlineInputBorder(
+                                                    focusedErrorBorder:
+                                                        OutlineInputBorder(
                                                       borderSide: BorderSide(
-                                                        color: FlutterFlowTheme.of(context).error,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .error,
                                                         width: 2.0,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
                                                     filled: true,
-                                                    fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                                    fillColor: FlutterFlowTheme
+                                                            .of(context)
+                                                        .secondaryBackground,
                                                   ),
-                                                  style: FlutterFlowTheme.of(context).bodyMedium,
-                                                  validator: _model.pesoAtualTextControllerValidator.asValidator(context),
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium,
+                                                  validator: _model
+                                                      .pesoAtualTextControllerValidator
+                                                      .asValidator(context),
                                                 ),
                                               ),
                                             ),
@@ -3774,7 +3875,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   onTap: () async {
                                                     final datePicked5Date =
                                                         await showDatePicker(
-                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                      initialEntryMode:
+                                                          DatePickerEntryMode
+                                                              .calendarOnly,
                                                       context: context,
                                                       initialDate:
                                                           getCurrentTimestamp,
@@ -4063,7 +4166,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   onTap: () async {
                                                     final datePicked6Date =
                                                         await showDatePicker(
-                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                      initialEntryMode:
+                                                          DatePickerEntryMode
+                                                              .calendarOnly,
                                                       context: context,
                                                       initialDate:
                                                           getCurrentTimestamp,
@@ -4353,7 +4458,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   onTap: () async {
                                                     final datePicked7Date =
                                                         await showDatePicker(
-                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                      initialEntryMode:
+                                                          DatePickerEntryMode
+                                                              .calendarOnly,
                                                       context: context,
                                                       initialDate:
                                                           getCurrentTimestamp,
@@ -4577,7 +4684,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   onTap: () async {
                                                     final datePicked8Date =
                                                         await showDatePicker(
-                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                      initialEntryMode:
+                                                          DatePickerEntryMode
+                                                              .calendarOnly,
                                                       context: context,
                                                       initialDate:
                                                           getCurrentTimestamp,
@@ -4800,7 +4909,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                   onTap: () async {
                                                     final datePicked9Date =
                                                         await showDatePicker(
-                                                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                      initialEntryMode:
+                                                          DatePickerEntryMode
+                                                              .calendarOnly,
                                                       context: context,
                                                       initialDate:
                                                           getCurrentTimestamp,
@@ -5312,417 +5423,205 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                 _isSaving = true;
                                                 safeSetState(() {});
                                                 try {
-                                                if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
-                                                if (!await sanitizePesoControllersBeforeSave(
-                                                    context, [
-                                                  _model
-                                                      .pesonascimentoTextController,
-                                                  _model
-                                                      .pesodadesmamaTextController,
-                                                  _model
-                                                      .pesoAtualTextController,
-                                                ])) {
-                                                  return;
-                                                }
-                                                if (_model.formKey2
-                                                            .currentState ==
-                                                        null ||
-                                                    !_model
-                                                        .formKey2.currentState!
-                                                        .validate()) {
-                                                  return;
-                                                }
-                                                if (_model.dropDownSexoValue ==
-                                                    null ||
-                                                    _model.dropDownSexoValue ==
-                                                        '') {
-                                                  await showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (alertDialogContext) {
-                                                      return AlertDialog(
-                                                        title: const Text(
-                                                            'Sexo'),
-                                                        content: const Text(
-                                                            'Selecione o sexo do animal.'),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    alertDialogContext),
-                                                            child: const Text(
-                                                                'Ok'),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                  return;
-                                                }
-                                                if ((_model.dropDownSexoValue ==
-                                                            'Fêmea' &&
-                                                        (_model.dPCategoriaFemeaValue ==
-                                                                null ||
-                                                            _model.dPCategoriaFemeaValue ==
-                                                                '')) ||
-                                                    (_model.dropDownSexoValue ==
-                                                            'Macho' &&
-                                                        (_model.dPCategoriaMachoValue ==
-                                                                null ||
-                                                            _model.dPCategoriaMachoValue ==
-                                                                ''))) {
-                                                  await showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (alertDialogContext) {
-                                                      return AlertDialog(
-                                                        title: const Text(
-                                                            'Categoria'),
-                                                        content: const Text(
-                                                            'Selecione a categoria do animal.'),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    alertDialogContext),
-                                                            child: const Text(
-                                                                'Ok'),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                  return;
-                                                }
-                                                if (_model.dPStatusValue ==
-                                                    null) {
-                                                  await showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (alertDialogContext) {
-                                                      return AlertDialog(
-                                                        title: const Text(
-                                                            'Status'),
-                                                        content: const Text(
-                                                            'Selecione o status do animal.'),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.pop(
-                                                                    alertDialogContext),
-                                                            child: const Text(
-                                                                'Ok'),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                  return;
-                                                }
-                                                _model.idRebanho = null;
-                                                safeSetState(() {});
-                                                _model.idRebanho =
-                                                    random_data.randomString(
-                                                  20,
-                                                  20,
-                                                  true,
-                                                  false,
-                                                  true,
-                                                );
-                                                safeSetState(() {});
-                                                if (!(FFAppState()
-                                                        .dataDadosNaoSyncRebanho !=
-                                                    null)) {
-                                                  FFAppState()
-                                                          .dataDadosNaoSyncRebanho =
-                                                      getCurrentTimestamp;
+                                                  if (await action_blocks
+                                                      .blockIfAccountCanceled(
+                                                          context,
+                                                          refreshFromServer:
+                                                              true)) return;
+                                                  if (!await sanitizePesoControllersBeforeSave(
+                                                      context, [
+                                                    _model
+                                                        .pesonascimentoTextController,
+                                                    _model
+                                                        .pesodadesmamaTextController,
+                                                  ])) {
+                                                    return;
+                                                  }
+                                                  if (_model.formKey2
+                                                              .currentState ==
+                                                          null ||
+                                                      !_model.formKey2
+                                                          .currentState!
+                                                          .validate()) {
+                                                    return;
+                                                  }
+                                                  if (_model.dropDownSexoValue ==
+                                                          null ||
+                                                      _model.dropDownSexoValue ==
+                                                          '') {
+                                                    await showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (alertDialogContext) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Sexo'),
+                                                          content: const Text(
+                                                              'Selecione o sexo do animal.'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext),
+                                                              child: const Text(
+                                                                  'Ok'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                    return;
+                                                  }
+                                                  final categoriaParaSalvar =
+                                                      _categoriaSelecionadaParaSexo(
+                                                          _model
+                                                              .dropDownSexoValue);
+                                                  if (!_categoriaCondizComSexo(
+                                                    _model.dropDownSexoValue,
+                                                    categoriaParaSalvar,
+                                                  )) {
+                                                    await showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (alertDialogContext) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Categoria'),
+                                                          content: const Text(
+                                                              'Selecione a categoria do animal.'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext),
+                                                              child: const Text(
+                                                                  'Ok'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                    return;
+                                                  }
+                                                  if (_model.dPStatusValue ==
+                                                      null) {
+                                                    await showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (alertDialogContext) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Status'),
+                                                          content: const Text(
+                                                              'Selecione o status do animal.'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () =>
+                                                                  Navigator.pop(
+                                                                      alertDialogContext),
+                                                              child: const Text(
+                                                                  'Ok'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                    return;
+                                                  }
+                                                  _model.idRebanho = null;
                                                   safeSetState(() {});
-                                                }
-                                                await SQLiteManager.instance
-                                                    .insertRebanho(
-                                                  idPropriedade: FFAppState()
-                                                      .propriedadeSelecionada
-                                                      .idPropriedade,
-                                                  numeroAnimal: _model
-                                                      .nAnimalTextController
-                                                      .text,
-                                                  chip: _model
-                                                      .nChipTextController.text,
-                                                  codRegistro: _model
-                                                      .cdigoregistroTextController
-                                                      .text,
-                                                  nome: _model
-                                                      .nomeAnimalTextController
-                                                      .text,
-                                                  sexo:
-                                                      _model.dropDownSexoValue,
-                                                  categoria:
-                                                      valueOrDefault<String>(
-                                                    _model.dropDownSexoValue ==
-                                                            'Fêmea'
-                                                        ? valueOrDefault<
-                                                            String>(
-                                                            _model
-                                                                .dPCategoriaFemeaValue,
-                                                            'null',
-                                                          )
-                                                        : valueOrDefault<
-                                                            String>(
-                                                            _model
-                                                                .dPCategoriaMachoValue,
-                                                            'null',
-                                                          ),
-                                                    'null',
-                                                  ),
-                                                  dataNascimento:
-                                                      dateTimeFormat(
-                                                    "yyyy-MM-dd",
-                                                    _model.datePicked1,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  pesoNascimento: _parsePeso(
-                                                      _model
-                                                          .pesonascimentoTextController
-                                                          .text),
-                                                  porte: _model.dPPorteValue,
-                                                  raca: valueOrDefault<String>(
-                                                    _model.dPRacaValue,
-                                                    'null',
-                                                  ),
-                                                  dataEntradaLote:
-                                                      dateTimeFormat(
-                                                    "yyyy-MM-dd",
-                                                    _model.datePicked2,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  dataDesmama: dateTimeFormat(
-                                                    "yyyy-MM-dd",
-                                                    _model.datePicked3,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  pesoDesmama: _parsePeso(
-                                                      _model
-                                                          .pesodadesmamaTextController
-                                                          .text),
-                                                  pesoAtual: _parsePeso(
-                                                      _model
-                                                          .pesoAtualTextController
-                                                          .text),
-                                                  statusRebanho:
-                                                      valueOrDefault<String>(
-                                                    _model.dPStatusValue,
-                                                    'Na propriedade',
-                                                  ),
-                                                  origem: _model.dPOrigemValue,
-                                                  anotacoes: _model
-                                                      .anotacoesTextController
-                                                      .text,
-                                                  idRebanho: _model.idRebanho,
-                                                  deletado: 'NAO',
-                                                  createdat: dateTimeFormat(
-                                                    "yyyy-MM-dd HH:mm:ss",
-                                                    getCurrentTimestamp,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  updatedat: dateTimeFormat(
-                                                    "yyyy-MM-dd HH:mm:ss",
-                                                    getCurrentTimestamp,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  tipo: 'animal',
-                                                  dataAcao: dateTimeFormat(
-                                                    "yyyy-MM-dd",
-                                                    _model.datePicked5,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  valorCompra:
-                                                      FFAppState().valueDouble,
-                                                  dataUltimaPesagem:
-                                                      dateTimeFormat(
-                                                    "yyyy-MM-dd",
-                                                    _model.datePicked4,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  nomeConcat:
-                                                      '${_model.nAnimalTextController.text} - ${_model.nomeAnimalTextController.text} - ${dateTimeFormat(
-                                                    "d/M/y",
-                                                    _model.datePicked1,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  )}',
-                                                  loteID: _model.dPLoteValue,
-                                                  loteNome:
-                                                      rebanhoLoteNomeById(
+                                                  _model.idRebanho =
+                                                      random_data.randomString(
+                                                    20,
+                                                    20,
+                                                    true,
+                                                    false,
+                                                    true,
+                                                  );
+                                                  safeSetState(() {});
+                                                  if (!(FFAppState()
+                                                          .dataDadosNaoSyncRebanho !=
+                                                      null)) {
                                                     FFAppState()
-                                                        .rebanhoLotesSelecionar,
-                                                    _model.dPLoteValue,
-                                                  ),
-                                                  dataVenda: dateTimeFormat(
-                                                    "yyyy-MM-dd",
-                                                    _model.datePicked6,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  valorVenda:
-                                                      FFAppState().valueDouble2,
-                                                  movimentacaoentrada:
-                                                      dateTimeFormat(
-                                                    "yyyy-MM-dd",
-                                                    _model.datePicked7,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  numeroMatriz: FFAppState()
-                                                      .matrizSelecionada
-                                                      .numAnimal,
-                                                  nomeMatriz: FFAppState()
-                                                      .matrizSelecionada
-                                                      .nomeAnimal,
-                                                  dataNascMatriz: FFAppState()
-                                                      .matrizSelecionada
-                                                      .dataNascAnimal,
-                                                  racaMatriz: FFAppState()
-                                                      .matrizSelecionada
-                                                      .racaAnimal,
-                                                  numeroReprodutor: FFAppState()
-                                                      .reprodutorSelecionado
-                                                      .numAnimal,
-                                                  nomeReprodutor: FFAppState()
-                                                      .reprodutorSelecionado
-                                                      .nomeAnimal,
-                                                  dataNascReprodutor:
-                                                      FFAppState()
-                                                          .reprodutorSelecionado
-                                                          .dataNascAnimal,
-                                                  racaReprodutor: FFAppState()
-                                                      .reprodutorSelecionado
-                                                      .racaAnimal,
-                                                  movimentacaosaida:
-                                                      dateTimeFormat(
-                                                    "yyyy-MM-dd",
-                                                    _model.datePicked8,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  datamorte: dateTimeFormat(
-                                                    "yyyy-MM-dd",
-                                                    _model.datePicked9,
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  motivomorte:
-                                                      valueOrDefault<String>(
-                                                    _model.dPMotivoMorteValue,
-                                                    'null',
-                                                  ),
-                                                  categoriamatriz:
-                                                      valueOrDefault<String>(
-                                                    FFAppState()
-                                                        .matrizSelecionada
-                                                        .categoria,
-                                                    'null',
-                                                  ),
-                                                  rebanhoIdMatriz: FFAppState()
-                                                      .matrizSelecionada
-                                                      .idRebanho,
-                                                  rebanhoIdReprodutor:
-                                                      FFAppState()
-                                                          .reprodutorSelecionado
-                                                          .idRebanho,
-                                                );
-                                                if (_model
-                                                        .pesonascimentoTextController
-                                                        .text !=
-                                                    '') {
-                                                  final pesoNasc = _parsePeso(
-                                                      _model
-                                                          .pesonascimentoTextController
-                                                          .text);
-                                                  if (pesoNasc != null && (_model.idRebanho ?? "").isNotEmpty) {
-                                                    await SQLiteManager.instance
-                                                        .updatePesagemByTipo(
-                                                      idRebanho:
-                                                          _model.idRebanho!,
-                                                      tipo: 'Nascimento',
-                                                      peso: pesoNasc,
-                                                      dataPesagem:
-                                                          dateTimeFormat(
-                                                        "yyyy-MM-dd",
-                                                        _model.datePicked1 ??
-                                                            getCurrentTimestamp,
-                                                        locale:
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      ),
-                                                    );
+                                                            .dataDadosNaoSyncRebanho =
+                                                        getCurrentTimestamp;
+                                                    safeSetState(() {});
                                                   }
-                                                }
-                                                if (_model
-                                                        .pesodadesmamaTextController
-                                                        .text !=
-                                                    '') {
-                                                  final pesoDesm = _parsePeso(
-                                                      _model
-                                                          .pesodadesmamaTextController
-                                                          .text);
-                                                  if (pesoDesm != null && (_model.idRebanho ?? "").isNotEmpty && _model.datePicked3 != null) {
-                                                    await SQLiteManager.instance
-                                                        .updatePesagemByTipo(
-                                                      idRebanho:
-                                                          _model.idRebanho!,
-                                                      tipo: 'Desmama',
-                                                      peso: pesoDesm,
-                                                      dataPesagem:
-                                                          dateTimeFormat(
-                                                        "yyyy-MM-dd",
-                                                        _model.datePicked3,
-                                                        locale:
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      ),
-                                                    );
-                                                  }
-                                                }
-                                                if (_model
-                                                        .pesoAtualTextController
-                                                        .text !=
-                                                    '') {
                                                   await SQLiteManager.instance
-                                                      .addPesagem(
-                                                    dataPesagem: dateTimeFormat(
+                                                      .insertRebanho(
+                                                    idPropriedade: FFAppState()
+                                                        .propriedadeSelecionada
+                                                        .idPropriedade,
+                                                    numeroAnimal: _model
+                                                        .nAnimalTextController
+                                                        .text,
+                                                    chip: _model
+                                                        .nChipTextController
+                                                        .text,
+                                                    codRegistro: _model
+                                                        .cdigoregistroTextController
+                                                        .text,
+                                                    nome: _model
+                                                        .nomeAnimalTextController
+                                                        .text,
+                                                    sexo: _model
+                                                        .dropDownSexoValue,
+                                                    categoria:
+                                                        valueOrDefault<String>(
+                                                      categoriaParaSalvar,
+                                                      'null',
+                                                    ),
+                                                    dataNascimento:
+                                                        dateTimeFormat(
                                                       "yyyy-MM-dd",
-                                                      _model.datePicked4 ??
-                                                          getCurrentTimestamp,
+                                                      _model.datePicked1,
                                                       locale:
                                                           FFLocalizations.of(
                                                                   context)
                                                               .languageCode,
                                                     ),
-                                                    tipo: 'Atual',
-                                                    peso: _parsePeso(_model
-                                                        .pesoAtualTextController
+                                                    pesoNascimento: _parsePeso(
+                                                        _model
+                                                            .pesonascimentoTextController
+                                                            .text),
+                                                    porte: _model.dPPorteValue,
+                                                    raca:
+                                                        valueOrDefault<String>(
+                                                      _model.dPRacaValue,
+                                                      'null',
+                                                    ),
+                                                    dataEntradaLote:
+                                                        dateTimeFormat(
+                                                      "yyyy-MM-dd",
+                                                      _model.datePicked2,
+                                                      locale:
+                                                          FFLocalizations.of(
+                                                                  context)
+                                                              .languageCode,
+                                                    ),
+                                                    dataDesmama: dateTimeFormat(
+                                                      "yyyy-MM-dd",
+                                                      _model.datePicked3,
+                                                      locale:
+                                                          FFLocalizations.of(
+                                                                  context)
+                                                              .languageCode,
+                                                    ),
+                                                    pesoDesmama: _parsePeso(_model
+                                                        .pesodadesmamaTextController
                                                         .text),
+                                                    pesoAtual: null,
+                                                    statusRebanho:
+                                                        valueOrDefault<String>(
+                                                      _model.dPStatusValue,
+                                                      'Na propriedade',
+                                                    ),
+                                                    origem:
+                                                        _model.dPOrigemValue,
+                                                    anotacoes: _model
+                                                        .anotacoesTextController
+                                                        .text,
+                                                    idRebanho: _model.idRebanho,
                                                     deletado: 'NAO',
                                                     createdat: dateTimeFormat(
                                                       "yyyy-MM-dd HH:mm:ss",
@@ -5732,38 +5631,6 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                   context)
                                                               .languageCode,
                                                     ),
-                                                    idRebanho: _model.idRebanho,
-                                                    idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
-                                                  );
-                                                }
-                                                if (_model.dPLoteValue !=
-                                                        null &&
-                                                    _model.dPLoteValue != '') {
-                                                  _model.loteSelecionado =
-                                                      await SQLiteManager
-                                                          .instance
-                                                          .buscarLote(
-                                                    idLote: _model.dPLoteValue,
-                                                  );
-                                                  _model.animaisLote = functions
-                                                      .converterJSONparaLista(
-                                                          _model
-                                                              .loteSelecionado!
-                                                              .firstOrNull!
-                                                              .idAnimais!)
-                                                      .toList()
-                                                      .cast<String>();
-                                                  safeSetState(() {});
-                                                  _model.addToAnimaisLote(
-                                                      _model.idRebanho!);
-                                                  safeSetState(() {});
-                                                  await SQLiteManager.instance
-                                                      .uPDTLoteRebanho(
-                                                    idLote: _model.dPLoteValue,
-                                                    idAnimais: functions
-                                                        .converterListaParaJSON(
-                                                            _model.animaisLote
-                                                                .toList()),
                                                     updatedat: dateTimeFormat(
                                                       "yyyy-MM-dd HH:mm:ss",
                                                       getCurrentTimestamp,
@@ -5772,35 +5639,179 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                                   context)
                                                               .languageCode,
                                                     ),
-                                                  );
-                                                }
-                                                await action_blocks
-                                                    .animaisRegistrados(
-                                                        context);
-                                                await action_blocks
-                                                    .animaisPropriedade(
-                                                        context);
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                      'Animal adicionado com sucesso',
-                                                      style: TextStyle(
-                                                        color: FlutterFlowTheme
-                                                                .of(context)
-                                                            .secondaryBackground,
-                                                      ),
+                                                    tipo: 'animal',
+                                                    dataAcao: dateTimeFormat(
+                                                      "yyyy-MM-dd",
+                                                      _model.datePicked5,
+                                                      locale:
+                                                          FFLocalizations.of(
+                                                                  context)
+                                                              .languageCode,
                                                     ),
-                                                    duration: const Duration(
-                                                        milliseconds: 4000),
-                                                    backgroundColor:
-                                                        FlutterFlowTheme.of(
-                                                                context)
-                                                            .secondary,
-                                                  ),
-                                                );
-                                                FFAppState().update(() {});
-                                                Navigator.pop(context);
+                                                    valorCompra: FFAppState()
+                                                        .valueDouble,
+                                                    dataUltimaPesagem: '',
+                                                    nomeConcat:
+                                                        '${_model.nAnimalTextController.text} - ${_model.nomeAnimalTextController.text} - ${dateTimeFormat(
+                                                      "d/M/y",
+                                                      _model.datePicked1,
+                                                      locale:
+                                                          FFLocalizations.of(
+                                                                  context)
+                                                              .languageCode,
+                                                    )}',
+                                                    loteID: _model.dPLoteValue,
+                                                    loteNome:
+                                                        rebanhoLoteNomeById(
+                                                      FFAppState()
+                                                          .rebanhoLotesSelecionar,
+                                                      _model.dPLoteValue,
+                                                    ),
+                                                    dataVenda: dateTimeFormat(
+                                                      "yyyy-MM-dd",
+                                                      _model.datePicked6,
+                                                      locale:
+                                                          FFLocalizations.of(
+                                                                  context)
+                                                              .languageCode,
+                                                    ),
+                                                    valorVenda: FFAppState()
+                                                        .valueDouble2,
+                                                    movimentacaoentrada:
+                                                        dateTimeFormat(
+                                                      "yyyy-MM-dd",
+                                                      _model.datePicked7,
+                                                      locale:
+                                                          FFLocalizations.of(
+                                                                  context)
+                                                              .languageCode,
+                                                    ),
+                                                    numeroMatriz: FFAppState()
+                                                        .matrizSelecionada
+                                                        .numAnimal,
+                                                    nomeMatriz: FFAppState()
+                                                        .matrizSelecionada
+                                                        .nomeAnimal,
+                                                    dataNascMatriz: FFAppState()
+                                                        .matrizSelecionada
+                                                        .dataNascAnimal,
+                                                    racaMatriz: FFAppState()
+                                                        .matrizSelecionada
+                                                        .racaAnimal,
+                                                    numeroReprodutor: FFAppState()
+                                                        .reprodutorSelecionado
+                                                        .numAnimal,
+                                                    nomeReprodutor: FFAppState()
+                                                        .reprodutorSelecionado
+                                                        .nomeAnimal,
+                                                    dataNascReprodutor:
+                                                        FFAppState()
+                                                            .reprodutorSelecionado
+                                                            .dataNascAnimal,
+                                                    racaReprodutor: FFAppState()
+                                                        .reprodutorSelecionado
+                                                        .racaAnimal,
+                                                    movimentacaosaida:
+                                                        dateTimeFormat(
+                                                      "yyyy-MM-dd",
+                                                      _model.datePicked8,
+                                                      locale:
+                                                          FFLocalizations.of(
+                                                                  context)
+                                                              .languageCode,
+                                                    ),
+                                                    datamorte: dateTimeFormat(
+                                                      "yyyy-MM-dd",
+                                                      _model.datePicked9,
+                                                      locale:
+                                                          FFLocalizations.of(
+                                                                  context)
+                                                              .languageCode,
+                                                    ),
+                                                    motivomorte:
+                                                        valueOrDefault<String>(
+                                                      _model.dPMotivoMorteValue,
+                                                      'null',
+                                                    ),
+                                                    categoriamatriz:
+                                                        valueOrDefault<String>(
+                                                      FFAppState()
+                                                          .matrizSelecionada
+                                                          .categoria,
+                                                      'null',
+                                                    ),
+                                                    rebanhoIdMatriz:
+                                                        FFAppState()
+                                                            .matrizSelecionada
+                                                            .idRebanho,
+                                                    rebanhoIdReprodutor:
+                                                        FFAppState()
+                                                            .reprodutorSelecionado
+                                                            .idRebanho,
+                                                  );
+                                                  if (_model
+                                                          .pesodadesmamaTextController
+                                                          .text !=
+                                                      '') {
+                                                    final pesoDesm = _parsePeso(
+                                                        _model
+                                                            .pesodadesmamaTextController
+                                                            .text);
+                                                    if (pesoDesm != null &&
+                                                        (_model.idRebanho ?? "")
+                                                            .isNotEmpty &&
+                                                        _model.datePicked3 !=
+                                                            null) {
+                                                      await SQLiteManager
+                                                          .instance
+                                                          .updatePesagemByTipo(
+                                                        idRebanho:
+                                                            _model.idRebanho!,
+                                                        tipo: 'Desmama',
+                                                        peso: pesoDesm,
+                                                        dataPesagem:
+                                                            dateTimeFormat(
+                                                          "yyyy-MM-dd",
+                                                          _model.datePicked3,
+                                                          locale:
+                                                              FFLocalizations.of(
+                                                                      context)
+                                                                  .languageCode,
+                                                        ),
+                                                      );
+                                                    }
+                                                  }
+                                                  await SQLiteManager.instance
+                                                      .syncUltimaPesagemNoRebanho(
+                                                    idRebanho: _model.idRebanho,
+                                                  );
+                                                  await action_blocks
+                                                      .animaisRegistrados(
+                                                          context);
+                                                  await action_blocks
+                                                      .animaisPropriedade(
+                                                          context);
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                        'Animal adicionado com sucesso',
+                                                        style: TextStyle(
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .secondaryBackground,
+                                                        ),
+                                                      ),
+                                                      duration: const Duration(
+                                                          milliseconds: 4000),
+                                                      backgroundColor:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .secondary,
+                                                    ),
+                                                  );
+                                                  FFAppState().update(() {});
+                                                  Navigator.pop(context);
                                                 } finally {
                                                   if (mounted) {
                                                     _isSaving = false;

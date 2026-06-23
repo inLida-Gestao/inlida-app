@@ -19,6 +19,18 @@ class PageRebanhoModel extends FlutterFlowModel<PageRebanhoWidget> {
 
   int? pageNum = 1;
 
+  String? buscaRebanhoPaginadaCacheKey;
+
+  Future<List<BuscaRebanhoPaginadaRow>>? buscaRebanhoPaginadaFuture;
+
+  String? buscaRebanhoPesquisaCacheKey;
+
+  Future<List<BuscaRebanhoPaginadaPesquisaRow>>? buscaRebanhoPesquisaFuture;
+
+  String? buscaRebanhoOrdenadaCacheKey;
+
+  Future<dynamic>? buscaRebanhoOrdenadaFuture;
+
   ///  State fields for stateful widgets in this component.
 
   // Model for selecionarPropriedade component.

@@ -2486,7 +2486,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                     ) == '') ? 'N/A' : valueOrDefault<String>(
                                                                                     rebanhosSelectItem.categoria,
                                                                                     'N/A',
-                                                                                  )} • Raça: ${(valueOrDefault<String>(
+                                                                                  )} • ${(valueOrDefault<String>(
                                                                                       rebanhosSelectItem.raca,
                                                                                       'N/A',
                                                                                     ) == 'null') || (valueOrDefault<String>(
@@ -2579,21 +2579,6 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                                 ),
                                                                               ].divide(const SizedBox(width: 5.0)),
                                                                             ),
-                                                                            if (rebanhosSelectItem.dataEntradaLote != null &&
-                                                                                rebanhosSelectItem.dataEntradaLote != '')
-                                                                              Text(
-                                                                                '(entrada em ${dateTimeFormat(
-                                                                                  "d/M/y",
-                                                                                  functions.converterParaData(rebanhosSelectItem.dataEntradaLote),
-                                                                                  locale: FFLocalizations.of(context).languageCode,
-                                                                                )})',
-                                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                      fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                      color: FlutterFlowTheme.of(context).customColor6,
-                                                                                      letterSpacing: 0.0,
-                                                                                      useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
-                                                                                    ),
-                                                                              ),
                                                                           ],
                                                                         ),
                                                                       ].divide(const SizedBox(
@@ -3267,7 +3252,7 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                         children:
                                                                             [
                                                                           Text(
-                                                                            '${(rebanhoAplicadoItem.categoria == 'null') || (rebanhoAplicadoItem.categoria == null || rebanhoAplicadoItem.categoria == '') ? 'N/A' : rebanhoAplicadoItem.categoria} • Raça: ${(rebanhoAplicadoItem.raca == 'null') || (rebanhoAplicadoItem.raca == null || rebanhoAplicadoItem.raca == '') ? 'N/A' : rebanhoAplicadoItem.raca}',
+                                                                            '${(rebanhoAplicadoItem.categoria == 'null') || (rebanhoAplicadoItem.categoria == null || rebanhoAplicadoItem.categoria == '') ? 'N/A' : rebanhoAplicadoItem.categoria} • ${(rebanhoAplicadoItem.raca == 'null') || (rebanhoAplicadoItem.raca == null || rebanhoAplicadoItem.raca == '') ? 'N/A' : rebanhoAplicadoItem.raca}',
                                                                             style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                                   font: GoogleFonts.plusJakartaSans(
                                                                                     fontWeight: FontWeight.normal,
@@ -3588,7 +3573,12 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                           _isSaving = true;
                                                           safeSetState(() {});
                                                           try {
-                                                            if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                                                            if (await action_blocks
+                                                                .blockIfAccountCanceled(
+                                                                    context,
+                                                                    refreshFromServer:
+                                                                        true))
+                                                              return;
                                                             if (!(FFAppState()
                                                                     .dataDadosNaoSyncLotes !=
                                                                 null)) {
@@ -3711,55 +3701,6 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                   );
                                                                 }
                                                               } else {
-                                                                _model.loteAnimalExiste =
-                                                                    await SQLiteManager
-                                                                        .instance
-                                                                        .buscarLote(
-                                                                  idLote: _model
-                                                                      .rebanhoIndex2
-                                                                      ?.firstOrNull
-                                                                      ?.loteID,
-                                                                );
-                                                                final animaisDoLoteExistente = _model
-                                                                        .loteAnimalExiste
-                                                                        ?.firstOrNull
-                                                                        ?.idAnimais ??
-                                                                    '[]';
-                                                                _model.idAnimais = functions
-                                                                    .converterJSONparaLista(
-                                                                        animaisDoLoteExistente)
-                                                                    .toList()
-                                                                    .cast<
-                                                                        String>();
-                                                                safeSetState(
-                                                                    () {});
-                                                                _model.removeFromIdAnimais(_model
-                                                                    .rebanhoIAplicados
-                                                                    .elementAtOrNull(
-                                                                        _model
-                                                                            .index)!);
-                                                                safeSetState(
-                                                                    () {});
-                                                                await SQLiteManager
-                                                                    .instance
-                                                                    .uPDTLoteRebanho(
-                                                                  idAnimais: functions
-                                                                      .converterListaParaJSON(_model
-                                                                          .idAnimais
-                                                                          .toList()),
-                                                                  updatedat:
-                                                                      dateTimeFormat(
-                                                                    "yyyy-MM-dd HH:mm:ss",
-                                                                    getCurrentTimestamp,
-                                                                    locale: FFLocalizations.of(
-                                                                            context)
-                                                                        .languageCode,
-                                                                  ),
-                                                                  idLote: _model
-                                                                      .rebanhoIndex2
-                                                                      ?.firstOrNull
-                                                                      ?.loteID,
-                                                                );
                                                                 if (_model
                                                                         .ativoInativoValue ==
                                                                     true) {
@@ -3850,10 +3791,6 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                   FFAppState()
                                                                       .propriedadeSelecionada
                                                                       .idPropriedade,
-                                                              idAnimais: functions
-                                                                  .converterListaParaJSON(_model
-                                                                      .rebanhoIAplicados
-                                                                      .toList()),
                                                               nome: _model
                                                                   .nomeloteTextController
                                                                   .text,

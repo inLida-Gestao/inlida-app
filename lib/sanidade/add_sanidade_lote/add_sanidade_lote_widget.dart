@@ -9,6 +9,7 @@ import '/flutter_flow/instant_timer.dart';
 import '/sanidade/legenda_sanidade/legenda_sanidade_widget.dart';
 import '/sanidade/selecionar_sanidade/selecionar_sanidade_widget.dart';
 import '/actions/actions.dart' as action_blocks;
+import '/sanidade/sanidade_dropdown_options.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:aligned_dialog/aligned_dialog.dart';
@@ -99,6 +100,69 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
     super.dispose();
   }
 
+  bool _hasMultiSelectValue(List<String>? value) =>
+      value?.any((item) => item.trim().isNotEmpty) ?? false;
+
+  bool _hasSingleSelectValue(String? value) =>
+      value?.trim().isNotEmpty ?? false;
+
+  bool _hasSanidadeType(String type, bool hasFieldValue) =>
+      FFAppState().sanidade.contains(type) || hasFieldValue;
+
+  bool get _hasVacinaSelected => _hasSanidadeType(
+      'Vacina', _hasMultiSelectValue(_model.dropDownVacinaValue));
+
+  bool get _hasAntiparasitarioSelected => _hasSanidadeType('Antiparasitário',
+      _hasMultiSelectValue(_model.dropDownAntiparasitarioValue));
+
+  bool get _hasTratamentoSelected => _hasSanidadeType(
+      'Tratamento', _hasMultiSelectValue(_model.dropDownTratamentoValue));
+
+  bool get _hasProtocoloSelected => _hasSanidadeType('Protocolo reprodutivo',
+      _hasSingleSelectValue(_model.dropDownProtocoloValue));
+
+  bool get _canSaveSanidade {
+    final hasAnyType = _hasVacinaSelected ||
+        _hasAntiparasitarioSelected ||
+        _hasTratamentoSelected ||
+        _hasProtocoloSelected;
+
+    return !_isSaving &&
+        _model.dropDownLoteValue != null &&
+        _model.dropDownLoteValue != '' &&
+        _model.datePicked != null &&
+        hasAnyType &&
+        (!_hasVacinaSelected ||
+            _hasMultiSelectValue(_model.dropDownVacinaValue)) &&
+        (!_hasAntiparasitarioSelected ||
+            _hasMultiSelectValue(_model.dropDownAntiparasitarioValue)) &&
+        (!_hasTratamentoSelected ||
+            _hasMultiSelectValue(_model.dropDownTratamentoValue)) &&
+        (!_hasProtocoloSelected ||
+            _hasSingleSelectValue(_model.dropDownProtocoloValue));
+  }
+
+  void _syncSanidadeTypesFromInputs() {
+    void addType(String type) {
+      if (!FFAppState().sanidade.contains(type)) {
+        FFAppState().addToSanidade(type);
+      }
+    }
+
+    if (_hasMultiSelectValue(_model.dropDownVacinaValue)) {
+      addType('Vacina');
+    }
+    if (_hasMultiSelectValue(_model.dropDownAntiparasitarioValue)) {
+      addType('Antiparasitário');
+    }
+    if (_hasMultiSelectValue(_model.dropDownTratamentoValue)) {
+      addType('Tratamento');
+    }
+    if (_hasSingleSelectValue(_model.dropDownProtocoloValue)) {
+      addType('Protocolo reprodutivo');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
@@ -122,7 +186,8 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
             ),
           );
         }
-        final containerListarLotesRowList = snapshot.data!;
+        final containerListarLotesRowList =
+            snapshot.data!.where((lote) => lote.ativo == 'Ativo').toList();
 
         return Container(
           width: double.infinity,
@@ -789,19 +854,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     .dropDownVacinaValueController ??=
                                                 FormListFieldController<String>(
                                                     null),
-                                            options: const [
-                                              'Aftosa',
-                                              'Antitetânica',
-                                              'Botulismo',
-                                              'Brucelose',
-                                              'Clostridiose',
-                                              'Diarréia (BVD)',
-                                              'Doença Respiratória (DBR)',
-                                              'Leptospirose',
-                                              'Parainfluenza e herpes',
-                                              'Raiva',
-                                              'Rinotraqueíte (IBR)'
-                                            ],
+                                            options: sanidadeVacinaOptions,
                                             width: double.infinity,
                                             height: 56.0,
                                             textStyle: FlutterFlowTheme.of(
@@ -1161,21 +1214,8 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     .dropDownAntiparasitarioValueController ??=
                                                 FormListFieldController<String>(
                                                     null),
-                                            options: const [
-                                              'Abamectina',
-                                              'Albendazol',
-                                              'Babesiose (Tristeza Bovina) & Tripanossoma',
-                                              'Brinco mosquicida',
-                                              'Carrapaticida & Mosquicida (Pour ON)',
-                                              'Carrapaticida & Mosquicida (Pulverização)',
-                                              'Deltrametrina, Imidocarp, Nitroxinil & Triclorfon',
-                                              'Doramectina',
-                                              'Eprinomectina',
-                                              'Ivermectina',
-                                              'Moxidectina',
-                                              'Levamisol',
-                                              'Vermífigo'
-                                            ],
+                                            options:
+                                                sanidadeAntiparasitarioOptions,
                                             width: double.infinity,
                                             height: 56.0,
                                             textStyle: FlutterFlowTheme.of(
@@ -1536,17 +1576,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     .dropDownTratamentoValueController ??=
                                                 FormListFieldController<String>(
                                                     null),
-                                            options: const [
-                                              'Anestésico, Sedativo & Similares',
-                                              'Analgésico',
-                                              'Anti-inflamatório',
-                                              'Anti-séptico',
-                                              'Castração Química',
-                                              'Complexo Vitamínico & Mineral',
-                                              'Homeopático',
-                                              'Hormônio',
-                                              'Antibiótico'
-                                            ],
+                                            options: sanidadeTratamentoOptions,
                                             width: double.infinity,
                                             height: 56.0,
                                             textStyle: FlutterFlowTheme.of(
@@ -1909,12 +1939,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     .dropDownProtocoloValueController ??=
                                                 FormFieldController<String>(
                                                     null),
-                                            options: const [
-                                              'D0-D7-D9',
-                                              'D0-D8-D10',
-                                              'D0-D9-D11',
-                                              'D0-D7-D9-D11'
-                                            ],
+                                            options: sanidadeProtocoloOptions,
                                             onChanged: (val) => safeSetState(
                                                 () => _model
                                                         .dropDownProtocoloValue =
@@ -2026,12 +2051,7 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     .dropDownD0ValueController ??=
                                                 FormFieldController<String>(
                                                     null),
-                                            options: const [
-                                              'BE  + Implante novo',
-                                              'BE + Implante novo + PGF',
-                                              'BE  + Implante reuso',
-                                              'BE + Implante reuso + PGF'
-                                            ],
+                                            options: sanidadeProtocoloD0Options,
                                             onChanged: (val) => safeSetState(
                                                 () => _model.dropDownD0Value =
                                                     val),
@@ -2219,10 +2239,8 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                     .dropDownRetiradaValueController ??=
                                                 FormFieldController<String>(
                                                     null),
-                                            options: const [
-                                              'eCG + PGF + CE',
-                                              'eCG + PGR + CE + BE'
-                                            ],
+                                            options:
+                                                sanidadeProtocoloRetiradaOptions,
                                             onChanged: (val) => safeSetState(
                                                 () => _model
                                                         .dropDownRetiradaValue =
@@ -2348,10 +2366,8 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                                       .dropDownIATFValueController ??=
                                                   FormFieldController<String>(
                                                       null),
-                                              options: const [
-                                                'Com GnRH',
-                                                'Sem GnRH'
-                                              ],
+                                              options:
+                                                  sanidadeProtocoloIatfOptions,
                                               onChanged: (val) => safeSetState(
                                                   () => _model
                                                       .dropDownIATFValue = val),
@@ -2734,41 +2750,17 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                       ),
                       Expanded(
                         child: FFButtonWidget(
-                          onPressed: (_isSaving ||
-                                  ((_model.dropDownLoteValue == null ||
-                                          _model.dropDownLoteValue == '') ||
-                                      (_model.datePicked == null) ||
-                                      (FFAppState().sanidade.isEmpty) ||
-                                      (FFAppState()
-                                              .sanidade
-                                              .contains('Vacina') &&
-                                          !(_model.dropDownVacinaValue?.isNotEmpty ??
-                                              false)) ||
-                                      (FFAppState()
-                                              .sanidade
-                                              .contains('Antiparasitário') &&
-                                          !(_model.dropDownAntiparasitarioValue
-                                                  ?.isNotEmpty ??
-                                              false)) ||
-                                      (FFAppState()
-                                              .sanidade
-                                              .contains('Tratamento') &&
-                                          !(_model.dropDownTratamentoValue
-                                                  ?.isNotEmpty ??
-                                              false)) ||
-                                      (FFAppState().sanidade.contains(
-                                              'Protocolo reprodutivo') &&
-                                          ((_model.dropDownProtocoloValue ==
-                                                  null) ||
-                                              (_model.dropDownProtocoloValue ==
-                                                  '')))))
+                          onPressed: !_canSaveSanidade
                               ? null
                               : () async {
                                   if (_isSaving) return;
                                   _isSaving = true;
                                   safeSetState(() {});
                                   try {
-                                    if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                                    if (await action_blocks
+                                        .blockIfAccountCanceled(context,
+                                            refreshFromServer: true)) return;
+                                    _syncSanidadeTypesFromInputs();
                                     if (!(FFAppState()
                                             .dataDadosNaoSyncSanidade !=
                                         null)) {

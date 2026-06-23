@@ -4101,14 +4101,6 @@ class _EditReproducaoRebanhoWidgetState
                                                           getCurrentTimestamp;
                                                       safeSetState(() {});
                                                     }
-                                                    _model.animalSelecionado =
-                                                        await SQLiteManager
-                                                            .instance
-                                                            .buscarRebanho(
-                                                      idRebanho: FFAppState()
-                                                          .matrizSelecionada
-                                                          .idRebanho,
-                                                    );
                                                     if (_model.tipoReproducao ==
                                                         'Inseminação') {
                                                       await SQLiteManager
@@ -4175,10 +4167,6 @@ class _EditReproducaoRebanhoWidgetState
                                                                             .editReproducao
                                                                             ?.firstOrNull
                                                                             ?.previsaoParto,
-                                                        idLote: _model
-                                                            .animalSelecionado
-                                                            ?.firstOrNull
-                                                            ?.loteID,
                                                         dataInicial: _model
                                                                     .datePicked3 !=
                                                                 null
@@ -4247,10 +4235,6 @@ class _EditReproducaoRebanhoWidgetState
                                                             FFAppState()
                                                                 .reprodutorSelecionado
                                                                 .dataNascAnimal,
-                                                        loteNome: _model
-                                                            .animalSelecionado
-                                                            ?.firstOrNull
-                                                            ?.loteNome,
                                                         statusReproducao:
                                                             valueOrDefault<
                                                                 String>(
@@ -4375,10 +4359,6 @@ class _EditReproducaoRebanhoWidgetState
                                                                 .editReproducao
                                                                 ?.firstOrNull
                                                                 ?.previsaoParto,
-                                                        idLote: _model
-                                                            .animalSelecionado
-                                                            ?.firstOrNull
-                                                            ?.loteID,
                                                         dataInicial: _model
                                                                     .datePicked3 !=
                                                                 null
@@ -4444,10 +4424,6 @@ class _EditReproducaoRebanhoWidgetState
                                                             FFAppState()
                                                                 .reprodutorSelecionado
                                                                 .dataNascAnimal,
-                                                        loteNome: _model
-                                                            .animalSelecionado
-                                                            ?.firstOrNull
-                                                            ?.loteNome,
                                                         statusReproducao:
                                                             valueOrDefault<
                                                                 String>(

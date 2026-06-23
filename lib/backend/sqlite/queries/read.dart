@@ -10,6 +10,11 @@ Future<List<T>> _readQuery<T>(
 
 String _escapeSqlValue(String value) => value.replaceAll("'", "''");
 
+String _escapeSqlLikeValue(String value) => _escapeSqlValue(value)
+    .replaceAll('\\', '\\\\')
+    .replaceAll('%', r'\%')
+    .replaceAll('_', r'\_');
+
 String _buildSqlMultiValueCondition(String column, String? rawValue) {
   final values = (rawValue ?? '')
       .split('|')
@@ -622,7 +627,7 @@ Future<List<QTDAnimaisPropriedadeRow>> performQTDAnimaisPropriedade(
     dataNascFim: dataNascFim,
   );
   final query = '''
-SELECT * FROM local_rebanho
+SELECT COUNT(*) AS total FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
 $filterCondition
 AND statusRebanho = 'Na propriedade'
@@ -634,6 +639,7 @@ AND deletado = 'NAO'
 class QTDAnimaisPropriedadeRow extends SqliteRow {
   QTDAnimaisPropriedadeRow(super.data);
 
+  int get total => (data['total'] as num?)?.toInt() ?? 0;
   int? get id => data['id'] as int?;
 }
 
@@ -708,6 +714,16 @@ Future<List<BuscaHistPesagensRow>> performBuscaHistPesagens(
 SELECT * FROM local_historico_pesagens
 WHERE idRebanho = '$idRebanho'
 AND (deletado = 'NAO' OR deletado IS NULL OR deletado = '')
+AND id IN (
+  SELECT MAX(id)
+  FROM local_historico_pesagens
+  WHERE idRebanho = '$idRebanho'
+  AND (deletado = 'NAO' OR deletado IS NULL OR deletado = '')
+  GROUP BY idRebanho,
+           substr(COALESCE(dataPesagem, ''), 1, 10),
+           COALESCE(tipo, ''),
+           printf('%.3f', CAST(peso AS REAL))
+)
 ''';
   return _readQuery(database, query, (d) => BuscaHistPesagensRow(d));
 }
@@ -1306,7 +1322,7 @@ Future<List<BuscarLotesRow>> performBuscarLotes(
   final safeId =
       idPropriedade?.contains(',') == true ? idPropriedade : "'$idPropriedade'";
   final query = '''
-SELECT id_lote, nome, id_animais FROM local_lotes
+SELECT id_lote, nome FROM local_lotes
 WHERE ativo = 'Ativo'
 AND deletado = 'NAO'
 AND id_propriedade IN ($safeId)
@@ -1852,7 +1868,8 @@ Future<List<BuscaRebanhoPaginadaRow>> performBuscaRebanhoPaginada(
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
-SELECT * FROM local_rebanho
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
 AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
@@ -1941,7 +1958,7 @@ Future<List<QTDAnimaisTotalPropriedadeRow>> performQTDAnimaisTotalPropriedade(
     dataNascFim: dataNascFim,
   );
   final query = '''
-SELECT * FROM local_rebanho
+SELECT COUNT(*) AS total FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
 $filterCondition
 AND deletado = 'NAO'
@@ -1952,6 +1969,7 @@ AND deletado = 'NAO'
 class QTDAnimaisTotalPropriedadeRow extends SqliteRow {
   QTDAnimaisTotalPropriedadeRow(super.data);
 
+  int get total => (data['total'] as num?)?.toInt() ?? 0;
   int? get id => data['id'] as int?;
 }
 
@@ -2242,30 +2260,89 @@ Future<List<BuscaRebanhoPaginadaPesquisaRow>>
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
-}) {
+}) async {
   final dataNascInicioValue = dataNascInicio ?? '';
   final dataNascFimValue = dataNascFim ?? '';
+  final pesquisaValue = (pesquisa ?? '').trim();
+  final pesquisaSql = _escapeSqlValue(pesquisaValue);
+  final pesquisaLikeSql = _escapeSqlLikeValue(pesquisaValue);
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
-  final query = '''
-SELECT * FROM local_rebanho
+  const selectColumns =
+      'idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteID, loteNome, statusRebanho, created_at';
+  final baseFilter = '''
 WHERE idPropriedade = '$idPropriedade'
 AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
 AND ('$raca' = '' OR raca = '$raca')
 AND ('$origem' = '' OR origem = '$origem')
 AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
-AND ('$pesquisa' = '' OR numeroAnimal LIKE '%$pesquisa%' OR nome LIKE '%$pesquisa%' 
-OR chip LIKE '%$pesquisa%')
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
 AND $statusCondition
 AND deletado = 'NAO'
+''';
+  if (pesquisaValue.isNotEmpty) {
+    final collectedRows = <Map<String, dynamic>>[];
+    final collectedIds = <String>{};
+
+    Future<void> addRows(String query) async {
+      final rows = await database.rawQuery(query);
+      for (final row in rows) {
+        final id = row['idRebanho']?.toString() ?? row.toString();
+        if (collectedIds.add(id)) {
+          collectedRows.add(row);
+        }
+        if (collectedRows.length >= 100) {
+          return;
+        }
+      }
+    }
+
+    String rankedQuery(String condition) => '''
+SELECT $selectColumns
+FROM local_rebanho
+$baseFilter
+AND $condition
+ORDER BY created_at DESC
+LIMIT ${100 - collectedRows.length}
+
+''';
+
+    await addRows(rankedQuery("chip = '$pesquisaSql'"));
+    await addRows(rankedQuery("numeroAnimal = '$pesquisaSql'"));
+    if (collectedRows.isNotEmpty) {
+      return collectedRows
+          .map((d) => BuscaRebanhoPaginadaPesquisaRow(d))
+          .toList();
+    }
+
+    await addRows(rankedQuery("chip LIKE '$pesquisaLikeSql%' ESCAPE '\\'"));
+    await addRows(
+        rankedQuery("numeroAnimal LIKE '$pesquisaLikeSql%' ESCAPE '\\'"));
+    await addRows(rankedQuery(
+        "nome COLLATE NOCASE LIKE '$pesquisaLikeSql%' ESCAPE '\\'"));
+    if (collectedRows.isNotEmpty) {
+      return collectedRows
+          .map((d) => BuscaRebanhoPaginadaPesquisaRow(d))
+          .toList();
+    }
+  }
+
+  final query = '''
+SELECT $selectColumns
+FROM local_rebanho
+$baseFilter
+AND ('$pesquisaSql' = ''
+  OR numeroAnimal LIKE '%$pesquisaLikeSql%' ESCAPE '\\'
+  OR nome COLLATE NOCASE LIKE '%$pesquisaLikeSql%' ESCAPE '\\'
+  OR chip LIKE '%$pesquisaLikeSql%' ESCAPE '\\')
 ORDER BY created_at DESC
 LIMIT 100
 
 ''';
-  return _readQuery(database, query, (d) => BuscaRebanhoPaginadaPesquisaRow(d));
+  final rows = await database.rawQuery(query);
+  return rows.map((d) => BuscaRebanhoPaginadaPesquisaRow(d)).toList();
 }
 
 class BuscaRebanhoPaginadaPesquisaRow extends SqliteRow {
@@ -2595,6 +2672,7 @@ Future<List<QtdAnimaisNoLoteRow>> performQtdAnimaisNoLote(
   final query = '''
 select count(*) as qtd_animais from local_rebanho
 where loteID = '$loteID'
+AND COALESCE(deletado, 'NAO') != 'SIM'
 ''';
   return _readQuery(database, query, (d) => QtdAnimaisNoLoteRow(d));
 }
@@ -2606,6 +2684,27 @@ class QtdAnimaisNoLoteRow extends SqliteRow {
 }
 
 /// END QTD ANIMAIS NO LOTE
+
+/// BEGIN QTD REPRODUCOES NO LOTE
+Future<List<QtdReproducoesNoLoteRow>> performQtdReproducoesNoLote(
+  Database database, {
+  String? loteID,
+}) {
+  final query = '''
+select count(*) as qtd_reproducoes from local_reproducao
+where id_lote = '$loteID'
+AND COALESCE(deletado, 'NAO') != 'SIM'
+''';
+  return _readQuery(database, query, (d) => QtdReproducoesNoLoteRow(d));
+}
+
+class QtdReproducoesNoLoteRow extends SqliteRow {
+  QtdReproducoesNoLoteRow(super.data);
+
+  int? get qtdReproducoes => data['qtd_reproducoes'] as int?;
+}
+
+/// END QTD REPRODUCOES NO LOTE
 
 /// BEGIN BUSCAR ANIMAIS DO LOTE
 Future<List<BuscarAnimaisDoLoteRow>> performBuscarAnimaisDoLote(
@@ -2647,7 +2746,8 @@ Future<List<RebanhoPagOrdNumCresRow>> performRebanhoPagOrdNumCres(
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
-SELECT * FROM local_rebanho
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
 AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
@@ -2732,7 +2832,8 @@ Future<List<RebanhoPagOrdNumDescRow>> performRebanhoPagOrdNumDesc(
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
-SELECT * FROM local_rebanho
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
 AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
@@ -2817,7 +2918,8 @@ Future<List<RebanhoPagOrdNomCresRow>> performRebanhoPagOrdNomCres(
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
-SELECT * FROM local_rebanho
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
 AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
@@ -2902,7 +3004,8 @@ Future<List<RebanhoPagOrdNomDescRow>> performRebanhoPagOrdNomDesc(
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
-SELECT * FROM local_rebanho
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
 AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
@@ -2987,7 +3090,8 @@ Future<List<RebanhoPagOrdDataCresRow>> performRebanhoPagOrdDataCres(
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
-SELECT * FROM local_rebanho
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
 AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')
@@ -3074,7 +3178,8 @@ Future<List<RebanhoPagOrdDataDescRow>> performRebanhoPagOrdDataDesc(
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
   final query = '''
-SELECT * FROM local_rebanho
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
 AND ('$sexo' = '' OR sexo = '$sexo')
 AND ('$categoria' = '' OR categoria = '$categoria')

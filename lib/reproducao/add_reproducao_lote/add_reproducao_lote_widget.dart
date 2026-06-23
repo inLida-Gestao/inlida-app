@@ -2226,7 +2226,12 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                       TextCapitalization
                                                           .characters,
                                                   inputFormatters: [
-                                                    TextInputFormatter.withFunction((old, val) => val.copyWith(text: val.text.toUpperCase())),
+                                                    TextInputFormatter
+                                                        .withFunction((old,
+                                                                val) =>
+                                                            val.copyWith(
+                                                                text: val.text
+                                                                    .toUpperCase())),
                                                   ],
                                                   decoration: InputDecoration(
                                                     hintText: 'Informe um nome',
@@ -3660,20 +3665,19 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                 _isSaving = true;
                                                 safeSetState(() {});
                                                 try {
-                                                  if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
-                                                  _model.lote =
+                                                  if (await action_blocks
+                                                      .blockIfAccountCanceled(
+                                                          context,
+                                                          refreshFromServer:
+                                                              true)) return;
+                                                  _model.animaisLote =
                                                       await SQLiteManager
                                                           .instance
-                                                          .buscarLote(
-                                                    idLote: _model
+                                                          .buscarRebanhoReproducaoLote(
+                                                    loteID: _model
                                                         .dropDownLoteValue,
                                                   );
-                                                  if (functions
-                                                      .converterJSONparaLista(
-                                                          _model
-                                                              .lote!
-                                                              .firstOrNull!
-                                                              .idAnimais!)
+                                                  if (_model.animaisLote!
                                                       .isNotEmpty) {
                                                     if (!(FFAppState()
                                                             .dataDadosNaoSyncRepro !=
@@ -3683,13 +3687,6 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                           getCurrentTimestamp;
                                                       safeSetState(() {});
                                                     }
-                                                    _model.animaisLote =
-                                                        await SQLiteManager
-                                                            .instance
-                                                            .buscarRebanhoReproducaoLote(
-                                                      loteID: _model
-                                                          .dropDownLoteValue,
-                                                    );
                                                     while (_model.index <
                                                         _model.animaisLote!
                                                             .length) {

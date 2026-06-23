@@ -26,9 +26,6 @@ Future<Map<String, dynamic>> batchInsertLocalLotes(
       if (source.containsKey('id_propriedade')) {
         mapped['id_propriedade'] = _cleanNull(source['id_propriedade']);
       }
-      if (source.containsKey('id_animais')) {
-        mapped['id_animais'] = _cleanNull(source['id_animais']);
-      }
       if (source.containsKey('nome')) {
         mapped['nome'] = _cleanNull(source['nome']);
       }

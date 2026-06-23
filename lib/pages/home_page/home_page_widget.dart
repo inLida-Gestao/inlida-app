@@ -30,6 +30,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart'
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'home_page_model.dart';
@@ -50,6 +51,61 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Future<void> _handleAndroidBack() async {
+    if (scaffoldKey.currentState?.isDrawerOpen ?? false) {
+      Navigator.pop(context);
+      return;
+    }
+    if (scaffoldKey.currentState?.isEndDrawerOpen ?? false) {
+      Navigator.pop(context);
+      return;
+    }
+
+    final appState = FFAppState();
+    if (appState.navegacaoDashboard == 'propriedades' &&
+        appState.pagePropriedades != 'home') {
+      appState.pagePropriedades = 'home';
+      safeSetState(() {});
+      return;
+    }
+
+    if (appState.popDashboardNavigation()) {
+      safeSetState(() {});
+      return;
+    }
+
+    if (appState.navegacaoDashboard != 'painel') {
+      appState.setDashboardFromBack('painel');
+      safeSetState(() {});
+      return;
+    }
+
+    final shouldExit = await showDialog<bool>(
+          context: context,
+          builder: (alertDialogContext) {
+            return AlertDialog(
+              title: const Text('Sair do app'),
+              content: const Text('Deseja realmente sair do aplicativo?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(alertDialogContext, false),
+                  child: const Text('Não'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(alertDialogContext, true),
+                  child: const Text('Sim'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (shouldExit) {
+      await SystemNavigator.pop();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +116,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       // A2/A3: garantir que nenhum flag de sync fica preso em "true" se a
       // sessão anterior travou. `isSyncing` e `syncCancelRequested` são
       // runtime-only, então um reset aqui é suficiente.
+      FFAppState().clearDashboardNavigationHistory();
       FFAppState().isSyncing = false;
       FFAppState().syncCancelRequested = false;
       Function() navigate = () {};
@@ -339,773 +396,733 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         FocusScope.of(context).unfocus();
         FocusManager.instance.primaryFocus?.unfocus();
       },
-      child: Scaffold(
-        key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-        floatingActionButton: Visibility(
-          visible: !action_blocks
-                  .isAccountAccessCanceled(FFAppState().userLogado.acesso) &&
-              ((FFAppState().navegacaoDashboard == 'propriedades') ||
-                  (FFAppState().navegacaoDashboard == 'rebanhos') ||
-                  (FFAppState().navegacaoDashboard == 'lotes') ||
-                  (FFAppState().navegacaoDashboard == 'reproducoes') ||
-                  (FFAppState().navegacaoDashboard == 'sanidade')),
-          child: Builder(
-            builder: (context) => Padding(
-              padding:
-                  const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 24.0),
-              child: FloatingActionButton(
-                onPressed: () async {
-                  if (await action_blocks.blockIfAccountCanceled(context)) {
-                    return;
-                  }
-                  if (FFAppState().navegacaoDashboard == 'propriedades') {
-                    FFAppState().cidadeSelecionada = '';
-                    safeSetState(() {});
-                    await showDialog(
-                      barrierColor: Colors.transparent,
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (dialogContext) {
-                        return Dialog(
-                          elevation: 0,
-                          insetPadding: EdgeInsets.zero,
-                          backgroundColor: Colors.transparent,
-                          alignment: const AlignmentDirectional(0.0, 0.0)
-                              .resolve(Directionality.of(context)),
-                          child: GestureDetector(
-                            onTap: () {
-                              FocusScope.of(dialogContext).unfocus();
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                            child: const AddPropriedadeWidget(),
-                          ),
-                        );
-                      },
-                    );
-                  } else if (FFAppState().navegacaoDashboard == 'rebanhos') {
-                    await showAlignedDialog(
-                      barrierColor: Colors.transparent,
-                      context: context,
-                      isGlobal: false,
-                      avoidOverflow: true,
-                      targetAnchor: const AlignmentDirectional(1.0, -1.0)
-                          .resolve(Directionality.of(context)),
-                      followerAnchor: const AlignmentDirectional(1.0, 1.0)
-                          .resolve(Directionality.of(context)),
-                      builder: (dialogContext) {
-                        return Material(
-                          color: Colors.transparent,
-                          child: GestureDetector(
-                            onTap: () {
-                              FocusScope.of(dialogContext).unfocus();
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                            child: const SubMenuRebanhoWidget(),
-                          ),
-                        );
-                      },
-                    );
-                  } else if (FFAppState().navegacaoDashboard == 'lotes') {
-                    await action_blocks.animaisPropriedade(context);
-                    await showDialog(
-                      barrierColor: Colors.transparent,
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (dialogContext) {
-                        return Dialog(
-                          elevation: 0,
-                          insetPadding: EdgeInsets.zero,
-                          backgroundColor: Colors.transparent,
-                          alignment: const AlignmentDirectional(0.0, 0.0)
-                              .resolve(Directionality.of(context)),
-                          child: GestureDetector(
-                            onTap: () {
-                              FocusScope.of(dialogContext).unfocus();
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                            child: const AddLoteWidget(),
-                          ),
-                        );
-                      },
-                    );
-                    safeSetState(() {});
-                  } else if (FFAppState().navegacaoDashboard == 'reproducoes') {
-                    await showAlignedDialog(
-                      barrierColor: Colors.transparent,
-                      context: context,
-                      isGlobal: false,
-                      avoidOverflow: true,
-                      targetAnchor: const AlignmentDirectional(1.0, -1.0)
-                          .resolve(Directionality.of(context)),
-                      followerAnchor: const AlignmentDirectional(1.0, 1.0)
-                          .resolve(Directionality.of(context)),
-                      builder: (dialogContext) {
-                        return Material(
-                          color: Colors.transparent,
-                          child: GestureDetector(
-                            onTap: () {
-                              FocusScope.of(dialogContext).unfocus();
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                            child: const PopupReproducaoWidget(),
-                          ),
-                        );
-                      },
-                    );
-                  } else if (FFAppState().navegacaoDashboard == 'sanidade') {
-                    await showAlignedDialog(
-                      barrierColor: Colors.transparent,
-                      context: context,
-                      isGlobal: false,
-                      avoidOverflow: true,
-                      targetAnchor: const AlignmentDirectional(1.0, -1.0)
-                          .resolve(Directionality.of(context)),
-                      followerAnchor: const AlignmentDirectional(1.0, 1.0)
-                          .resolve(Directionality.of(context)),
-                      builder: (dialogContext) {
-                        return Material(
-                          color: Colors.transparent,
-                          child: GestureDetector(
-                            onTap: () {
-                              FocusScope.of(dialogContext).unfocus();
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                            child: const PopupSanidadeWidget(),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                },
-                backgroundColor: FlutterFlowTheme.of(context).primary,
-                elevation: 8.0,
-                child: Icon(
-                  Icons.add_rounded,
-                  color: FlutterFlowTheme.of(context).info,
-                  size: 24.0,
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) async {
+          if (didPop) {
+            return;
+          }
+          await _handleAndroidBack();
+        },
+        child: Scaffold(
+          key: scaffoldKey,
+          backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+          floatingActionButton: Visibility(
+            visible: !action_blocks
+                    .isAccountAccessCanceled(FFAppState().userLogado.acesso) &&
+                ((FFAppState().navegacaoDashboard == 'propriedades') ||
+                    (FFAppState().navegacaoDashboard == 'rebanhos') ||
+                    (FFAppState().navegacaoDashboard == 'lotes') ||
+                    (FFAppState().navegacaoDashboard == 'reproducoes') ||
+                    (FFAppState().navegacaoDashboard == 'sanidade')),
+            child: Builder(
+              builder: (context) => Padding(
+                padding:
+                    const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 24.0),
+                child: FloatingActionButton(
+                  onPressed: () async {
+                    if (await action_blocks.blockIfAccountCanceled(context)) {
+                      return;
+                    }
+                    if (FFAppState().navegacaoDashboard == 'propriedades') {
+                      FFAppState().cidadeSelecionada = '';
+                      safeSetState(() {});
+                      await showDialog(
+                        barrierColor: Colors.transparent,
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (dialogContext) {
+                          return Dialog(
+                            elevation: 0,
+                            insetPadding: EdgeInsets.zero,
+                            backgroundColor: Colors.transparent,
+                            alignment: const AlignmentDirectional(0.0, 0.0)
+                                .resolve(Directionality.of(context)),
+                            child: GestureDetector(
+                              onTap: () {
+                                FocusScope.of(dialogContext).unfocus();
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              },
+                              child: const AddPropriedadeWidget(),
+                            ),
+                          );
+                        },
+                      );
+                    } else if (FFAppState().navegacaoDashboard == 'rebanhos') {
+                      await showAlignedDialog(
+                        barrierColor: Colors.transparent,
+                        context: context,
+                        isGlobal: false,
+                        avoidOverflow: true,
+                        targetAnchor: const AlignmentDirectional(1.0, -1.0)
+                            .resolve(Directionality.of(context)),
+                        followerAnchor: const AlignmentDirectional(1.0, 1.0)
+                            .resolve(Directionality.of(context)),
+                        builder: (dialogContext) {
+                          return Material(
+                            color: Colors.transparent,
+                            child: GestureDetector(
+                              onTap: () {
+                                FocusScope.of(dialogContext).unfocus();
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              },
+                              child: const SubMenuRebanhoWidget(),
+                            ),
+                          );
+                        },
+                      );
+                    } else if (FFAppState().navegacaoDashboard == 'lotes') {
+                      await action_blocks.animaisPropriedade(context);
+                      await showDialog(
+                        barrierColor: Colors.transparent,
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (dialogContext) {
+                          return Dialog(
+                            elevation: 0,
+                            insetPadding: EdgeInsets.zero,
+                            backgroundColor: Colors.transparent,
+                            alignment: const AlignmentDirectional(0.0, 0.0)
+                                .resolve(Directionality.of(context)),
+                            child: GestureDetector(
+                              onTap: () {
+                                FocusScope.of(dialogContext).unfocus();
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              },
+                              child: const AddLoteWidget(),
+                            ),
+                          );
+                        },
+                      );
+                      safeSetState(() {});
+                    } else if (FFAppState().navegacaoDashboard ==
+                        'reproducoes') {
+                      await showAlignedDialog(
+                        barrierColor: Colors.transparent,
+                        context: context,
+                        isGlobal: false,
+                        avoidOverflow: true,
+                        targetAnchor: const AlignmentDirectional(1.0, -1.0)
+                            .resolve(Directionality.of(context)),
+                        followerAnchor: const AlignmentDirectional(1.0, 1.0)
+                            .resolve(Directionality.of(context)),
+                        builder: (dialogContext) {
+                          return Material(
+                            color: Colors.transparent,
+                            child: GestureDetector(
+                              onTap: () {
+                                FocusScope.of(dialogContext).unfocus();
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              },
+                              child: const PopupReproducaoWidget(),
+                            ),
+                          );
+                        },
+                      );
+                    } else if (FFAppState().navegacaoDashboard == 'sanidade') {
+                      await showAlignedDialog(
+                        barrierColor: Colors.transparent,
+                        context: context,
+                        isGlobal: false,
+                        avoidOverflow: true,
+                        targetAnchor: const AlignmentDirectional(1.0, -1.0)
+                            .resolve(Directionality.of(context)),
+                        followerAnchor: const AlignmentDirectional(1.0, 1.0)
+                            .resolve(Directionality.of(context)),
+                        builder: (dialogContext) {
+                          return Material(
+                            color: Colors.transparent,
+                            child: GestureDetector(
+                              onTap: () {
+                                FocusScope.of(dialogContext).unfocus();
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              },
+                              child: const PopupSanidadeWidget(),
+                            ),
+                          );
+                        },
+                      );
+                    }
+                  },
+                  backgroundColor: FlutterFlowTheme.of(context).primary,
+                  elevation: 8.0,
+                  child: Icon(
+                    Icons.add_rounded,
+                    color: FlutterFlowTheme.of(context).info,
+                    size: 24.0,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        drawer: Drawer(
-          elevation: 16.0,
-          child: wrapWithModel(
-            model: _model.navegacaoModel,
-            updateCallback: () => safeSetState(() {}),
-            child: const NavegacaoWidget(),
+          drawer: Drawer(
+            elevation: 16.0,
+            child: wrapWithModel(
+              model: _model.navegacaoModel,
+              updateCallback: () => safeSetState(() {}),
+              child: const NavegacaoWidget(),
+            ),
           ),
-        ),
-        body: SafeArea(
-          top: true,
-          child: Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                      24.0, 0.0, 24.0, 0.0),
-                  child: Container(
-                    decoration: const BoxDecoration(),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          decoration: const BoxDecoration(),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              FlutterFlowIconButton(
-                                borderRadius: 8.0,
-                                buttonSize: 40.0,
-                                fillColor: FlutterFlowTheme.of(context)
-                                    .secondaryBackground,
-                                icon: Icon(
-                                  Icons.menu,
-                                  color:
-                                      FlutterFlowTheme.of(context).customColor4,
-                                  size: 24.0,
-                                ),
-                                onPressed: () async {
-                                  scaffoldKey.currentState!.openDrawer();
-                                },
-                              ),
-                              Text(
-                                () {
-                                  if (FFAppState().navegacaoDashboard ==
-                                      'propriedades') {
-                                    return 'Propriedades';
-                                  } else if (FFAppState().navegacaoDashboard ==
-                                      'lotes') {
-                                    return 'Lote';
-                                  } else if (FFAppState().navegacaoDashboard ==
-                                      'rebanhos') {
-                                    return 'Rebanho';
-                                  } else if (FFAppState().navegacaoDashboard ==
-                                      'reproducoes') {
-                                    return 'Reprodução';
-                                  } else if (FFAppState().navegacaoDashboard ==
-                                      'sanidade') {
-                                    return 'Sanidade';
-                                  } else if (FFAppState().navegacaoDashboard ==
-                                      'piquetes') {
-                                    return 'Piquete';
-                                  } else if (FFAppState().navegacaoDashboard ==
-                                      'pastagem') {
-                                    return 'Pastagem';
-                                  } else if (FFAppState().navegacaoDashboard ==
-                                      'painel') {
-                                    return 'Painel';
-                                  } else if (FFAppState().navegacaoDashboard ==
-                                      'minhaconta') {
-                                    return 'Minha conta';
-                                  } else {
-                                    return 'Painel';
-                                  }
-                                }(),
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      fontFamily: FlutterFlowTheme.of(context)
-                                          .bodyMediumFamily,
-                                      color: FlutterFlowTheme.of(context)
-                                          .customColor4,
-                                      fontSize: 22.0,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.w500,
-                                      useGoogleFonts:
-                                          !FlutterFlowTheme.of(context)
-                                              .bodyMediumIsCustom,
-                                    ),
-                              ),
-                            ].divide(const SizedBox(width: 8.0)),
-                          ),
-                        ),
-                        if (responsiveVisibility(
-                          context: context,
-                          phone: false,
-                          tablet: false,
-                          tabletLandscape: false,
-                          desktop: false,
-                        ))
-                          Builder(
-                            builder: (context) => FFButtonWidget(
-                              onPressed: () async {
-                                await showDialog(
-                                  barrierColor: Colors.transparent,
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (dialogContext) {
-                                    return Dialog(
-                                      elevation: 0,
-                                      insetPadding: EdgeInsets.zero,
-                                      backgroundColor: Colors.transparent,
-                                      alignment: const AlignmentDirectional(
-                                              0.0, 0.0)
-                                          .resolve(Directionality.of(context)),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          FocusScope.of(dialogContext)
-                                              .unfocus();
-                                          FocusManager.instance.primaryFocus
-                                              ?.unfocus();
-                                        },
-                                        child: const PesquisaGeralWidget(),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              text: '',
-                              icon: const Icon(
-                                Icons.search,
-                                size: 28.0,
-                              ),
-                              options: FFButtonOptions(
-                                height: 40.0,
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    10.0, 0.0, 0.0, 0.0),
-                                iconPadding:
-                                    const EdgeInsetsDirectional.fromSTEB(
-                                        0.0, 0.0, 0.0, 0.0),
-                                iconColor:
-                                    FlutterFlowTheme.of(context).customColor4,
-                                color: const Color(0x0028A365),
-                                textStyle: FlutterFlowTheme.of(context)
-                                    .titleSmall
-                                    .override(
-                                      fontFamily: FlutterFlowTheme.of(context)
-                                          .titleSmallFamily,
-                                      color: Colors.white,
-                                      letterSpacing: 0.0,
-                                      useGoogleFonts:
-                                          !FlutterFlowTheme.of(context)
-                                              .titleSmallIsCustom,
-                                    ),
-                                elevation: 0.0,
-                                borderSide: BorderSide(
-                                  color: FlutterFlowTheme.of(context).accent4,
-                                ),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-                Flexible(
-                  child: Builder(
-                    builder: (context) {
-                      if (FFAppState().navegacaoDashboard == 'propriedades') {
-                        return AnimatedContainer(
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeInOut,
-                          decoration: const BoxDecoration(),
-                          child: wrapWithModel(
-                            model: _model.pagePropriedadesModel,
-                            updateCallback: () => safeSetState(() {}),
-                            child: const PagePropriedadesWidget(),
-                          ),
-                        );
-                      } else if (FFAppState().navegacaoDashboard == 'painel') {
-                        return Padding(
-                          padding: const EdgeInsetsDirectional.fromSTEB(
-                              24.0, 0.0, 24.0, 0.0),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.easeInOut,
+          body: SafeArea(
+            top: true,
+            bottom: true,
+            child: Padding(
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                        24.0, 0.0, 24.0, 0.0),
+                    child: Container(
+                      decoration: const BoxDecoration(),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
                             decoration: const BoxDecoration(),
-                            child: Column(
+                            child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                wrapWithModel(
-                                  model: _model.selecionarPropriedadeModel,
-                                  updateCallback: () => safeSetState(() {}),
-                                  child: SelecionarPropriedadeWidget(
-                                    onPropriedadeChanged: () async {
-                                      await action_blocks
-                                          .animaisPropriedade(context);
-                                      await action_blocks
-                                          .countLotesCadastrados(context);
-                                      safeSetState(() {});
-                                    },
+                                FlutterFlowIconButton(
+                                  borderRadius: 8.0,
+                                  buttonSize: 40.0,
+                                  fillColor: FlutterFlowTheme.of(context)
+                                      .secondaryBackground,
+                                  icon: Icon(
+                                    Icons.menu,
+                                    color: FlutterFlowTheme.of(context)
+                                        .customColor4,
+                                    size: 24.0,
                                   ),
-                                ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        width: 160.0,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(12.0),
-                                            bottomRight: Radius.circular(12.0),
-                                            topLeft: Radius.circular(12.0),
-                                            topRight: Radius.circular(12.0),
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(12.0, 12.0, 12.0, 8.0),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                child: SvgPicture.asset(
-                                                  'assets/images/Lotes.svg',
-                                                  width: 24.0,
-                                                  height: 24.0,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                              Container(
-                                                decoration:
-                                                    const BoxDecoration(),
-                                                child: Text(
-                                                  valueOrDefault<String>(
-                                                    FFAppState()
-                                                        .lotesCadastrados
-                                                        .toString(),
-                                                    '0',
-                                                  ),
-                                                  maxLines: 1,
-                                                  style:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMedium
-                                                          .override(
-                                                            fontFamily:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumFamily,
-                                                            fontSize: 24.0,
-                                                            letterSpacing: 0.0,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            useGoogleFonts:
-                                                                !FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumIsCustom,
-                                                          ),
-                                                ),
-                                              ),
-                                              Text(
-                                                'Lotes\ncadastrados',
-                                                textAlign: TextAlign.center,
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMediumFamily,
-                                                          fontSize: 10.0,
-                                                          letterSpacing: 0.0,
-                                                          useGoogleFonts:
-                                                              !FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyMediumIsCustom,
-                                                        ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        width: 160.0,
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFFF8F8F8),
-                                          borderRadius: BorderRadius.only(
-                                            bottomLeft: Radius.circular(12.0),
-                                            bottomRight: Radius.circular(12.0),
-                                            topLeft: Radius.circular(12.0),
-                                            topRight: Radius.circular(12.0),
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(12.0, 12.0, 12.0, 8.0),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                child: Image.asset(
-                                                  'assets/images/Group_11_1.png',
-                                                  width: 24.0,
-                                                  height: 24.0,
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                              Container(
-                                                decoration:
-                                                    const BoxDecoration(),
-                                                child: Text(
-                                                  valueOrDefault<String>(
-                                                    FFAppState()
-                                                        .qtdAnimaisPropriedade
-                                                        .toString(),
-                                                    '0',
-                                                  ),
-                                                  maxLines: 1,
-                                                  style:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMedium
-                                                          .override(
-                                                            fontFamily:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumFamily,
-                                                            fontSize: 24.0,
-                                                            letterSpacing: 0.0,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            useGoogleFonts:
-                                                                !FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMediumIsCustom,
-                                                          ),
-                                                ),
-                                              ),
-                                              Text(
-                                                'Animais\ncadastrados',
-                                                textAlign: TextAlign.center,
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily:
-                                                              FlutterFlowTheme.of(
-                                                                      context)
-                                                                  .bodyMediumFamily,
-                                                          fontSize: 10.0,
-                                                          letterSpacing: 0.0,
-                                                          useGoogleFonts:
-                                                              !FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyMediumIsCustom,
-                                                        ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ].divide(const SizedBox(width: 8.0)),
-                                ),
-                                if (responsiveVisibility(
-                                  context: context,
-                                  phone: false,
-                                  tablet: false,
-                                  tabletLandscape: false,
-                                  desktop: false,
-                                ))
-                                  Container(
-                                    width: double.infinity,
-                                    height: 80.0,
-                                    decoration: BoxDecoration(
-                                      color: FlutterFlowTheme.of(context)
-                                          .customColor5,
-                                      borderRadius: BorderRadius.circular(6.0),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Icon(
-                                            Icons.insert_chart,
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondary,
-                                            size: 48.0,
-                                          ),
-                                          Text(
-                                            'Ver meus resultados',
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyMedium
-                                                .override(
-                                                  fontFamily:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMediumFamily,
-                                                  fontSize: 18.0,
-                                                  letterSpacing: 0.0,
-                                                  fontWeight: FontWeight.w500,
-                                                  useGoogleFonts:
-                                                      !FlutterFlowTheme.of(
-                                                              context)
-                                                          .bodyMediumIsCustom,
-                                                ),
-                                          ),
-                                        ].divide(const SizedBox(width: 24.0)),
-                                      ),
-                                    ),
-                                  ),
-                                FFButtonWidget(
                                   onPressed: () async {
-                                    await showModalBottomSheet(
-                                      isScrollControlled: true,
-                                      backgroundColor: Colors.transparent,
-                                      enableDrag: false,
-                                      context: context,
-                                      builder: (context) {
-                                        return GestureDetector(
+                                    scaffoldKey.currentState!.openDrawer();
+                                  },
+                                ),
+                                Text(
+                                  () {
+                                    if (FFAppState().navegacaoDashboard ==
+                                        'propriedades') {
+                                      return 'Propriedades';
+                                    } else if (FFAppState()
+                                            .navegacaoDashboard ==
+                                        'lotes') {
+                                      return 'Lote';
+                                    } else if (FFAppState()
+                                            .navegacaoDashboard ==
+                                        'rebanhos') {
+                                      return 'Rebanho';
+                                    } else if (FFAppState()
+                                            .navegacaoDashboard ==
+                                        'reproducoes') {
+                                      return 'Reprodução';
+                                    } else if (FFAppState()
+                                            .navegacaoDashboard ==
+                                        'sanidade') {
+                                      return 'Sanidade';
+                                    } else if (FFAppState()
+                                            .navegacaoDashboard ==
+                                        'piquetes') {
+                                      return 'Piquete';
+                                    } else if (FFAppState()
+                                            .navegacaoDashboard ==
+                                        'pastagem') {
+                                      return 'Pastagem';
+                                    } else if (FFAppState()
+                                            .navegacaoDashboard ==
+                                        'painel') {
+                                      return 'Painel';
+                                    } else if (FFAppState()
+                                            .navegacaoDashboard ==
+                                        'minhaconta') {
+                                      return 'Minha conta';
+                                    } else {
+                                      return 'Painel';
+                                    }
+                                  }(),
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: FlutterFlowTheme.of(context)
+                                            .bodyMediumFamily,
+                                        color: FlutterFlowTheme.of(context)
+                                            .customColor4,
+                                        fontSize: 22.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w500,
+                                        useGoogleFonts:
+                                            !FlutterFlowTheme.of(context)
+                                                .bodyMediumIsCustom,
+                                      ),
+                                ),
+                              ].divide(const SizedBox(width: 8.0)),
+                            ),
+                          ),
+                          if (responsiveVisibility(
+                            context: context,
+                            phone: false,
+                            tablet: false,
+                            tabletLandscape: false,
+                            desktop: false,
+                          ))
+                            Builder(
+                              builder: (context) => FFButtonWidget(
+                                onPressed: () async {
+                                  await showDialog(
+                                    barrierColor: Colors.transparent,
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (dialogContext) {
+                                      return Dialog(
+                                        elevation: 0,
+                                        insetPadding: EdgeInsets.zero,
+                                        backgroundColor: Colors.transparent,
+                                        alignment:
+                                            const AlignmentDirectional(0.0, 0.0)
+                                                .resolve(
+                                                    Directionality.of(context)),
+                                        child: GestureDetector(
                                           onTap: () {
-                                            FocusScope.of(context).unfocus();
+                                            FocusScope.of(dialogContext)
+                                                .unfocus();
                                             FocusManager.instance.primaryFocus
                                                 ?.unfocus();
                                           },
-                                          child: Padding(
-                                            padding: MediaQuery.viewInsetsOf(
-                                                context),
-                                            child: const NavegarBottomWidget(),
-                                          ),
-                                        );
-                                      },
-                                    ).then((value) => safeSetState(() {}));
-                                  },
-                                  text: 'Adicionar novo',
-                                  icon: const Icon(
-                                    Icons.add,
-                                    size: 24.0,
-                                  ),
-                                  options: FFButtonOptions(
-                                    width: double.infinity,
-                                    height: 48.0,
-                                    padding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            16.0, 0.0, 16.0, 0.0),
-                                    iconPadding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            0.0, 0.0, 0.0, 0.0),
-                                    color: FlutterFlowTheme.of(context).primary,
-                                    textStyle: FlutterFlowTheme.of(context)
-                                        .titleSmall
-                                        .override(
-                                          fontFamily:
-                                              FlutterFlowTheme.of(context)
-                                                  .titleSmallFamily,
-                                          color: Colors.white,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts:
-                                              !FlutterFlowTheme.of(context)
-                                                  .titleSmallIsCustom,
+                                          child: const PesquisaGeralWidget(),
                                         ),
-                                    elevation: 0.0,
-                                    borderRadius: BorderRadius.circular(6.0),
-                                  ),
+                                      );
+                                    },
+                                  );
+                                },
+                                text: '',
+                                icon: const Icon(
+                                  Icons.search,
+                                  size: 28.0,
                                 ),
-                                Padding(
+                                options: FFButtonOptions(
+                                  height: 40.0,
                                   padding: const EdgeInsetsDirectional.fromSTEB(
-                                      0.0, 16.0, 0.0, 0.0),
-                                  child: FutureBuilder<List<AnunciosRow>>(
-                                    future: AnunciosTable().queryRows(
-                                      queryFn: (q) => q,
+                                      10.0, 0.0, 0.0, 0.0),
+                                  iconPadding:
+                                      const EdgeInsetsDirectional.fromSTEB(
+                                          0.0, 0.0, 0.0, 0.0),
+                                  iconColor:
+                                      FlutterFlowTheme.of(context).customColor4,
+                                  color: const Color(0x0028A365),
+                                  textStyle: FlutterFlowTheme.of(context)
+                                      .titleSmall
+                                      .override(
+                                        fontFamily: FlutterFlowTheme.of(context)
+                                            .titleSmallFamily,
+                                        color: Colors.white,
+                                        letterSpacing: 0.0,
+                                        useGoogleFonts:
+                                            !FlutterFlowTheme.of(context)
+                                                .titleSmallIsCustom,
+                                      ),
+                                  elevation: 0.0,
+                                  borderSide: BorderSide(
+                                    color: FlutterFlowTheme.of(context).accent4,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        if (FFAppState().navegacaoDashboard == 'propriedades') {
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeInOut,
+                            decoration: const BoxDecoration(),
+                            child: wrapWithModel(
+                              model: _model.pagePropriedadesModel,
+                              updateCallback: () => safeSetState(() {}),
+                              child: const PagePropriedadesWidget(),
+                            ),
+                          );
+                        } else if (FFAppState().navegacaoDashboard ==
+                            'painel') {
+                          return Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                24.0, 0.0, 24.0, 0.0),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                              decoration: const BoxDecoration(),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  wrapWithModel(
+                                    model: _model.selecionarPropriedadeModel,
+                                    updateCallback: () => safeSetState(() {}),
+                                    child: SelecionarPropriedadeWidget(
+                                      onPropriedadeChanged: () async {
+                                        await action_blocks
+                                            .animaisPropriedade(context);
+                                        await action_blocks
+                                            .countLotesCadastrados(context);
+                                        safeSetState(() {});
+                                      },
                                     ),
-                                    builder: (context, snapshot) {
-                                      // Customize what your widget looks like when it's loading.
-                                      if (!snapshot.hasData) {
-                                        return Center(
-                                          child: SizedBox(
-                                            width: 50.0,
-                                            height: 50.0,
-                                            child: CircularProgressIndicator(
-                                              valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                FlutterFlowTheme.of(context)
-                                                    .primary,
-                                              ),
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          width: 160.0,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFF8F8F8),
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(12.0),
+                                              bottomRight:
+                                                  Radius.circular(12.0),
+                                              topLeft: Radius.circular(12.0),
+                                              topRight: Radius.circular(12.0),
                                             ),
                                           ),
-                                        );
-                                      }
-                                      List<AnunciosRow>
-                                          containerAnunciosRowList =
-                                          snapshot.data!;
-
-                                      return Container(
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
-                                        ),
-                                        child: Visibility(
-                                          visible: ((containerAnunciosRowList
-                                                      .isNotEmpty) &&
-                                                  (_model.temNet == true)) &&
-                                              responsiveVisibility(
-                                                context: context,
-                                                phone: false,
-                                              ),
-                                          child: Builder(
-                                            builder: (context) {
-                                              final varAnuncio =
-                                                  containerAnunciosRowList
-                                                      .toList();
-
-                                              return SizedBox(
-                                                width: double.infinity,
-                                                height: 160.0,
-                                                child: Stack(
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(0.0,
-                                                              24.0, 0.0, 0.0),
-                                                      child: PageView.builder(
-                                                        controller: _model
-                                                                .pageViewController ??=
-                                                            PageController(
-                                                                initialPage: max(
-                                                                    0,
-                                                                    min(
-                                                                        0,
-                                                                        varAnuncio.length -
-                                                                            1))),
-                                                        scrollDirection:
-                                                            Axis.horizontal,
-                                                        itemCount:
-                                                            varAnuncio.length,
-                                                        itemBuilder: (context,
-                                                            varAnuncioIndex) {
-                                                          final varAnuncioItem =
-                                                              varAnuncio[
-                                                                  varAnuncioIndex];
-                                                          return Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            children: [
-                                                              InkWell(
-                                                                splashColor: Colors
-                                                                    .transparent,
-                                                                focusColor: Colors
-                                                                    .transparent,
-                                                                hoverColor: Colors
-                                                                    .transparent,
-                                                                highlightColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                onTap:
-                                                                    () async {
-                                                                  await launchURL(
-                                                                      varAnuncioItem
-                                                                          .link!);
-                                                                },
-                                                                child:
-                                                                    ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0),
-                                                                  child: Image
-                                                                      .network(
-                                                                    varAnuncioItem
-                                                                        .imagem!,
-                                                                    width: double
-                                                                        .infinity,
-                                                                    height:
-                                                                        120.0,
-                                                                    fit: BoxFit
-                                                                        .contain,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        },
-                                                      ),
+                                          child: Padding(
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(
+                                                12.0, 12.0, 12.0, 8.0),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                  child: SvgPicture.asset(
+                                                    'assets/images/Lotes.svg',
+                                                    width: 24.0,
+                                                    height: 24.0,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  decoration:
+                                                      const BoxDecoration(),
+                                                  child: Text(
+                                                    valueOrDefault<String>(
+                                                      FFAppState()
+                                                          .lotesCadastrados
+                                                          .toString(),
+                                                      '0',
                                                     ),
-                                                    Align(
-                                                      alignment:
-                                                          const AlignmentDirectional(
-                                                              0.0, -1.0),
-                                                      child: Padding(
+                                                    maxLines: 1,
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          fontSize: 24.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  'Lotes\ncadastrados',
+                                                  textAlign: TextAlign.center,
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            fontSize: 10.0,
+                                                            letterSpacing: 0.0,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          width: 160.0,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFF8F8F8),
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(12.0),
+                                              bottomRight:
+                                                  Radius.circular(12.0),
+                                              topLeft: Radius.circular(12.0),
+                                              topRight: Radius.circular(12.0),
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(
+                                                12.0, 12.0, 12.0, 8.0),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                  child: Image.asset(
+                                                    'assets/images/Group_11_1.png',
+                                                    width: 24.0,
+                                                    height: 24.0,
+                                                    fit: BoxFit.contain,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  decoration:
+                                                      const BoxDecoration(),
+                                                  child: Text(
+                                                    valueOrDefault<String>(
+                                                      FFAppState()
+                                                          .qtdAnimaisPropriedade
+                                                          .toString(),
+                                                      '0',
+                                                    ),
+                                                    maxLines: 1,
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .bodyMediumFamily,
+                                                          fontSize: 24.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          useGoogleFonts:
+                                                              !FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMediumIsCustom,
+                                                        ),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  'Animais\ncadastrados',
+                                                  textAlign: TextAlign.center,
+                                                  style:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily:
+                                                                FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumFamily,
+                                                            fontSize: 10.0,
+                                                            letterSpacing: 0.0,
+                                                            useGoogleFonts:
+                                                                !FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMediumIsCustom,
+                                                          ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ].divide(const SizedBox(width: 8.0)),
+                                  ),
+                                  if (responsiveVisibility(
+                                    context: context,
+                                    phone: false,
+                                    tablet: false,
+                                    tabletLandscape: false,
+                                    desktop: false,
+                                  ))
+                                    Container(
+                                      width: double.infinity,
+                                      height: 80.0,
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.of(context)
+                                            .customColor5,
+                                        borderRadius:
+                                            BorderRadius.circular(6.0),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Icon(
+                                              Icons.insert_chart,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondary,
+                                              size: 48.0,
+                                            ),
+                                            Text(
+                                              'Ver meus resultados',
+                                              style: FlutterFlowTheme.of(
+                                                      context)
+                                                  .bodyMedium
+                                                  .override(
+                                                    fontFamily:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumFamily,
+                                                    fontSize: 18.0,
+                                                    letterSpacing: 0.0,
+                                                    fontWeight: FontWeight.w500,
+                                                    useGoogleFonts:
+                                                        !FlutterFlowTheme.of(
+                                                                context)
+                                                            .bodyMediumIsCustom,
+                                                  ),
+                                            ),
+                                          ].divide(const SizedBox(width: 24.0)),
+                                        ),
+                                      ),
+                                    ),
+                                  FFButtonWidget(
+                                    onPressed: () async {
+                                      await showModalBottomSheet(
+                                        isScrollControlled: true,
+                                        backgroundColor: Colors.transparent,
+                                        enableDrag: false,
+                                        context: context,
+                                        builder: (context) {
+                                          return GestureDetector(
+                                            onTap: () {
+                                              FocusScope.of(context).unfocus();
+                                              FocusManager.instance.primaryFocus
+                                                  ?.unfocus();
+                                            },
+                                            child: Padding(
+                                              padding: MediaQuery.viewInsetsOf(
+                                                  context),
+                                              child:
+                                                  const NavegarBottomWidget(),
+                                            ),
+                                          );
+                                        },
+                                      ).then((value) => safeSetState(() {}));
+                                    },
+                                    text: 'Adicionar novo',
+                                    icon: const Icon(
+                                      Icons.add,
+                                      size: 24.0,
+                                    ),
+                                    options: FFButtonOptions(
+                                      width: double.infinity,
+                                      height: 48.0,
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              16.0, 0.0, 16.0, 0.0),
+                                      iconPadding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 0.0, 0.0, 0.0),
+                                      color:
+                                          FlutterFlowTheme.of(context).primary,
+                                      textStyle: FlutterFlowTheme.of(context)
+                                          .titleSmall
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .titleSmallFamily,
+                                            color: Colors.white,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .titleSmallIsCustom,
+                                          ),
+                                      elevation: 0.0,
+                                      borderRadius: BorderRadius.circular(6.0),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 16.0, 0.0, 0.0),
+                                    child: FutureBuilder<List<AnunciosRow>>(
+                                      future: AnunciosTable().queryRows(
+                                        queryFn: (q) => q,
+                                      ),
+                                      builder: (context, snapshot) {
+                                        // Customize what your widget looks like when it's loading.
+                                        if (!snapshot.hasData) {
+                                          return Center(
+                                            child: SizedBox(
+                                              width: 50.0,
+                                              height: 50.0,
+                                              child: CircularProgressIndicator(
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                        Color>(
+                                                  FlutterFlowTheme.of(context)
+                                                      .primary,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        List<AnunciosRow>
+                                            containerAnunciosRowList =
+                                            snapshot.data!;
+
+                                        return Container(
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground,
+                                          ),
+                                          child: Visibility(
+                                            visible: ((containerAnunciosRowList
+                                                        .isNotEmpty) &&
+                                                    (_model.temNet == true)) &&
+                                                responsiveVisibility(
+                                                  context: context,
+                                                  phone: false,
+                                                ),
+                                            child: Builder(
+                                              builder: (context) {
+                                                final varAnuncio =
+                                                    containerAnunciosRowList
+                                                        .toList();
+
+                                                return SizedBox(
+                                                  width: double.infinity,
+                                                  height: 160.0,
+                                                  child: Stack(
+                                                    children: [
+                                                      Padding(
                                                         padding:
                                                             const EdgeInsetsDirectional
                                                                 .fromSTEB(0.0,
-                                                                0.0, 0.0, 16.0),
-                                                        child: smooth_page_indicator
-                                                            .SmoothPageIndicator(
+                                                                24.0, 0.0, 0.0),
+                                                        child: PageView.builder(
                                                           controller: _model
                                                                   .pageViewController ??=
                                                               PageController(
@@ -1115,304 +1132,389 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                           0,
                                                                           varAnuncio.length -
                                                                               1))),
-                                                          count:
-                                                              varAnuncio.length,
-                                                          axisDirection:
+                                                          scrollDirection:
                                                               Axis.horizontal,
-                                                          onDotClicked:
-                                                              (i) async {
-                                                            await _model
-                                                                .pageViewController!
-                                                                .animateToPage(
-                                                              i,
-                                                              duration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          500),
-                                                              curve:
-                                                                  Curves.ease,
+                                                          itemCount:
+                                                              varAnuncio.length,
+                                                          itemBuilder: (context,
+                                                              varAnuncioIndex) {
+                                                            final varAnuncioItem =
+                                                                varAnuncio[
+                                                                    varAnuncioIndex];
+                                                            return Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              children: [
+                                                                InkWell(
+                                                                  splashColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  focusColor: Colors
+                                                                      .transparent,
+                                                                  hoverColor: Colors
+                                                                      .transparent,
+                                                                  highlightColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  onTap:
+                                                                      () async {
+                                                                    await launchURL(
+                                                                        varAnuncioItem
+                                                                            .link!);
+                                                                  },
+                                                                  child:
+                                                                      ClipRRect(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                    child: Image
+                                                                        .network(
+                                                                      varAnuncioItem
+                                                                          .imagem!,
+                                                                      width: double
+                                                                          .infinity,
+                                                                      height:
+                                                                          120.0,
+                                                                      fit: BoxFit
+                                                                          .contain,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             );
-                                                            safeSetState(() {});
                                                           },
-                                                          effect:
-                                                              smooth_page_indicator
-                                                                  .SlideEffect(
-                                                            spacing: 8.0,
-                                                            radius: 8.0,
-                                                            dotWidth: 8.0,
-                                                            dotHeight: 8.0,
-                                                            dotColor:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .primaryText,
-                                                            activeDotColor:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .primaryText,
-                                                            paintStyle:
-                                                                PaintingStyle
-                                                                    .stroke,
+                                                        ),
+                                                      ),
+                                                      Align(
+                                                        alignment:
+                                                            const AlignmentDirectional(
+                                                                0.0, -1.0),
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  0.0,
+                                                                  0.0,
+                                                                  0.0,
+                                                                  16.0),
+                                                          child: smooth_page_indicator
+                                                              .SmoothPageIndicator(
+                                                            controller: _model
+                                                                    .pageViewController ??=
+                                                                PageController(
+                                                                    initialPage: max(
+                                                                        0,
+                                                                        min(
+                                                                            0,
+                                                                            varAnuncio.length -
+                                                                                1))),
+                                                            count: varAnuncio
+                                                                .length,
+                                                            axisDirection:
+                                                                Axis.horizontal,
+                                                            onDotClicked:
+                                                                (i) async {
+                                                              await _model
+                                                                  .pageViewController!
+                                                                  .animateToPage(
+                                                                i,
+                                                                duration:
+                                                                    const Duration(
+                                                                        milliseconds:
+                                                                            500),
+                                                                curve:
+                                                                    Curves.ease,
+                                                              );
+                                                              safeSetState(
+                                                                  () {});
+                                                            },
+                                                            effect:
+                                                                smooth_page_indicator
+                                                                    .SlideEffect(
+                                                              spacing: 8.0,
+                                                              radius: 8.0,
+                                                              dotWidth: 8.0,
+                                                              dotHeight: 8.0,
+                                                              dotColor: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .primaryText,
+                                                              activeDotColor:
+                                                                  FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                              paintStyle:
+                                                                  PaintingStyle
+                                                                      .stroke,
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  if (responsiveVisibility(
+                                    context: context,
+                                    phone: false,
+                                    tablet: false,
+                                    tabletLandscape: false,
+                                    desktop: false,
+                                  ))
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        FlutterFlowIconButton(
+                                          borderRadius: 8.0,
+                                          buttonSize: 40.0,
+                                          fillColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .primary,
+                                          icon: Icon(
+                                            Icons.arrow_back,
+                                            color: FlutterFlowTheme.of(context)
+                                                .info,
+                                            size: 24.0,
+                                          ),
+                                          onPressed: () {
+                                            print('IconButton pressed ...');
+                                          },
+                                        ),
+                                        FFButtonWidget(
+                                          onPressed: () async {
+                                            await SQLiteManager.instance
+                                                .deletarTodosRebanhos();
+                                          },
+                                          text: 'delete',
+                                          options: FFButtonOptions(
+                                            height: 40.0,
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                            iconPadding:
+                                                const EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                    0.0, 0.0, 0.0, 0.0),
+                                            color: FlutterFlowTheme.of(context)
+                                                .primary,
+                                            textStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .titleSmall
+                                                    .override(
+                                                      fontFamily:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .titleSmallFamily,
+                                                      color: Colors.white,
+                                                      letterSpacing: 0.0,
+                                                      useGoogleFonts:
+                                                          !FlutterFlowTheme.of(
+                                                                  context)
+                                                              .titleSmallIsCustom,
                                                     ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
+                                            elevation: 0.0,
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
                                         ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                if (responsiveVisibility(
-                                  context: context,
-                                  phone: false,
-                                  tablet: false,
-                                  tabletLandscape: false,
-                                  desktop: false,
-                                ))
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      FlutterFlowIconButton(
-                                        borderRadius: 8.0,
-                                        buttonSize: 40.0,
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .primary,
-                                        icon: Icon(
-                                          Icons.arrow_back,
-                                          color:
-                                              FlutterFlowTheme.of(context).info,
-                                          size: 24.0,
-                                        ),
-                                        onPressed: () {
-                                          print('IconButton pressed ...');
-                                        },
-                                      ),
-                                      FFButtonWidget(
-                                        onPressed: () async {
-                                          await SQLiteManager.instance
-                                              .deletarTodosRebanhos();
-                                        },
-                                        text: 'delete',
-                                        options: FFButtonOptions(
-                                          height: 40.0,
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(16.0, 0.0, 16.0, 0.0),
-                                          iconPadding:
-                                              const EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                          color: FlutterFlowTheme.of(context)
-                                              .primary,
-                                          textStyle: FlutterFlowTheme.of(
-                                                  context)
-                                              .titleSmall
+                                        Text(
+                                          valueOrDefault<String>(
+                                            FFAppState()
+                                                .rebanhosChangeDateTime
+                                                ?.toString(),
+                                            '...',
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
                                               .override(
                                                 fontFamily:
                                                     FlutterFlowTheme.of(context)
-                                                        .titleSmallFamily,
-                                                color: Colors.white,
+                                                        .bodyMediumFamily,
                                                 letterSpacing: 0.0,
                                                 useGoogleFonts:
                                                     !FlutterFlowTheme.of(
                                                             context)
-                                                        .titleSmallIsCustom,
+                                                        .bodyMediumIsCustom,
                                               ),
-                                          elevation: 0.0,
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
                                         ),
-                                      ),
-                                      Text(
-                                        valueOrDefault<String>(
-                                          FFAppState()
-                                              .rebanhosChangeDateTime
-                                              ?.toString(),
-                                          '...',
-                                        ),
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                      ),
-                                      FlutterFlowIconButton(
-                                        borderRadius: 8.0,
-                                        buttonSize: 40.0,
-                                        fillColor: FlutterFlowTheme.of(context)
-                                            .primary,
-                                        icon: Icon(
-                                          Icons.arrow_back,
-                                          color:
-                                              FlutterFlowTheme.of(context).info,
-                                          size: 24.0,
-                                        ),
-                                        onPressed: () async {
-                                          FFAppState().visibleProgressBar =
-                                              false;
-                                          safeSetState(() {});
-                                        },
-                                      ),
-                                    ].divide(const SizedBox(width: 8.0)),
-                                  ),
-                                if (responsiveVisibility(
-                                  context: context,
-                                  phone: false,
-                                  tablet: false,
-                                  tabletLandscape: false,
-                                  desktop: false,
-                                ))
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Text(
-                                        valueOrDefault<String>(
-                                          FFAppState()
-                                              .indexRebPaginacao
-                                              .toString(),
-                                          '0',
-                                        ),
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                      ),
-                                      Text(
-                                        valueOrDefault<String>(
-                                          FFAppState()
-                                              .indexCtrlRebanhos
-                                              .toString(),
-                                          '0',
-                                        ),
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              letterSpacing: 0.0,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                      ),
-                                    ].divide(const SizedBox(width: 8.0)),
-                                  ),
-                                if (responsiveVisibility(
-                                  context: context,
-                                  phone: false,
-                                  tablet: false,
-                                  tabletLandscape: false,
-                                  desktop: false,
-                                ))
-                                  Text(
-                                    valueOrDefault<String>(
-                                      FFAppState().rebanhosIndex.toString(),
-                                      '0',
-                                    ),
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          fontFamily:
+                                        FlutterFlowIconButton(
+                                          borderRadius: 8.0,
+                                          buttonSize: 40.0,
+                                          fillColor:
                                               FlutterFlowTheme.of(context)
-                                                  .bodyMediumFamily,
-                                          letterSpacing: 0.0,
-                                          useGoogleFonts:
-                                              !FlutterFlowTheme.of(context)
-                                                  .bodyMediumIsCustom,
+                                                  .primary,
+                                          icon: Icon(
+                                            Icons.arrow_back,
+                                            color: FlutterFlowTheme.of(context)
+                                                .info,
+                                            size: 24.0,
+                                          ),
+                                          onPressed: () async {
+                                            FFAppState().visibleProgressBar =
+                                                false;
+                                            safeSetState(() {});
+                                          },
                                         ),
-                                  ),
-                              ].divide(const SizedBox(height: 24.0)),
+                                      ].divide(const SizedBox(width: 8.0)),
+                                    ),
+                                  if (responsiveVisibility(
+                                    context: context,
+                                    phone: false,
+                                    tablet: false,
+                                    tabletLandscape: false,
+                                    desktop: false,
+                                  ))
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Text(
+                                          valueOrDefault<String>(
+                                            FFAppState()
+                                                .indexRebPaginacao
+                                                .toString(),
+                                            '0',
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                letterSpacing: 0.0,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMediumIsCustom,
+                                              ),
+                                        ),
+                                        Text(
+                                          valueOrDefault<String>(
+                                            FFAppState()
+                                                .indexCtrlRebanhos
+                                                .toString(),
+                                            '0',
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                letterSpacing: 0.0,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMediumIsCustom,
+                                              ),
+                                        ),
+                                      ].divide(const SizedBox(width: 8.0)),
+                                    ),
+                                  if (responsiveVisibility(
+                                    context: context,
+                                    phone: false,
+                                    tablet: false,
+                                    tabletLandscape: false,
+                                    desktop: false,
+                                  ))
+                                    Text(
+                                      valueOrDefault<String>(
+                                        FFAppState().rebanhosIndex.toString(),
+                                        '0',
+                                      ),
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                ].divide(const SizedBox(height: 24.0)),
+                              ),
                             ),
-                          ),
-                        );
-                      } else if (FFAppState().navegacaoDashboard ==
-                          'rebanhos') {
-                        return Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                          ),
-                          child: wrapWithModel(
-                            model: _model.pageRebanhoModel,
+                          );
+                        } else if (FFAppState().navegacaoDashboard ==
+                            'rebanhos') {
+                          return Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                            child: wrapWithModel(
+                              model: _model.pageRebanhoModel,
+                              updateCallback: () => safeSetState(() {}),
+                              child: const PageRebanhoWidget(),
+                            ),
+                          );
+                        } else if (FFAppState().navegacaoDashboard == 'lotes') {
+                          return Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                            child: wrapWithModel(
+                              model: _model.pageLotesModel,
+                              updateCallback: () => safeSetState(() {}),
+                              child: const PageLotesWidget(),
+                            ),
+                          );
+                        } else if (FFAppState().navegacaoDashboard ==
+                            'reproducoes') {
+                          return Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                            child: wrapWithModel(
+                              model: _model.pageReproducoesModel,
+                              updateCallback: () => safeSetState(() {}),
+                              child: const PageReproducoesWidget(),
+                            ),
+                          );
+                        } else if (FFAppState().navegacaoDashboard ==
+                            'sanidade') {
+                          return wrapWithModel(
+                            model: _model.pageSanidadeModel,
                             updateCallback: () => safeSetState(() {}),
-                            child: const PageRebanhoWidget(),
-                          ),
-                        );
-                      } else if (FFAppState().navegacaoDashboard == 'lotes') {
-                        return Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                          ),
-                          child: wrapWithModel(
-                            model: _model.pageLotesModel,
+                            child: const PageSanidadeWidget(),
+                          );
+                        } else if (FFAppState().navegacaoDashboard ==
+                            'minhaconta') {
+                          return wrapWithModel(
+                            model: _model.minhaContaModel,
                             updateCallback: () => safeSetState(() {}),
-                            child: const PageLotesWidget(),
-                          ),
-                        );
-                      } else if (FFAppState().navegacaoDashboard ==
-                          'reproducoes') {
-                        return Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                          ),
-                          child: wrapWithModel(
-                            model: _model.pageReproducoesModel,
-                            updateCallback: () => safeSetState(() {}),
-                            child: const PageReproducoesWidget(),
-                          ),
-                        );
-                      } else if (FFAppState().navegacaoDashboard ==
-                          'sanidade') {
-                        return wrapWithModel(
-                          model: _model.pageSanidadeModel,
-                          updateCallback: () => safeSetState(() {}),
-                          child: const PageSanidadeWidget(),
-                        );
-                      } else if (FFAppState().navegacaoDashboard ==
-                          'minhaconta') {
-                        return wrapWithModel(
-                          model: _model.minhaContaModel,
-                          updateCallback: () => safeSetState(() {}),
-                          child: const MinhaContaWidget(),
-                        );
-                      } else {
-                        return Container(
-                          width: 100.0,
-                          height: 100.0,
-                          decoration: BoxDecoration(
-                            color: FlutterFlowTheme.of(context)
-                                .secondaryBackground,
-                          ),
-                        );
-                      }
-                    },
+                            child: const MinhaContaWidget(),
+                          );
+                        } else {
+                          return Container(
+                            width: 100.0,
+                            height: 100.0,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme.of(context)
+                                  .secondaryBackground,
+                            ),
+                          );
+                        }
+                      },
+                    ),
                   ),
-                ),
-              ].divide(const SizedBox(height: 16.0)),
+                ].divide(const SizedBox(height: 16.0)),
+              ),
             ),
           ),
         ),

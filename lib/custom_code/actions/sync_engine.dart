@@ -361,37 +361,54 @@ class SyncEngine {
       );
     }
 
-    emit(55, 'Baixando dados...');
-    final pullFutures = <Future>[];
+    emit(55, 'Baixando rebanhos...');
     if (rebanhoOk) {
-      pullFutures.add(_guard(
+      await _guard(
         () => action_blocks.refreshRebanhoOtimizada(context),
         'PULL rebanho',
         _pullModuleTimeout,
         null,
-      ));
+      );
     }
+    if (state.syncCancelRequested) {
+      return SyncResult(
+        cancelled: true,
+        propOk: propOk,
+        rebanhoOk: rebanhoOk,
+        lotesOk: lotesOk,
+        reproOk: reproOk,
+        sanidadeOk: sanidadeOk,
+      );
+    }
+
+    emit(65, 'Baixando reprodução...');
     if (reproOk) {
-      pullFutures.add(_guard(
+      await _guard(
         () => action_blocks.refreshReproducaoOtimizada(context),
         'PULL reproducao',
         _pullModuleTimeout,
         null,
-      ));
+      );
     }
+    if (state.syncCancelRequested) {
+      return SyncResult(
+        cancelled: true,
+        propOk: propOk,
+        rebanhoOk: rebanhoOk,
+        lotesOk: lotesOk,
+        reproOk: reproOk,
+        sanidadeOk: sanidadeOk,
+      );
+    }
+
+    emit(75, 'Baixando sanidade...');
     if (sanidadeOk) {
-      pullFutures.add(_guard(
+      await _guard(
         () => action_blocks.refresSanidadeOtimizada(context),
         'PULL sanidade',
         _pullModuleTimeout,
         null,
-      ));
-    }
-    if (pullFutures.isNotEmpty) {
-      await Future.wait(pullFutures).catchError((e) {
-        debugPrint('[SYNC][engine] Erro no PULL paralelo: $e');
-        return <void>[];
-      });
+      );
     }
     if (state.syncCancelRequested) {
       return SyncResult(

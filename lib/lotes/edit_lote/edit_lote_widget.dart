@@ -375,16 +375,32 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                       size: 20.0,
                                     ),
                                     onPressed: () async {
-                                      // Check if lote has animals
-                                      final animaisNoLote = await SQLiteManager
-                                          .instance
-                                          .qtdAnimaisNoLote(
+                                      final animaisNoLote =
+                                          await SQLiteManager.instance
+                                              .qtdAnimaisNoLote(
                                         loteID: widget.idLote,
                                       );
-                                      final qtd = animaisNoLote
-                                              .firstOrNull?.qtdAnimais ??
+                                      final reproducoesNoLote =
+                                          await SQLiteManager.instance
+                                              .qtdReproducoesNoLote(
+                                        loteID: widget.idLote,
+                                      );
+                                      final qtdAnimais =
+                                          animaisNoLote.firstOrNull
+                                                  ?.qtdAnimais ??
                                           0;
-                                      if (qtd > 0) {
+                                      final qtdReproducoes =
+                                          reproducoesNoLote.firstOrNull
+                                                  ?.qtdReproducoes ??
+                                          0;
+                                      if (qtdAnimais > 0 ||
+                                          qtdReproducoes > 0) {
+                                        final motivos = <String>[
+                                          if (qtdAnimais > 0)
+                                            '$qtdAnimais ${qtdAnimais == 1 ? 'animal vinculado' : 'animais vinculados'}',
+                                          if (qtdReproducoes > 0)
+                                            '$qtdReproducoes ${qtdReproducoes == 1 ? 'reprodução vinculada' : 'reproduções vinculadas'}',
+                                        ];
                                         await showDialog(
                                           context: context,
                                           builder: (alertDialogContext) {
@@ -392,7 +408,7 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                               title: const Text(
                                                   'Não é possível excluir'),
                                               content: Text(
-                                                  'Este lote possui $qtd ${qtd == 1 ? 'animal' : 'animais'}. Remova os animais do lote antes de excluí-lo.'),
+                                                  'Este lote não pode ser excluído porque possui ${motivos.join(' e ')}. Remova ou ajuste esses vínculos antes de excluir o lote.'),
                                               actions: [
                                                 TextButton(
                                                   onPressed: () =>
@@ -438,7 +454,10 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                               ) ??
                                               false;
                                       if (confirmDialogResponse) {
-                                        if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                                        if (await action_blocks
+                                            .blockIfAccountCanceled(context,
+                                                refreshFromServer: true))
+                                          return;
                                         if (!(FFAppState()
                                                 .dataDadosNaoSyncLotes !=
                                             null)) {
@@ -3175,7 +3194,7 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                                             ) == '') ? 'N/A' : valueOrDefault<String>(
                                                                                             rebanhosSelectItem.categoria,
                                                                                             'N/A',
-                                                                                          )} • Raça: ${(valueOrDefault<String>(
+                                                                                          )} • ${(valueOrDefault<String>(
                                                                                               rebanhosSelectItem.raca,
                                                                                               'N/A',
                                                                                             ) == 'null') || (valueOrDefault<String>(
@@ -3264,20 +3283,6 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                                         ),
                                                                                       ].divide(const SizedBox(width: 5.0)),
                                                                                     ),
-                                                                                    if ((rebanhosSelectItem.dataEntradaLote != 'null') || (rebanhosSelectItem.loteID != 'null') || (rebanhosSelectItem.loteID != ' '))
-                                                                                      Text(
-                                                                                        '(entrada em ${dateTimeFormat(
-                                                                                          "d/M/y",
-                                                                                          functions.converterParaData(rebanhosSelectItem.dataEntradaLote),
-                                                                                          locale: FFLocalizations.of(context).languageCode,
-                                                                                        )})',
-                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                              fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                              color: FlutterFlowTheme.of(context).customColor6,
-                                                                                              letterSpacing: 0.0,
-                                                                                              useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
-                                                                                            ),
-                                                                                      ),
                                                                                   ],
                                                                                 ),
                                                                               ].divide(const SizedBox(height: 8.0)),
@@ -4005,7 +4010,7 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                               mainAxisSize: MainAxisSize.max,
                                                                               children: [
                                                                                 Text(
-                                                                                  '${(rebanhoAplicadoItem.categoria == 'null') || (rebanhoAplicadoItem.categoria == '') ? 'N/A' : rebanhoAplicadoItem.categoria} • Raça: ${(rebanhoAplicadoItem.raca == 'null') || (rebanhoAplicadoItem.raca == '') ? 'N/A' : rebanhoAplicadoItem.raca}',
+                                                                                  '${(rebanhoAplicadoItem.categoria == 'null') || (rebanhoAplicadoItem.categoria == '') ? 'N/A' : rebanhoAplicadoItem.categoria} • ${(rebanhoAplicadoItem.raca == 'null') || (rebanhoAplicadoItem.raca == '') ? 'N/A' : rebanhoAplicadoItem.raca}',
                                                                                   style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                                         font: GoogleFonts.plusJakartaSans(
                                                                                           fontWeight: FontWeight.normal,
@@ -4082,23 +4087,6 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                                   ),
                                                                                 ].divide(const SizedBox(width: 5.0)),
                                                                               ),
-                                                                              if ((rebanhoAplicadoItem.dataEntradaLote != ' null') || (rebanhoAplicadoItem.loteId != 'null') || (rebanhoAplicadoItem.loteId != ' '))
-                                                                                Text(
-                                                                                  '(entrada em ${valueOrDefault<String>(
-                                                                                    dateTimeFormat(
-                                                                                      "d/M/y",
-                                                                                      functions.converterParaData(rebanhoAplicadoItem.dataEntradaLote),
-                                                                                      locale: FFLocalizations.of(context).languageCode,
-                                                                                    ),
-                                                                                    'S/D',
-                                                                                  )})',
-                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                        fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                        color: FlutterFlowTheme.of(context).customColor6,
-                                                                                        letterSpacing: 0.0,
-                                                                                        useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
-                                                                                      ),
-                                                                                ),
                                                                             ],
                                                                           ),
                                                                         ].divide(const SizedBox(height: 8.0)),
@@ -4328,7 +4316,11 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                 safeSetState(
                                                                     () {});
                                                                 try {
-                                                                  if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                                                                  if (await action_blocks.blockIfAccountCanceled(
+                                                                      context,
+                                                                      refreshFromServer:
+                                                                          true))
+                                                                    return;
                                                                   if (!(FFAppState()
                                                                           .dataDadosNaoSyncLotes !=
                                                                       null)) {
@@ -4451,42 +4443,6 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                           );
                                                                         }
                                                                       } else {
-                                                                        _model.loteAnimalExiste = await SQLiteManager
-                                                                            .instance
-                                                                            .buscarLote(
-                                                                          idLote:
-                                                                              loteIdAtual,
-                                                                        );
-                                                                        final animaisDoLoteExistente =
-                                                                            _model.loteAnimalExiste?.firstOrNull?.idAnimais ??
-                                                                                '[]';
-                                                                        _model.idAnimais = functions
-                                                                            .converterJSONparaLista(animaisDoLoteExistente)
-                                                                            .toList()
-                                                                            .cast<String>();
-                                                                        safeSetState(
-                                                                            () {});
-                                                                        _model.removeFromIdAnimais(_model
-                                                                            .rebanhoIdAplicados
-                                                                            .elementAtOrNull(_model.index)!);
-                                                                        safeSetState(
-                                                                            () {});
-                                                                        await SQLiteManager
-                                                                            .instance
-                                                                            .uPDTLoteRebanho(
-                                                                          idAnimais: functions.converterListaParaJSON(_model
-                                                                              .idAnimais
-                                                                              .toList()),
-                                                                          updatedat:
-                                                                              dateTimeFormat(
-                                                                            "yyyy-MM-dd HH:mm:ss",
-                                                                            getCurrentTimestamp,
-                                                                            locale:
-                                                                                FFLocalizations.of(context).languageCode,
-                                                                          ),
-                                                                          idLote:
-                                                                              loteIdAtual,
-                                                                        );
                                                                         if (_model.ativoInativoValue ==
                                                                             true) {
                                                                           await SQLiteManager
@@ -4689,9 +4645,6 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                   await SQLiteManager
                                                                       .instance
                                                                       .uPDTLote(
-                                                                    idAnimais: functions.converterListaParaJSON(_model
-                                                                        .rebanhoIdAplicados
-                                                                        .toList()),
                                                                     nome: _model
                                                                         .nomeloteTextController
                                                                         .text,

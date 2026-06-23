@@ -15,6 +15,7 @@ import '/rebanho/edit_rebanho/edit_rebanho_widget.dart';
 import '/rebanho/reproducoes_view_rebanho/reproducoes_view_rebanho_widget.dart';
 import '/sanidade/edit_sanidade_animal/edit_sanidade_animal_widget.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
+import '/actions/actions.dart' as action_blocks;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -126,6 +127,51 @@ class ViewRebanhoWidget extends StatefulWidget {
 class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
     with TickerProviderStateMixin {
   late ViewRebanhoModel _model;
+  bool _isRepairingPesagens = false;
+
+  String _normalizeInfoValue(String? value) {
+    if (value == null) return '';
+    final normalized = value.trim();
+    if (normalized.isEmpty) return '';
+    final lowercase = normalized.toLowerCase();
+    if (lowercase == 'null' || lowercase == 'n/a' || normalized == '-') {
+      return '';
+    }
+    return normalized;
+  }
+
+  bool _isDesmamaPesagem(HistoricoPesagensStruct pesagem) =>
+      pesagem.tipo.trim().toLowerCase() == 'desmama';
+
+  HistoricoPesagensStruct? _pesagemDesmamaFromHist() {
+    HistoricoPesagensStruct? selected;
+    DateTime? selectedDate;
+
+    for (final pesagem in FFAppState().histPesagens) {
+      if (!_isDesmamaPesagem(pesagem) || !pesagem.hasDataPesagem()) {
+        continue;
+      }
+
+      final dataPesagemValue = _normalizeInfoValue(pesagem.dataPesagem);
+      if (dataPesagemValue.isEmpty) {
+        continue;
+      }
+
+      final dataPesagem = functions.converterParaData(dataPesagemValue);
+      if (dataPesagem == null) {
+        continue;
+      }
+
+      if (selected == null ||
+          selectedDate == null ||
+          dataPesagem.isAfter(selectedDate)) {
+        selected = pesagem;
+        selectedDate = dataPesagem;
+      }
+    }
+
+    return selected;
+  }
 
   Future<void> _refreshHistPesagensAtual() async {
     final idRebanho = widget.idRebanho;
@@ -153,6 +199,19 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
         deletado: item.deletado,
         createdAt: item.createdAt,
       ));
+    }
+
+    final pesagemDesmama = _pesagemDesmamaFromHist();
+    if (pesagemDesmama != null) {
+      FFAppState().updateRebanhoSelecionadoStruct(
+        (e) => e
+          ..dataDesmama = _normalizeInfoValue(e.dataDesmama).isEmpty
+              ? pesagemDesmama.dataPesagem
+              : e.dataDesmama
+          ..pesoDesmama = e.pesoDesmama == 0.0 && pesagemDesmama.hasPeso()
+              ? pesagemDesmama.peso
+              : e.pesoDesmama,
+      );
     }
 
     if (mounted) {
@@ -194,6 +253,27 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
 
     if (mounted) {
       safeSetState(() {});
+    }
+  }
+
+  Future<void> _repairPesagensRebanhoAtual() async {
+    final idRebanho = widget.idRebanho?.trim();
+    if (idRebanho == null || idRebanho.isEmpty || _isRepairingPesagens) {
+      return;
+    }
+
+    _isRepairingPesagens = true;
+    try {
+      final idPropriedade =
+          FFAppState().rebanhoSelecionado.idPropriedade.trim().isNotEmpty
+              ? FFAppState().rebanhoSelecionado.idPropriedade
+              : FFAppState().propriedadeSelecionada.idPropriedade;
+      await action_blocks.repararPesagensRebanhoLocal(
+        idRebanho: idRebanho,
+        idPropriedade: idPropriedade,
+      );
+    } finally {
+      _isRepairingPesagens = false;
     }
   }
 
@@ -1056,6 +1136,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _refreshHistPesagensAtual();
+      await _refreshPesoAtualEDataUltimaPesagem();
+      await _repairPesagensRebanhoAtual();
+      await _refreshHistPesagensAtual();
+      await _refreshPesoAtualEDataUltimaPesagem();
       safeSetState(() {});
     });
   }

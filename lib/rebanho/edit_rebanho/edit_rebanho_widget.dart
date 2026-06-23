@@ -33,6 +33,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     with TickerProviderStateMixin {
   late EditRebanhoModel _model;
   bool _isSaving = false;
+  bool _isRepairingPesagens = false;
 
   double? _parsePeso(String? rawValue) => parsePesoFormatado(rawValue);
 
@@ -58,6 +59,79 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     return normalized;
   }
 
+  List<String> _categoriasPermitidasParaSexo(String? sexo) {
+    final sexoNormalizado = _normalizeInputText(sexo);
+    if (sexoNormalizado == 'Fêmea') {
+      return FFAppState().categoriasRebanhoFemea;
+    }
+    if (sexoNormalizado == 'Macho') {
+      return FFAppState().categoriasRebanhoMacho;
+    }
+    return const <String>[];
+  }
+
+  String? _categoriaPadraoNascimento(String? sexo) {
+    final sexoNormalizado = _normalizeInputText(sexo);
+    if (sexoNormalizado == 'Macho') {
+      return 'Bezerro';
+    }
+    if (sexoNormalizado == 'Fêmea') {
+      return 'Bezerra';
+    }
+    return null;
+  }
+
+  String? _categoriaInicialParaSexo(String sexo) {
+    final categoriaAtual =
+        _normalizeDropdownValue(FFAppState().rebanhoSelecionado.categoria);
+    if (categoriaAtual == null) {
+      return null;
+    }
+
+    return _categoriasPermitidasParaSexo(sexo).contains(categoriaAtual)
+        ? categoriaAtual
+        : null;
+  }
+
+  String? _categoriaSelecionadaParaSexo(String? sexo) {
+    if (FFAppState().rebanhoSelecionado.tipo == 'Nascimento') {
+      return _categoriaPadraoNascimento(sexo);
+    }
+
+    final sexoNormalizado = _normalizeInputText(sexo);
+    if (sexoNormalizado == 'Macho') {
+      return _normalizeDropdownValue(
+        _model.dPCategoriaMachoValueController?.value ??
+            _model.dPCategoriaMachoValue,
+      );
+    }
+    if (sexoNormalizado == 'Fêmea') {
+      return _normalizeDropdownValue(
+        _model.dPCategoriaFemeaValueController?.value ??
+            _model.dPCategoriaFemeaValue,
+      );
+    }
+    return null;
+  }
+
+  bool _categoriaCondizComSexo(String? sexo, String? categoria) {
+    final categoriaNormalizada = _normalizeDropdownValue(categoria);
+    if (categoriaNormalizada == null) {
+      return false;
+    }
+
+    return _categoriasPermitidasParaSexo(sexo).any(
+      (item) => _normalizeInputText(item) == categoriaNormalizada,
+    );
+  }
+
+  void _limparCategoriasSelecionadas() {
+    _model.dPCategoriaFemeaValue = null;
+    _model.dPCategoriaMachoValue = null;
+    _model.dPCategoriaFemeaValueController?.value = null;
+    _model.dPCategoriaMachoValueController?.value = null;
+  }
+
   DateTime? _parseStoredDate(String? value) {
     final normalized = _normalizeInputText(value);
     if (normalized.isEmpty) {
@@ -65,6 +139,68 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     }
 
     return functions.converterParaData(normalized);
+  }
+
+  bool _isDesmamaPesagem(HistoricoPesagensStruct pesagem) =>
+      pesagem.tipo.trim().toLowerCase() == 'desmama';
+
+  HistoricoPesagensStruct? _pesagemDesmamaFromHist() {
+    HistoricoPesagensStruct? selected;
+    DateTime? selectedDate;
+
+    for (final pesagem in FFAppState().histPesagens) {
+      if (!_isDesmamaPesagem(pesagem) || !pesagem.hasDataPesagem()) {
+        continue;
+      }
+
+      final dataPesagem = _parseStoredDate(pesagem.dataPesagem);
+      if (dataPesagem == null) {
+        continue;
+      }
+
+      if (selected == null ||
+          selectedDate == null ||
+          dataPesagem.isAfter(selectedDate)) {
+        selected = pesagem;
+        selectedDate = dataPesagem;
+      }
+    }
+
+    return selected;
+  }
+
+  void _applyDesmamaFromHistorico() {
+    final pesagemDesmama = _pesagemDesmamaFromHist();
+    if (pesagemDesmama == null) {
+      return;
+    }
+
+    final currentData =
+        _normalizeInputText(FFAppState().rebanhoSelecionado.dataDesmama);
+    final currentPeso = FFAppState().rebanhoSelecionado.pesoDesmama;
+    final historicoData = _normalizeInputText(pesagemDesmama.dataPesagem);
+    final historicoPeso =
+        pesagemDesmama.hasPeso() ? pesagemDesmama.peso : currentPeso;
+
+    if (currentData.isEmpty || currentPeso == 0.0) {
+      FFAppState().updateRebanhoSelecionadoStruct(
+        (e) => e
+          ..dataDesmama = currentData.isEmpty ? historicoData : currentData
+          ..pesoDesmama = currentPeso == 0.0 ? historicoPeso : currentPeso,
+      );
+    }
+
+    if (_model.datePicked3 == null && historicoData.isNotEmpty) {
+      _model.datePicked3 = _parseStoredDate(historicoData);
+    }
+    if (_model.pesodadesmamaTextController != null &&
+        (_normalizeInputText(_model.pesodadesmamaTextController!.text)
+                .isEmpty ||
+            _model.pesodadesmamaTextController!.text == '0' ||
+            _model.pesodadesmamaTextController!.text == '0.0')) {
+      _model.pesodadesmamaTextController!.text =
+          formatPesoInicial(historicoPeso);
+    }
   }
 
   String? _formatDateForSql(
@@ -170,8 +306,31 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
       ));
     }
 
+    _applyDesmamaFromHistorico();
+
     if (mounted) {
       safeSetState(() {});
+    }
+  }
+
+  Future<void> _repairPesagensRebanhoAtual() async {
+    final idRebanho = FFAppState().rebanhoSelecionado.idRebanho.trim();
+    if (idRebanho.isEmpty || _isRepairingPesagens) {
+      return;
+    }
+
+    _isRepairingPesagens = true;
+    try {
+      final idPropriedade =
+          FFAppState().rebanhoSelecionado.idPropriedade.trim().isNotEmpty
+              ? FFAppState().rebanhoSelecionado.idPropriedade
+              : FFAppState().propriedadeSelecionada.idPropriedade;
+      await action_blocks.repararPesagensRebanhoLocal(
+        idRebanho: idRebanho,
+        idPropriedade: idPropriedade,
+      );
+    } finally {
+      _isRepairingPesagens = false;
     }
   }
 
@@ -234,6 +393,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
         _normalizeDropdownValue(FFAppState().rebanhoSelecionado.loteId);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _refreshHistPesagens();
+      await _refreshPesoAtualEDataUltimaPesagem();
+      await _repairPesagensRebanhoAtual();
       await _refreshHistPesagens();
       await _refreshPesoAtualEDataUltimaPesagem();
     });
@@ -335,7 +497,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                           ) ??
                           false;
                       if (confirmDialogResponse) {
-                        if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                        if (await action_blocks.blockIfAccountCanceled(context,
+                            refreshFromServer: true)) return;
                         if (!(FFAppState().dataDadosNaoSyncRebanho != null)) {
                           FFAppState().dataDadosNaoSyncRebanho =
                               getCurrentTimestamp;
@@ -1209,8 +1372,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                             ),
                                           ),
                                           options: const ['Macho', 'Fêmea'],
-                                          onChanged: (val) => safeSetState(() =>
-                                              _model.dropDownSexoValue = val),
+                                          onChanged: (val) => safeSetState(() {
+                                            if (_model.dropDownSexoValue !=
+                                                val) {
+                                              _limparCategoriasSelecionadas();
+                                            }
+                                            _model.dropDownSexoValue = val;
+                                          }),
                                           width: double.infinity,
                                           height: 56.0,
                                           textStyle: FlutterFlowTheme.of(
@@ -1288,11 +1456,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     .dPCategoriaFemeaValueController ??=
                                                 FormFieldController<String>(
                                               _model.dPCategoriaFemeaValue ??=
-                                                  _normalizeDropdownValue(
-                                                FFAppState()
-                                                    .rebanhoSelecionado
-                                                    .categoria,
-                                              ),
+                                                  _categoriaInicialParaSexo(
+                                                      'Fêmea'),
                                             ),
                                             options: FFAppState()
                                                 .categoriasRebanhoFemea,
@@ -1348,11 +1513,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     .dPCategoriaMachoValueController ??=
                                                 FormFieldController<String>(
                                               _model.dPCategoriaMachoValue ??=
-                                                  _normalizeDropdownValue(
-                                                FFAppState()
-                                                    .rebanhoSelecionado
-                                                    .categoria,
-                                              ),
+                                                  _categoriaInicialParaSexo(
+                                                      'Macho'),
                                             ),
                                             options: FFAppState()
                                                 .categoriasRebanhoMacho,
@@ -2396,11 +2558,11 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                 );
 
                                                 _model.pesoAtualTextController
-                                                        ?.text =
-                                                    FFAppState()
-                                                        .rebanhoSelecionado
-                                                        .pesoAtual
-                                                        .toString();
+                                                    ?.text = formatPesoInicial(
+                                                  FFAppState()
+                                                      .rebanhoSelecionado
+                                                      .pesoAtual,
+                                                );
                                               });
                                               safeSetState(() {
                                                 _model
@@ -3528,85 +3690,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                           focusColor: Colors.transparent,
                                           hoverColor: Colors.transparent,
                                           highlightColor: Colors.transparent,
-                                          onTap: () async {
-                                            final datePicked4Date =
-                                                await showDatePicker(
-                                              initialEntryMode:
-                                                  DatePickerEntryMode
-                                                      .calendarOnly,
-                                              context: context,
-                                              initialDate: getCurrentTimestamp,
-                                              firstDate: DateTime(1900),
-                                              lastDate: DateTime(2050),
-                                              builder: (context, child) {
-                                                return wrapInMaterialDatePickerTheme(
-                                                  context,
-                                                  child!,
-                                                  headerBackgroundColor:
-                                                      const Color(0xFF28A365),
-                                                  headerForegroundColor:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .info,
-                                                  headerTextStyle:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .headlineLarge
-                                                          .override(
-                                                            fontFamily:
-                                                                FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .headlineLargeFamily,
-                                                            fontSize: 32.0,
-                                                            letterSpacing: 0.0,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            useGoogleFonts:
-                                                                !FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .headlineLargeIsCustom,
-                                                          ),
-                                                  pickerBackgroundColor:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .secondaryBackground,
-                                                  pickerForegroundColor:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .primaryText,
-                                                  selectedDateTimeBackgroundColor:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .primary,
-                                                  selectedDateTimeForegroundColor:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .info,
-                                                  actionButtonForegroundColor:
-                                                      FlutterFlowTheme.of(
-                                                              context)
-                                                          .primaryText,
-                                                  iconSize: 24.0,
-                                                );
-                                              },
-                                            );
-
-                                            if (datePicked4Date != null) {
-                                              safeSetState(() {
-                                                _model.datePicked4 = DateTime(
-                                                  datePicked4Date.year,
-                                                  datePicked4Date.month,
-                                                  datePicked4Date.day,
-                                                );
-                                              });
-                                            } else if (_model.datePicked4 !=
-                                                null) {
-                                              safeSetState(() {
-                                                _model.datePicked4 =
-                                                    getCurrentTimestamp;
-                                              });
-                                            }
-                                          },
+                                          onTap: null,
                                           child: Container(
                                             width: double.infinity,
                                             height: 56.0,
@@ -3638,6 +3722,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         storedValue: FFAppState()
                                                             .rebanhoSelecionado
                                                             .dataUltimaPesagem,
+                                                        placeholder:
+                                                            'Sem pesagem',
                                                       ),
                                                       style: FlutterFlowTheme
                                                               .of(context)
@@ -3668,8 +3754,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     ),
                                                   ),
                                                   Icon(
-                                                    Icons
-                                                        .calendar_month_outlined,
+                                                    Icons.lock_outline,
                                                     color: FlutterFlowTheme.of(
                                                             context)
                                                         .primaryText,
@@ -3720,12 +3805,13 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                               controller: _model
                                                   .pesoAtualTextController,
                                               autofocus: false,
+                                              readOnly: true,
                                               obscureText: false,
                                               keyboardType: const TextInputType
                                                   .numberWithOptions(
                                                   decimal: true, signed: false),
                                               decoration: InputDecoration(
-                                                hintText: 'Peso do animal',
+                                                hintText: 'Sem pesagem',
                                                 hintStyle:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium,
@@ -5462,18 +5548,39 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                           child: FFButtonWidget(
                                             onPressed: () async {
                                               if (_isSaving) return;
+                                              final categoriaParaSalvar =
+                                                  _categoriaSelecionadaParaSexo(
+                                                      _model.dropDownSexoValue);
+                                              if (!_categoriaCondizComSexo(
+                                                _model.dropDownSexoValue,
+                                                categoriaParaSalvar,
+                                              )) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                        'Selecione uma categoria compatível com o sexo informado.'),
+                                                    backgroundColor:
+                                                        Color(0xFFE53935),
+                                                  ),
+                                                );
+                                                return;
+                                              }
+
                                               _isSaving = true;
                                               safeSetState(() {});
                                               try {
-                                                if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                                                if (await action_blocks
+                                                    .blockIfAccountCanceled(
+                                                        context,
+                                                        refreshFromServer:
+                                                            true)) return;
                                                 if (!await sanitizePesoControllersBeforeSave(
                                                     context, [
                                                   _model
                                                       .pesonascimentoTextController,
                                                   _model
                                                       .pesodadesmamaTextController,
-                                                  _model
-                                                      .pesoAtualTextController,
                                                 ])) {
                                                   return;
                                                 }
@@ -5521,51 +5628,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   sexo:
                                                       _model.dropDownSexoValue,
                                                   categoria:
-                                                      valueOrDefault<String>(
-                                                    () {
-                                                      if (FFAppState()
-                                                              .rebanhoSelecionado
-                                                              .tipo ==
-                                                          'Nascimento') {
-                                                        return valueOrDefault<
-                                                            String>(
-                                                          () {
-                                                            if (_model
-                                                                    .dropDownSexoValue ==
-                                                                'Macho') {
-                                                              return 'Bezerro';
-                                                            } else if (_model
-                                                                    .dropDownSexoValue ==
-                                                                'Fêmea') {
-                                                              return 'Bezerra';
-                                                            } else {
-                                                              return 'Sem Categoria';
-                                                            }
-                                                          }(),
-                                                          'Sem Categoria',
-                                                        );
-                                                      } else if ((FFAppState()
-                                                                  .rebanhoSelecionado
-                                                                  .tipo !=
-                                                              'Nascimento') &&
-                                                          (_model.dropDownSexoValue ==
-                                                              'Macho')) {
-                                                        return _model
-                                                            .dPCategoriaMachoValue;
-                                                      } else if ((FFAppState()
-                                                                  .rebanhoSelecionado
-                                                                  .tipo !=
-                                                              'Nascimento') &&
-                                                          (_model.dropDownSexoValue ==
-                                                              'Fêmea')) {
-                                                        return _model
-                                                            .dPCategoriaFemeaValue;
-                                                      } else {
-                                                        return 'Sem Categoria';
-                                                      }
-                                                    }(),
-                                                    'Sem Categoria',
-                                                  ),
+                                                      categoriaParaSalvar,
                                                   dataNascimento: _model
                                                               .datePicked1 !=
                                                           null
@@ -5626,9 +5689,6 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   pesoDesmama: _parsePeso(_model
                                                       .pesodadesmamaTextController
                                                       .text),
-                                                  pesoAtual: _parsePeso(_model
-                                                      .pesoAtualTextController
-                                                      .text),
                                                   statusRebanho:
                                                       valueOrDefault<String>(
                                                     _model.dPStatusValue,
@@ -5662,28 +5722,6 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         ),
                                                   valorCompra:
                                                       FFAppState().valueDouble,
-                                                  dataUltimaPesagem: _model
-                                                              .datePicked4 !=
-                                                          null
-                                                      ? dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          _model.datePicked4,
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        )
-                                                      : dateTimeFormat(
-                                                          "yyyy-MM-dd",
-                                                          functions.converterParaData(
-                                                              FFAppState()
-                                                                  .rebanhoSelecionado
-                                                                  .dataUltimaPesagem),
-                                                          locale:
-                                                              FFLocalizations.of(
-                                                                      context)
-                                                                  .languageCode,
-                                                        ),
                                                   nomeConcat:
                                                       '${_model.nAnimalTextController.text} - ${_model.nomeAnimalTextController.text} - ${_model.datePicked1 != null ? dateTimeFormat(
                                                           "d/M/y",
@@ -5714,8 +5752,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                         .languageCode,
                                                   ),
                                                   loteID: _model.dPLoteValue,
-                                                  loteNome:
-                                                      rebanhoLoteNomeById(
+                                                  loteNome: rebanhoLoteNomeById(
                                                     FFAppState()
                                                         .rebanhoLotesSelecionar,
                                                     _model.dPLoteValue,
@@ -5862,37 +5899,6 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           .rebanhoSelecionado
                                                           .rebanhoIdReprodutor,
                                                 );
-                                                final novoPesoNascimento =
-                                                    _parsePeso(_model
-                                                        .pesonascimentoTextController
-                                                        .text);
-                                                if (novoPesoNascimento !=
-                                                        null &&
-                                                    FFAppState()
-                                                            .rebanhoSelecionado
-                                                            .pesoNascimento !=
-                                                        novoPesoNascimento) {
-                                                  await SQLiteManager.instance
-                                                      .updatePesagemByTipo(
-                                                    idRebanho: FFAppState()
-                                                        .rebanhoSelecionado
-                                                        .idRebanho,
-                                                    tipo: 'Nascimento',
-                                                    peso: novoPesoNascimento,
-                                                    dataPesagem:
-                                                        _model.datePicked1 !=
-                                                                null
-                                                            ? dateTimeFormat(
-                                                                "yyyy-MM-dd",
-                                                                _model
-                                                                    .datePicked1,
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              )
-                                                            : null,
-                                                  );
-                                                }
                                                 final novoPesoDesmama =
                                                     _parsePeso(_model
                                                         .pesodadesmamaTextController
@@ -5918,242 +5924,12 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                   );
                                                 }
 
-                                                // Só usa a desmama como peso atual quando o usuário
-                                                // não informou um peso atual manualmente.
-                                                final pesoAtualOriginal =
-                                                    FFAppState()
-                                                        .rebanhoSelecionado
-                                                        .pesoAtual;
-                                                final pesoAtualDigitadoTexto =
-                                                    _model
-                                                        .pesoAtualTextController
-                                                        .text
-                                                        .trim();
-                                                if ((pesoAtualOriginal ==
-                                                        0.0) &&
-                                                    novoPesoDesmama != null &&
-                                                    novoPesoDesmama > 0 &&
-                                                    pesoAtualDigitadoTexto
-                                                        .isEmpty) {
-                                                  _model.pesoAtualTextController
-                                                      .text = novoPesoDesmama ==
-                                                          novoPesoDesmama
-                                                              .truncateToDouble()
-                                                      ? novoPesoDesmama
-                                                          .toInt()
-                                                          .toString()
-                                                      : novoPesoDesmama
-                                                          .toString();
-                                                }
-
-                                                final novoPesoAtual =
-                                                    _parsePeso(_model
-                                                        .pesoAtualTextController
-                                                        .text);
-                                                if (novoPesoAtual != null &&
-                                                    FFAppState()
-                                                            .rebanhoSelecionado
-                                                            .pesoAtual !=
-                                                        novoPesoAtual) {
-                                                  await SQLiteManager.instance
-                                                      .addPesagem(
-                                                    dataPesagem: _model
-                                                                .datePicked4 !=
-                                                            null
-                                                        ? dateTimeFormat(
-                                                            "yyyy-MM-dd",
-                                                            _model.datePicked4,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          )
-                                                        : (FFAppState()
-                                                                .rebanhoSelecionado
-                                                                .dataUltimaPesagem
-                                                                .isNotEmpty
-                                                            ? dateTimeFormat(
-                                                                "yyyy-MM-dd",
-                                                                functions.converterParaData(
-                                                                    FFAppState()
-                                                                        .rebanhoSelecionado
-                                                                        .dataUltimaPesagem),
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              )
-                                                            : dateTimeFormat(
-                                                                "yyyy-MM-dd",
-                                                                getCurrentTimestamp,
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              )),
-                                                    tipo: 'Atual',
-                                                    peso:
-                                                        valueOrDefault<double>(
-                                                      _parsePeso(_model
-                                                          .pesoAtualTextController
-                                                          .text),
-                                                      0.0,
-                                                    ),
-                                                    deletado: 'NAO',
-                                                    createdat: dateTimeFormat(
-                                                      "yyyy-MM-dd HH:mm:ss",
-                                                      getCurrentTimestamp,
-                                                      locale:
-                                                          FFLocalizations.of(
-                                                                  context)
-                                                              .languageCode,
-                                                    ),
-                                                    idRebanho: FFAppState()
-                                                        .rebanhoSelecionado
-                                                        .idRebanho,
-                                                    idPropriedade: FFAppState()
-                                                        .propriedadeSelecionada
-                                                        .idPropriedade,
-                                                  );
-                                                }
-                                                if (FFAppState()
-                                                        .rebanhoSelecionado
-                                                        .loteId !=
-                                                    '') {
-                                                  _model.loteSelecionadoEditExiste =
-                                                      await SQLiteManager
-                                                          .instance
-                                                          .buscarLote(
-                                                    idLote: _model.loteAtual,
-                                                  );
-                                                  final loteExisteItem = _model
-                                                      .loteSelecionadoEditExiste
-                                                      ?.firstOrNull;
-                                                  if (loteExisteItem != null &&
-                                                      loteExisteItem
-                                                              .idAnimais !=
-                                                          null) {
-                                                    _model.idAnimais = functions
-                                                        .converterJSONparaLista(
-                                                            loteExisteItem
-                                                                .idAnimais!)
-                                                        .toList()
-                                                        .cast<String>();
-                                                    safeSetState(() {});
-                                                    _model.removeFromIdAnimais(
-                                                        FFAppState()
-                                                            .rebanhoSelecionado
-                                                            .idRebanho);
-                                                    safeSetState(() {});
-                                                    await SQLiteManager.instance
-                                                        .uPDTLoteRebanho(
-                                                      idAnimais: functions
-                                                          .converterListaParaJSON(
-                                                              _model.idAnimais
-                                                                  .toList()),
-                                                      updatedat: dateTimeFormat(
-                                                        "yyyy-MM-dd HH:mm:ss",
-                                                        getCurrentTimestamp,
-                                                        locale:
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      ),
-                                                      idLote: _model.loteAtual,
-                                                    );
-                                                  }
-                                                  _model.loteSelecionadoEdit2 =
-                                                      await SQLiteManager
-                                                          .instance
-                                                          .buscarLote(
-                                                    idLote: _model.dPLoteValue,
-                                                  );
-                                                  final loteEdit2Item = _model
-                                                      .loteSelecionadoEdit2
-                                                      ?.firstOrNull;
-                                                  if (loteEdit2Item != null &&
-                                                      loteEdit2Item.idAnimais !=
-                                                          null) {
-                                                    _model.idAnimais = functions
-                                                        .converterJSONparaLista(
-                                                            loteEdit2Item
-                                                                .idAnimais!)
-                                                        .toList()
-                                                        .cast<String>();
-                                                    safeSetState(() {});
-                                                    _model.addToIdAnimais(
-                                                        FFAppState()
-                                                            .rebanhoSelecionado
-                                                            .idRebanho);
-                                                    safeSetState(() {});
-                                                    await SQLiteManager.instance
-                                                        .uPDTLoteRebanho(
-                                                      idAnimais: functions
-                                                          .converterListaParaJSON(
-                                                              _model.idAnimais
-                                                                  .toList()),
-                                                      updatedat: dateTimeFormat(
-                                                        "yyyy-MM-dd HH:mm:ss",
-                                                        getCurrentTimestamp,
-                                                        locale:
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      ),
-                                                      idLote:
-                                                          _model.dPLoteValue,
-                                                    );
-                                                  }
-                                                } else {
-                                                  if (_model.dPLoteValue !=
-                                                          null &&
-                                                      _model.dPLoteValue !=
-                                                          '') {
-                                                    _model.loteSelecionadoEdit =
-                                                        await SQLiteManager
-                                                            .instance
-                                                            .buscarLote(
-                                                      idLote:
-                                                          _model.dPLoteValue,
-                                                    );
-                                                    final loteEditItem = _model
-                                                        .loteSelecionadoEdit
-                                                        ?.firstOrNull;
-                                                    if (loteEditItem != null &&
-                                                        loteEditItem
-                                                                .idAnimais !=
-                                                            null) {
-                                                      _model.idAnimais = functions
-                                                          .converterJSONparaLista(
-                                                              loteEditItem
-                                                                  .idAnimais!)
-                                                          .toList()
-                                                          .cast<String>();
-                                                    } else {
-                                                      _model.idAnimais = [];
-                                                    }
-                                                    safeSetState(() {});
-                                                    _model.addToIdAnimais(
-                                                        FFAppState()
-                                                            .rebanhoSelecionado
-                                                            .idRebanho);
-                                                    safeSetState(() {});
-                                                    await SQLiteManager.instance
-                                                        .uPDTLoteRebanho(
-                                                      idAnimais: functions
-                                                          .converterListaParaJSON(
-                                                              _model.idAnimais
-                                                                  .toList()),
-                                                      updatedat: dateTimeFormat(
-                                                        "yyyy-MM-dd HH:mm:ss",
-                                                        getCurrentTimestamp,
-                                                        locale:
-                                                            FFLocalizations.of(
-                                                                    context)
-                                                                .languageCode,
-                                                      ),
-                                                      idLote:
-                                                          _model.dPLoteValue,
-                                                    );
-                                                  }
-                                                }
+                                                await SQLiteManager.instance
+                                                    .syncUltimaPesagemNoRebanho(
+                                                  idRebanho: FFAppState()
+                                                      .rebanhoSelecionado
+                                                      .idRebanho,
+                                                );
 
                                                 await Future.wait([
                                                   action_blocks
@@ -6182,6 +5958,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                             .secondary,
                                                   ),
                                                 );
+                                                FFAppState()
+                                                        .rebanhosChangeDateTime =
+                                                    getCurrentTimestamp;
                                                 FFAppState().update(() {});
                                                 Navigator.pop(context);
                                               } finally {

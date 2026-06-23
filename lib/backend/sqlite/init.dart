@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -596,21 +595,21 @@ Future<void> _ensureRebanhoIndexes(
     // Índice para busca por numeroAnimal (LIKE prefix)
     (
       name: 'idx_rebanho_numero_animal',
-      heavy: true,
+      heavy: false,
       sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_numero_animal
        ON local_rebanho (idPropriedade, deletado, numeroAnimal)''',
     ),
     // Índice para busca por nome (LIKE prefix)
     (
       name: 'idx_rebanho_nome',
-      heavy: true,
+      heavy: false,
       sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_nome
        ON local_rebanho (idPropriedade, deletado, nome)''',
     ),
     // Índice para busca por chip
     (
       name: 'idx_rebanho_chip',
-      heavy: true,
+      heavy: false,
       sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_chip
        ON local_rebanho (idPropriedade, deletado, chip)''',
     ),
@@ -620,6 +619,36 @@ Future<void> _ensureRebanhoIndexes(
       heavy: true,
       sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_sexo_status
        ON local_rebanho (idPropriedade, deletado, sexo, statusRebanho, categoria)''',
+    ),
+    (
+      name: 'idx_rebanho_prop_status_created',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_prop_status_created
+       ON local_rebanho (idPropriedade, deletado, statusRebanho, created_at DESC)''',
+    ),
+    (
+      name: 'idx_rebanho_prop_created',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_prop_created
+       ON local_rebanho (idPropriedade, deletado, created_at DESC)''',
+    ),
+    (
+      name: 'idx_rebanho_prop_status_numero',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_prop_status_numero
+       ON local_rebanho (idPropriedade, deletado, statusRebanho, numeroAnimal)''',
+    ),
+    (
+      name: 'idx_rebanho_prop_status_nome',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_prop_status_nome
+       ON local_rebanho (idPropriedade, deletado, statusRebanho, nome)''',
+    ),
+    (
+      name: 'idx_rebanho_prop_status_nascimento',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_prop_status_nascimento
+       ON local_rebanho (idPropriedade, deletado, statusRebanho, dataNascimento)''',
     ),
     (
       name: 'idx_rebanho_sync_created',
@@ -967,7 +996,7 @@ Future<void> _dedupePesagensFixas(
 //    a sync envie o INSERT ao Supabase — depois a antiga é soft-deleted.
 //    (A tabela local_historico_pesagens só sincroniza INSERT por created_at
 //    e UPDATE quando deletado='SIM'; mudar idRebanho via UPDATE não subiria.)
-// 5. Sanidade, reprodução, auto-refs e JSON de lotes são re-vinculados via
+// 5. Sanidade, reprodução e auto-refs são re-vinculados via
 //    UPDATE com updated_at = nowIso (essas tabelas têm UPDT por updated_at).
 // 6. Markers de sync (ff_dataDadosNaoSync*) são gravados ANTES das mutações,
 //    com janela de segurança (now - 5min), garantindo que linhas alteradas
@@ -975,8 +1004,7 @@ Future<void> _dedupePesagensFixas(
 // 7. Cada grupo é uma transação ATÔMICA isolada. Falha em um grupo não
 //    afeta os outros. Erros por grupo são contados; flag de "concluído" só
 //    é gravada se zero erros.
-// 8. JSON de id_animais em lotes é manipulado via jsonDecode/encode real.
-// 9. Idempotente — controlada por flag prefs. Roda 1x por instalação.
+// 8. Idempotente — controlada por flag prefs. Roda 1x por instalação.
 // ============================================================================
 Future<void> _dedupRebanhoDuplicados(
   Database db,
@@ -1003,7 +1031,6 @@ Future<void> _dedupRebanhoDuplicados(
     'pesagensSoftDelete': 0,
     'sanidadeReatribuidos': 0,
     'reproducaoReatribuidos': 0,
-    'lotesAtualizados': 0,
     'autoRefsAtualizadas': 0,
   };
 
@@ -1229,30 +1256,6 @@ Future<void> _dedupRebanhoDuplicados(
           report['autoRefsAtualizadas'] =
               (report['autoRefsAtualizadas'] ?? 0) + n4 + n5;
 
-          // Lotes: id_animais é JSON-array. Manipula via jsonDecode/encode.
-          final lotesRows = await txn.query(
-            'local_lotes',
-            columns: ['id', 'id_animais'],
-            where: "id_animais LIKE ? AND COALESCE(deletado,'NAO') != 'SIM'",
-            whereArgs: ['%$dupId%'],
-          );
-          for (final lr in lotesRows) {
-            final id = lr['id'];
-            final ja = lr['id_animais'] as String?;
-            if (ja == null || ja.isEmpty) continue;
-            final novoJson = _replaceIdInJsonList(ja, dupId, canonicalId);
-            if (novoJson != null && novoJson != ja) {
-              await txn.update(
-                'local_lotes',
-                {'id_animais': novoJson, 'updated_at': nowIso},
-                where: 'id = ?',
-                whereArgs: [id],
-              );
-              report['lotesAtualizados'] =
-                  (report['lotesAtualizados'] ?? 0) + 1;
-            }
-          }
-
           // Soft-delete do duplicado.
           await txn.update(
             'local_rebanho',
@@ -1342,7 +1345,6 @@ Future<void> _dedupRebanhoLogicoDuplicadoV3(
     'pesagensSoftDelete': 0,
     'sanidadeReatribuidos': 0,
     'reproducaoReatribuidos': 0,
-    'lotesAtualizados': 0,
     'autoRefsAtualizadas': 0,
   };
 
@@ -1525,30 +1527,6 @@ Future<void> _dedupRebanhoLogicoDuplicadoV3(
             report['autoRefsAtualizadas'] =
                 (report['autoRefsAtualizadas'] ?? 0) + n4 + n5;
 
-            final lotesRows = await txn.query(
-              'local_lotes',
-              columns: ['id', 'id_animais'],
-              where: "id_animais LIKE ? AND COALESCE(deletado,'NAO') != 'SIM'",
-              whereArgs: ['%$dupId%'],
-            );
-            for (final lote in lotesRows) {
-              final novoJson = _replaceIdInJsonList(
-                (lote['id_animais'] ?? '').toString(),
-                dupId,
-                canonicalId,
-              );
-              if (novoJson != null && novoJson != lote['id_animais']) {
-                await txn.update(
-                  'local_lotes',
-                  {'id_animais': novoJson, 'updated_at': nowIso},
-                  where: 'id = ?',
-                  whereArgs: [lote['id']],
-                );
-                report['lotesAtualizados'] =
-                    (report['lotesAtualizados'] ?? 0) + 1;
-              }
-            }
-
             await txn.update(
               'local_rebanho',
               {
@@ -1598,26 +1576,6 @@ String? _normalize(Object? v) {
   final s = v.toString().trim();
   if (s.isEmpty || s.toLowerCase() == 'null') return null;
   return s;
-}
-
-/// Substitui `oldId` por `newId` num JSON-array de strings, deduplicando.
-/// Retorna null se o JSON for inválido (não toca na linha).
-String? _replaceIdInJsonList(String json, String oldId, String newId) {
-  try {
-    final decoded = jsonDecode(json);
-    if (decoded is! List) return null;
-    final seen = <String>{};
-    final out = <String>[];
-    for (final item in decoded) {
-      if (item == null) continue;
-      final s = item.toString();
-      final mapped = s == oldId ? newId : s;
-      if (seen.add(mapped)) out.add(mapped);
-    }
-    return jsonEncode(out);
-  } catch (_) {
-    return null;
-  }
 }
 
 // ============================================================================
