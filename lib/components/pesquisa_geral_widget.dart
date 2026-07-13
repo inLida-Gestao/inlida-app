@@ -1619,7 +1619,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                         0.0) &&
                                                                     (_model.pesquisarPropTextController.text ==
                                                                         '')) ||
-                                                                (((e.atividades!).contains(
+                                                                (((e.atividades ?? '').contains(
                                                                         FFAppState()
                                                                             .filtroPropAtividades)) &&
                                                                     ((e.cidade == FFAppState().filtroPropCidades) ||
@@ -1632,14 +1632,14 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                 int>(
                                                                               (String qtdAnimais) {
                                                                                 return qtdAnimais == '[]' ? 0 : qtdAnimais.split(',').length;
-                                                                              }(e.rebanhosID!),
+                                                                              }(e.rebanhosID ?? '[]'),
                                                                               0,
                                                                             )) ==
                                                                             FFAppState()
                                                                                 .filtroNumeroAnimais) ||
                                                                         (FFAppState().filtroNumeroAnimais ==
                                                                             0.0)) &&
-                                                                    ((e.nome!)
+                                                                    ((e.nome ?? '')
                                                                         .toLowerCase()
                                                                         .contains(_model
                                                                             .pesquisarPropTextController
