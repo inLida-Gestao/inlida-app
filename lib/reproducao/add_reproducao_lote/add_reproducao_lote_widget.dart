@@ -2782,7 +2782,8 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                             .calendarOnly,
                                                     context: context,
                                                     initialDate:
-                                                        getCurrentTimestamp,
+                                                        _model.datePicked6 ??
+                                                            getCurrentTimestamp,
                                                     firstDate: DateTime(1900),
                                                     lastDate: DateTime(2050),
                                                     builder: (context, child) {
@@ -2850,13 +2851,6 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                         datePicked6Date.month,
                                                         datePicked6Date.day,
                                                       );
-                                                    });
-                                                  } else if (_model
-                                                          .datePicked6 !=
-                                                      null) {
-                                                    safeSetState(() {
-                                                      _model.datePicked6 =
-                                                          getCurrentTimestamp;
                                                     });
                                                   }
                                                 },
@@ -4011,12 +4005,17 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                                   _model.index)
                                                               ?.chip,
                                                           previsaoParto:
-                                                              dateTimeFormat(
-                                                            "yyyy-MM-dd",
-                                                            _model.datePicked6,
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
+                                                              valueOrDefault<
+                                                                  String>(
+                                                            dateTimeFormat(
+                                                              "yyyy-MM-dd",
+                                                              _model
+                                                                  .datePicked6,
+                                                              locale: FFLocalizations
+                                                                      .of(context)
+                                                                  .languageCode,
+                                                            ),
+                                                            'null',
                                                           ),
                                                           ressinc: _model
                                                               .dropdownRessincValue,

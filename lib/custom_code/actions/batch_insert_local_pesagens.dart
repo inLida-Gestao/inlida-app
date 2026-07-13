@@ -131,6 +131,7 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
         await _replaceLocalPesagem(txn, mapped);
       }
     });
+    await _syncPesoAtualRebanhosAfetados(dedupedRecords);
 
     return {'inserted': dedupedRecords.length, 'errors': errors};
   } catch (batchError) {
@@ -138,18 +139,42 @@ Future<Map<String, dynamic>> batchInsertLocalPesagens(
         '[SYNC][pesagens] Batch falhou ($batchError). Inserindo individualmente...');
     final db = SQLiteManager.instance.database;
     int insertedCount = 0;
+    final insertedRecords = <Map<String, dynamic>>[];
 
     for (final mapped in _dedupMappedPesagens(mappedRecords)) {
       try {
         await _replaceLocalPesagem(db, mapped);
+        insertedRecords.add(mapped);
         insertedCount++;
       } catch (e) {
         final id = mapped['idRebanho']?.toString() ?? 'desconhecido';
         errors.add({'id': id, 'error': e.toString()});
       }
     }
+    await _syncPesoAtualRebanhosAfetados(insertedRecords);
 
     return {'inserted': insertedCount, 'errors': errors};
+  }
+}
+
+Future<void> _syncPesoAtualRebanhosAfetados(
+  List<Map<String, dynamic>> records,
+) async {
+  final ids = records
+      .map((record) => _cleanNull(record['idRebanho']))
+      .whereType<String>()
+      .where((id) => id.isNotEmpty)
+      .toSet();
+
+  for (final idRebanho in ids) {
+    try {
+      await SQLiteManager.instance.syncUltimaPesagemNoRebanho(
+        idRebanho: idRebanho,
+      );
+    } catch (e) {
+      debugPrint(
+          '[SYNC][pesagens] Erro ao recalcular peso atual de $idRebanho: $e');
+    }
   }
 }
 
@@ -168,30 +193,26 @@ Future<void> _replaceLocalPesagem(
 
   final idRebanho = _cleanNull(mapped['idRebanho']);
   final dataPesagem = _cleanNull(mapped['dataPesagem']);
-  final tipo = _cleanNull(mapped['tipo']);
+  final tipoKey = _cleanNull(mapped['tipo']) ?? '';
   final pesoKey = _formatPesoKey(mapped['peso']);
   final createdAt = _cleanNull(mapped['created_at']);
-  if (idRebanho != null &&
-      dataPesagem != null &&
-      tipo != null &&
-      pesoKey.isNotEmpty) {
+  if (idRebanho != null && dataPesagem != null && pesoKey.isNotEmpty) {
     await db.delete(
       'local_historico_pesagens',
       where: '''
         idRebanho = ?
         AND dataPesagem = ?
-        AND tipo = ?
+        AND COALESCE(tipo, '') = ?
         AND printf('%.3f', CAST(peso AS REAL)) = ?
         AND COALESCE(deletado, 'NAO') != 'SIM'
         AND COALESCE(sync_op, '') != 'delete'
       ''',
-      whereArgs: [idRebanho, dataPesagem, tipo, pesoKey],
+      whereArgs: [idRebanho, dataPesagem, tipoKey, pesoKey],
     );
   }
 
   if (idRebanho != null &&
       dataPesagem != null &&
-      tipo != null &&
       pesoKey.isNotEmpty &&
       createdAt != null) {
     await db.delete(
@@ -199,12 +220,12 @@ Future<void> _replaceLocalPesagem(
       where: '''
         idRebanho = ?
         AND dataPesagem = ?
-        AND tipo = ?
+        AND COALESCE(tipo, '') = ?
         AND printf('%.3f', CAST(peso AS REAL)) = ?
         AND created_at = ?
         AND COALESCE(sync_dirty, 0) = 0
       ''',
-      whereArgs: [idRebanho, dataPesagem, tipo, pesoKey, createdAt],
+      whereArgs: [idRebanho, dataPesagem, tipoKey, pesoKey, createdAt],
     );
   }
 

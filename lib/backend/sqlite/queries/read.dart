@@ -2710,12 +2710,19 @@ class QtdReproducoesNoLoteRow extends SqliteRow {
 Future<List<BuscarAnimaisDoLoteRow>> performBuscarAnimaisDoLote(
   Database database, {
   String? loteid,
+  String? idPropriedade,
 }) {
-  final query = '''
-select * from local_rebanho
-where loteID = '$loteid'
+  const query = '''
+SELECT idRebanho
+FROM local_rebanho
+WHERE loteID = ?
+AND idPropriedade = ?
+AND COALESCE(deletado, 'NAO') != 'SIM'
+AND statusRebanho = 'Na propriedade'
+AND COALESCE(idRebanho, '') != ''
 ''';
-  return _readQuery(database, query, (d) => BuscarAnimaisDoLoteRow(d));
+  return database.rawQuery(query, [loteid, idPropriedade]).then(
+      (result) => result.map((d) => BuscarAnimaisDoLoteRow(d)).toList());
 }
 
 class BuscarAnimaisDoLoteRow extends SqliteRow {

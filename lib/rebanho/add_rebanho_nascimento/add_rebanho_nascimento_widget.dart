@@ -4025,7 +4025,10 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                             .secondary,
                                                   ),
                                                 );
-                                                FFAppState().update(() {});
+                                                FFAppState().update(() {
+                                                  FFAppState()
+                                                      .bumpRebanhoListRefreshRevision();
+                                                });
                                                 Navigator.pop(context);
                                               } finally {
                                                 if (mounted) {

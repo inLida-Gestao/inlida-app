@@ -267,6 +267,31 @@ Future<bool> _updateRebanhoSupabaseById(
   final updatePayload = Map<String, dynamic>.from(payload)
     ..remove('idRebanho')
     ..remove('created_at');
+
+  final localUpdatedAt = _parseSyncDate(updatePayload['updated_at']);
+  if (localUpdatedAt != null) {
+    final current = await _withTimeout(
+      () => SupaFlow.client
+          .from('rebanho')
+          .select('idRebanho,updated_at')
+          .eq('idRebanho', idRebanho)
+          .limit(1),
+      label: '$label.precheck(idRebanho=$idRebanho)',
+      timeout: kSyncPageTimeout,
+    );
+    final remoteUpdatedAt = current.isEmpty
+        ? null
+        : _parseSyncDate((current.first as Map)['updated_at']);
+    if (remoteUpdatedAt != null &&
+        remoteUpdatedAt.toUtc().isAfter(localUpdatedAt.toUtc())) {
+      _syncLog(
+        label,
+        'UPDATE rebanho ignorado: idRebanho=$idRebanho tem updated_at remoto mais recente ($remoteUpdatedAt > $localUpdatedAt).',
+      );
+      return true;
+    }
+  }
+
   final updated = await _withTimeout(
     () => SupaFlow.client
         .from('rebanho')
@@ -277,6 +302,14 @@ Future<bool> _updateRebanhoSupabaseById(
     timeout: kSyncPageTimeout,
   );
   return updated.isNotEmpty;
+}
+
+DateTime? _parseSyncDate(dynamic value) {
+  if (value == null) return null;
+  if (value is DateTime) return value;
+  final raw = value.toString().trim();
+  if (raw.isEmpty || raw == 'null') return null;
+  return DateTime.tryParse(raw);
 }
 
 Future<Set<String>> _buscarRebanhoIdsRemotos(
@@ -1000,7 +1033,6 @@ Future<ApiCallResponse> _buscarPesagensDireto({
           'id_propriedade': 'in.${_buildSupabaseInFilter(propertyIds)}',
           'idRebanho': 'not.is.null',
           'dataPesagem': 'not.is.null',
-          'tipo': 'not.is.null',
           'peso': 'not.is.null',
           'deletado': 'not.eq.SIM',
           if (updatedAfter != null) 'updated_at': 'gt.$updatedAfter',
@@ -1055,6 +1087,78 @@ Future<ApiCallResponse> _buscarPesagensSemPropriedade({
       .timeout(timeout);
 }
 
+Future<ApiCallResponse> _buscarPesagensTipoVazioDireto({
+  required List<String> propertyIds,
+  required int limit,
+  required int offset,
+  String? updatedAfter,
+  Duration timeout = const Duration(seconds: 25),
+}) {
+  return ApiManager.instance
+      .makeApiCall(
+        callName: 'Buscar Pesagens Tipo Vazio',
+        apiUrl:
+            '${SupabaseFunctionsGroup.getBaseUrl().replaceFirst('/rpc', '')}/historico_pesagens',
+        callType: ApiCallType.GET,
+        headers: SupabaseFunctionsGroup.headers,
+        params: {
+          'select':
+              'id,id_pesagem,idRebanho,dataPesagem,tipo,peso,deletado,created_at,updated_at,id_propriedade',
+          'id_propriedade': 'in.${_buildSupabaseInFilter(propertyIds)}',
+          'idRebanho': 'not.is.null',
+          'dataPesagem': 'not.is.null',
+          'peso': 'not.is.null',
+          'or': '(tipo.is.null,tipo.eq.)',
+          if (updatedAfter != null) 'updated_at': 'gt.$updatedAfter',
+          'order': 'id.asc',
+          'limit': limit,
+          'offset': offset,
+        },
+        returnBody: true,
+        encodeBodyUtf8: false,
+        decodeUtf8: false,
+        cache: false,
+        isStreamingApi: false,
+        alwaysAllowBody: false,
+      )
+      .timeout(timeout);
+}
+
+Future<ApiCallResponse> _buscarPesagensTipoVazioSemPropriedade({
+  required List<String> rebanhoIds,
+  required int limit,
+  required int offset,
+  Duration timeout = const Duration(seconds: 25),
+}) {
+  return ApiManager.instance
+      .makeApiCall(
+        callName: 'Buscar Pesagens Tipo Vazio sem Propriedade',
+        apiUrl:
+            '${SupabaseFunctionsGroup.getBaseUrl().replaceFirst('/rpc', '')}/historico_pesagens',
+        callType: ApiCallType.GET,
+        headers: SupabaseFunctionsGroup.headers,
+        params: {
+          'select':
+              'id,id_pesagem,idRebanho,dataPesagem,tipo,peso,deletado,created_at,updated_at,id_propriedade',
+          'id_propriedade': 'is.null',
+          'idRebanho': 'in.${_buildSupabaseInFilter(rebanhoIds)}',
+          'dataPesagem': 'not.is.null',
+          'peso': 'not.is.null',
+          'or': '(tipo.is.null,tipo.eq.)',
+          'order': 'id.asc',
+          'limit': limit,
+          'offset': offset,
+        },
+        returnBody: true,
+        encodeBodyUtf8: false,
+        decodeUtf8: false,
+        cache: false,
+        isStreamingApi: false,
+        alwaysAllowBody: false,
+      )
+      .timeout(timeout);
+}
+
 Future<ApiCallResponse> _buscarPesagensRebanhoDireto({
   required String idRebanho,
   String? idPropriedade,
@@ -1075,7 +1179,6 @@ Future<ApiCallResponse> _buscarPesagensRebanhoDireto({
           if (propertyId != null && propertyId.isNotEmpty)
             'id_propriedade': 'eq.$propertyId',
           'dataPesagem': 'not.is.null',
-          'tipo': 'not.is.null',
           'peso': 'not.is.null',
           'deletado': 'not.eq.SIM',
           'order': 'dataPesagem.asc,created_at.asc,id.asc',
@@ -1273,6 +1376,89 @@ Future<_PesagensSyncPageResult> _syncPesagensKeysetPages({
     if (records.length < limit) break;
   }
 
+  return _PesagensSyncPageResult(inserted: totalInserted, errors: errors);
+}
+
+Future<_PesagensSyncPageResult> _syncPesagensTipoVazioRestPages({
+  required List<String> propertyIds,
+  required String? updatedAfter,
+}) async {
+  final errors = <Map<String, String>>[];
+  var totalInserted = 0;
+  var fetchedCount = 0;
+  var totalFetched = 0;
+  const pageSize = 999;
+
+  while (true) {
+    _throwIfCancelled('refreshPesagens.tipoVazio');
+    final resp = await _buscarPesagensTipoVazioDireto(
+      propertyIds: propertyIds,
+      limit: pageSize,
+      offset: fetchedCount,
+      updatedAfter: updatedAfter,
+    );
+    final records = _safeRecordsFromApi(resp.jsonBody);
+    _syncLog('pesagens',
+        'Backfill tipo vazio: offset=$fetchedCount, ${records.length} registro(s).');
+    if (records.isEmpty) break;
+
+    final result = await actions.batchInsertLocalPesagens(records);
+    totalInserted += result['inserted'] as int? ?? 0;
+    totalFetched += records.length;
+    final pageErrors = result['errors'] as List<Map<String, String>>? ?? [];
+    if (pageErrors.isNotEmpty) errors.addAll(pageErrors);
+
+    fetchedCount += records.length;
+    if (records.length < pageSize) break;
+  }
+
+  _syncLog('pesagens',
+      'Backfill tipo vazio por propriedade finalizado: $totalFetched encontrado(s), $totalInserted upsert(s).');
+  return _PesagensSyncPageResult(inserted: totalInserted, errors: errors);
+}
+
+Future<_PesagensSyncPageResult> _syncPesagensTipoVazioSemPropriedadePages({
+  required List<String> rebanhoIds,
+}) async {
+  final errors = <Map<String, String>>[];
+  var totalInserted = 0;
+  var totalFetched = 0;
+  const pageSize = 999;
+  const batchSize = 50;
+
+  for (var i = 0; i < rebanhoIds.length; i += batchSize) {
+    _throwIfCancelled('refreshPesagens.tipoVazioSemPropriedade');
+    final batch = rebanhoIds.sublist(
+      i,
+      i + batchSize > rebanhoIds.length ? rebanhoIds.length : i + batchSize,
+    );
+    var offset = 0;
+
+    while (true) {
+      _throwIfCancelled('refreshPesagens.tipoVazioSemPropriedade');
+      final resp = await _buscarPesagensTipoVazioSemPropriedade(
+        rebanhoIds: batch,
+        limit: pageSize,
+        offset: offset,
+      );
+      final records = _safeRecordsFromApi(resp.jsonBody);
+      _syncLog('pesagens',
+          'Backfill tipo vazio sem propriedade: batch=${i ~/ batchSize}, offset=$offset, ${records.length} registro(s).');
+      if (records.isEmpty) break;
+
+      final result = await actions.batchInsertLocalPesagens(records);
+      totalInserted += result['inserted'] as int? ?? 0;
+      totalFetched += records.length;
+      final pageErrors = result['errors'] as List<Map<String, String>>? ?? [];
+      if (pageErrors.isNotEmpty) errors.addAll(pageErrors);
+
+      offset += records.length;
+      if (records.length < pageSize) break;
+    }
+  }
+
+  _syncLog('pesagens',
+      'Backfill tipo vazio sem propriedade finalizado: $totalFetched encontrado(s), $totalInserted upsert(s).');
   return _PesagensSyncPageResult(inserted: totalInserted, errors: errors);
 }
 
@@ -4497,8 +4683,8 @@ Future<void> _refreshPesagensInternal(BuildContext context) async {
         'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
 
     if (!shouldSync) {
-      _syncLog('pesagens', 'Sem necessidade de sincronização.');
-      return;
+      _syncLog('pesagens',
+          'Sem alterações incrementais; verificando backfill de pesagens com tipo vazio.');
     }
 
     final localPesagensEmpty =
@@ -4514,8 +4700,11 @@ Future<void> _refreshPesagensInternal(BuildContext context) async {
         ? effectiveLocalLastChange.toUtc().toIso8601String()
         : null;
 
-    _syncLog('pesagens',
-        'Iniciando sincronização ${isFirst ? "COMPLETA (primeiro sync)" : "INCREMENTAL desde $updatedAfter"}.');
+    _syncLog(
+        'pesagens',
+        shouldSync
+            ? 'Iniciando sincronização ${isFirst ? "COMPLETA (primeiro sync)" : "INCREMENTAL desde $updatedAfter"}.'
+            : 'Sincronização incremental pulada; backfill de tipo vazio será completo.');
     var syncOk = true;
     final List<Map<String, String>> syncErrors = [];
     int totalInserted = 0;
@@ -4536,22 +4725,24 @@ Future<void> _refreshPesagensInternal(BuildContext context) async {
 
       var keysetCompleted = false;
       Object? keysetError;
-      try {
-        _syncLog('pesagens', 'Usando paginação keyset por RPC.');
-        final keysetResult = await _syncPesagensKeysetPages(
-          propertyIds: propertyIds,
-          updatedAfter: updatedAfter,
-        );
-        totalInserted += keysetResult.inserted;
-        syncErrors.addAll(keysetResult.errors);
-        keysetCompleted = true;
-      } catch (e, s) {
-        keysetError = e;
-        _syncLog('pesagens',
-            'RPC keyset indisponível/falhou. Fallback REST com OFFSET: $e\n$s');
+      if (shouldSync) {
+        try {
+          _syncLog('pesagens', 'Usando paginação keyset por RPC.');
+          final keysetResult = await _syncPesagensKeysetPages(
+            propertyIds: propertyIds,
+            updatedAfter: updatedAfter,
+          );
+          totalInserted += keysetResult.inserted;
+          syncErrors.addAll(keysetResult.errors);
+          keysetCompleted = true;
+        } catch (e, s) {
+          keysetError = e;
+          _syncLog('pesagens',
+              'RPC keyset indisponível/falhou. Fallback REST com OFFSET: $e\n$s');
+        }
       }
 
-      if (!keysetCompleted) {
+      if (shouldSync && !keysetCompleted) {
         // Fallback legado direto da tabela REST para instalações onde a migration
         // da RPC ainda não foi aplicada.
         pesagensAPI = await _buscarPesagensDireto(
@@ -4582,9 +4773,8 @@ Future<void> _refreshPesagensInternal(BuildContext context) async {
                 remoteLastChange ?? DateTime.now();
           } else {
             _syncLog('pesagens',
-                'Primeira página vazia apesar de total=$totalPesagens. Não apagando dados locais. Abortando sync.');
+                'Primeira página vazia apesar de total=$totalPesagens. Não apagando dados locais.');
           }
-          return;
         }
 
         if (isFirst) {
@@ -4667,6 +4857,30 @@ Future<void> _refreshPesagensInternal(BuildContext context) async {
         }
       }
 
+      final tipoVazioResult = await _syncPesagensTipoVazioRestPages(
+        propertyIds: propertyIds,
+        updatedAfter: null,
+      );
+      totalInserted += tipoVazioResult.inserted;
+      syncErrors.addAll(tipoVazioResult.errors);
+
+      try {
+        final localRebIds = await _getLocalRebanhoIds();
+        if (localRebIds.isNotEmpty) {
+          _syncLog('pesagens',
+              'Backfill tipo vazio: verificando id_propriedade NULL para ${localRebIds.length} animais locais.');
+          final tipoVazioSemPropriedadeResult =
+              await _syncPesagensTipoVazioSemPropriedadePages(
+            rebanhoIds: localRebIds,
+          );
+          totalInserted += tipoVazioSemPropriedadeResult.inserted;
+          syncErrors.addAll(tipoVazioSemPropriedadeResult.errors);
+        }
+      } catch (e, s) {
+        _syncLog('pesagens',
+            'Erro no backfill de tipo vazio sem propriedade: $e\n$s');
+      }
+
       // ── Catch-up: buscar pesagens com id_propriedade NULL ──────────
       // Registros criados pela web podem não ter id_propriedade preenchido,
       // o que faz com que o filtro principal (in.props) os ignore.
@@ -4678,7 +4892,8 @@ Future<void> _refreshPesagensInternal(BuildContext context) async {
       final lastCatchup = FFAppState().lastCatchupPesagens;
       final skipCatchupAfterKeysetTimeout =
           !keysetCompleted && _isTimeoutLikeError(keysetError);
-      final shouldRunCatchup = !keysetCompleted &&
+      final shouldRunCatchup = shouldSync &&
+          !keysetCompleted &&
           !skipCatchupAfterKeysetTimeout &&
           (isFirst ||
               lastCatchup == null ||

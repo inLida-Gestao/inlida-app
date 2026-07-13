@@ -140,6 +140,9 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
     return normalized;
   }
 
+  bool _isPesagemAtiva(HistoricoPesagensStruct pesagem) =>
+      pesagem.deletado.trim().toUpperCase() != 'SIM';
+
   bool _isDesmamaPesagem(HistoricoPesagensStruct pesagem) =>
       pesagem.tipo.trim().toLowerCase() == 'desmama';
 
@@ -7946,9 +7949,8 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           builder: (context) {
                                                             final pesagem = FFAppState()
                                                                 .histPesagens
-                                                                .where((e) =>
-                                                                    e.deletado ==
-                                                                    'NAO')
+                                                                .where(
+                                                                    _isPesagemAtiva)
                                                                 .toList()
                                                                 .sortedList(
                                                                     keyOf: (e) =>

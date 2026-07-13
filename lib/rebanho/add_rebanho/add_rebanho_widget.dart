@@ -5810,7 +5810,10 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                               .secondary,
                                                     ),
                                                   );
-                                                  FFAppState().update(() {});
+                                                  FFAppState().update(() {
+                                                    FFAppState()
+                                                        .bumpRebanhoListRefreshRevision();
+                                                  });
                                                   Navigator.pop(context);
                                                 } finally {
                                                   if (mounted) {

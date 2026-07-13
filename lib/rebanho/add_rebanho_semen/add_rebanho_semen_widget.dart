@@ -740,76 +740,84 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                     _isSaving = true;
                                     safeSetState(() {});
                                     try {
-                                    if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
-                                    if (!(FFAppState()
-                                            .dataDadosNaoSyncRebanho !=
-                                        null)) {
-                                      FFAppState().dataDadosNaoSyncRebanho =
-                                          getCurrentTimestamp;
-                                      safeSetState(() {});
-                                    }
-                                    await SQLiteManager.instance
-                                        .insertRebanhoSemen(
-                                      idPropriedade: FFAppState()
-                                          .propriedadeSelecionada
-                                          .idPropriedade,
-                                      numeroAnimal:
-                                          _model.nAnimalTextController.text,
-                                      codRegistro: _model
-                                          .cdigoregistroTextController.text,
-                                      nome:
-                                          _model.nomeAnimalTextController.text,
-                                      raca: _model.dPRacaValue,
-                                      anotacoes:
-                                          _model.anotacoesTextController.text,
-                                      idRebanho: random_data.randomString(
-                                        20,
-                                        20,
-                                        true,
-                                        false,
-                                        true,
-                                      ),
-                                      deletado: 'NAO',
-                                      createdat: dateTimeFormat(
-                                        "yyyy-MM-dd HH:mm:ss",
-                                        getCurrentTimestamp,
-                                        locale: FFLocalizations.of(context)
-                                            .languageCode,
-                                      ),
-                                      updatedat: dateTimeFormat(
-                                        "yyyy-MM-dd HH:mm:ss",
-                                        getCurrentTimestamp,
-                                        locale: FFLocalizations.of(context)
-                                            .languageCode,
-                                      ),
-                                      tipo: 'Sêmen',
-                                      sexo: 'Macho',
-                                      categoria: 'Touro',
-                                      nomeConcat:
-                                          '${_model.nAnimalTextController.text} - ${_model.nomeAnimalTextController.text}',
-                                      statusRebanho: 'Sêmen',
-                                    );
-                                    await action_blocks
-                                        .animaisRegistrados(context);
-                                    await action_blocks
-                                        .animaisPropriedade(context);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Sêmen adicionado com sucesso',
-                                          style: TextStyle(
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryBackground,
-                                          ),
+                                      if (await action_blocks
+                                          .blockIfAccountCanceled(context,
+                                              refreshFromServer: true)) return;
+                                      if (!(FFAppState()
+                                              .dataDadosNaoSyncRebanho !=
+                                          null)) {
+                                        FFAppState().dataDadosNaoSyncRebanho =
+                                            getCurrentTimestamp;
+                                        safeSetState(() {});
+                                      }
+                                      await SQLiteManager.instance
+                                          .insertRebanhoSemen(
+                                        idPropriedade: FFAppState()
+                                            .propriedadeSelecionada
+                                            .idPropriedade,
+                                        numeroAnimal:
+                                            _model.nAnimalTextController.text,
+                                        codRegistro: _model
+                                            .cdigoregistroTextController.text,
+                                        nome: _model
+                                            .nomeAnimalTextController.text,
+                                        raca: _model.dPRacaValue,
+                                        anotacoes:
+                                            _model.anotacoesTextController.text,
+                                        idRebanho: random_data.randomString(
+                                          20,
+                                          20,
+                                          true,
+                                          false,
+                                          true,
                                         ),
-                                        duration:
-                                            const Duration(milliseconds: 4000),
-                                        backgroundColor:
-                                            FlutterFlowTheme.of(context)
-                                                .secondary,
-                                      ),
-                                    );
-                                    Navigator.pop(context);
+                                        deletado: 'NAO',
+                                        createdat: dateTimeFormat(
+                                          "yyyy-MM-dd HH:mm:ss",
+                                          getCurrentTimestamp,
+                                          locale: FFLocalizations.of(context)
+                                              .languageCode,
+                                        ),
+                                        updatedat: dateTimeFormat(
+                                          "yyyy-MM-dd HH:mm:ss",
+                                          getCurrentTimestamp,
+                                          locale: FFLocalizations.of(context)
+                                              .languageCode,
+                                        ),
+                                        tipo: 'Sêmen',
+                                        sexo: 'Macho',
+                                        categoria: 'Touro',
+                                        nomeConcat:
+                                            '${_model.nAnimalTextController.text} - ${_model.nomeAnimalTextController.text}',
+                                        statusRebanho: 'Sêmen',
+                                      );
+                                      await action_blocks
+                                          .animaisRegistrados(context);
+                                      await action_blocks
+                                          .animaisPropriedade(context);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Sêmen adicionado com sucesso',
+                                            style: TextStyle(
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                            ),
+                                          ),
+                                          duration: const Duration(
+                                              milliseconds: 4000),
+                                          backgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .secondary,
+                                        ),
+                                      );
+                                      FFAppState().update(() {
+                                        FFAppState()
+                                            .bumpRebanhoListRefreshRevision();
+                                      });
+                                      Navigator.pop(context);
                                     } finally {
                                       if (mounted) {
                                         _isSaving = false;

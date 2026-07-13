@@ -1181,6 +1181,12 @@ class FFAppState extends ChangeNotifier {
         : prefs.remove('ff_rebanhosChangeDateTime');
   }
 
+  int _rebanhoListRefreshRevision = 0;
+  int get rebanhoListRefreshRevision => _rebanhoListRefreshRevision;
+  void bumpRebanhoListRefreshRevision() {
+    _rebanhoListRefreshRevision++;
+  }
+
   int _rebanhosIndex = 0;
   int get rebanhosIndex => _rebanhosIndex;
   set rebanhosIndex(int value) {
@@ -2194,11 +2200,13 @@ class FFAppState extends ChangeNotifier {
   AnimalSelecionadoStruct get matrizSelecionada => _matrizSelecionada;
   set matrizSelecionada(AnimalSelecionadoStruct value) {
     _matrizSelecionada = value;
+    notifyListeners();
   }
 
   void updateMatrizSelecionadaStruct(
       Function(AnimalSelecionadoStruct) updateFn) {
     updateFn(_matrizSelecionada);
+    notifyListeners();
   }
 
   AnimalSelecionadoStruct _reprodutorSelecionado =
@@ -2206,11 +2214,13 @@ class FFAppState extends ChangeNotifier {
   AnimalSelecionadoStruct get reprodutorSelecionado => _reprodutorSelecionado;
   set reprodutorSelecionado(AnimalSelecionadoStruct value) {
     _reprodutorSelecionado = value;
+    notifyListeners();
   }
 
   void updateReprodutorSelecionadoStruct(
       Function(AnimalSelecionadoStruct) updateFn) {
     updateFn(_reprodutorSelecionado);
+    notifyListeners();
   }
 
   int _totalReproducoes = 0;

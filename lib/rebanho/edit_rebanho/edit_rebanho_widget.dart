@@ -141,6 +141,9 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
     return functions.converterParaData(normalized);
   }
 
+  bool _isPesagemAtiva(HistoricoPesagensStruct pesagem) =>
+      pesagem.deletado.trim().toUpperCase() != 'SIM';
+
   bool _isDesmamaPesagem(HistoricoPesagensStruct pesagem) =>
       pesagem.tipo.trim().toLowerCase() == 'desmama';
 
@@ -2830,6 +2833,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           );
                                                         },
                                                       );
+                                                      safeSetState(() {});
                                                     },
                                                     child: Container(
                                                       width: double.infinity,
@@ -3072,6 +3076,7 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                           );
                                                         },
                                                       );
+                                                      safeSetState(() {});
                                                     },
                                                     child: Container(
                                                       width: double.infinity,
@@ -6089,9 +6094,8 @@ class _EditRebanhoWidgetState extends State<EditRebanhoWidget>
                                                     builder: (context) {
                                                       final pesagem = FFAppState()
                                                           .histPesagens
-                                                          .where((e) =>
-                                                              e.deletado ==
-                                                              'NAO')
+                                                          .where(
+                                                              _isPesagemAtiva)
                                                           .toList()
                                                           .sortedList(
                                                               keyOf: (e) =>

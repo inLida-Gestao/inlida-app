@@ -110,6 +110,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
       _dataNascInicioFilterValue(),
       _dataNascFimFilterValue(),
       state.rebanhosChangeDateTime?.millisecondsSinceEpoch,
+      state.rebanhoListRefreshRevision,
     ].join('|');
   }
 
@@ -152,6 +153,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
       _dataNascInicioFilterValue(),
       _dataNascFimFilterValue(),
       state.rebanhosChangeDateTime?.millisecondsSinceEpoch,
+      state.rebanhoListRefreshRevision,
     ].join('|');
   }
 
@@ -193,6 +195,7 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
       _dataNascInicioFilterValue(),
       _dataNascFimFilterValue(),
       state.rebanhosChangeDateTime?.millisecondsSinceEpoch,
+      state.rebanhoListRefreshRevision,
     ].join('|');
   }
 

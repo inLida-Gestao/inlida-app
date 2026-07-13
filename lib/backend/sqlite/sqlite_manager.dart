@@ -779,10 +779,12 @@ class SQLiteManager {
 
   Future<List<BuscarAnimaisDoLoteRow>> buscarAnimaisDoLote({
     String? loteid,
+    String? idPropriedade,
   }) =>
       performBuscarAnimaisDoLote(
         _database,
         loteid: loteid,
+        idPropriedade: idPropriedade,
       );
 
   Future<List<RebanhoPagOrdNumCresRow>> rebanhoPagOrdNumCres({
@@ -1978,6 +1980,8 @@ WHERE idRebanho = ?
     String? idPropriedade,
     String? idRebanho,
     String? dataSanidade,
+    String? idLote,
+    double? porcentagemLote,
     String? idSanidade,
     String? updatedat,
     String? deletado,
@@ -2003,6 +2007,8 @@ WHERE idRebanho = ?
         idPropriedade: idPropriedade,
         idRebanho: idRebanho,
         dataSanidade: dataSanidade,
+        idLote: idLote,
+        porcentagemLote: porcentagemLote,
         idSanidade: idSanidade,
         updatedat: updatedat,
         deletado: deletado,

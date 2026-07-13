@@ -2772,6 +2772,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                         .instance
                                         .buscarAnimaisDoLote(
                                       loteid: _model.dropDownLoteValue,
+                                      idPropriedade: FFAppState()
+                                          .propriedadeSelecionada
+                                          .idPropriedade,
                                     );
                                     _model.index = 0;
                                     safeSetState(() {});
@@ -2813,6 +2816,11 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                             locale: FFLocalizations.of(context)
                                                 .languageCode,
                                           ),
+                                          idLote: _model.dropDownLoteValue,
+                                          porcentagemLote: double.tryParse(_model
+                                              .textFieldPorcentagemLoteTextController
+                                              .text
+                                              .replaceAll(',', '.')),
                                           idSanidade: random_data.randomString(
                                             20,
                                             20,

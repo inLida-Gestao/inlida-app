@@ -1,9 +1,11 @@
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
+import '/backend/utils/lote_dropdown_utils.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/lotes/edit_lote/edit_lote_widget.dart';
+import '/rebanho/view_rebanho/view_rebanho_widget.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'dart:async';
 import 'package:easy_debounce/easy_debounce.dart';
@@ -133,6 +135,122 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
     _model.maybeDispose();
 
     super.dispose();
+  }
+
+  AnimaisStruct _criaMatrizToAnimaisStruct(
+    BuscarCriasRebanhoMatrizRow cria,
+  ) =>
+      AnimaisStruct(
+        idRebanho: cria.idRebanho,
+        sexo: cria.sexo,
+        numeroAnimal: cria.numeroAnimal,
+        nome: cria.nome,
+        dataNascimento: cria.dataNascimento,
+        categoria: cria.categoria,
+        raca: cria.raca,
+        loteNome: cria.loteNome,
+        rebanhoIdMatriz: cria.rebanhoIdMatriz,
+        rebanhoIdReprodutor: cria.rebanhoIdReprodutor,
+        numeroMatriz: cria.numeroMatriz,
+        nomeMatriz: cria.nomeMatriz,
+        dataNascMatriz: cria.dataNascMatriz,
+        racaMatriz: cria.racaMatriz,
+        numeroReprodutor: cria.numeroReprodutor,
+        nomeReprodutor: cria.nomeReprodutor,
+        dataNascReprodutor: cria.dataNascReprodutor,
+        racaReprodutor: cria.racaReprodutor,
+      );
+
+  AnimaisStruct _criaReprodutorToAnimaisStruct(
+    BuscarCriasRebanhoReprodutorRow cria,
+  ) =>
+      AnimaisStruct(
+        idRebanho: cria.idRebanho,
+        sexo: cria.sexo,
+        numeroAnimal: cria.numeroAnimal,
+        nome: cria.nome,
+        dataNascimento: cria.dataNascimento,
+        categoria: cria.categoria,
+        raca: cria.raca,
+        loteNome: cria.loteNome,
+        rebanhoIdMatriz: cria.rebanhoIdMatriz,
+        rebanhoIdReprodutor: cria.rebanhoIdReprodutor,
+        numeroMatriz: cria.numeroMatriz,
+        nomeMatriz: cria.nomeMatriz,
+        dataNascMatriz: cria.dataNascMatriz,
+        racaMatriz: cria.racaMatriz,
+        numeroReprodutor: cria.numeroReprodutor,
+        nomeReprodutor: cria.nomeReprodutor,
+        dataNascReprodutor: cria.dataNascReprodutor,
+        racaReprodutor: cria.racaReprodutor,
+      );
+
+  HistoricoPesagensStruct _pesagemToHistoricoStruct(
+    BuscaHistPesagensRow pesagem,
+  ) =>
+      HistoricoPesagensStruct(
+        idRebanho: pesagem.idRebanho,
+        dataPesagem: pesagem.dataPesagem,
+        tipo: pesagem.tipo,
+        deletado: pesagem.deletado,
+        createdAt: pesagem.createdAt,
+        id: pesagem.id,
+        peso: pesagem.peso,
+      );
+
+  Future<void> _prepareRebanhoStateForDialog(String idRebanho) async {
+    final criasMatriz = await SQLiteManager.instance.buscarCriasRebanhoMatriz(
+      idRebanho: idRebanho,
+    );
+    final criasReprodutor =
+        await SQLiteManager.instance.buscarCriasRebanhoReprodutor(
+      idRebanho: idRebanho,
+    );
+    final histPesagens = await SQLiteManager.instance.buscaHistPesagens(
+      idRebanho: idRebanho,
+    );
+    final lotes = await SQLiteManager.instance.buscarLotes(
+      idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+    );
+
+    FFAppState().crias = [
+      ...criasMatriz.map(_criaMatrizToAnimaisStruct),
+      ...criasReprodutor.map(_criaReprodutorToAnimaisStruct),
+    ];
+    FFAppState().histPesagens =
+        histPesagens.map(_pesagemToHistoricoStruct).toList();
+    FFAppState().rebanhoLotesSelecionar = buildRebanhoLoteOptions(lotes);
+  }
+
+  Future<void> _openRebanhoDialog(String? idRebanho) async {
+    final normalizedId = idRebanho?.trim();
+    if (normalizedId == null || normalizedId.isEmpty) {
+      return;
+    }
+
+    await _prepareRebanhoStateForDialog(normalizedId);
+    if (!mounted) return;
+
+    await showDialog(
+      barrierColor: Colors.transparent,
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          elevation: 0,
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          alignment: const AlignmentDirectional(0.0, 0.0)
+              .resolve(Directionality.of(context)),
+          child: ViewRebanhoWidget(
+            idRebanho: normalizedId,
+          ),
+        );
+      },
+    );
+
+    if (mounted) {
+      safeSetState(() {});
+    }
   }
 
   DateTime _dateOnly(DateTime value) =>
@@ -381,9 +499,8 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
       }
       todasPesagens.addAll(pontos);
 
-      final shouldYield =
-          (index + 1) % _gmdLoteCalculationBatchSize == 0 ||
-              index == animais.length - 1;
+      final shouldYield = (index + 1) % _gmdLoteCalculationBatchSize == 0 ||
+          index == animais.length - 1;
       if (shouldYield) {
         await Future<void>.delayed(Duration.zero);
       }
@@ -434,10 +551,10 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
       } else {
         final animalPesagens =
             (pontosPorAnimal[idRebanho] ?? const <_LoteGmdPesagem>[])
-            .where((pesagem) =>
-                !pesagem.data.isBefore(dataInicial) &&
-                !pesagem.data.isAfter(dataFinal))
-            .toList();
+                .where((pesagem) =>
+                    !pesagem.data.isBefore(dataInicial) &&
+                    !pesagem.data.isAfter(dataFinal))
+                .toList();
 
         if (animalPesagens.length < 2) {
           results.add(_LoteGmdAnimalResult(
@@ -473,9 +590,8 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
         }
       }
 
-      final shouldYield =
-          (index + 1) % _gmdLoteCalculationBatchSize == 0 ||
-              index == animais.length - 1;
+      final shouldYield = (index + 1) % _gmdLoteCalculationBatchSize == 0 ||
+          index == animais.length - 1;
       if (shouldYield) {
         if (mounted && _gmdLoteCalculationKey == calculationKey) {
           safeSetState(() {
@@ -1116,12 +1232,10 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
   }
 
   Widget _buildGmdLoteProgressState(List<RebanhoStruct> animais) {
-    final total = _gmdLoteProgressTotal > 0
-        ? _gmdLoteProgressTotal
-        : animais.length;
-    final current = _gmdLoteProgressCurrent > total
-        ? total
-        : _gmdLoteProgressCurrent;
+    final total =
+        _gmdLoteProgressTotal > 0 ? _gmdLoteProgressTotal : animais.length;
+    final current =
+        _gmdLoteProgressCurrent > total ? total : _gmdLoteProgressCurrent;
     final progress = total > 0 ? current / total : null;
 
     return SingleChildScrollView(
@@ -2815,199 +2929,217 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
                                                                           0.0,
                                                                           8.0),
                                                                   child:
-                                                                      SingleChildScrollView(
-                                                                    scrollDirection:
-                                                                        Axis.horizontal,
-                                                                    child: Row(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .max,
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .start,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .center,
-                                                                      children:
-                                                                          [
-                                                                        Column(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.min,
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children:
-                                                                              [
-                                                                            SingleChildScrollView(
-                                                                              scrollDirection: Axis.horizontal,
-                                                                              child: Row(
-                                                                                mainAxisSize: MainAxisSize.max,
-                                                                                children: [
-                                                                                  ClipRRect(
-                                                                                    borderRadius: BorderRadius.circular(8.0),
-                                                                                    child: Image.asset(
-                                                                                      'assets/images/Group_11_3_(1).png',
-                                                                                      width: 24.0,
-                                                                                      height: 24.0,
-                                                                                      fit: BoxFit.scaleDown,
-                                                                                    ),
-                                                                                  ),
-                                                                                  if (rebanhoItem.sexo == 'Macho')
+                                                                      InkWell(
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
+                                                                        () async {
+                                                                      await _openRebanhoDialog(
+                                                                          rebanhoItem
+                                                                              .idRebanho);
+                                                                    },
+                                                                    child:
+                                                                        SingleChildScrollView(
+                                                                      scrollDirection:
+                                                                          Axis.horizontal,
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.max,
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.center,
+                                                                        children:
+                                                                            [
+                                                                          Column(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.min,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children:
+                                                                                [
+                                                                              SingleChildScrollView(
+                                                                                scrollDirection: Axis.horizontal,
+                                                                                child: Row(
+                                                                                  mainAxisSize: MainAxisSize.max,
+                                                                                  children: [
                                                                                     ClipRRect(
                                                                                       borderRadius: BorderRadius.circular(8.0),
                                                                                       child: Image.asset(
-                                                                                        'assets/images/Sexomacho.png',
+                                                                                        'assets/images/Group_11_3_(1).png',
                                                                                         width: 24.0,
                                                                                         height: 24.0,
                                                                                         fit: BoxFit.scaleDown,
                                                                                       ),
                                                                                     ),
-                                                                                  if (rebanhoItem.sexo == 'Fêmea')
-                                                                                    ClipRRect(
-                                                                                      borderRadius: BorderRadius.circular(8.0),
-                                                                                      child: Image.asset(
-                                                                                        'assets/images/Sexofemea.png',
-                                                                                        width: 24.0,
-                                                                                        height: 24.0,
-                                                                                        fit: BoxFit.scaleDown,
+                                                                                    if (rebanhoItem.sexo == 'Macho')
+                                                                                      ClipRRect(
+                                                                                        borderRadius: BorderRadius.circular(8.0),
+                                                                                        child: Image.asset(
+                                                                                          'assets/images/Sexomacho.png',
+                                                                                          width: 24.0,
+                                                                                          height: 24.0,
+                                                                                          fit: BoxFit.scaleDown,
+                                                                                        ),
                                                                                       ),
-                                                                                    ),
-                                                                                ],
+                                                                                    if (rebanhoItem.sexo == 'Fêmea')
+                                                                                      ClipRRect(
+                                                                                        borderRadius: BorderRadius.circular(8.0),
+                                                                                        child: Image.asset(
+                                                                                          'assets/images/Sexofemea.png',
+                                                                                          width: 24.0,
+                                                                                          height: 24.0,
+                                                                                          fit: BoxFit.scaleDown,
+                                                                                        ),
+                                                                                      ),
+                                                                                  ],
+                                                                                ),
                                                                               ),
-                                                                            ),
-                                                                            SingleChildScrollView(
-                                                                              scrollDirection: Axis.horizontal,
-                                                                              child: Row(
-                                                                                mainAxisSize: MainAxisSize.max,
-                                                                                children: [
-                                                                                  Text(
-                                                                                    '${valueOrDefault<String>(
-                                                                                      rebanhoItem.numeroAnimal,
-                                                                                      'numero',
-                                                                                    )} • ${valueOrDefault<String>(
-                                                                                      () {
-                                                                                        if (valueOrDefault<String>(
+                                                                              SingleChildScrollView(
+                                                                                scrollDirection: Axis.horizontal,
+                                                                                child: Row(
+                                                                                  mainAxisSize: MainAxisSize.max,
+                                                                                  children: [
+                                                                                    Text(
+                                                                                      '${valueOrDefault<String>(
+                                                                                        rebanhoItem.numeroAnimal,
+                                                                                        'numero',
+                                                                                      )} • ${valueOrDefault<String>(
+                                                                                        () {
+                                                                                          if (valueOrDefault<String>(
+                                                                                                rebanhoItem.nome,
+                                                                                                'nome',
+                                                                                              ) ==
+                                                                                              'null') {
+                                                                                            return 'S/N';
+                                                                                          } else if (valueOrDefault<String>(
+                                                                                                rebanhoItem.nome,
+                                                                                                'nome',
+                                                                                              ) ==
+                                                                                              '') {
+                                                                                            return 'S/N';
+                                                                                          } else {
+                                                                                            return valueOrDefault<String>(
                                                                                               rebanhoItem.nome,
                                                                                               'nome',
-                                                                                            ) ==
-                                                                                            'null') {
-                                                                                          return 'S/N';
-                                                                                        } else if (valueOrDefault<String>(
-                                                                                              rebanhoItem.nome,
-                                                                                              'nome',
-                                                                                            ) ==
-                                                                                            '') {
-                                                                                          return 'S/N';
-                                                                                        } else {
-                                                                                          return valueOrDefault<String>(
-                                                                                            rebanhoItem.nome,
-                                                                                            'nome',
-                                                                                          );
-                                                                                        }
-                                                                                      }(),
-                                                                                      'S/N',
-                                                                                    )} • ${dateTimeFormat(
-                                                                                      "d/M/y",
-                                                                                      functions.converterParaData(rebanhoItem.dataNascimento),
-                                                                                      locale: FFLocalizations.of(context).languageCode,
-                                                                                    )}',
-                                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                          font: GoogleFonts.plusJakartaSans(
+                                                                                            );
+                                                                                          }
+                                                                                        }(),
+                                                                                        'S/N',
+                                                                                      )} • ${dateTimeFormat(
+                                                                                        "d/M/y",
+                                                                                        functions.converterParaData(rebanhoItem.dataNascimento),
+                                                                                        locale: FFLocalizations.of(context).languageCode,
+                                                                                      )}',
+                                                                                      style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                            font: GoogleFonts.plusJakartaSans(
+                                                                                              fontWeight: FontWeight.w500,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                            ),
+                                                                                            color: const Color(0xFF474747),
+                                                                                            fontSize: 16.0,
+                                                                                            letterSpacing: 0.0,
                                                                                             fontWeight: FontWeight.w500,
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                           ),
-                                                                                          color: const Color(0xFF474747),
-                                                                                          fontSize: 16.0,
-                                                                                          letterSpacing: 0.0,
-                                                                                          fontWeight: FontWeight.w500,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                        ),
-                                                                                  ),
-                                                                                ].divide(const SizedBox(width: 4.0)),
-                                                                              ),
-                                                                            ),
-                                                                            SingleChildScrollView(
-                                                                              scrollDirection: Axis.horizontal,
-                                                                              child: Row(
-                                                                                mainAxisSize: MainAxisSize.max,
-                                                                                children: [
-                                                                                  Text(
-                                                                                    valueOrDefault<String>(
-                                                                                      rebanhoItem.categoria,
-                                                                                      'Sem categoria',
                                                                                     ),
-                                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                          font: GoogleFonts.plusJakartaSans(
-                                                                                            fontWeight: FontWeight.normal,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                          ),
-                                                                                          color: const Color(0xFF5F5F5F),
-                                                                                          fontSize: 14.0,
-                                                                                          letterSpacing: 0.0,
-                                                                                          fontWeight: FontWeight.normal,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                        ),
-                                                                                  ),
-                                                                                  Text(
-                                                                                    '•',
-                                                                                    maxLines: 1,
-                                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                          font: GoogleFonts.plusJakartaSans(
-                                                                                            fontWeight: FontWeight.normal,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                          ),
-                                                                                          color: const Color(0xFF474747),
-                                                                                          fontSize: 16.0,
-                                                                                          letterSpacing: 0.0,
-                                                                                          fontWeight: FontWeight.normal,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                        ),
-                                                                                  ),
-                                                                                  Text(
-                                                                                    () {
-                                                                                      if (valueOrDefault<String>(
-                                                                                            rebanhoItem.raca,
-                                                                                            'Sem raça',
-                                                                                          ) ==
-                                                                                          ' ') {
-                                                                                        return 'Sem raça';
-                                                                                      } else if (valueOrDefault<String>(
-                                                                                            rebanhoItem.raca,
-                                                                                            'Sem raça',
-                                                                                          ) ==
-                                                                                          '') {
-                                                                                        return 'Sem raça';
-                                                                                      } else if (valueOrDefault<String>(
-                                                                                            rebanhoItem.raca,
-                                                                                            'Sem raça',
-                                                                                          ) ==
-                                                                                          'null') {
-                                                                                        return 'Sem raça';
-                                                                                      } else {
-                                                                                        return valueOrDefault<String>(
-                                                                                          rebanhoItem.raca,
-                                                                                          'Sem raça',
-                                                                                        );
-                                                                                      }
-                                                                                    }(),
-                                                                                    style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                          font: GoogleFonts.plusJakartaSans(
-                                                                                            fontWeight: FontWeight.normal,
-                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                          ),
-                                                                                          color: const Color(0xFF5F5F5F),
-                                                                                          fontSize: 14.0,
-                                                                                          letterSpacing: 0.0,
-                                                                                          fontWeight: FontWeight.normal,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                        ),
-                                                                                  ),
-                                                                                ].divide(const SizedBox(width: 4.0)),
+                                                                                  ].divide(const SizedBox(width: 4.0)),
+                                                                                ),
                                                                               ),
-                                                                            ),
-                                                                          ].divide(const SizedBox(height: 8.0)),
-                                                                        ),
-                                                                      ].divide(const SizedBox(
-                                                                              width: 8.0)),
+                                                                              SingleChildScrollView(
+                                                                                scrollDirection: Axis.horizontal,
+                                                                                child: Row(
+                                                                                  mainAxisSize: MainAxisSize.max,
+                                                                                  children: [
+                                                                                    Text(
+                                                                                      valueOrDefault<String>(
+                                                                                        rebanhoItem.categoria,
+                                                                                        'Sem categoria',
+                                                                                      ),
+                                                                                      style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                            font: GoogleFonts.plusJakartaSans(
+                                                                                              fontWeight: FontWeight.normal,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                            ),
+                                                                                            color: const Color(0xFF5F5F5F),
+                                                                                            fontSize: 14.0,
+                                                                                            letterSpacing: 0.0,
+                                                                                            fontWeight: FontWeight.normal,
+                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                          ),
+                                                                                    ),
+                                                                                    Text(
+                                                                                      '•',
+                                                                                      maxLines: 1,
+                                                                                      style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                            font: GoogleFonts.plusJakartaSans(
+                                                                                              fontWeight: FontWeight.normal,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                            ),
+                                                                                            color: const Color(0xFF474747),
+                                                                                            fontSize: 16.0,
+                                                                                            letterSpacing: 0.0,
+                                                                                            fontWeight: FontWeight.normal,
+                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                          ),
+                                                                                    ),
+                                                                                    Text(
+                                                                                      () {
+                                                                                        if (valueOrDefault<String>(
+                                                                                              rebanhoItem.raca,
+                                                                                              'Sem raça',
+                                                                                            ) ==
+                                                                                            ' ') {
+                                                                                          return 'Sem raça';
+                                                                                        } else if (valueOrDefault<String>(
+                                                                                              rebanhoItem.raca,
+                                                                                              'Sem raça',
+                                                                                            ) ==
+                                                                                            '') {
+                                                                                          return 'Sem raça';
+                                                                                        } else if (valueOrDefault<String>(
+                                                                                              rebanhoItem.raca,
+                                                                                              'Sem raça',
+                                                                                            ) ==
+                                                                                            'null') {
+                                                                                          return 'Sem raça';
+                                                                                        } else {
+                                                                                          return valueOrDefault<String>(
+                                                                                            rebanhoItem.raca,
+                                                                                            'Sem raça',
+                                                                                          );
+                                                                                        }
+                                                                                      }(),
+                                                                                      style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                            font: GoogleFonts.plusJakartaSans(
+                                                                                              fontWeight: FontWeight.normal,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                            ),
+                                                                                            color: const Color(0xFF5F5F5F),
+                                                                                            fontSize: 14.0,
+                                                                                            letterSpacing: 0.0,
+                                                                                            fontWeight: FontWeight.normal,
+                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                          ),
+                                                                                    ),
+                                                                                  ].divide(const SizedBox(width: 4.0)),
+                                                                                ),
+                                                                              ),
+                                                                            ].divide(const SizedBox(height: 8.0)),
+                                                                          ),
+                                                                        ].divide(const SizedBox(width: 8.0)),
+                                                                      ),
                                                                     ),
                                                                   ),
                                                                 ),
@@ -3565,181 +3697,197 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
                                                                           0.0,
                                                                           8.0),
                                                                       child:
-                                                                          SingleChildScrollView(
-                                                                        scrollDirection:
-                                                                            Axis.horizontal,
+                                                                          InkWell(
+                                                                        splashColor:
+                                                                            Colors.transparent,
+                                                                        focusColor:
+                                                                            Colors.transparent,
+                                                                        hoverColor:
+                                                                            Colors.transparent,
+                                                                        highlightColor:
+                                                                            Colors.transparent,
+                                                                        onTap:
+                                                                            () async {
+                                                                          await _openRebanhoDialog(
+                                                                              rebanhoItem.idRebanho);
+                                                                        },
                                                                         child:
-                                                                            Row(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.max,
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.center,
-                                                                          children:
-                                                                              [
-                                                                            Column(
-                                                                              mainAxisSize: MainAxisSize.min,
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: [
-                                                                                SingleChildScrollView(
-                                                                                  scrollDirection: Axis.horizontal,
-                                                                                  child: Row(
-                                                                                    mainAxisSize: MainAxisSize.max,
-                                                                                    children: [
-                                                                                      ClipRRect(
-                                                                                        borderRadius: BorderRadius.circular(8.0),
-                                                                                        child: Image.asset(
-                                                                                          'assets/images/Group_11_3_(1).png',
-                                                                                          width: 24.0,
-                                                                                          height: 24.0,
-                                                                                          fit: BoxFit.scaleDown,
-                                                                                        ),
-                                                                                      ),
-                                                                                      if (rebanhoItem.sexo == 'Macho')
+                                                                            SingleChildScrollView(
+                                                                          scrollDirection:
+                                                                              Axis.horizontal,
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.max,
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.start,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.center,
+                                                                            children:
+                                                                                [
+                                                                              Column(
+                                                                                mainAxisSize: MainAxisSize.min,
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  SingleChildScrollView(
+                                                                                    scrollDirection: Axis.horizontal,
+                                                                                    child: Row(
+                                                                                      mainAxisSize: MainAxisSize.max,
+                                                                                      children: [
                                                                                         ClipRRect(
                                                                                           borderRadius: BorderRadius.circular(8.0),
                                                                                           child: Image.asset(
-                                                                                            'assets/images/Sexomacho.png',
+                                                                                            'assets/images/Group_11_3_(1).png',
                                                                                             width: 24.0,
                                                                                             height: 24.0,
                                                                                             fit: BoxFit.scaleDown,
                                                                                           ),
                                                                                         ),
-                                                                                      if (rebanhoItem.sexo == 'Fêmea')
-                                                                                        ClipRRect(
-                                                                                          borderRadius: BorderRadius.circular(8.0),
-                                                                                          child: Image.asset(
-                                                                                            'assets/images/Sexofemea.png',
-                                                                                            width: 24.0,
-                                                                                            height: 24.0,
-                                                                                            fit: BoxFit.scaleDown,
+                                                                                        if (rebanhoItem.sexo == 'Macho')
+                                                                                          ClipRRect(
+                                                                                            borderRadius: BorderRadius.circular(8.0),
+                                                                                            child: Image.asset(
+                                                                                              'assets/images/Sexomacho.png',
+                                                                                              width: 24.0,
+                                                                                              height: 24.0,
+                                                                                              fit: BoxFit.scaleDown,
+                                                                                            ),
                                                                                           ),
-                                                                                        ),
-                                                                                    ],
+                                                                                        if (rebanhoItem.sexo == 'Fêmea')
+                                                                                          ClipRRect(
+                                                                                            borderRadius: BorderRadius.circular(8.0),
+                                                                                            child: Image.asset(
+                                                                                              'assets/images/Sexofemea.png',
+                                                                                              width: 24.0,
+                                                                                              height: 24.0,
+                                                                                              fit: BoxFit.scaleDown,
+                                                                                            ),
+                                                                                          ),
+                                                                                      ],
+                                                                                    ),
                                                                                   ),
-                                                                                ),
-                                                                                SingleChildScrollView(
-                                                                                  scrollDirection: Axis.horizontal,
-                                                                                  child: Row(
-                                                                                    mainAxisSize: MainAxisSize.max,
-                                                                                    children: [
-                                                                                      Text(
-                                                                                        '${valueOrDefault<String>(
-                                                                                          rebanhoItem.numeroAnimal,
-                                                                                          'numero',
-                                                                                        )} • ${valueOrDefault<String>(
-                                                                                          () {
-                                                                                            if (valueOrDefault<String>(
+                                                                                  SingleChildScrollView(
+                                                                                    scrollDirection: Axis.horizontal,
+                                                                                    child: Row(
+                                                                                      mainAxisSize: MainAxisSize.max,
+                                                                                      children: [
+                                                                                        Text(
+                                                                                          '${valueOrDefault<String>(
+                                                                                            rebanhoItem.numeroAnimal,
+                                                                                            'numero',
+                                                                                          )} • ${valueOrDefault<String>(
+                                                                                            () {
+                                                                                              if (valueOrDefault<String>(
+                                                                                                    rebanhoItem.nome,
+                                                                                                    'nome',
+                                                                                                  ) ==
+                                                                                                  'null') {
+                                                                                                return 'S/N';
+                                                                                              } else if (valueOrDefault<String>(
+                                                                                                    rebanhoItem.nome,
+                                                                                                    'nome',
+                                                                                                  ) ==
+                                                                                                  '') {
+                                                                                                return 'S/N';
+                                                                                              } else {
+                                                                                                return valueOrDefault<String>(
                                                                                                   rebanhoItem.nome,
                                                                                                   'nome',
-                                                                                                ) ==
-                                                                                                'null') {
-                                                                                              return 'S/N';
-                                                                                            } else if (valueOrDefault<String>(
-                                                                                                  rebanhoItem.nome,
-                                                                                                  'nome',
-                                                                                                ) ==
-                                                                                                '') {
-                                                                                              return 'S/N';
-                                                                                            } else {
-                                                                                              return valueOrDefault<String>(
-                                                                                                rebanhoItem.nome,
-                                                                                                'nome',
-                                                                                              );
-                                                                                            }
-                                                                                          }(),
-                                                                                          'S/N',
-                                                                                        )} • ${dateTimeFormat(
-                                                                                          "d/M/y",
-                                                                                          functions.converterParaData(rebanhoItem.dataNascimento),
-                                                                                          locale: FFLocalizations.of(context).languageCode,
-                                                                                        )}',
-                                                                                        style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                              font: GoogleFonts.plusJakartaSans(
+                                                                                                );
+                                                                                              }
+                                                                                            }(),
+                                                                                            'S/N',
+                                                                                          )} • ${dateTimeFormat(
+                                                                                            "d/M/y",
+                                                                                            functions.converterParaData(rebanhoItem.dataNascimento),
+                                                                                            locale: FFLocalizations.of(context).languageCode,
+                                                                                          )}',
+                                                                                          style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                                font: GoogleFonts.plusJakartaSans(
+                                                                                                  fontWeight: FontWeight.w500,
+                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                                ),
+                                                                                                color: const Color(0xFF474747),
+                                                                                                fontSize: 16.0,
+                                                                                                letterSpacing: 0.0,
                                                                                                 fontWeight: FontWeight.w500,
                                                                                                 fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                               ),
-                                                                                              color: const Color(0xFF474747),
-                                                                                              fontSize: 16.0,
-                                                                                              letterSpacing: 0.0,
-                                                                                              fontWeight: FontWeight.w500,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                            ),
-                                                                                      ),
-                                                                                    ].divide(const SizedBox(width: 4.0)),
-                                                                                  ),
-                                                                                ),
-                                                                                SingleChildScrollView(
-                                                                                  scrollDirection: Axis.horizontal,
-                                                                                  child: Row(
-                                                                                    mainAxisSize: MainAxisSize.max,
-                                                                                    children: [
-                                                                                      Text(
-                                                                                        valueOrDefault<String>(
-                                                                                          rebanhoItem.categoria,
-                                                                                          'Sem categoria',
                                                                                         ),
-                                                                                        style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                              font: GoogleFonts.plusJakartaSans(
-                                                                                                fontWeight: FontWeight.normal,
-                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                              ),
-                                                                                              color: const Color(0xFF5F5F5F),
-                                                                                              fontSize: 14.0,
-                                                                                              letterSpacing: 0.0,
-                                                                                              fontWeight: FontWeight.normal,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                            ),
-                                                                                      ),
-                                                                                      Text(
-                                                                                        '•',
-                                                                                        maxLines: 1,
-                                                                                        style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                              font: GoogleFonts.plusJakartaSans(
-                                                                                                fontWeight: FontWeight.normal,
-                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                              ),
-                                                                                              color: const Color(0xFF474747),
-                                                                                              fontSize: 16.0,
-                                                                                              letterSpacing: 0.0,
-                                                                                              fontWeight: FontWeight.normal,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                            ),
-                                                                                      ),
-                                                                                      Text(
-                                                                                        valueOrDefault<String>(
-                                                                                          () {
-                                                                                            if (rebanhoItem.raca == ' ') {
-                                                                                              return 'Sem raça';
-                                                                                            } else if (rebanhoItem.raca == '') {
-                                                                                              return 'Sem raça';
-                                                                                            } else if (rebanhoItem.raca == 'null') {
-                                                                                              return 'Sem raça';
-                                                                                            } else {
-                                                                                              return rebanhoItem.raca;
-                                                                                            }
-                                                                                          }(),
-                                                                                          'Sem raça',
-                                                                                        ),
-                                                                                        style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                              font: GoogleFonts.plusJakartaSans(
-                                                                                                fontWeight: FontWeight.normal,
-                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                              ),
-                                                                                              color: const Color(0xFF5F5F5F),
-                                                                                              fontSize: 14.0,
-                                                                                              letterSpacing: 0.0,
-                                                                                              fontWeight: FontWeight.normal,
-                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                            ),
-                                                                                      ),
-                                                                                    ].divide(const SizedBox(width: 4.0)),
+                                                                                      ].divide(const SizedBox(width: 4.0)),
+                                                                                    ),
                                                                                   ),
-                                                                                ),
-                                                                              ].divide(const SizedBox(height: 8.0)),
-                                                                            ),
-                                                                          ].divide(const SizedBox(width: 8.0)),
+                                                                                  SingleChildScrollView(
+                                                                                    scrollDirection: Axis.horizontal,
+                                                                                    child: Row(
+                                                                                      mainAxisSize: MainAxisSize.max,
+                                                                                      children: [
+                                                                                        Text(
+                                                                                          valueOrDefault<String>(
+                                                                                            rebanhoItem.categoria,
+                                                                                            'Sem categoria',
+                                                                                          ),
+                                                                                          style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                                font: GoogleFonts.plusJakartaSans(
+                                                                                                  fontWeight: FontWeight.normal,
+                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                                ),
+                                                                                                color: const Color(0xFF5F5F5F),
+                                                                                                fontSize: 14.0,
+                                                                                                letterSpacing: 0.0,
+                                                                                                fontWeight: FontWeight.normal,
+                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                              ),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          '•',
+                                                                                          maxLines: 1,
+                                                                                          style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                                font: GoogleFonts.plusJakartaSans(
+                                                                                                  fontWeight: FontWeight.normal,
+                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                                ),
+                                                                                                color: const Color(0xFF474747),
+                                                                                                fontSize: 16.0,
+                                                                                                letterSpacing: 0.0,
+                                                                                                fontWeight: FontWeight.normal,
+                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                              ),
+                                                                                        ),
+                                                                                        Text(
+                                                                                          valueOrDefault<String>(
+                                                                                            () {
+                                                                                              if (rebanhoItem.raca == ' ') {
+                                                                                                return 'Sem raça';
+                                                                                              } else if (rebanhoItem.raca == '') {
+                                                                                                return 'Sem raça';
+                                                                                              } else if (rebanhoItem.raca == 'null') {
+                                                                                                return 'Sem raça';
+                                                                                              } else {
+                                                                                                return rebanhoItem.raca;
+                                                                                              }
+                                                                                            }(),
+                                                                                            'Sem raça',
+                                                                                          ),
+                                                                                          style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                                font: GoogleFonts.plusJakartaSans(
+                                                                                                  fontWeight: FontWeight.normal,
+                                                                                                  fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                                ),
+                                                                                                color: const Color(0xFF5F5F5F),
+                                                                                                fontSize: 14.0,
+                                                                                                letterSpacing: 0.0,
+                                                                                                fontWeight: FontWeight.normal,
+                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                              ),
+                                                                                        ),
+                                                                                      ].divide(const SizedBox(width: 4.0)),
+                                                                                    ),
+                                                                                  ),
+                                                                                ].divide(const SizedBox(height: 8.0)),
+                                                                              ),
+                                                                            ].divide(const SizedBox(width: 8.0)),
+                                                                          ),
                                                                         ),
                                                                       ),
                                                                     ),

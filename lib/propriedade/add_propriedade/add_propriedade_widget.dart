@@ -15,6 +15,7 @@ import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:aligned_dialog/aligned_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'add_propriedade_model.dart';
 export 'add_propriedade_model.dart';
@@ -34,6 +35,20 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
     super.setState(callback);
     _model.onUpdate();
   }
+
+  int _roundAreaText(String? value) {
+    final normalized = (value ?? '').trim().replaceAll(',', '.');
+    if (normalized.isEmpty) {
+      return 0;
+    }
+    return double.tryParse(normalized)?.round() ?? 0;
+  }
+
+  int _calculateAreaTotal() =>
+      _roundAreaText(_model.benfeitoriaTextController?.text) +
+      _roundAreaText(_model.tFpastagemTextController?.text) +
+      _roundAreaText(_model.tFreservaTextController?.text) +
+      _roundAreaText(_model.tFagriculturaTextController?.text);
 
   @override
   void initState() {
@@ -636,6 +651,9 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                     .bodyMediumIsCustom,
                               ),
                           keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           cursorColor:
                               FlutterFlowTheme.of(context).secondaryText,
                           validator: _model.benfeitoriaTextControllerValidator
@@ -742,6 +760,9 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                     .bodyMediumIsCustom,
                               ),
                           keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           cursorColor:
                               FlutterFlowTheme.of(context).secondaryText,
                           validator: _model.tFpastagemTextControllerValidator
@@ -848,6 +869,9 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                     .bodyMediumIsCustom,
                               ),
                           keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           cursorColor:
                               FlutterFlowTheme.of(context).secondaryText,
                           validator: _model.tFreservaTextControllerValidator
@@ -954,6 +978,9 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                     .bodyMediumIsCustom,
                               ),
                           keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           cursorColor:
                               FlutterFlowTheme.of(context).secondaryText,
                           validator: _model.tFagriculturaTextControllerValidator
@@ -1004,28 +1031,7 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                 16.0, 0.0, 0.0, 0.0),
                             child: Text(
                               valueOrDefault<String>(
-                                (valueOrDefault<int>(
-                                          int.tryParse(_model
-                                              .benfeitoriaTextController.text),
-                                          0,
-                                        ) +
-                                        valueOrDefault<int>(
-                                          int.tryParse(_model
-                                              .tFpastagemTextController.text),
-                                          0,
-                                        ) +
-                                        valueOrDefault<int>(
-                                          int.tryParse(_model
-                                              .tFreservaTextController.text),
-                                          0,
-                                        ) +
-                                        valueOrDefault<int>(
-                                          int.tryParse(_model
-                                              .tFagriculturaTextController
-                                              .text),
-                                          0,
-                                        ))
-                                    .toString(),
+                                _calculateAreaTotal().toString(),
                                 '0',
                               ),
                               style: FlutterFlowTheme.of(context)
@@ -1340,39 +1346,15 @@ class _AddPropriedadeWidgetState extends State<AddPropriedadeWidget> {
                                       .insertPropriedade(
                                     userID: currentUserUid,
                                     anotacoes: _model.textController6.text,
-                                    areaAgricultura: int.tryParse(_model
-                                        .tFagriculturaTextController.text),
-                                    areaBenfeitoria: int.tryParse(
-                                        _model.benfeitoriaTextController.text),
-                                    areaPastagem: int.parse(
-                                        _model.tFpastagemTextController.text),
-                                    areaReserva: int.tryParse(
-                                        _model.tFreservaTextController.text),
-                                    areaTotal: valueOrDefault<int>(
-                                      valueOrDefault<int>(
-                                            int.tryParse(_model
-                                                .benfeitoriaTextController
-                                                .text),
-                                            0,
-                                          ) +
-                                          valueOrDefault<int>(
-                                            int.tryParse(_model
-                                                .tFpastagemTextController.text),
-                                            0,
-                                          ) +
-                                          valueOrDefault<int>(
-                                            int.tryParse(_model
-                                                .tFreservaTextController.text),
-                                            0,
-                                          ) +
-                                          valueOrDefault<int>(
-                                            int.tryParse(_model
-                                                .tFagriculturaTextController
-                                                .text),
-                                            0,
-                                          ),
-                                      0,
-                                    ),
+                                    areaAgricultura: _roundAreaText(_model
+                                        .tFagriculturaTextController?.text),
+                                    areaBenfeitoria: _roundAreaText(
+                                        _model.benfeitoriaTextController?.text),
+                                    areaPastagem: _roundAreaText(
+                                        _model.tFpastagemTextController?.text),
+                                    areaReserva: _roundAreaText(
+                                        _model.tFreservaTextController?.text),
+                                    areaTotal: _calculateAreaTotal(),
                                     cidade: FFAppState().cidadeSelecionada,
                                     estado: _model.dropdownUFValue!,
                                     icone: valueOrDefault<String>(
