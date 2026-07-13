@@ -3625,7 +3625,7 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             ),
                                             child: Checkbox(
                                               value:
-                                                  _model.checkboxParidaValue ??=
+                                                  _model.checkboxParidaValue ??
                                                       _model.parida,
                                               onChanged: (newValue) async {
                                                 safeSetState(() =>
