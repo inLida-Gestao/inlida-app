@@ -596,29 +596,141 @@ class _EditReproducaoRebanhoWidgetState
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                    if (containerBuscarReproducaoRowList
-                                            .firstOrNull !=
-                                        null)
-                                      Text(
-                                        'Lote: ${containerBuscarReproducaoRowList.firstOrNull?.loteNome != null && containerBuscarReproducaoRowList.firstOrNull?.loteNome != '' && containerBuscarReproducaoRowList.firstOrNull?.loteNome != 'null' ? containerBuscarReproducaoRowList.firstOrNull?.loteNome : 'Sem lote'}',
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  24.0, 8.0, 24.0, 0.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Align(
+                                    alignment:
+                                        const AlignmentDirectional(-1.0, 0.0),
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0.0, 0.0, 0.0, 8.0),
+                                      child: Text(
+                                        'Lote',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
                                               fontFamily:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMediumFamily,
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .secondaryText,
-                                              fontSize: 14.0,
+                                              color: const Color(0xFF474747),
+                                              fontSize: 16.0,
                                               letterSpacing: 0.0,
+                                              fontWeight: FontWeight.w600,
                                               useGoogleFonts:
                                                   !FlutterFlowTheme.of(context)
                                                       .bodyMediumIsCustom,
                                             ),
                                       ),
-                                  ],
-                                ),
+                                    ),
+                                  ),
+                                  FutureBuilder<List<ListarLotesRow>>(
+                                    future: SQLiteManager.instance.listarLotes(
+                                      idPropriedade: FFAppState()
+                                          .propriedadeSelecionada
+                                          .idPropriedade,
+                                    ),
+                                    builder: (context, snapshotLotes) {
+                                      if (!snapshotLotes.hasData) {
+                                        return const SizedBox(
+                                          height: 56.0,
+                                          child: Center(
+                                            child: SizedBox(
+                                              width: 24.0,
+                                              height: 24.0,
+                                              child: CircularProgressIndicator(
+                                                  strokeWidth: 2.0),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      final lotesRepro = snapshotLotes.data!
+                                          .where((e) => e.deletado == 'NAO')
+                                          .toList();
+                                      if (!_model.loteInicializado) {
+                                        final idLoteAtual = _normalizeInputText(
+                                            reproducao?.idLote);
+                                        _model.dropDownLoteValue =
+                                            idLoteAtual.isEmpty
+                                                ? null
+                                                : idLoteAtual;
+                                        _model.dropDownLoteValueController =
+                                            FormFieldController<String>(
+                                                _model.dropDownLoteValue);
+                                        _model.loteInicializado = true;
+                                      }
+                                      return Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFF1F1F1),
+                                          borderRadius:
+                                              BorderRadius.circular(6.0),
+                                        ),
+                                        child: FlutterFlowDropDown<String>(
+                                          controller: _model
+                                                  .dropDownLoteValueController ??=
+                                              FormFieldController<String>(
+                                                  _model.dropDownLoteValue),
+                                          options: List<String>.from(lotesRepro
+                                              .map((e) => e.idLote)
+                                              .withoutNulls
+                                              .toList()),
+                                          optionLabels: lotesRepro
+                                              .map((e) => e.nome)
+                                              .withoutNulls
+                                              .toList(),
+                                          onChanged: (val) => safeSetState(() =>
+                                              _model.dropDownLoteValue = val),
+                                          width: double.infinity,
+                                          height: 56.0,
+                                          textStyle: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMediumFamily,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryText,
+                                                fontSize: 16.0,
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w600,
+                                                useGoogleFonts:
+                                                    !FlutterFlowTheme.of(context)
+                                                        .bodyMediumIsCustom,
+                                              ),
+                                          hintText: 'Selecionar lote',
+                                          icon: Icon(
+                                            Icons.keyboard_arrow_down_rounded,
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryText,
+                                            size: 24.0,
+                                          ),
+                                          fillColor: const Color(0xFFF1F1F1),
+                                          elevation: 0.0,
+                                          borderColor: const Color(0x00E0E3E7),
+                                          borderWidth: 2.0,
+                                          borderRadius: 8.0,
+                                          margin: const EdgeInsetsDirectional
+                                              .fromSTEB(8.0, 4.0, 16.0, 4.0),
+                                          hidesUnderline: true,
+                                          isOverButton: true,
+                                          isSearchable: false,
+                                          isMultiSelect: false,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
                             Padding(
@@ -4020,139 +4132,6 @@ class _EditReproducaoRebanhoWidgetState
                                     ),
                                   ].divide(const SizedBox(height: 8.0)),
                                 ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  24.0, 0.0, 24.0, 24.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Align(
-                                    alignment:
-                                        const AlignmentDirectional(-1.0, 0.0),
-                                    child: Padding(
-                                      padding:
-                                          const EdgeInsetsDirectional.fromSTEB(
-                                              0.0, 0.0, 0.0, 8.0),
-                                      child: Text(
-                                        'Lote',
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMediumFamily,
-                                              color: const Color(0xFF474747),
-                                              fontSize: 16.0,
-                                              letterSpacing: 0.0,
-                                              fontWeight: FontWeight.w600,
-                                              useGoogleFonts:
-                                                  !FlutterFlowTheme.of(context)
-                                                      .bodyMediumIsCustom,
-                                            ),
-                                      ),
-                                    ),
-                                  ),
-                                  FutureBuilder<List<ListarLotesRow>>(
-                                    future: SQLiteManager.instance.listarLotes(
-                                      idPropriedade: FFAppState()
-                                          .propriedadeSelecionada
-                                          .idPropriedade,
-                                    ),
-                                    builder: (context, snapshotLotes) {
-                                      if (!snapshotLotes.hasData) {
-                                        return const SizedBox(
-                                          height: 56.0,
-                                          child: Center(
-                                            child: SizedBox(
-                                              width: 24.0,
-                                              height: 24.0,
-                                              child: CircularProgressIndicator(
-                                                  strokeWidth: 2.0),
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                      final lotesRepro = snapshotLotes.data!
-                                          .where((e) => e.deletado == 'NAO')
-                                          .toList();
-                                      if (!_model.loteInicializado) {
-                                        final idLoteAtual = _normalizeInputText(
-                                            reproducao?.idLote);
-                                        _model.dropDownLoteValue =
-                                            idLoteAtual.isEmpty
-                                                ? null
-                                                : idLoteAtual;
-                                        _model.dropDownLoteValueController =
-                                            FormFieldController<String>(
-                                                _model.dropDownLoteValue);
-                                        _model.loteInicializado = true;
-                                      }
-                                      return Container(
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFF1F1F1),
-                                          borderRadius:
-                                              BorderRadius.circular(6.0),
-                                        ),
-                                        child: FlutterFlowDropDown<String>(
-                                          controller: _model
-                                                  .dropDownLoteValueController ??=
-                                              FormFieldController<String>(
-                                                  _model.dropDownLoteValue),
-                                          options: List<String>.from(lotesRepro
-                                              .map((e) => e.idLote)
-                                              .withoutNulls
-                                              .toList()),
-                                          optionLabels: lotesRepro
-                                              .map((e) => e.nome)
-                                              .withoutNulls
-                                              .toList(),
-                                          onChanged: (val) => safeSetState(() =>
-                                              _model.dropDownLoteValue = val),
-                                          width: double.infinity,
-                                          height: 56.0,
-                                          textStyle: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMediumFamily,
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryText,
-                                                fontSize: 16.0,
-                                                letterSpacing: 0.0,
-                                                fontWeight: FontWeight.w600,
-                                                useGoogleFonts:
-                                                    !FlutterFlowTheme.of(context)
-                                                        .bodyMediumIsCustom,
-                                              ),
-                                          hintText: 'Selecionar lote',
-                                          icon: Icon(
-                                            Icons.keyboard_arrow_down_rounded,
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                            size: 24.0,
-                                          ),
-                                          fillColor: const Color(0xFFF1F1F1),
-                                          elevation: 0.0,
-                                          borderColor: const Color(0x00E0E3E7),
-                                          borderWidth: 2.0,
-                                          borderRadius: 8.0,
-                                          margin: const EdgeInsetsDirectional
-                                              .fromSTEB(8.0, 4.0, 16.0, 4.0),
-                                          hidesUnderline: true,
-                                          isOverButton: true,
-                                          isSearchable: false,
-                                          isMultiSelect: false,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
                               ),
                             ),
                             Padding(
