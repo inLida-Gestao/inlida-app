@@ -3701,10 +3701,10 @@ Map<String, dynamic> _buildReproducaoPayload(
     'id_rebanho_matriz': nullableFk(raw['id_rebanho_matriz']),
     'id_rebanho_reprodutor': nullableFk(raw['id_rebanho_reprodutor']),
   };
-  if (isInsert) {
-    payload['id_lote'] = nullableStr(raw['id_lote']);
-    payload['loteNome'] = nullableStr(raw['loteNome']);
-  }
+  // id_lote/loteNome enviados tanto em insert quanto em update, para permitir
+  // alterar o lote vinculado à reprodução (chaves nulas são removidas abaixo).
+  payload['id_lote'] = nullableStr(raw['id_lote']);
+  payload['loteNome'] = nullableStr(raw['loteNome']);
 
   // Remove chaves null para não sobrescrever valores remotos com null
   // em campos que não foram alterados off-line (comportamento conservador

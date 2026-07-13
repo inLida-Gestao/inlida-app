@@ -1063,6 +1063,8 @@ Future performUPDTReproducao(
   String? idrebanhoreprodutor,
   String? gnrh,
   String? cio,
+  String? idLote,
+  String? loteNome,
 }) {
   final query = '''
 UPDATE local_reproducao SET
@@ -1075,6 +1077,8 @@ UPDATE local_reproducao SET
     data_inicial = '$dataInicial',
     data_final = '$dataFinal',
     inseminador = '$inseminador',
+    id_lote = '$idLote',
+    loteNome = '$loteNome',
     anotacoes = '$anotacoes',
     deletado = '$deletado',
     updated_at = '$updatedAt',
@@ -1760,6 +1764,8 @@ Future performUPDTReproducaoMonta(
   String? tipoReproducao,
   double? scoreCorporal,
   String? dataPartidaSemen,
+  String? idLote,
+  String? loteNome,
   int? partidaSemen,
   String? previsaoParto,
   String? dataInicial,
@@ -1793,6 +1799,8 @@ UPDATE local_reproducao SET
     tipo_reproducao = '$tipoReproducao',
     score_corporal = $scoreCorporal,
     data_partida_semen = '$dataPartidaSemen',
+    id_lote = '$idLote',
+    loteNome = '$loteNome',
     partida_semen = $partidaSemen,
     previsao_parto = '$previsaoParto',
     data_inicial = '$dataInicial',

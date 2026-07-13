@@ -1413,7 +1413,7 @@ class SQLiteManager {
     String? createdat,
     String? idPropriedade,
   }) async {
-    final resolvedIdPesagem = idPesagem ?? 'uuid:${Uuid().v4()}';
+    final resolvedIdPesagem = idPesagem ?? 'uuid:${const Uuid().v4()}';
     await performAddPesagem(
       _database,
       idPesagem: resolvedIdPesagem,
@@ -1481,7 +1481,7 @@ SELECT idPropriedade FROM local_rebanho WHERE idRebanho = ? LIMIT 1
           .replaceFirst('T', ' ');
       await performAddPesagem(
         _database,
-        idPesagem: 'uuid:${Uuid().v4()}',
+        idPesagem: 'uuid:${const Uuid().v4()}',
         idRebanho: idRebanho,
         dataPesagem:
             dataPesagem ?? DateTime.now().toIso8601String().substring(0, 10),
@@ -1935,12 +1935,16 @@ WHERE idRebanho = ?
     String? idrebanhoreprodutor,
     String? gnrh,
     String? cio,
+    String? idLote,
+    String? loteNome,
   }) =>
       performUPDTReproducao(
         _database,
         tipoReproducao: tipoReproducao,
         scoreCorporal: scoreCorporal,
         dataInseminacao: dataInseminacao,
+        idLote: idLote,
+        loteNome: loteNome,
         dataPartidaSemen: dataPartidaSemen,
         partidaSemen: partidaSemen,
         previsaoParto: previsaoParto,
@@ -2386,6 +2390,8 @@ WHERE idRebanho = ?
     String? tipoReproducao,
     double? scoreCorporal,
     String? dataPartidaSemen,
+    String? idLote,
+    String? loteNome,
     int? partidaSemen,
     String? previsaoParto,
     String? dataInicial,
@@ -2419,6 +2425,8 @@ WHERE idRebanho = ?
         tipoReproducao: tipoReproducao,
         scoreCorporal: scoreCorporal,
         dataPartidaSemen: dataPartidaSemen,
+        idLote: idLote,
+        loteNome: loteNome,
         partidaSemen: partidaSemen,
         previsaoParto: previsaoParto,
         dataInicial: dataInicial,

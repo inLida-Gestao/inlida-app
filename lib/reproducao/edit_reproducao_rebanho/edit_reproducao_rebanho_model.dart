@@ -37,6 +37,10 @@ class EditReproducaoRebanhoModel
   // State field(s) for Dropdown-cio widget.
   String? dropdownCioValue;
   FormFieldController<String>? dropdownCioValueController;
+  // State field(s) for Dropdown-Lote widget.
+  String? dropDownLoteValue;
+  FormFieldController<String>? dropDownLoteValueController;
+  bool loteInicializado = false;
   DateTime? datePicked2;
   DateTime? datePicked3;
   DateTime? datePicked4;
