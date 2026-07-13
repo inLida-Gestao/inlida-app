@@ -4037,6 +4037,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               .transparent,
                                                                       onTap:
                                                                           () async {
+                                                                        // Salvar crias e pesagens atuais antes de navegar
+                                                                        final savedCrias =
+                                                                            FFAppState().crias.toList();
+                                                                        final savedHistPesagens =
+                                                                            FFAppState().histPesagens.toList();
                                                                         if ((containerBuscarRebanhoRowList.firstOrNull?.numeroMatriz != null && containerBuscarRebanhoRowList.firstOrNull?.numeroMatriz != '') &&
                                                                             (containerBuscarRebanhoRowList.firstOrNull?.numeroMatriz !=
                                                                                 'null')) {
@@ -4236,6 +4241,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           );
                                                                         }
 
+                                                                        // Restaurar crias e pesagens do animal ao voltar
+                                                                        FFAppState().crias =
+                                                                            savedCrias;
+                                                                        FFAppState().histPesagens =
+                                                                            savedHistPesagens;
                                                                         safeSetState(
                                                                             () {});
                                                                       },
@@ -4504,6 +4514,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                               .transparent,
                                                                       onTap:
                                                                           () async {
+                                                                        // Salvar crias e pesagens atuais antes de navegar
+                                                                        final savedCrias =
+                                                                            FFAppState().crias.toList();
+                                                                        final savedHistPesagens =
+                                                                            FFAppState().histPesagens.toList();
                                                                         if ((containerBuscarRebanhoRowList.firstOrNull?.numeroReprodutor != null && containerBuscarRebanhoRowList.firstOrNull?.numeroReprodutor != '') &&
                                                                             (containerBuscarRebanhoRowList.firstOrNull?.numeroReprodutor !=
                                                                                 'null')) {
@@ -4698,6 +4713,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           );
                                                                         }
 
+                                                                        // Restaurar crias e pesagens do animal ao voltar
+                                                                        FFAppState().crias =
+                                                                            savedCrias;
+                                                                        FFAppState().histPesagens =
+                                                                            savedHistPesagens;
                                                                         safeSetState(
                                                                             () {});
                                                                       },
