@@ -1172,7 +1172,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                   '') &&
                                                               (e.deletado ==
                                                                   'NAO')) ||
-                                                          (((e.atividades!).contains(
+                                                          (((e.atividades ?? '').contains(
                                                                   FFAppState()
                                                                       .filtroPropAtividades)) &&
                                                               ((e.cidade == FFAppState().filtroPropCidades) ||
@@ -1189,14 +1189,14 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                           return qtdAnimais == '[]'
                                                                               ? 0
                                                                               : qtdAnimais.split(',').length;
-                                                                        }(e.rebanhosID!),
+                                                                        }(e.rebanhosID ?? '[]'),
                                                                         0,
                                                                       )) ==
                                                                       FFAppState()
                                                                           .filtroNumeroAnimais) ||
                                                                   (FFAppState().filtroNumeroAnimais ==
                                                                       0.0)) &&
-                                                              ((e.nome!)
+                                                              ((e.nome ?? '')
                                                                   .toLowerCase()
                                                                   .contains(_model
                                                                       .pesquisarTextController
@@ -1454,7 +1454,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                   '') &&
                                                               (e.deletado ==
                                                                   'NAO')) ||
-                                                          (((e.atividades!).contains(
+                                                          (((e.atividades ?? '').contains(
                                                                   FFAppState()
                                                                       .filtroPropAtividades)) &&
                                                               ((e.cidade == FFAppState().filtroPropCidades) ||
@@ -1471,14 +1471,14 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                           return qtdAnimais == '[]'
                                                                               ? 0
                                                                               : qtdAnimais.split(',').length;
-                                                                        }(e.rebanhosID!),
+                                                                        }(e.rebanhosID ?? '[]'),
                                                                         0,
                                                                       )) ==
                                                                       FFAppState()
                                                                           .filtroNumeroAnimais) ||
                                                                   (FFAppState().filtroNumeroAnimais ==
                                                                       0.0)) &&
-                                                              ((e.nome!)
+                                                              ((e.nome ?? '')
                                                                   .toLowerCase()
                                                                   .contains(_model
                                                                       .pesquisarTextController
@@ -1706,7 +1706,7 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                               '') &&
                                                           (e.deletado ==
                                                               'NAO')) ||
-                                                      (((e.atividades!).contains(
+                                                      (((e.atividades ?? '').contains(
                                                               FFAppState()
                                                                   .filtroPropAtividades)) &&
                                                           ((e.cidade == FFAppState().filtroPropCidades) ||
@@ -1726,14 +1726,14 @@ class _PagePropriedadesWidgetState extends State<PagePropriedadesWidget> {
                                                                           : qtdAnimais
                                                                               .split(',')
                                                                               .length;
-                                                                    }(e.rebanhosID!),
+                                                                    }(e.rebanhosID ?? '[]'),
                                                                     0,
                                                                   )) ==
                                                                   FFAppState()
                                                                       .filtroNumeroAnimais) ||
                                                               (FFAppState().filtroNumeroAnimais ==
                                                                   0.0)) &&
-                                                          ((e.nome!)
+                                                          ((e.nome ?? '')
                                                               .toLowerCase()
                                                               .contains(_model
                                                                   .pesquisarTextController
