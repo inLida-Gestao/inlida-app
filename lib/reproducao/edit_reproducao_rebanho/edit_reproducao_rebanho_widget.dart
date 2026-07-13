@@ -3588,7 +3588,7 @@ class _EditReproducaoRebanhoWidgetState
                                           FlutterFlowTheme.of(context).accent4,
                                     ),
                                     child: Checkbox(
-                                      value: _model.checkboxParidaValue ??=
+                                      value: _model.checkboxParidaValue ??
                                           _model.parida,
                                       onChanged: (newValue) async {
                                         safeSetState(() => _model
