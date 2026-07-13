@@ -928,6 +928,11 @@ Future performInsertReproducao(
   String? gnrh,
   String? cio,
 }) {
+  final previsaoPartoSql = previsaoParto == null ||
+          previsaoParto.trim().isEmpty ||
+          previsaoParto == 'null'
+      ? 'NULL'
+      : "'$previsaoParto'";
   final query = '''
 INSERT INTO local_reproducao (
     id_propriedade, 
@@ -974,7 +979,7 @@ INSERT INTO local_reproducao (
     '$dataInseminacao',
     '$dataPartidaSemen',
     $partidaSemen,
-    '$previsaoParto',
+    $previsaoPartoSql,
     '$idLote',
     '$dataInicial',
     '$dataFinal',
@@ -1066,6 +1071,11 @@ Future performUPDTReproducao(
   String? idLote,
   String? loteNome,
 }) {
+  final previsaoPartoSql = previsaoParto == null ||
+          previsaoParto.trim().isEmpty ||
+          previsaoParto == 'null'
+      ? 'NULL'
+      : "'$previsaoParto'";
   final query = '''
 UPDATE local_reproducao SET
     tipo_reproducao = '$tipoReproducao',
@@ -1073,7 +1083,7 @@ UPDATE local_reproducao SET
     data_inseminacao = '$dataInseminacao',
     data_partida_semen = '$dataPartidaSemen',
     partida_semen = $partidaSemen,
-    previsao_parto = '$previsaoParto',
+    previsao_parto = $previsaoPartoSql,
     data_inicial = '$dataInicial',
     data_final = '$dataFinal',
     inseminador = '$inseminador',
@@ -1639,6 +1649,11 @@ Future performInsertReproducaoMonta(
   String? gnrh,
   String? cio,
 }) {
+  final previsaoPartoSql = previsaoParto == null ||
+          previsaoParto.trim().isEmpty ||
+          previsaoParto == 'null'
+      ? 'NULL'
+      : "'$previsaoParto'";
   final query = '''
 INSERT INTO local_reproducao (
     id_propriedade, 
@@ -1680,7 +1695,7 @@ INSERT INTO local_reproducao (
     '$tipoReproducao',
     $scoreCorporal,
     '$datainseminacao',
-    '$previsaoParto',
+    $previsaoPartoSql,
     '$idLote',
     '$dataInicial',
     '$dataFinal',
@@ -1794,6 +1809,11 @@ Future performUPDTReproducaoMonta(
   String? gnrh,
   String? cio,
 }) {
+  final previsaoPartoSql = previsaoParto == null ||
+          previsaoParto.trim().isEmpty ||
+          previsaoParto == 'null'
+      ? 'NULL'
+      : "'$previsaoParto'";
   final query = '''
 UPDATE local_reproducao SET
     tipo_reproducao = '$tipoReproducao',
@@ -1802,7 +1822,7 @@ UPDATE local_reproducao SET
     id_lote = '$idLote',
     loteNome = '$loteNome',
     partida_semen = $partidaSemen,
-    previsao_parto = '$previsaoParto',
+    previsao_parto = $previsaoPartoSql,
     data_inicial = '$dataInicial',
     data_final = '$dataFinal',
     anotacoes = '$anotacoes',

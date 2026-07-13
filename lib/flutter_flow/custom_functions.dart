@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-
 double? convertIntToDouble(int? valor) {
   // crie uma function que converta um valor inteiro em double
   return valor?.toDouble();
@@ -139,6 +138,14 @@ DateTime hojeMais90() {
 DateTime dataMais295(DateTime data) {
   // ajuste a function a seguir para que possa ser passado uma data e adicionar 295 dias  return DateTime.now().add(Duration(days: 295));
   return data.add(const Duration(days: 295));
+}
+
+bool permitePrevisaoParto(String? diagnostico) {
+  final diagnosticoNormalizado = diagnostico?.trim();
+  return diagnosticoNormalizado == null ||
+      diagnosticoNormalizado.isEmpty ||
+      diagnosticoNormalizado == 'Não diagnosticado' ||
+      diagnosticoNormalizado == 'Prenhez';
 }
 
 bool? ultimos30Dias(DateTime? data) {

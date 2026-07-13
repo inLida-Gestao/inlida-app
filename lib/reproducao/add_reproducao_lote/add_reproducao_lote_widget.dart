@@ -2370,16 +2370,11 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                         safeSetState(() =>
                                             _model.checkboxValue = newValue!);
                                       },
-                                      side: (FlutterFlowTheme.of(context)
-                                                  .alternate !=
-                                              null)
-                                          ? BorderSide(
-                                              width: 2,
-                                              color:
-                                                  FlutterFlowTheme.of(context)
-                                                      .alternate,
-                                            )
-                                          : null,
+                                      side: BorderSide(
+                                        width: 2,
+                                        color: FlutterFlowTheme.of(context)
+                                            .alternate,
+                                      ),
                                       activeColor:
                                           FlutterFlowTheme.of(context).primary,
                                       checkColor:
@@ -2462,9 +2457,17 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               'Prenhez',
                                               'Vazio'
                                             ],
-                                            onChanged: (val) => safeSetState(
-                                                () => _model
-                                                    .dropdownStatusValue = val),
+                                            onChanged: (val) {
+                                              safeSetState(() {
+                                                _model.dropdownStatusValue =
+                                                    val;
+                                                if (!functions
+                                                    .permitePrevisaoParto(
+                                                        val)) {
+                                                  _model.datePicked6 = null;
+                                                }
+                                              });
+                                            },
                                             width: double.infinity,
                                             height: 56.0,
                                             textStyle: FlutterFlowTheme.of(
@@ -2729,8 +2732,10 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                             ),
                                           ].divide(const SizedBox(height: 8.0)),
                                         ),
-                                      if (_model.tipoReproducao ==
-                                          'Monta Natural')
+                                      if (functions.permitePrevisaoParto(
+                                              _model.dropdownStatusValue) &&
+                                          _model.tipoReproducao ==
+                                              'Monta Natural')
                                         Container(
                                           width: double.infinity,
                                           decoration: BoxDecoration(
@@ -2959,7 +2964,9 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                 const SizedBox(height: 8.0)),
                                           ),
                                         ),
-                                      if ((_model.tipoReproducao ==
+                                      if (functions.permitePrevisaoParto(
+                                              _model.dropdownStatusValue) &&
+                                          (_model.tipoReproducao ==
                                               'Inseminação') &&
                                           (_model.datePicked1 != null))
                                         Container(
@@ -3208,15 +3215,11 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                       safeSetState(() => _model
                                           .checkboxParidaValue = newValue!);
                                     },
-                                    side: (FlutterFlowTheme.of(context)
-                                                .accent4 !=
-                                            null)
-                                        ? BorderSide(
-                                            width: 2,
-                                            color: FlutterFlowTheme.of(context)
-                                                .accent4,
-                                          )
-                                        : null,
+                                    side: BorderSide(
+                                      width: 2,
+                                      color:
+                                          FlutterFlowTheme.of(context).accent4,
+                                    ),
                                     activeColor:
                                         FlutterFlowTheme.of(context).primary,
                                     checkColor:
@@ -3663,7 +3666,9 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                       .blockIfAccountCanceled(
                                                           context,
                                                           refreshFromServer:
-                                                              true)) return;
+                                                              true)) {
+                                                    return;
+                                                  }
                                                   _model.animaisLote =
                                                       await SQLiteManager
                                                           .instance
@@ -3714,18 +3719,21 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                           ),
                                                           partidaSemen: _model
                                                               .partidaSemen,
-                                                          previsaoParto:
-                                                              dateTimeFormat(
-                                                            "yyyy-MM-dd",
-                                                            _model.datePicked6 ??
-                                                                functions
-                                                                    .dataMais295(
-                                                                        _model
-                                                                            .datePicked1!),
-                                                            locale: FFLocalizations
-                                                                    .of(context)
-                                                                .languageCode,
-                                                          ),
+                                                          previsaoParto: functions
+                                                                  .permitePrevisaoParto(
+                                                                      _model
+                                                                          .dropdownStatusValue)
+                                                              ? dateTimeFormat(
+                                                                  "yyyy-MM-dd",
+                                                                  _model.datePicked6 ??
+                                                                      functions.dataMais295(
+                                                                          _model
+                                                                              .datePicked1!),
+                                                                  locale: FFLocalizations.of(
+                                                                          context)
+                                                                      .languageCode,
+                                                                )
+                                                              : null,
                                                           idLote: _model
                                                               .dropDownLoteValue,
                                                           dataInicial:
@@ -4004,19 +4012,23 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                               ?.elementAtOrNull(
                                                                   _model.index)
                                                               ?.chip,
-                                                          previsaoParto:
-                                                              valueOrDefault<
+                                                          previsaoParto: functions
+                                                                  .permitePrevisaoParto(
+                                                                      _model
+                                                                          .dropdownStatusValue)
+                                                              ? valueOrDefault<
                                                                   String>(
-                                                            dateTimeFormat(
-                                                              "yyyy-MM-dd",
-                                                              _model
-                                                                  .datePicked6,
-                                                              locale: FFLocalizations
-                                                                      .of(context)
-                                                                  .languageCode,
-                                                            ),
-                                                            'null',
-                                                          ),
+                                                                  dateTimeFormat(
+                                                                    "yyyy-MM-dd",
+                                                                    _model
+                                                                        .datePicked6,
+                                                                    locale: FFLocalizations.of(
+                                                                            context)
+                                                                        .languageCode,
+                                                                  ),
+                                                                  'null',
+                                                                )
+                                                              : null,
                                                           ressinc: _model
                                                               .dropdownRessincValue,
                                                           parida:

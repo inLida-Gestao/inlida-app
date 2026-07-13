@@ -482,7 +482,10 @@ class _EditReproducaoRebanhoWidgetState
                                                 ) ??
                                                 false;
                                         if (confirmDialogResponse) {
-                                          if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                                          if (await action_blocks
+                                              .blockIfAccountCanceled(context,
+                                                  refreshFromServer: true))
+                                            return;
                                           if (!(FFAppState()
                                                   .dataDadosNaoSyncRepro !=
                                               null)) {
@@ -906,7 +909,8 @@ class _EditReproducaoRebanhoWidgetState
                                               _model.dropDownLoteValue = val),
                                           width: double.infinity,
                                           height: 56.0,
-                                          textStyle: FlutterFlowTheme.of(context)
+                                          textStyle: FlutterFlowTheme.of(
+                                                  context)
                                               .bodyMedium
                                               .override(
                                                 fontFamily:
@@ -919,7 +923,8 @@ class _EditReproducaoRebanhoWidgetState
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                                 useGoogleFonts:
-                                                    !FlutterFlowTheme.of(context)
+                                                    !FlutterFlowTheme.of(
+                                                            context)
                                                         .bodyMediumIsCustom,
                                               ),
                                           hintText: 'Selecionar lote',
@@ -2739,7 +2744,12 @@ class _EditReproducaoRebanhoWidgetState
                                                       TextCapitalization
                                                           .characters,
                                                   inputFormatters: [
-                                                    TextInputFormatter.withFunction((old, val) => val.copyWith(text: val.text.toUpperCase())),
+                                                    TextInputFormatter
+                                                        .withFunction((old,
+                                                                val) =>
+                                                            val.copyWith(
+                                                                text: val.text
+                                                                    .toUpperCase())),
                                                   ],
                                                   decoration: InputDecoration(
                                                     isDense: true,
@@ -3000,10 +3010,22 @@ class _EditReproducaoRebanhoWidgetState
                                                 'Prenhez',
                                                 'Vazio'
                                               ],
-                                              onChanged: (val) => safeSetState(
-                                                  () => _model
-                                                          .dropdownStatusValue =
-                                                      val),
+                                              onChanged: (val) {
+                                                safeSetState(() {
+                                                  _model.dropdownStatusValue =
+                                                      val;
+                                                  if (functions
+                                                      .permitePrevisaoParto(
+                                                          val)) {
+                                                    _previsaoPartoCleared =
+                                                        false;
+                                                  } else {
+                                                    _model.datePicked6 = null;
+                                                    _previsaoPartoCleared =
+                                                        true;
+                                                  }
+                                                });
+                                              },
                                               width: double.infinity,
                                               height: 56.0,
                                               textStyle: FlutterFlowTheme.of(
@@ -3290,7 +3312,11 @@ class _EditReproducaoRebanhoWidgetState
                                 ),
                               ),
                             ),
-                            if ((_model.tipoReproducao == 'Inseminação') &&
+                            if (functions.permitePrevisaoParto(
+                                    _model.dropdownStatusValue ??
+                                        containerBuscarReproducaoRowList
+                                            .firstOrNull?.statusReproducao) &&
+                                (_model.tipoReproducao == 'Inseminação') &&
                                 ((_model.datePicked1 != null) ||
                                     (dateTimeFormat(
                                           "d/M/y",
@@ -3502,7 +3528,11 @@ class _EditReproducaoRebanhoWidgetState
                                   ].divide(const SizedBox(height: 8.0)),
                                 ),
                               ),
-                            if (_model.tipoReproducao == 'Monta Natural')
+                            if (functions.permitePrevisaoParto(
+                                    _model.dropdownStatusValue ??
+                                        containerBuscarReproducaoRowList
+                                            .firstOrNull?.statusReproducao) &&
+                                _model.tipoReproducao == 'Monta Natural')
                               Padding(
                                 padding: const EdgeInsetsDirectional.fromSTEB(
                                     24.0, 0.0, 24.0, 0.0),
@@ -4204,7 +4234,11 @@ class _EditReproducaoRebanhoWidgetState
                                                   _isSaving = true;
                                                   safeSetState(() {});
                                                   try {
-                                                    if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                                                    if (await action_blocks
+                                                        .blockIfAccountCanceled(
+                                                            context,
+                                                            refreshFromServer:
+                                                                true)) return;
                                                     if (!(FFAppState()
                                                             .dataDadosNaoSyncRepro !=
                                                         null)) {
@@ -4213,26 +4247,27 @@ class _EditReproducaoRebanhoWidgetState
                                                           getCurrentTimestamp;
                                                       safeSetState(() {});
                                                     }
-                                                    final loteSelecionadoRepro = ((_model
-                                                                    .dropDownLoteValue ==
-                                                                null) ||
-                                                            (_model.dropDownLoteValue ??
-                                                                    '')
-                                                                .isEmpty)
-                                                        ? null
-                                                        : (await SQLiteManager
-                                                                .instance
-                                                                .listarLotes(
-                                                            idPropriedade: FFAppState()
-                                                                .propriedadeSelecionada
-                                                                .idPropriedade,
-                                                          ))
-                                                            .where((e) =>
-                                                                e.idLote ==
-                                                                _model
-                                                                    .dropDownLoteValue)
-                                                            .toList()
-                                                            .firstOrNull;
+                                                    final loteSelecionadoRepro =
+                                                        ((_model.dropDownLoteValue ==
+                                                                    null) ||
+                                                                (_model.dropDownLoteValue ??
+                                                                        '')
+                                                                    .isEmpty)
+                                                            ? null
+                                                            : (await SQLiteManager
+                                                                    .instance
+                                                                    .listarLotes(
+                                                                idPropriedade:
+                                                                    FFAppState()
+                                                                        .propriedadeSelecionada
+                                                                        .idPropriedade,
+                                                              ))
+                                                                .where((e) =>
+                                                                    e.idLote ==
+                                                                    _model
+                                                                        .dropDownLoteValue)
+                                                                .toList()
+                                                                .firstOrNull;
                                                     final loteNomeRepro =
                                                         loteSelecionadoRepro
                                                             ?.nome;
@@ -4281,30 +4316,37 @@ class _EditReproducaoRebanhoWidgetState
                                                                         ?.dataPartidaSemen,
                                                         partidaSemen:
                                                             _model.partidaSemen,
-                                                        previsaoParto:
-                                                            _previsaoPartoCleared
-                                                                ? null
-                                                                : _model.datePicked6 !=
+                                                        previsaoParto: !functions.permitePrevisaoParto(_model
+                                                                        .dropdownStatusValue ??
+                                                                    _model
+                                                                        .editReproducao
+                                                                        ?.firstOrNull
+                                                                        ?.statusReproducao) ||
+                                                                _previsaoPartoCleared
+                                                            ? null
+                                                            : _model.datePicked6 !=
+                                                                    null
+                                                                ? dateTimeFormat(
+                                                                    "yyyy-MM-dd",
+                                                                    _model
+                                                                        .datePicked6!,
+                                                                    locale: FFLocalizations.of(
+                                                                            context)
+                                                                        .languageCode,
+                                                                  )
+                                                                : _model.datePicked1 !=
                                                                         null
                                                                     ? dateTimeFormat(
                                                                         "yyyy-MM-dd",
-                                                                        _model
-                                                                            .datePicked6!,
+                                                                        functions
+                                                                            .dataMais295(_model.datePicked1!),
                                                                         locale:
                                                                             FFLocalizations.of(context).languageCode,
                                                                       )
-                                                                    : _model.datePicked1 !=
-                                                                            null
-                                                                        ? dateTimeFormat(
-                                                                            "yyyy-MM-dd",
-                                                                            functions.dataMais295(_model.datePicked1!),
-                                                                            locale:
-                                                                                FFLocalizations.of(context).languageCode,
-                                                                          )
-                                                                        : _model
-                                                                            .editReproducao
-                                                                            ?.firstOrNull
-                                                                            ?.previsaoParto,
+                                                                    : _model
+                                                                        .editReproducao
+                                                                        ?.firstOrNull
+                                                                        ?.previsaoParto,
                                                         dataInicial: _model
                                                                     .datePicked3 !=
                                                                 null
@@ -4485,21 +4527,27 @@ class _EditReproducaoRebanhoWidgetState
                                                                 ?.dataPartidaSemen,
                                                         partidaSemen:
                                                             _model.partidaSemen,
-                                                        previsaoParto: _model
-                                                                    .datePicked6 !=
-                                                                null
-                                                            ? dateTimeFormat(
-                                                                "yyyy-MM-dd",
+                                                        previsaoParto: !functions.permitePrevisaoParto(_model
+                                                                    .dropdownStatusValue ??
                                                                 _model
-                                                                    .datePicked6,
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              )
-                                                            : _model
-                                                                .editReproducao
-                                                                ?.firstOrNull
-                                                                ?.previsaoParto,
+                                                                    .editReproducao
+                                                                    ?.firstOrNull
+                                                                    ?.statusReproducao)
+                                                            ? null
+                                                            : _model.datePicked6 !=
+                                                                    null
+                                                                ? dateTimeFormat(
+                                                                    "yyyy-MM-dd",
+                                                                    _model
+                                                                        .datePicked6,
+                                                                    locale: FFLocalizations.of(
+                                                                            context)
+                                                                        .languageCode,
+                                                                  )
+                                                                : _model
+                                                                    .editReproducao
+                                                                    ?.firstOrNull
+                                                                    ?.previsaoParto,
                                                         dataInicial: _model
                                                                     .datePicked3 !=
                                                                 null

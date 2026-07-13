@@ -3657,6 +3657,9 @@ Map<String, dynamic> _buildReproducaoPayload(
   }
 
   final dataInseminacaoStr = parseDate(raw['data_inseminacao']);
+  final statusReproducao = nullableStr(raw['status_reproducao']);
+  final previsaoPartoPermitida =
+      functions.permitePrevisaoParto(statusReproducao);
   final partidaDefault = FFAppState().dateDefault;
   final dataPartidaSemen = (raw['data_partida_semen'] != null &&
           raw['data_partida_semen'].toString().isNotEmpty)
@@ -3673,10 +3676,11 @@ Map<String, dynamic> _buildReproducaoPayload(
     'data_inseminacao': dataInseminacaoStr,
     'data_partida_semen': dataPartidaSemen,
     'partida_semen': raw['partida_semen'] ?? 1,
-    'previsao_parto': parseDate(raw['previsao_parto']),
+    'previsao_parto':
+        previsaoPartoPermitida ? parseDate(raw['previsao_parto']) : null,
     'data_inicial': parseDate(raw['data_inicial']),
     'data_final': parseDate(raw['data_final']),
-    'status_reproducao': nullableStr(raw['status_reproducao']),
+    'status_reproducao': statusReproducao,
     'inseminador': nullableStr(raw['inseminador']),
     'anotacoes': nullableStr(raw['anotacoes']),
     'deletado': nullableStr(raw['deletado']),
@@ -3712,7 +3716,8 @@ Map<String, dynamic> _buildReproducaoPayload(
   payload.removeWhere((key, value) =>
       value == null &&
       key != 'id_rebanho_matriz' &&
-      key != 'id_rebanho_reprodutor');
+      key != 'id_rebanho_reprodutor' &&
+      !(key == 'previsao_parto' && !previsaoPartoPermitida));
   return payload;
 }
 

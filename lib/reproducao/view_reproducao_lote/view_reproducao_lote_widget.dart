@@ -878,102 +878,107 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                           ),
                         ),
                       ),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
-                            24.0, 0.0, 24.0, 0.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Align(
-                              alignment: const AlignmentDirectional(-1.0, 0.0),
-                              child: Text(
-                                'Previsão do parto',
-                                style: FlutterFlowTheme.of(context)
-                                    .bodyMedium
-                                    .override(
-                                      fontFamily: FlutterFlowTheme.of(context)
-                                          .bodyMediumFamily,
-                                      color: const Color(0xFF474747),
-                                      fontSize: 16.0,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.w600,
-                                      useGoogleFonts:
-                                          !FlutterFlowTheme.of(context)
-                                              .bodyMediumIsCustom,
-                                    ),
-                              ),
-                            ),
-                            Container(
-                              width: double.infinity,
-                              height: 56.0,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF1F1F1),
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(6.0),
-                                  bottomRight: Radius.circular(6.0),
-                                  topLeft: Radius.circular(6.0),
-                                  topRight: Radius.circular(6.0),
-                                ),
-                                border: Border.all(
-                                  color: const Color(0x001E7A4C),
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsetsDirectional.fromSTEB(
-                                    8.0, 0.0, 8.0, 0.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      valueOrDefault<String>(
-                                        dateTimeFormat(
-                                          "d/M/y",
-                                          functions.converterParaData(_model
-                                              .reproducao
-                                              ?.firstOrNull
-                                              ?.previsaoParto),
-                                          locale: FFLocalizations.of(context)
-                                              .languageCode,
-                                        ),
-                                        'N/A',
+                    if (functions.permitePrevisaoParto(
+                        _model.reproducao?.firstOrNull?.statusReproducao))
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color:
+                              FlutterFlowTheme.of(context).secondaryBackground,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              24.0, 0.0, 24.0, 0.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Align(
+                                alignment:
+                                    const AlignmentDirectional(-1.0, 0.0),
+                                child: Text(
+                                  'Previsão do parto',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: FlutterFlowTheme.of(context)
+                                            .bodyMediumFamily,
+                                        color: const Color(0xFF474747),
+                                        fontSize: 16.0,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w600,
+                                        useGoogleFonts:
+                                            !FlutterFlowTheme.of(context)
+                                                .bodyMediumIsCustom,
                                       ),
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMediumFamily,
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                            fontSize: 16.0,
-                                            letterSpacing: 0.0,
-                                            fontWeight: FontWeight.w600,
-                                            useGoogleFonts:
-                                                !FlutterFlowTheme.of(context)
-                                                    .bodyMediumIsCustom,
-                                          ),
-                                    ),
-                                    Icon(
-                                      Icons.calendar_month_rounded,
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryText,
-                                      size: 24.0,
-                                    ),
-                                  ],
                                 ),
                               ),
-                            ),
-                          ].divide(const SizedBox(height: 8.0)),
+                              Container(
+                                width: double.infinity,
+                                height: 56.0,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF1F1F1),
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(6.0),
+                                    bottomRight: Radius.circular(6.0),
+                                    topLeft: Radius.circular(6.0),
+                                    topRight: Radius.circular(6.0),
+                                  ),
+                                  border: Border.all(
+                                    color: const Color(0x001E7A4C),
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      8.0, 0.0, 8.0, 0.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        valueOrDefault<String>(
+                                          dateTimeFormat(
+                                            "d/M/y",
+                                            functions.converterParaData(_model
+                                                .reproducao
+                                                ?.firstOrNull
+                                                ?.previsaoParto),
+                                            locale: FFLocalizations.of(context)
+                                                .languageCode,
+                                          ),
+                                          'N/A',
+                                        ),
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMediumFamily,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryText,
+                                              fontSize: 16.0,
+                                              letterSpacing: 0.0,
+                                              fontWeight: FontWeight.w600,
+                                              useGoogleFonts:
+                                                  !FlutterFlowTheme.of(context)
+                                                      .bodyMediumIsCustom,
+                                            ),
+                                      ),
+                                      Icon(
+                                        Icons.calendar_month_rounded,
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryText,
+                                        size: 24.0,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ].divide(const SizedBox(height: 8.0)),
+                          ),
                         ),
                       ),
-                    ),
                     if (_model.tipoReproducao == 'Monta Natural')
                       Container(
                         width: double.infinity,

@@ -1006,9 +1006,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                         statusReproducaoFiltro: FFAppState()
                                 .filtroDiagnosticoReproducao
                                 .isNotEmpty
-                            ? FFAppState()
-                                .filtroDiagnosticoReproducao
-                                .join('|')
+                            ? FFAppState().filtroDiagnosticoReproducao.join('|')
                             : '',
                       ),
                       builder: (context, snapshot) {
@@ -1145,8 +1143,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                             return const Center(
                                               child: SizedBox(
                                                 height: 200.0,
-                                                child:
-                                                    EmptyReproducaoWidget(),
+                                                child: EmptyReproducaoWidget(),
                                               ),
                                             );
                                           }
@@ -1740,9 +1737,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                       ].divide(const SizedBox(
                                                                               width: 3.0)),
                                                                     ),
-                                                                    if (reproducaoItem
-                                                                            .tipoReproducao ==
-                                                                        'Inseminação')
+                                                                    if (reproducaoItem.tipoReproducao ==
+                                                                            'Inseminação' &&
+                                                                        functions
+                                                                            .permitePrevisaoParto(reproducaoItem.statusReproducao))
                                                                       Row(
                                                                         mainAxisSize:
                                                                             MainAxisSize.max,
@@ -2065,9 +2063,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                         statusReproducaoFiltro: FFAppState()
                                 .filtroDiagnosticoReproducao
                                 .isNotEmpty
-                            ? FFAppState()
-                                .filtroDiagnosticoReproducao
-                                .join('|')
+                            ? FFAppState().filtroDiagnosticoReproducao.join('|')
                             : '',
                       ),
                       builder: (context, snapshot) {
@@ -2202,8 +2198,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                             return const Center(
                                               child: SizedBox(
                                                 height: 200.0,
-                                                child:
-                                                    EmptyReproducaoWidget(),
+                                                child: EmptyReproducaoWidget(),
                                               ),
                                             );
                                           }
@@ -2546,9 +2541,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                         ].divide(const SizedBox(width: 3.0)),
                                                                       ),
                                                                     ),
-                                                                    if (reproducaoItem
-                                                                            .tipoReproducao ==
-                                                                        'Inseminação')
+                                                                    if (reproducaoItem.tipoReproducao ==
+                                                                            'Inseminação' &&
+                                                                        functions
+                                                                            .permitePrevisaoParto(reproducaoItem.statusReproducao))
                                                                       Row(
                                                                         mainAxisSize:
                                                                             MainAxisSize.max,

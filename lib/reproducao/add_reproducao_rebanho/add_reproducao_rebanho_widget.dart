@@ -2253,9 +2253,12 @@ class _AddReproducaoRebanhoWidgetState
                                             autofocus: false,
                                             obscureText: false,
                                             textCapitalization:
-                                          TextCapitalization.characters,
+                                                TextCapitalization.characters,
                                             inputFormatters: [
-                                              TextInputFormatter.withFunction((old, val) => val.copyWith(text: val.text.toUpperCase())),
+                                              TextInputFormatter.withFunction(
+                                                  (old, val) => val.copyWith(
+                                                      text: val.text
+                                                          .toUpperCase())),
                                             ],
                                             decoration: InputDecoration(
                                               hintText: 'Informe um nome',
@@ -2379,14 +2382,10 @@ class _AddReproducaoRebanhoWidgetState
                                   safeSetState(
                                       () => _model.checkboxValue = newValue!);
                                 },
-                                side: (FlutterFlowTheme.of(context).accent4 !=
-                                        null)
-                                    ? BorderSide(
-                                        width: 2,
-                                        color: FlutterFlowTheme.of(context)
-                                            .accent4,
-                                      )
-                                    : null,
+                                side: BorderSide(
+                                  width: 2,
+                                  color: FlutterFlowTheme.of(context).accent4,
+                                ),
                                 activeColor:
                                     FlutterFlowTheme.of(context).primary,
                                 checkColor: FlutterFlowTheme.of(context).info,
@@ -2454,8 +2453,14 @@ class _AddReproducaoRebanhoWidgetState
                                   'Prenhez',
                                   'Vazio'
                                 ],
-                                onChanged: (val) => safeSetState(
-                                    () => _model.dropdownStatusValue = val),
+                                onChanged: (val) {
+                                  safeSetState(() {
+                                    _model.dropdownStatusValue = val;
+                                    if (!functions.permitePrevisaoParto(val)) {
+                                      _model.datePicked6 = null;
+                                    }
+                                  });
+                                },
                                 width: double.infinity,
                                 height: 56.0,
                                 textStyle: FlutterFlowTheme.of(context)
@@ -2665,7 +2670,9 @@ class _AddReproducaoRebanhoWidgetState
                                 ),
                               ].divide(const SizedBox(height: 8.0)),
                             ),
-                          if (_model.tipoReproducao == 'Monta Natural')
+                          if (functions.permitePrevisaoParto(
+                                  _model.dropdownStatusValue) &&
+                              _model.tipoReproducao == 'Monta Natural')
                             Container(
                               width: double.infinity,
                               decoration: BoxDecoration(
@@ -2849,7 +2856,9 @@ class _AddReproducaoRebanhoWidgetState
                                 ].divide(const SizedBox(height: 8.0)),
                               ),
                             ),
-                          if ((_model.tipoReproducao == 'Inseminação') &&
+                          if (functions.permitePrevisaoParto(
+                                  _model.dropdownStatusValue) &&
+                              (_model.tipoReproducao == 'Inseminação') &&
                               (_model.datePicked1 != null))
                             Column(
                               mainAxisSize: MainAxisSize.max,
@@ -3035,14 +3044,10 @@ class _AddReproducaoRebanhoWidgetState
                                     safeSetState(() =>
                                         _model.checkboxParidaValue = newValue!);
                                   },
-                                  side: (FlutterFlowTheme.of(context).accent4 !=
-                                          null)
-                                      ? BorderSide(
-                                          width: 2,
-                                          color: FlutterFlowTheme.of(context)
-                                              .accent4,
-                                        )
-                                      : null,
+                                  side: BorderSide(
+                                    width: 2,
+                                    color: FlutterFlowTheme.of(context).accent4,
+                                  ),
                                   activeColor:
                                       FlutterFlowTheme.of(context).primary,
                                   checkColor: FlutterFlowTheme.of(context).info,
@@ -3448,7 +3453,10 @@ class _AddReproducaoRebanhoWidgetState
                                           _isSaving = true;
                                           safeSetState(() {});
                                           try {
-                                            if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                                            if (await action_blocks
+                                                .blockIfAccountCanceled(context,
+                                                    refreshFromServer: true))
+                                              return;
                                             if (!(FFAppState()
                                                     .dataDadosNaoSyncRepro !=
                                                 null)) {
@@ -3491,20 +3499,24 @@ class _AddReproducaoRebanhoWidgetState
                                                 ),
                                                 partidaSemen:
                                                     _model.partidaSemen,
-                                                previsaoParto:
-                                                    valueOrDefault<String>(
-                                                  dateTimeFormat(
-                                                    "yyyy-MM-dd",
-                                                    _model.datePicked6 ??
-                                                        functions.dataMais295(
-                                                            _model
-                                                                .datePicked1!),
-                                                    locale: FFLocalizations.of(
-                                                            context)
-                                                        .languageCode,
-                                                  ),
-                                                  'null',
-                                                ),
+                                                previsaoParto: functions
+                                                        .permitePrevisaoParto(_model
+                                                            .dropdownStatusValue)
+                                                    ? valueOrDefault<String>(
+                                                        dateTimeFormat(
+                                                          "yyyy-MM-dd",
+                                                          _model.datePicked6 ??
+                                                              functions.dataMais295(
+                                                                  _model
+                                                                      .datePicked1!),
+                                                          locale:
+                                                              FFLocalizations.of(
+                                                                      context)
+                                                                  .languageCode,
+                                                        ),
+                                                        'null',
+                                                      )
+                                                    : null,
                                                 idLote: _model.animalSeleciona
                                                     ?.firstOrNull?.loteID,
                                                 dataInicial: dateTimeFormat(
@@ -3738,13 +3750,18 @@ class _AddReproducaoRebanhoWidgetState
                                                 chipReprodutor: FFAppState()
                                                     .reprodutorSelecionado
                                                     .chip,
-                                                previsaoParto: dateTimeFormat(
-                                                  "yyyy-MM-dd",
-                                                  _model.datePicked6,
-                                                  locale: FFLocalizations.of(
-                                                          context)
-                                                      .languageCode,
-                                                ),
+                                                previsaoParto: functions
+                                                        .permitePrevisaoParto(_model
+                                                            .dropdownStatusValue)
+                                                    ? dateTimeFormat(
+                                                        "yyyy-MM-dd",
+                                                        _model.datePicked6,
+                                                        locale:
+                                                            FFLocalizations.of(
+                                                                    context)
+                                                                .languageCode,
+                                                      )
+                                                    : null,
                                                 ressinc: valueOrDefault<String>(
                                                   _model.dropdownRessincValue,
                                                   '-',
