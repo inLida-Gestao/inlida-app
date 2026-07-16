@@ -15,9 +15,11 @@ class AddPesagemWidget extends StatefulWidget {
   const AddPesagemWidget({
     super.key,
     required this.idRebanho,
+    this.onPesagemAdded,
   });
 
   final String? idRebanho;
+  final void Function(DateTime data, double peso)? onPesagemAdded;
 
   @override
   State<AddPesagemWidget> createState() => _AddPesagemWidgetState();
@@ -413,7 +415,15 @@ class _AddPesagemWidgetState extends State<AddPesagemWidget> {
                     _isSaving = true;
                     safeSetState(() {});
                     try {
-                      if (await action_blocks.blockIfAccountCanceled(context, refreshFromServer: true)) return;
+                      if (widget.onPesagemAdded != null) {
+                        widget.onPesagemAdded!(_model.datePicked!, peso);
+                        Navigator.pop(context);
+                        return;
+                      }
+                      if (await action_blocks.blockIfAccountCanceled(context,
+                          refreshFromServer: true)) {
+                        return;
+                      }
                       await SQLiteManager.instance.addPesagem(
                         idRebanho: widget.idRebanho,
                         dataPesagem: dateTimeFormat(

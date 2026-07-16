@@ -10,9 +10,12 @@ import '/components/empty_sanidade_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
+import '/rebanho/add_rebanho_nascimento/add_rebanho_nascimento_widget.dart';
 import '/rebanho/add_pesagem/add_pesagem_widget.dart';
 import '/rebanho/edit_rebanho/edit_rebanho_widget.dart';
 import '/rebanho/reproducoes_view_rebanho/reproducoes_view_rebanho_widget.dart';
+import '/reproducao/add_reproducao_rebanho/add_reproducao_rebanho_widget.dart';
+import '/sanidade/add_sanidade_animal/add_sanidade_animal_widget.dart';
 import '/sanidade/edit_sanidade_animal/edit_sanidade_animal_widget.dart';
 import '/flutter_flow/custom_functions.dart' as functions;
 import '/actions/actions.dart' as action_blocks;
@@ -138,6 +141,11 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
       return '';
     }
     return normalized;
+  }
+
+  String _loteDisplayName(String? value) {
+    final loteNome = _normalizeInfoValue(value);
+    return loteNome.isEmpty ? 'Sem lote' : loteNome;
   }
 
   bool _isPesagemAtiva(HistoricoPesagensStruct pesagem) =>
@@ -1152,6 +1160,81 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
     _model.maybeDispose();
 
     super.dispose();
+  }
+
+  AnimalSelecionadoStruct _animalSelecionado(BuscarRebanhoRow? animal) {
+    return AnimalSelecionadoStruct(
+      numAnimal: animal?.numeroAnimal,
+      nomeAnimal: animal?.nome,
+      dataNascAnimal: animal?.dataNascimento,
+      racaAnimal: animal?.raca,
+      idRebanho: animal?.idRebanho,
+      chip: animal?.chip,
+      categoria: animal?.categoria,
+      loteNome: animal?.loteNome,
+    );
+  }
+
+  Future<void> _abrirModalComContextoAnimal({
+    required BuscarRebanhoRow animal,
+    required Widget child,
+  }) async {
+    final matrizAnterior = FFAppState().matrizSelecionada;
+    final reprodutorAnterior = FFAppState().reprodutorSelecionado;
+    final sanidadeAnterior = FFAppState().rebanhoSanidadeSelecionado;
+    final animalSelecionado = _animalSelecionado(animal);
+
+    FFAppState().matrizSelecionada =
+        animal.sexo == 'Fêmea' ? animalSelecionado : AnimalSelecionadoStruct();
+    FFAppState().reprodutorSelecionado =
+        animal.sexo == 'Macho' ? animalSelecionado : AnimalSelecionadoStruct();
+    FFAppState().rebanhoSanidadeSelecionado = animalSelecionado;
+
+    try {
+      await showDialog(
+        barrierColor: Colors.transparent,
+        barrierDismissible: false,
+        context: context,
+        builder: (dialogContext) {
+          return Dialog(
+            elevation: 0,
+            insetPadding: EdgeInsets.zero,
+            backgroundColor: Colors.transparent,
+            alignment: const AlignmentDirectional(0.0, 0.0)
+                .resolve(Directionality.of(context)),
+            child: child,
+          );
+        },
+      );
+    } finally {
+      FFAppState().matrizSelecionada = matrizAnterior;
+      FFAppState().reprodutorSelecionado = reprodutorAnterior;
+      FFAppState().rebanhoSanidadeSelecionado = sanidadeAnterior;
+      if (mounted) {
+        safeSetState(() {});
+      }
+    }
+  }
+
+  Future<void> _adicionarCria(BuscarRebanhoRow animal) async {
+    await _abrirModalComContextoAnimal(
+      animal: animal,
+      child: const AddRebanhoNascimentoWidget(),
+    );
+  }
+
+  Future<void> _adicionarReproducao(BuscarRebanhoRow animal) async {
+    await _abrirModalComContextoAnimal(
+      animal: animal,
+      child: const AddReproducaoRebanhoWidget(),
+    );
+  }
+
+  Future<void> _adicionarSanidade(BuscarRebanhoRow animal) async {
+    await _abrirModalComContextoAnimal(
+      animal: animal,
+      child: const AddSanidadeAnimalWidget(),
+    );
   }
 
   @override
@@ -3212,25 +3295,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                     .nAnimalTextController7 ??=
                                                                 TextEditingController(
                                                               text:
-                                                                  valueOrDefault<
-                                                                      String>(
-                                                                valueOrDefault<
-                                                                            String>(
-                                                                          containerBuscarRebanhoRowList
-                                                                              .firstOrNull
-                                                                              ?.loteNome,
-                                                                          'N/A',
-                                                                        ) ==
-                                                                        'null'
-                                                                    ? 'N/A'
-                                                                    : valueOrDefault<
-                                                                        String>(
-                                                                        containerBuscarRebanhoRowList
-                                                                            .firstOrNull
-                                                                            ?.loteNome,
-                                                                        'N/A',
-                                                                      ),
-                                                                'N/A',
+                                                                  _loteDisplayName(
+                                                                containerBuscarRebanhoRowList
+                                                                    .firstOrNull
+                                                                    ?.loteNome,
                                                               ),
                                                             ),
                                                             focusNode: _model
@@ -7228,6 +7296,43 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                               Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
+                                  Padding(
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            24.0, 14.0, 24.0, 0.0),
+                                    child: FFButtonWidget(
+                                      onPressed: () async {
+                                        final animal =
+                                            containerBuscarRebanhoRowList
+                                                .firstOrNull;
+                                        if (animal != null) {
+                                          await _adicionarCria(animal);
+                                        }
+                                      },
+                                      text: 'Adicionar cria',
+                                      icon: const Icon(Icons.add, size: 22.0),
+                                      options: FFButtonOptions(
+                                        width: double.infinity,
+                                        height: 48.0,
+                                        color: const Color(0xFF28A365),
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .override(
+                                              fontFamily:
+                                                  FlutterFlowTheme.of(context)
+                                                      .titleSmallFamily,
+                                              color: Colors.white,
+                                              letterSpacing: 0.0,
+                                              useGoogleFonts:
+                                                  !FlutterFlowTheme.of(context)
+                                                      .titleSmallIsCustom,
+                                            ),
+                                        elevation: 0.0,
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                  ),
                                   Flexible(
                                     child: Padding(
                                       padding:
@@ -8325,42 +8430,129 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                   ),
                                 ],
                               ),
-                              wrapWithModel(
-                                model: _model.reproducoesViewRebanhoModel,
-                                updateCallback: () => safeSetState(() {}),
-                                child: ReproducoesViewRebanhoWidget(
-                                  numAnimal: containerBuscarRebanhoRowList
-                                      .firstOrNull?.numeroAnimal,
-                                  createdAt: containerBuscarRebanhoRowList
-                                          .firstOrNull!.createdAt ??
-                                      '',
-                                  idRebanho: widget.idRebanho,
-                                ),
-                              ),
-                              FutureBuilder<List<BuscarSanidadesRebanhoRow>>(
-                                future: SQLiteManager.instance
-                                    .buscarSanidadesRebanho(
-                                  idRebanho: widget.idRebanho,
-                                ),
-                                builder: (context, snapshot) {
-                                  // Customize what your widget looks like when it's loading.
-                                  if (!snapshot.hasData) {
-                                    return Center(
-                                      child: SizedBox(
-                                        width: 50.0,
-                                        height: 50.0,
-                                        child: CircularProgressIndicator(
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                            FlutterFlowTheme.of(context)
-                                                .primary,
-                                          ),
-                                        ),
+                              Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Padding(
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            24.0, 24.0, 24.0, 12.0),
+                                    child: FFButtonWidget(
+                                      onPressed: () async {
+                                        final animal =
+                                            containerBuscarRebanhoRowList
+                                                .firstOrNull;
+                                        if (animal != null) {
+                                          await _adicionarReproducao(animal);
+                                        }
+                                      },
+                                      text: 'Adicionar reprodução',
+                                      icon: const Icon(Icons.add, size: 22.0),
+                                      options: FFButtonOptions(
+                                        width: double.infinity,
+                                        height: 48.0,
+                                        color: const Color(0xFF28A365),
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .override(
+                                              fontFamily:
+                                                  FlutterFlowTheme.of(context)
+                                                      .titleSmallFamily,
+                                              color: Colors.white,
+                                              letterSpacing: 0.0,
+                                              useGoogleFonts:
+                                                  !FlutterFlowTheme.of(context)
+                                                      .titleSmallIsCustom,
+                                            ),
+                                        elevation: 0.0,
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
                                       ),
-                                    );
-                                  }
-                                  final containerBuscarSanidadesRebanhoRowList =
-                                      snapshot.data!;
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: wrapWithModel(
+                                      model: _model.reproducoesViewRebanhoModel,
+                                      updateCallback: () => safeSetState(() {}),
+                                      child: ReproducoesViewRebanhoWidget(
+                                        numAnimal: containerBuscarRebanhoRowList
+                                            .firstOrNull?.numeroAnimal,
+                                        createdAt: containerBuscarRebanhoRowList
+                                                .firstOrNull!.createdAt ??
+                                            '',
+                                        idRebanho: widget.idRebanho,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Padding(
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            24.0, 24.0, 24.0, 12.0),
+                                    child: FFButtonWidget(
+                                      onPressed: () async {
+                                        final animal =
+                                            containerBuscarRebanhoRowList
+                                                .firstOrNull;
+                                        if (animal != null) {
+                                          await _adicionarSanidade(animal);
+                                        }
+                                      },
+                                      text: 'Adicionar sanidade',
+                                      icon: const Icon(Icons.add, size: 22.0),
+                                      options: FFButtonOptions(
+                                        width: double.infinity,
+                                        height: 48.0,
+                                        color: const Color(0xFF28A365),
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .override(
+                                              fontFamily:
+                                                  FlutterFlowTheme.of(context)
+                                                      .titleSmallFamily,
+                                              color: Colors.white,
+                                              letterSpacing: 0.0,
+                                              useGoogleFonts:
+                                                  !FlutterFlowTheme.of(context)
+                                                      .titleSmallIsCustom,
+                                            ),
+                                        elevation: 0.0,
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: FutureBuilder<
+                                        List<BuscarSanidadesRebanhoRow>>(
+                                      future: SQLiteManager.instance
+                                          .buscarSanidadesRebanho(
+                                        idRebanho: widget.idRebanho,
+                                      ),
+                                      builder: (context, snapshot) {
+                                        // Customize what your widget looks like when it's loading.
+                                        if (!snapshot.hasData) {
+                                          return Center(
+                                            child: SizedBox(
+                                              width: 50.0,
+                                              height: 50.0,
+                                              child: CircularProgressIndicator(
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                        Color>(
+                                                  FlutterFlowTheme.of(context)
+                                                      .primary,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        final containerBuscarSanidadesRebanhoRowList =
+                                            snapshot.data!;
 
                                   return Container(
                                     decoration: const BoxDecoration(),
@@ -9065,7 +9257,10 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                       ],
                                     ),
                                   );
-                                },
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

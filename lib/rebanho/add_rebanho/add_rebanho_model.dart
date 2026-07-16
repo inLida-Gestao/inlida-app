@@ -5,6 +5,13 @@ import '/flutter_flow/instant_timer.dart';
 import 'add_rebanho_widget.dart' show AddRebanhoWidget;
 import 'package:flutter/material.dart';
 
+class PesagemPendente {
+  PesagemPendente({required this.data, required this.peso});
+
+  final DateTime data;
+  final double peso;
+}
+
 class AddRebanhoModel extends FlutterFlowModel<AddRebanhoWidget> {
   ///  Local state fields for this component.
 
@@ -22,6 +29,8 @@ class AddRebanhoModel extends FlutterFlowModel<AddRebanhoWidget> {
   String? teste;
 
   bool ver = false;
+
+  List<PesagemPendente> pesagensPendentes = [];
 
   ///  State fields for stateful widgets in this component.
 
@@ -114,6 +123,7 @@ class AddRebanhoModel extends FlutterFlowModel<AddRebanhoWidget> {
   void dispose() {
     instantTimer?.cancel();
     tabBarController?.dispose();
+    pesagensPendentes.clear();
     nAnimalFocusNode?.dispose();
     nAnimalTextController?.dispose();
 

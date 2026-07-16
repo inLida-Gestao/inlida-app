@@ -8,6 +8,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/instant_timer.dart';
+import '/rebanho/add_pesagem/add_pesagem_widget.dart';
 import '/rebanho/popup_rebanhos/popup_rebanhos_widget.dart';
 import '/actions/actions.dart' as action_blocks;
 import '/custom_code/widgets/index.dart' as custom_widgets;
@@ -130,13 +131,13 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
 
     _model.tabBarController = TabController(
       vsync: this,
-      length: 3,
+      length: 4,
       initialIndex: min(
           valueOrDefault<int>(
             widget.nav,
             0,
           ),
-          2),
+          3),
     )..addListener(() => safeSetState(() {}));
 
     _model.nAnimalTextController ??= TextEditingController();
@@ -171,6 +172,29 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
     _model.maybeDispose();
 
     super.dispose();
+  }
+
+  Future<void> _abrirPesagemPendente() async {
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      enableDrag: false,
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: MediaQuery.viewInsetsOf(context),
+          child: AddPesagemWidget(
+            idRebanho: null,
+            onPesagemAdded: (data, peso) {
+              _model.pesagensPendentes.add(
+                PesagemPendente(data: data, peso: peso),
+              );
+            },
+          ),
+        );
+      },
+    );
+    safeSetState(() {});
   }
 
   @override
@@ -281,10 +305,18 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                             Tab(
                               text: 'Mais detalhes',
                             ),
+                            Tab(
+                              text: 'Pesagens',
+                            ),
                           ],
                           controller: _model.tabBarController,
                           onTap: (i) async {
-                            [() async {}, () async {}, () async {}][i]();
+                            [
+                              () async {},
+                              () async {},
+                              () async {},
+                              () async {}
+                            ][i]();
                           },
                         ),
                       ),
@@ -5427,7 +5459,9 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                       .blockIfAccountCanceled(
                                                           context,
                                                           refreshFromServer:
-                                                              true)) return;
+                                                              true)) {
+                                                    return;
+                                                  }
                                                   if (!await sanitizePesoControllersBeforeSave(
                                                       context, [
                                                     _model
@@ -5749,6 +5783,37 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                             .reprodutorSelecionado
                                                             .idRebanho,
                                                   );
+                                                  for (final pesagem in _model
+                                                      .pesagensPendentes) {
+                                                    await SQLiteManager.instance
+                                                        .addPesagem(
+                                                      idRebanho:
+                                                          _model.idRebanho,
+                                                      dataPesagem:
+                                                          dateTimeFormat(
+                                                        "yyyy-MM-dd",
+                                                        pesagem.data,
+                                                        locale:
+                                                            FFLocalizations.of(
+                                                                    context)
+                                                                .languageCode,
+                                                      ),
+                                                      tipo: 'Atual',
+                                                      peso: pesagem.peso,
+                                                      deletado: 'NAO',
+                                                      createdat: dateTimeFormat(
+                                                        "yyyy-MM-dd HH:mm:ss",
+                                                        getCurrentTimestamp,
+                                                        locale:
+                                                            FFLocalizations.of(
+                                                                    context)
+                                                                .languageCode,
+                                                      ),
+                                                      idPropriedade: FFAppState()
+                                                          .propriedadeSelecionada
+                                                          .idPropriedade,
+                                                    );
+                                                  }
                                                   if (_model
                                                           .pesodadesmamaTextController
                                                           .text !=
@@ -5870,6 +5935,199 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                     ].divide(const SizedBox(height: 24.0)),
                                   ),
                                 ),
+                              ),
+                            ),
+                            SingleChildScrollView(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                  24.0, 16.0, 24.0, 24.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Pesagens do animal',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMediumFamily,
+                                          fontSize: 18.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w600,
+                                          useGoogleFonts:
+                                              !FlutterFlowTheme.of(context)
+                                                  .bodyMediumIsCustom,
+                                        ),
+                                  ),
+                                  if (_model.pesagensPendentes.isEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 24.0),
+                                      child: Text(
+                                        'Nenhuma pesagem adicionada.',
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium,
+                                      ),
+                                    )
+                                  else
+                                    ..._model.pesagensPendentes
+                                        .asMap()
+                                        .entries
+                                        .map(
+                                          (entry) => Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 12.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    '${entry.value.peso.toStringAsFixed(2).replaceAll('.', ',')} kg • ${dateTimeFormat("d/M/y", entry.value.data, locale: FFLocalizations.of(context).languageCode)}',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium,
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  tooltip: 'Remover pesagem',
+                                                  onPressed: () {
+                                                    _model.pesagensPendentes
+                                                        .removeAt(entry.key);
+                                                    safeSetState(() {});
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.delete_outline,
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .error,
+                                                    size: 16.0,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 24.0),
+                                    child: FFButtonWidget(
+                                      onPressed: _abrirPesagemPendente,
+                                      text: 'Adicionar pesagem',
+                                      icon: const Icon(Icons.add, size: 22.0),
+                                      options: FFButtonOptions(
+                                        width: double.infinity,
+                                        height: 48.0,
+                                        color: const Color(0xFF28A365),
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .override(
+                                              fontFamily:
+                                                  FlutterFlowTheme.of(context)
+                                                      .titleSmallFamily,
+                                              color: Colors.white,
+                                              letterSpacing: 0.0,
+                                              useGoogleFonts:
+                                                  !FlutterFlowTheme.of(context)
+                                                      .titleSmallIsCustom,
+                                            ),
+                                        elevation: 0.0,
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 24.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: FFButtonWidget(
+                                            onPressed: () async {
+                                              _model.tabBarController!
+                                                  .animateTo(
+                                                max(
+                                                    0,
+                                                    _model.tabBarController!
+                                                            .index -
+                                                        1),
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                curve: Curves.ease,
+                                              );
+                                            },
+                                            text: 'Voltar',
+                                            options: FFButtonOptions(
+                                              height: 56.0,
+                                              color: Colors.transparent,
+                                              textStyle: FlutterFlowTheme.of(
+                                                      context)
+                                                  .titleSmall
+                                                  .override(
+                                                    fontFamily:
+                                                        FlutterFlowTheme.of(
+                                                                context)
+                                                            .titleSmallFamily,
+                                                    color:
+                                                        const Color(0xFF1E7A4C),
+                                                    letterSpacing: 0.0,
+                                                    useGoogleFonts:
+                                                        !FlutterFlowTheme.of(
+                                                                context)
+                                                            .titleSmallIsCustom,
+                                                  ),
+                                              elevation: 0.0,
+                                              borderSide: const BorderSide(
+                                                color: Color(0xFF1E7A4C),
+                                                width: 2.0,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 16.0),
+                                        Expanded(
+                                          child: FFButtonWidget(
+                                            onPressed: () async {
+                                              _model.tabBarController!
+                                                  .animateTo(
+                                                2,
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                curve: Curves.ease,
+                                              );
+                                            },
+                                            text: 'Ir para detalhes',
+                                            options: FFButtonOptions(
+                                              height: 56.0,
+                                              color: const Color(0xFF28A365),
+                                              textStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .titleSmall
+                                                      .override(
+                                                        fontFamily:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .titleSmallFamily,
+                                                        color: Colors.white,
+                                                        letterSpacing: 0.0,
+                                                        useGoogleFonts:
+                                                            !FlutterFlowTheme
+                                                                    .of(context)
+                                                                .titleSmallIsCustom,
+                                                      ),
+                                              elevation: 0.0,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
