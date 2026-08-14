@@ -145,6 +145,8 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                         FFAppState().filtroStatusRebanhoList = [];
                         FFAppState().filtroDataNascimentoInicio = null;
                         FFAppState().filtroDataNascimentoFim = null;
+                        FFAppState().filtroDataUltimaPesagemInicio = null;
+                        FFAppState().filtroDataUltimaPesagemFim = null;
                         safeSetState(() {
                           _model.dropDownLoteValue = null;
                           _model.dropDownLoteValueController?.value = null;
@@ -1971,6 +1973,256 @@ class _FiltrosRebanhoWidgetState extends State<FiltrosRebanhoWidget> {
                                         onTap: () async {
                                           FFAppState().filtroDataNascimentoInicio = null;
                                           FFAppState().filtroDataNascimentoFim = null;
+                                          safeSetState(() {});
+                                        },
+                                        child: Icon(
+                                          Icons.close,
+                                          color: FlutterFlowTheme.of(context).primaryText,
+                                          size: 24.0,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ].divide(const SizedBox(height: 8.0)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                          0.0, 24.0, 0.0, 0.0),
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color:
+                              FlutterFlowTheme.of(context).secondaryBackground,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsetsDirectional.fromSTEB(
+                              24.0, 0.0, 24.0, 0.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Data da Última Pesagem',
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .override(
+                                      fontFamily: FlutterFlowTheme.of(context)
+                                          .bodyMediumFamily,
+                                      color: const Color(0xFF2F2F2F),
+                                      fontSize: 18.0,
+                                      letterSpacing: 0.0,
+                                      fontWeight: FontWeight.w500,
+                                      useGoogleFonts:
+                                          !FlutterFlowTheme.of(context)
+                                              .bodyMediumIsCustom,
+                                    ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Expanded(
+                                    child: InkWell(
+                                      splashColor: Colors.transparent,
+                                      focusColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () async {
+                                        final datePicked = await showDatePicker(
+                                          initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                          context: context,
+                                          initialDate: FFAppState().filtroDataUltimaPesagemInicio ?? DateTime.now(),
+                                          firstDate: DateTime(1900),
+                                          lastDate: DateTime(2050),
+                                          builder: (context, child) {
+                                            return wrapInMaterialDatePickerTheme(
+                                              context,
+                                              child!,
+                                              headerBackgroundColor: const Color(0xFF28A365),
+                                              headerForegroundColor: FlutterFlowTheme.of(context).info,
+                                              headerTextStyle: FlutterFlowTheme.of(context).headlineLarge.override(
+                                                    fontFamily: FlutterFlowTheme.of(context).headlineLargeFamily,
+                                                    fontSize: 32.0,
+                                                    letterSpacing: 0.0,
+                                                    fontWeight: FontWeight.w600,
+                                                    useGoogleFonts: !FlutterFlowTheme.of(context).headlineLargeIsCustom,
+                                                  ),
+                                              pickerBackgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                              pickerForegroundColor: FlutterFlowTheme.of(context).primaryText,
+                                              selectedDateTimeBackgroundColor: const Color(0xFF28A365),
+                                              selectedDateTimeForegroundColor: FlutterFlowTheme.of(context).info,
+                                              actionButtonForegroundColor: FlutterFlowTheme.of(context).primaryText,
+                                              iconSize: 24.0,
+                                            );
+                                          },
+                                        );
+                                        if (datePicked != null) {
+                                          FFAppState().filtroDataUltimaPesagemInicio = datePicked;
+                                          safeSetState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        height: 50.0,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFF1F1F1),
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(
+                                              12.0, 0.0, 12.0, 0.0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                FFAppState().filtroDataUltimaPesagemInicio != null
+                                                    ? dateTimeFormat(
+                                                        'd/M/y',
+                                                        FFAppState().filtroDataUltimaPesagemInicio!,
+                                                        locale: FFLocalizations.of(context).languageCode,
+                                                      )
+                                                    : 'Início',
+                                                style: FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .override(
+                                                      fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                      color: FFAppState().filtroDataUltimaPesagemInicio != null
+                                                          ? FlutterFlowTheme.of(context).secondaryText
+                                                          : const Color(0xFF9E9E9E),
+                                                      fontSize: 16.0,
+                                                      letterSpacing: 0.0,
+                                                      fontWeight: FontWeight.w600,
+                                                      useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                    ),
+                                              ),
+                                              Icon(
+                                                Icons.calendar_today_outlined,
+                                                color: FlutterFlowTheme.of(context).secondaryText,
+                                                size: 20.0,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
+                                        8.0, 0.0, 8.0, 0.0),
+                                    child: Text(
+                                      'até',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                            color: const Color(0xFF2F2F2F),
+                                            fontSize: 14.0,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: InkWell(
+                                      splashColor: Colors.transparent,
+                                      focusColor: Colors.transparent,
+                                      hoverColor: Colors.transparent,
+                                      highlightColor: Colors.transparent,
+                                      onTap: () async {
+                                        final datePicked = await showDatePicker(
+                                          initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                          context: context,
+                                          initialDate: FFAppState().filtroDataUltimaPesagemFim ?? DateTime.now(),
+                                          firstDate: DateTime(1900),
+                                          lastDate: DateTime(2050),
+                                          builder: (context, child) {
+                                            return wrapInMaterialDatePickerTheme(
+                                              context,
+                                              child!,
+                                              headerBackgroundColor: const Color(0xFF28A365),
+                                              headerForegroundColor: FlutterFlowTheme.of(context).info,
+                                              headerTextStyle: FlutterFlowTheme.of(context).headlineLarge.override(
+                                                    fontFamily: FlutterFlowTheme.of(context).headlineLargeFamily,
+                                                    fontSize: 32.0,
+                                                    letterSpacing: 0.0,
+                                                    fontWeight: FontWeight.w600,
+                                                    useGoogleFonts: !FlutterFlowTheme.of(context).headlineLargeIsCustom,
+                                                  ),
+                                              pickerBackgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
+                                              pickerForegroundColor: FlutterFlowTheme.of(context).primaryText,
+                                              selectedDateTimeBackgroundColor: const Color(0xFF28A365),
+                                              selectedDateTimeForegroundColor: FlutterFlowTheme.of(context).info,
+                                              actionButtonForegroundColor: FlutterFlowTheme.of(context).primaryText,
+                                              iconSize: 24.0,
+                                            );
+                                          },
+                                        );
+                                        if (datePicked != null) {
+                                          FFAppState().filtroDataUltimaPesagemFim = datePicked;
+                                          safeSetState(() {});
+                                        }
+                                      },
+                                      child: Container(
+                                        height: 50.0,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFF1F1F1),
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(
+                                              12.0, 0.0, 12.0, 0.0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                FFAppState().filtroDataUltimaPesagemFim != null
+                                                    ? dateTimeFormat(
+                                                        'd/M/y',
+                                                        FFAppState().filtroDataUltimaPesagemFim!,
+                                                        locale: FFLocalizations.of(context).languageCode,
+                                                      )
+                                                    : 'Fim',
+                                                style: FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .override(
+                                                      fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                      color: FFAppState().filtroDataUltimaPesagemFim != null
+                                                          ? FlutterFlowTheme.of(context).secondaryText
+                                                          : const Color(0xFF9E9E9E),
+                                                      fontSize: 16.0,
+                                                      letterSpacing: 0.0,
+                                                      fontWeight: FontWeight.w600,
+                                                      useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                    ),
+                                              ),
+                                              Icon(
+                                                Icons.calendar_today_outlined,
+                                                color: FlutterFlowTheme.of(context).secondaryText,
+                                                size: 20.0,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  if (FFAppState().filtroDataUltimaPesagemInicio != null ||
+                                      FFAppState().filtroDataUltimaPesagemFim != null)
+                                    Padding(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
+                                          8.0, 0.0, 0.0, 0.0),
+                                      child: InkWell(
+                                        splashColor: Colors.transparent,
+                                        focusColor: Colors.transparent,
+                                        hoverColor: Colors.transparent,
+                                        highlightColor: Colors.transparent,
+                                        onTap: () async {
+                                          FFAppState().filtroDataUltimaPesagemInicio = null;
+                                          FFAppState().filtroDataUltimaPesagemFim = null;
                                           safeSetState(() {});
                                         },
                                         child: Icon(

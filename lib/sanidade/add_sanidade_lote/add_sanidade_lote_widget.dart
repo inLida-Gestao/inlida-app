@@ -2759,7 +2759,9 @@ class _AddSanidadeLoteWidgetState extends State<AddSanidadeLoteWidget> {
                                   try {
                                     if (await action_blocks
                                         .blockIfAccountCanceled(context,
-                                            refreshFromServer: true)) return;
+                                            refreshFromServer: true)) {
+                                      return;
+                                    }
                                     _syncSanidadeTypesFromInputs();
                                     if (!(FFAppState()
                                             .dataDadosNaoSyncSanidade !=

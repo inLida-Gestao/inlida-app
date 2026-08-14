@@ -81,7 +81,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Text(
-                        'Como utilizar o bastão AWR250 da Allflex integrado ao app da inLinda.',
+                        'Como utilizar o bastão AWR250 da Allflex integrado ao app da inLida.',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:
                                   FlutterFlowTheme.of(context).bodyMediumFamily,
@@ -143,7 +143,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                           padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Text(
-                            '(01) Ligue o bastão\n(02) Menu\n(03) Configuração \n(04) Configuração das comunicações \n(05) Bluetooth \n(06) Definir modo Bluetooth \n(07) Selecione o modo Slave \n(08) Definir perfil Bluetooth \n(09) Selecione o modo HID \n(10) Sair',
+                            '(01) Ligue o bastão\n(02) Menu\n(03) Configuração \n(04) Configuração das comunicações \n(05) Bluetooth \n(06) Definir modo Bluetooth \n(07) Selecione o modo Slave \n(08) Definir perfil Bluetooth \n(09) Selecione o modo BLE \n(10) Sair',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
@@ -164,7 +164,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                           padding: const EdgeInsetsDirectional.fromSTEB(
                               24.0, 24.0, 0.0, 0.0),
                           child: Text(
-                            '2. Pareie o bastão com o seu \n   celular',
+                            '2. Conecte o bastão pelo \n   próprio app',
                             maxLines: 2,
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
@@ -209,7 +209,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                           padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Text(
-                            '(01) Ligue o Bluetooth \n(02) Pesquise por dispositivos \n(03) Selecione o bastão \n(04) Faça o pareamento do bastão\n(05) Clique em confirmar',
+                            '(01) Ligue o Bluetooth \n(02) No campo Chip, toque no ícone do bastão \n(03) Toque em "Procurar bastão" \n(04) Selecione o bastão na lista \n(05) Aguarde a mensagem de conexão',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
@@ -230,7 +230,7 @@ class _SaibaMaisBTWidgetState extends State<SaibaMaisBTWidget> {
                           padding: const EdgeInsetsDirectional.fromSTEB(
                               0.0, 16.0, 0.0, 0.0),
                           child: Text(
-                            'Obs.: Ao parear, o bastão irá emitir um som, confirmando que a operação foi concluída.',
+                            'Obs.: Não pareie o bastão pelas configurações do celular. No modo HID ele funciona como teclado e o app não consegue se conectar.',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(

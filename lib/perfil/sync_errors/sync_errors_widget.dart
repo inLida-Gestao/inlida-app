@@ -253,40 +253,86 @@ class _SyncErrorsWidgetState extends State<SyncErrorsWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (e.campoProblema != null)
-                Text(
-                  'Campo: ${e.campoLabel}',
-                  style: GoogleFonts.poppins(fontSize: 12, color: theme.error),
-                ),
+              Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  if (e.codigo != null) _codigoChip(theme, e.codigo!),
+                  if (e.campoProblema != null)
+                    Text(
+                      'Campo: ${e.campoLabel}',
+                      style:
+                          GoogleFonts.poppins(fontSize: 12, color: theme.error),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 2),
               Text(
-                e.mensagemAmigavel ?? 'Erro ao enviar para o servidor.',
-                style: GoogleFonts.poppins(fontSize: 12),
+                e.tituloExibicao,
+                style: GoogleFonts.poppins(
+                    fontSize: 12, fontWeight: FontWeight.w500),
               ),
             ],
           ),
         ),
         children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Operação: ${e.operacao} · Tentativas: ${e.tentativas}\n'
-              'Primeira: ${df.format(e.primeiraOcorrencia)}\n'
-              'Última: ${df.format(e.ultimaOcorrencia)}',
-              style:
-                  GoogleFonts.poppins(fontSize: 11, color: theme.secondaryText),
+          if (e.causaProvavel != null) ...[
+            _secaoExplicativa(
+              theme,
+              icone: Icons.help_outline,
+              titulo: 'Por que isso aconteceu',
+              texto: e.causaProvavel!,
             ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: theme.primaryBackground,
-              borderRadius: BorderRadius.circular(6),
+            const SizedBox(height: 8),
+          ],
+          if (e.acaoSugerida != null) ...[
+            _secaoExplicativa(
+              theme,
+              icone: Icons.checklist_rtl,
+              titulo: 'O que fazer',
+              texto: e.acaoSugerida!,
+              corTexto: theme.primaryText,
+              corFundo: theme.primary.withOpacity(0.08),
             ),
-            child: Text(
-              e.mensagemErro,
-              style: GoogleFonts.firaMono(fontSize: 10),
+            const SizedBox(height: 10),
+          ],
+          Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              title: Text(
+                'Detalhes técnicos',
+                style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: theme.secondaryText),
+              ),
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Operação: ${e.operacao} · Tentativas: ${e.tentativas}\n'
+                    'Primeira: ${df.format(e.primeiraOcorrencia)}\n'
+                    'Última: ${df.format(e.ultimaOcorrencia)}',
+                    style: GoogleFonts.poppins(
+                        fontSize: 11, color: theme.secondaryText),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: theme.primaryBackground,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    e.mensagemErro,
+                    style: GoogleFonts.firaMono(fontSize: 10),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 10),
@@ -312,6 +358,70 @@ class _SyncErrorsWidgetState extends State<SyncErrorsWidget> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  /// Bloco "Por que"/"O que fazer" — mesmo padrão visual, cor configurável.
+  Widget _secaoExplicativa(
+    FlutterFlowTheme theme, {
+    required IconData icone,
+    required String titulo,
+    required String texto,
+    Color? corTexto,
+    Color? corFundo,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: corFundo ?? theme.primaryBackground,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icone, size: 14, color: theme.secondaryText),
+              const SizedBox(width: 6),
+              Text(
+                titulo,
+                style: GoogleFonts.poppins(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: theme.secondaryText),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            texto,
+            style: GoogleFonts.poppins(
+                fontSize: 13, color: corTexto ?? theme.primaryText),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Chip com o código estável do erro (ex.: STALE_CONFLICT, FK_MISSING).
+  /// Útil para o time de desenvolvimento localizar rapidamente a causa sem
+  /// precisar ler a mensagem técnica completa.
+  Widget _codigoChip(FlutterFlowTheme theme, String codigo) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: theme.secondaryText.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        codigo,
+        style: GoogleFonts.firaMono(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: theme.secondaryText,
+        ),
       ),
     );
   }

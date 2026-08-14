@@ -52,6 +52,32 @@ class _ReproducoesViewRebanhoWidgetState
     super.dispose();
   }
 
+  /// Rótulo do animal no formato "número • nome", usando o que estiver
+  /// disponível.
+  ///
+  /// A linha do Reprodutor mostrava apenas `nomeReprodutor`, então um
+  /// reprodutor cadastrado só com número (sem nome) aparecia como "--", dando
+  /// a impressão de que a reprodução estava sem reprodutor. A linha da Matriz
+  /// já exibia "número • nome"; aqui mantemos o mesmo critério.
+  ///
+  /// Tolera campos gravados com o literal 'null' (padrão legado do SQLite).
+  String _rotuloAnimal(String? numero, String? nome) {
+    String limpar(String? valor) {
+      final texto = (valor ?? '').trim();
+      if (texto.isEmpty ||
+          texto.toLowerCase() == 'null' ||
+          texto == '-' ||
+          texto == '--') {
+        return '';
+      }
+      return texto;
+    }
+
+    final partes =
+        [limpar(numero), limpar(nome)].where((parte) => parte.isNotEmpty);
+    return partes.isEmpty ? '--' : partes.join(' • ');
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<BuscarReproducoesRebanhoRow>>(
@@ -746,22 +772,28 @@ class _ReproducoesViewRebanhoWidgetState
                                                         child: Text(
                                                           valueOrDefault<
                                                               String>(
-                                                            '${valueOrDefault<String>(
-                                                              reproducaoItem
-                                                                  .statusReproducao,
-                                                              '--',
-                                                            )} (${valueOrDefault<String>(
-                                                              dateTimeFormat(
-                                                                "dd/MM/yy",
-                                                                functions.converterParaData(
+                                                            functions.exibirPartoConfirmado(
                                                                     reproducaoItem
-                                                                        .dataStatus),
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              ),
-                                                              'S/D',
-                                                            )})',
+                                                                        .parida,
+                                                                    reproducaoItem
+                                                                        .dataParto)
+                                                                ? 'Parida em (${functions.converterParaData(reproducaoItem.dataParto) != null ? dateTimeFormat("dd/MM/yy", functions.converterParaData(reproducaoItem.dataParto), locale: FFLocalizations.of(context).languageCode) : 'S/D'})'
+                                                                : '${valueOrDefault<String>(
+                                                                    reproducaoItem
+                                                                        .statusReproducao,
+                                                                    '--',
+                                                                  )} (${valueOrDefault<String>(
+                                                                    dateTimeFormat(
+                                                                      "dd/MM/yy",
+                                                                      functions.converterParaData(
+                                                                          reproducaoItem
+                                                                              .dataStatus),
+                                                                      locale: FFLocalizations.of(
+                                                                              context)
+                                                                          .languageCode,
+                                                                    ),
+                                                                    'S/D',
+                                                                  )})',
                                                             '--',
                                                           ),
                                                           textAlign:
@@ -810,7 +842,12 @@ class _ReproducoesViewRebanhoWidgetState
                                                     const SizedBox(width: 8.0)),
                                               ),
                                               if (reproducaoItem.parida ==
-                                                  'SIM')
+                                                      'SIM' &&
+                                                  !functions
+                                                      .exibirPartoConfirmado(
+                                                          reproducaoItem.parida,
+                                                          reproducaoItem
+                                                              .dataParto))
                                                 Row(
                                                   mainAxisSize:
                                                       MainAxisSize.max,
@@ -970,10 +1007,11 @@ class _ReproducoesViewRebanhoWidgetState
                                                   ),
                                                   Flexible(
                                                     child: Text(
-                                                      valueOrDefault<String>(
+                                                      _rotuloAnimal(
+                                                        reproducaoItem
+                                                            .numReprodutor,
                                                         reproducaoItem
                                                             .nomeReprodutor,
-                                                        '--',
                                                       ),
                                                       style:
                                                           FlutterFlowTheme.of(

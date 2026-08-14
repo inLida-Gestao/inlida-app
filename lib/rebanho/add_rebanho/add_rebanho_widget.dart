@@ -1,6 +1,7 @@
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
 import '/backend/utils/lote_dropdown_utils.dart';
+import '/components/bastao_leitura_button.dart';
 import '/components/saiba_mais_b_t_widget.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -627,6 +628,11 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                                                     filled: true,
                                                     fillColor:
                                                         const Color(0xFFF1F1F1),
+                                                    suffixIcon:
+                                                        BastaoLeituraButton(
+                                                      controller: _model
+                                                          .nChipTextController!,
+                                                    ),
                                                   ),
                                                   style: FlutterFlowTheme.of(
                                                           context)

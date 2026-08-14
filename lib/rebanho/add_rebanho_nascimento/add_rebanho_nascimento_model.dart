@@ -11,6 +11,22 @@ class AddRebanhoNascimentoModel
 
   String? idRebanho;
 
+  // Auto-vínculo com a reprodução que originou este nascimento (ver
+  // reproducao_parto_utils.dart). idReproducaoVinculada é o registro que
+  // será confirmado (parida/data_parto/status) ao salvar; a flag abaixo
+  // evita sobrescrever um reprodutor escolhido manualmente pelo usuário.
+  String? idReproducaoVinculada;
+  bool reprodutorPreenchidoAutomaticamente = false;
+
+  // Quando nenhuma inseminação é encontrada na janela automática (275-305
+  // dias), mas há candidatas na janela estendida (306-350 dias), o usuário
+  // escolhe manualmente via popup. `vinculoEscolhidoManualmente` marca que a
+  // escolha (vincular ou não vincular) já foi feita para `chaveEscolhaManual`
+  // (matriz + data de nascimento), evitando reabrir o popup à toa e evitando
+  // que a revalidação silenciosa no Salvar apague a escolha do usuário.
+  bool vinculoEscolhidoManualmente = false;
+  String? chaveEscolhaManual;
+
   List<String> idAnimais = [];
   void addToIdAnimais(String item) => idAnimais.add(item);
   void removeFromIdAnimais(String item) => idAnimais.remove(item);

@@ -1,13 +1,17 @@
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
+import '/backend/utils/lote_animal_sort.dart';
+import '/components/bastao_leitura_button.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
+import '/lotes/ordenacao_animais_lote/ordenacao_animais_lote_widget.dart';
 import '/rebanho/filtros_rebanho/filtros_rebanho_widget.dart';
 import '/actions/actions.dart' as action_blocks;
+import '/custom_code/actions/index.dart' as actions;
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:easy_debounce/easy_debounce.dart';
@@ -92,6 +96,8 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
         appliedById[id] = animal;
       }
     }
+    final selectedIds = appliedById.keys.toSet();
+    _model.rebanhosIDAux.removeWhere(selectedIds.contains);
     _model.rebanhosAplicados = appliedById.values.toList();
     _model.rebanhoIdAplicados = appliedById.keys.toList();
     _model.rebanhosSelecionados = _model.rebanhosAplicados.toList();
@@ -516,8 +522,9 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                       if (confirmDialogResponse) {
                                         if (await action_blocks
                                             .blockIfAccountCanceled(context,
-                                                refreshFromServer: true))
+                                                refreshFromServer: true)) {
                                           return;
+                                        }
                                         if (!(FFAppState()
                                                 .dataDadosNaoSyncLotes !=
                                             null)) {
@@ -2312,6 +2319,10 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                       .textController3.text,
                                                   statusReb: FFAppState()
                                                       .filtroStatusRebanho,
+                                                  ordenacaoTipo: FFAppState()
+                                                      .ordenacaoLoteAnimaisTipo,
+                                                  ordenacaoDirecao: FFAppState()
+                                                      .ordenacaoLoteAnimais,
                                                 ),
                                                 builder: (context, snapshot) {
                                                   // Customize what your widget looks like when it's loading.
@@ -2709,6 +2720,115 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                       ),
                                                                     ),
                                                                   ),
+                                                                  InkWell(
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    focusColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    hoverColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onTap:
+                                                                        () async {
+                                                                      await showModalBottomSheet(
+                                                                        isScrollControlled:
+                                                                            true,
+                                                                        backgroundColor:
+                                                                            Colors.transparent,
+                                                                        enableDrag:
+                                                                            false,
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (context) {
+                                                                          return Padding(
+                                                                            padding:
+                                                                                MediaQuery.viewInsetsOf(context),
+                                                                            child:
+                                                                                const OrdenacaoAnimaisLoteWidget(),
+                                                                          );
+                                                                        },
+                                                                      ).then((value) =>
+                                                                          safeSetState(
+                                                                              () {}));
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: FFAppState().ordenacaoLoteAnimaisTipo ==
+                                                                                ''
+                                                                            ? FlutterFlowTheme.of(context).secondaryBackground
+                                                                            : const Color(0xFFD6F5E5),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(24.0),
+                                                                        shape: BoxShape
+                                                                            .rectangle,
+                                                                        border:
+                                                                            Border.all(
+                                                                          color: FFAppState().ordenacaoLoteAnimaisTipo ==
+                                                                                  ''
+                                                                              ? const Color(0xFFBEBEBE)
+                                                                              : FlutterFlowTheme.of(context).secondary,
+                                                                        ),
+                                                                      ),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsetsDirectional
+                                                                            .fromSTEB(
+                                                                            16.0,
+                                                                            8.0,
+                                                                            16.0,
+                                                                            8.0),
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.max,
+                                                                          children:
+                                                                              [
+                                                                            Text(
+                                                                              'Ordenar',
+                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                    fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                    letterSpacing: 0.0,
+                                                                                    useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                  ),
+                                                                            ),
+                                                                            if (FFAppState().ordenacaoLoteAnimais ==
+                                                                                'crescente')
+                                                                              Icon(
+                                                                                Icons.arrow_upward,
+                                                                                color: FlutterFlowTheme.of(context).secondary,
+                                                                                size: 16.0,
+                                                                              ),
+                                                                            if (FFAppState().ordenacaoLoteAnimais ==
+                                                                                'decrescente')
+                                                                              Icon(
+                                                                                Icons.arrow_downward,
+                                                                                color: FlutterFlowTheme.of(context).secondary,
+                                                                                size: 16.0,
+                                                                              ),
+                                                                            if (FFAppState().ordenacaoLoteAnimaisTipo ==
+                                                                                '')
+                                                                              ClipRRect(
+                                                                                borderRadius: BorderRadius.circular(8.0),
+                                                                                child: Image.asset(
+                                                                                  'assets/images/Filter78978.png',
+                                                                                  width: 16.0,
+                                                                                  height: 16.0,
+                                                                                  fit: BoxFit.cover,
+                                                                                ),
+                                                                              ),
+                                                                          ].divide(const SizedBox(width: 6.0)),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
                                                                 ].divide(
                                                                     const SizedBox(
                                                                         width:
@@ -2933,17 +3053,23 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                           ),
                                                           Builder(
                                                             builder: (context) {
-                                                              final rebanhosSelect = animaisForaLoteBuscaRebanhoPaginadaPesquisaRowList
-                                                                  .where((e) =>
-                                                                      e.statusRebanho ==
-                                                                      'Na propriedade')
-                                                                  .toList()
-                                                                  .sortedList(
-                                                                      keyOf: (e) =>
-                                                                          e.createdAt ??
-                                                                          '',
-                                                                      desc:
-                                                                          true)
+                                                              final rebanhosSelect = sortAnimaisLote(
+                                                                animaisForaLoteBuscaRebanhoPaginadaPesquisaRowList
+                                                                    .where((e) =>
+                                                                        e.statusRebanho ==
+                                                                        'Na propriedade')
+                                                                    .toList(),
+                                                                numeroOf: (e) =>
+                                                                    e.numeroAnimal,
+                                                                nascimentoOf: (e) =>
+                                                                    e.dataNascimento,
+                                                                createdAtOf: (e) =>
+                                                                    e.createdAt,
+                                                                tipo: FFAppState()
+                                                                    .ordenacaoLoteAnimaisTipo,
+                                                                direcao: FFAppState()
+                                                                    .ordenacaoLoteAnimais,
+                                                              )
                                                                   .take(_model
                                                                       .mostrarFora)
                                                                   .toList();
@@ -3669,11 +3795,16 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                   .accent3,
                                                               size: 24.0,
                                                             ),
-                                                            suffixIcon: _model
+                                                            suffixIcon: Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              children: [
+                                                                if (_model
                                                                     .pesquisarTextController!
                                                                     .text
-                                                                    .isNotEmpty
-                                                                ? InkWell(
+                                                                    .isNotEmpty)
+                                                                  InkWell(
                                                                     onTap:
                                                                         () async {
                                                                       _model
@@ -3690,8 +3821,16 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                           .accent3,
                                                                       size: 22,
                                                                     ),
-                                                                  )
-                                                                : null,
+                                                                  ),
+                                                                BastaoLeituraButton(
+                                                                  controller: _model
+                                                                      .pesquisarTextController!,
+                                                                  aoLer: (_) =>
+                                                                      safeSetState(
+                                                                          () {}),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
                                                           style: FlutterFlowTheme
                                                                   .of(context)
@@ -3802,22 +3941,32 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                           .isNotEmpty)
                                                         Builder(
                                                           builder: (context) {
-                                                            final rebanhoAplicado = _model
-                                                                .rebanhosAplicados
-                                                                .where((e) =>
-                                                                    (_model.pesquisarTextController
-                                                                            .text ==
-                                                                        '') ||
-                                                                    (e.numeroAnimal.toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) ||
-                                                                        e.nome.toLowerCase().contains(_model
-                                                                            .pesquisarTextController
-                                                                            .text
-                                                                            .toLowerCase()) ||
-                                                                        e.chip.toLowerCase().contains(_model
-                                                                            .pesquisarTextController
-                                                                            .text
-                                                                            .toLowerCase())))
-                                                                .toList()
+                                                            final rebanhoAplicado = sortAnimaisLote(
+                                                              _model
+                                                                  .rebanhosAplicados
+                                                                  .where((e) =>
+                                                                      (_model.pesquisarTextController
+                                                                              .text ==
+                                                                          '') ||
+                                                                      (e.numeroAnimal.toLowerCase().contains(_model.pesquisarTextController.text.toLowerCase()) ||
+                                                                          e.nome.toLowerCase().contains(_model
+                                                                              .pesquisarTextController
+                                                                              .text
+                                                                              .toLowerCase()) ||
+                                                                          e.chip.toLowerCase().contains(_model
+                                                                              .pesquisarTextController
+                                                                              .text
+                                                                              .toLowerCase())))
+                                                                  .toList(),
+                                                              numeroOf: (e) =>
+                                                                  e.numeroAnimal,
+                                                              nascimentoOf: (e) =>
+                                                                  e.dataNascimento,
+                                                              tipo: FFAppState()
+                                                                  .ordenacaoLoteAnimaisTipo,
+                                                              direcao: FFAppState()
+                                                                  .ordenacaoLoteAnimais,
+                                                            )
                                                                 .take(
                                                                     _model.mostrarAdicionados)
                                                                 .toList();
@@ -4400,6 +4549,119 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                     _showSaleValidationSnackBar();
                                                                     return;
                                                                   }
+                                                                  final appliedRebanhoIds = _model
+                                                                      .rebanhoIdAplicados
+                                                                      .where((id) => id
+                                                                          .trim()
+                                                                          .isNotEmpty)
+                                                                      .toSet()
+                                                                      .toList();
+                                                                  final removedRebanhoIds = _model
+                                                                      .rebanhosIDAux
+                                                                      .where((id) => id
+                                                                          .trim()
+                                                                          .isNotEmpty)
+                                                                      .toSet()
+                                                                      .toList();
+                                                                  final loteUpdatedAt =
+                                                                      dateTimeFormat(
+                                                                    "yyyy-MM-dd HH:mm:ss",
+                                                                    getCurrentTimestamp,
+                                                                    locale: FFLocalizations.of(
+                                                                            context)
+                                                                        .languageCode,
+                                                                  );
+                                                                  final reconcileResult =
+                                                                      await SQLiteManager
+                                                                      .instance
+                                                                      .reconcileRebanhoLote(
+                                                                    appliedIds:
+                                                                        appliedRebanhoIds,
+                                                                    removedIds:
+                                                                        removedRebanhoIds,
+                                                                    loteNome: _model
+                                                                        .nomeloteTextController
+                                                                        .text,
+                                                                    loteID:
+                                                                        widget.idLote ??
+                                                                            '',
+                                                                    updatedat:
+                                                                        loteUpdatedAt,
+                                                                    dataEntradaLote:
+                                                                        loteUpdatedAt,
+                                                                    vendido:
+                                                                        loteSendoVendido,
+                                                                    dataVenda: dataVendaLote ==
+                                                                            null
+                                                                        ? null
+                                                                        : dateTimeFormat(
+                                                                            "yyyy-MM-dd",
+                                                                            dataVendaLote,
+                                                                            locale:
+                                                                                FFLocalizations.of(context).languageCode,
+                                                                          ),
+                                                                    valorVenda:
+                                                                        valorVendaLote,
+                                                                  );
+                                                                  if (reconcileResult
+                                                                      .hasMissing) {
+                                                                    for (final idRebanho
+                                                                        in reconcileResult
+                                                                            .appliedMissing) {
+                                                                      // ignore: discarded_futures
+                                                                      actions
+                                                                          .SyncErrorLog
+                                                                          .registrar(
+                                                                        modulo:
+                                                                            'lote',
+                                                                        operacao:
+                                                                            'reconcile_add',
+                                                                        registroId:
+                                                                            idRebanho,
+                                                                        registroDescricao:
+                                                                            'Animal $idRebanho não foi movido para o lote "${_model.nomeloteTextController.text}"',
+                                                                        erro:
+                                                                            'Animal não encontrado localmente ao aplicar o lote (idRebanho=$idRebanho, loteID=${widget.idLote}).',
+                                                                      );
+                                                                    }
+                                                                    for (final idRebanho
+                                                                        in reconcileResult
+                                                                            .removedMissing) {
+                                                                      // ignore: discarded_futures
+                                                                      actions
+                                                                          .SyncErrorLog
+                                                                          .registrar(
+                                                                        modulo:
+                                                                            'lote',
+                                                                        operacao:
+                                                                            'reconcile_remove',
+                                                                        registroId:
+                                                                            idRebanho,
+                                                                        registroDescricao:
+                                                                            'Animal $idRebanho não foi removido do lote "${_model.nomeloteTextController.text}"',
+                                                                        erro:
+                                                                            'Animal já não estava mais neste lote ao tentar remover (idRebanho=$idRebanho, loteID=${widget.idLote}). Provavelmente foi movido por outra edição concorrente.',
+                                                                      );
+                                                                    }
+                                                                  }
+                                                                  if (appliedRebanhoIds
+                                                                          .isNotEmpty ||
+                                                                      removedRebanhoIds
+                                                                          .isNotEmpty) {
+                                                                    if (!(FFAppState()
+                                                                            .dataDadosNaoSyncRebanho !=
+                                                                        null)) {
+                                                                      FFAppState()
+                                                                              .dataDadosNaoSyncRebanho =
+                                                                          getCurrentTimestamp;
+                                                                      safeSetState(
+                                                                          () {});
+                                                                    }
+                                                                  }
+                                                                  _model.rebanhoIdAplicados =
+                                                                      [];
+                                                                  _model.rebanhosIDAux =
+                                                                      [];
                                                                   if (!(FFAppState()
                                                                           .dataDadosNaoSyncLotes !=
                                                                       null)) {
@@ -4644,6 +4906,8 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                             .elementAtOrNull(_model.index),
                                                                         dataEntradaLote:
                                                                             ' ',
+                                                                        expectedLoteID:
+                                                                            widget.idLote,
                                                                       );
 
                                                                       _model.index =

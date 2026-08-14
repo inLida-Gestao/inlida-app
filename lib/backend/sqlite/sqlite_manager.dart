@@ -173,6 +173,26 @@ class SQLiteManager {
     return rows.isNotEmpty;
   }
 
+  /// Localiza um animal da propriedade pelo código do brinco eletrônico.
+  ///
+  /// Usado na leitura com o bastão, onde o código chega sem formatação.
+  /// Retorna `null` quando nenhum animal ativo tem esse chip.
+  ///
+  /// Informe [statusRebanho] para restringir a um status específico (ex.:
+  /// a abertura automática da ficha só considera 'Na propriedade'). Quando
+  /// omitido, qualquer status é aceito.
+  Future<Map<String, Object?>?> buscarRebanhoPorChip({
+    required String idPropriedade,
+    required String chip,
+    String? statusRebanho,
+  }) =>
+      performBuscarRebanhoPorChip(
+        _database,
+        idPropriedade: idPropriedade,
+        chip: chip,
+        statusRebanho: statusRebanho,
+      );
+
   Future<bool> hasLoteDirtyLocalForUser({
     required String userID,
   }) async {
@@ -241,6 +261,8 @@ class SQLiteManager {
     String? statusReb,
     String? dataNascInicio,
     String? dataNascFim,
+    String? dataUltPesagemInicio,
+    String? dataUltPesagemFim,
   }) =>
       performQTDAnimaisPropriedade(
         _database,
@@ -253,6 +275,8 @@ class SQLiteManager {
         statusReb: statusReb,
         dataNascInicio: dataNascInicio,
         dataNascFim: dataNascFim,
+        dataUltPesagemInicio: dataUltPesagemInicio,
+        dataUltPesagemFim: dataUltPesagemFim,
       );
 
   Future<List<QTDDeAnimaisGeralRow>> qTDDeAnimaisGeral({
@@ -527,6 +551,8 @@ class SQLiteManager {
     String? statusReb,
     String? dataNascInicio,
     String? dataNascFim,
+    String? dataUltPesagemInicio,
+    String? dataUltPesagemFim,
   }) =>
       _timedRebanhoQuery(
         'buscaRebanhoPaginada',
@@ -543,6 +569,8 @@ class SQLiteManager {
           statusReb: statusReb,
           dataNascInicio: dataNascInicio,
           dataNascFim: dataNascFim,
+          dataUltPesagemInicio: dataUltPesagemInicio,
+          dataUltPesagemFim: dataUltPesagemFim,
         ),
       );
 
@@ -556,6 +584,8 @@ class SQLiteManager {
     String? statusReb,
     String? dataNascInicio,
     String? dataNascFim,
+    String? dataUltPesagemInicio,
+    String? dataUltPesagemFim,
   }) =>
       performQTDAnimaisTotalPropriedade(
         _database,
@@ -568,6 +598,8 @@ class SQLiteManager {
         statusReb: statusReb,
         dataNascInicio: dataNascInicio,
         dataNascFim: dataNascFim,
+        dataUltPesagemInicio: dataUltPesagemInicio,
+        dataUltPesagemFim: dataUltPesagemFim,
       );
 
   Future<List<BuscarCriasRebanhoReprodutorRow>> buscarCriasRebanhoReprodutor({
@@ -645,6 +677,10 @@ class SQLiteManager {
     String? statusReb,
     String? dataNascInicio,
     String? dataNascFim,
+    String? dataUltPesagemInicio,
+    String? dataUltPesagemFim,
+    String? ordenacaoTipo,
+    String? ordenacaoDirecao,
   }) async {
     return performBuscaRebanhoPaginadaPesquisa(
       _database,
@@ -658,6 +694,10 @@ class SQLiteManager {
       statusReb: statusReb,
       dataNascInicio: dataNascInicio,
       dataNascFim: dataNascFim,
+      dataUltPesagemInicio: dataUltPesagemInicio,
+      dataUltPesagemFim: dataUltPesagemFim,
+      ordenacaoTipo: ordenacaoTipo,
+      ordenacaoDirecao: ordenacaoDirecao,
     );
   }
 
@@ -799,6 +839,8 @@ class SQLiteManager {
     String? statusReb,
     String? dataNascInicio,
     String? dataNascFim,
+    String? dataUltPesagemInicio,
+    String? dataUltPesagemFim,
   }) =>
       _timedRebanhoQuery(
         'rebanhoPagOrdNumCres',
@@ -815,6 +857,8 @@ class SQLiteManager {
           statusReb: statusReb,
           dataNascInicio: dataNascInicio,
           dataNascFim: dataNascFim,
+          dataUltPesagemInicio: dataUltPesagemInicio,
+          dataUltPesagemFim: dataUltPesagemFim,
         ),
       );
 
@@ -830,6 +874,8 @@ class SQLiteManager {
     String? statusReb,
     String? dataNascInicio,
     String? dataNascFim,
+    String? dataUltPesagemInicio,
+    String? dataUltPesagemFim,
   }) =>
       _timedRebanhoQuery(
         'rebanhoPagOrdNumDesc',
@@ -846,6 +892,8 @@ class SQLiteManager {
           statusReb: statusReb,
           dataNascInicio: dataNascInicio,
           dataNascFim: dataNascFim,
+          dataUltPesagemInicio: dataUltPesagemInicio,
+          dataUltPesagemFim: dataUltPesagemFim,
         ),
       );
 
@@ -861,6 +909,8 @@ class SQLiteManager {
     String? statusReb,
     String? dataNascInicio,
     String? dataNascFim,
+    String? dataUltPesagemInicio,
+    String? dataUltPesagemFim,
   }) =>
       _timedRebanhoQuery(
         'rebanhoPagOrdNomCres',
@@ -877,6 +927,8 @@ class SQLiteManager {
           statusReb: statusReb,
           dataNascInicio: dataNascInicio,
           dataNascFim: dataNascFim,
+          dataUltPesagemInicio: dataUltPesagemInicio,
+          dataUltPesagemFim: dataUltPesagemFim,
         ),
       );
 
@@ -892,6 +944,8 @@ class SQLiteManager {
     String? statusReb,
     String? dataNascInicio,
     String? dataNascFim,
+    String? dataUltPesagemInicio,
+    String? dataUltPesagemFim,
   }) =>
       _timedRebanhoQuery(
         'rebanhoPagOrdNomDesc',
@@ -908,6 +962,8 @@ class SQLiteManager {
           statusReb: statusReb,
           dataNascInicio: dataNascInicio,
           dataNascFim: dataNascFim,
+          dataUltPesagemInicio: dataUltPesagemInicio,
+          dataUltPesagemFim: dataUltPesagemFim,
         ),
       );
 
@@ -923,6 +979,8 @@ class SQLiteManager {
     String? statusReb,
     String? dataNascInicio,
     String? dataNascFim,
+    String? dataUltPesagemInicio,
+    String? dataUltPesagemFim,
   }) =>
       _timedRebanhoQuery(
         'rebanhoPagOrdDataCres',
@@ -939,6 +997,8 @@ class SQLiteManager {
           statusReb: statusReb,
           dataNascInicio: dataNascInicio,
           dataNascFim: dataNascFim,
+          dataUltPesagemInicio: dataUltPesagemInicio,
+          dataUltPesagemFim: dataUltPesagemFim,
         ),
       );
 
@@ -954,6 +1014,8 @@ class SQLiteManager {
     String? statusReb,
     String? dataNascInicio,
     String? dataNascFim,
+    String? dataUltPesagemInicio,
+    String? dataUltPesagemFim,
   }) =>
       _timedRebanhoQuery(
         'rebanhoPagOrdDataDesc',
@@ -970,6 +1032,47 @@ class SQLiteManager {
           statusReb: statusReb,
           dataNascInicio: dataNascInicio,
           dataNascFim: dataNascFim,
+          dataUltPesagemInicio: dataUltPesagemInicio,
+          dataUltPesagemFim: dataUltPesagemFim,
+        ),
+      );
+
+  Future<List<T>> rebanhoPagOrdPesagem<T>(
+    T Function(Map<String, dynamic>) rowBuilder, {
+    String? idPropriedade,
+    int? limitReb,
+    int? offsetReb,
+    String? sexo,
+    String? categoria,
+    String? raca,
+    String? origem,
+    String? loteId,
+    String? statusReb,
+    String? dataNascInicio,
+    String? dataNascFim,
+    String? dataUltPesagemInicio,
+    String? dataUltPesagemFim,
+    String? ordenacaoDirecao,
+  }) =>
+      _timedRebanhoQuery(
+        'rebanhoPagOrdPesagem',
+        () => performRebanhoPagOrdPesagem(
+          _database,
+          rowBuilder,
+          idPropriedade: idPropriedade,
+          limitReb: limitReb,
+          offsetReb: offsetReb,
+          sexo: sexo,
+          categoria: categoria,
+          raca: raca,
+          origem: origem,
+          loteId: loteId,
+          statusReb: statusReb,
+          dataNascInicio: dataNascInicio,
+          dataNascFim: dataNascFim,
+          dataUltPesagemInicio: dataUltPesagemInicio,
+          dataUltPesagemFim: dataUltPesagemFim,
+          ordenacaoDirecao: ordenacaoDirecao,
         ),
       );
 
@@ -1526,6 +1629,61 @@ SELECT idPropriedade FROM local_rebanho WHERE idRebanho = ? LIMIT 1
     await _syncUltimaPesagemNoRebanho(idRebanho);
   }
 
+  Future<void> syncUltimasPesagensNosRebanhos({
+    required Iterable<String> idsRebanho,
+  }) async {
+    final ids = idsRebanho
+        .map((id) => id.trim())
+        .where((id) => id.isNotEmpty)
+        .toSet()
+        .toList(growable: false);
+    if (ids.isEmpty) {
+      return;
+    }
+
+    // Uma atualização correlacionada por lote substitui duas consultas e um
+    // UPDATE por animal. Isso evita milhares de round-trips SQLite durante o
+    // download paginado de pesagens.
+    const batchSize = 400;
+    await _database.transaction((txn) async {
+      for (var offset = 0; offset < ids.length; offset += batchSize) {
+        final end =
+            offset + batchSize < ids.length ? offset + batchSize : ids.length;
+        final batch = ids.sublist(offset, end);
+        final placeholders = List.filled(batch.length, '?').join(',');
+        await txn.rawUpdate(
+          '''
+UPDATE local_rebanho
+SET pesoAtual = (
+      SELECT p.peso
+      FROM local_historico_pesagens p
+      WHERE p.idRebanho = local_rebanho.idRebanho
+        AND COALESCE(p.deletado, 'NAO') != 'SIM'
+        AND COALESCE(p.dataPesagem, '') != ''
+      ORDER BY date(p.dataPesagem) DESC,
+               datetime(COALESCE(p.created_at, '1970-01-01'), 'localtime') DESC,
+               p.id DESC
+      LIMIT 1
+    ),
+    dataUltimaPesagem = COALESCE((
+      SELECT p.dataPesagem
+      FROM local_historico_pesagens p
+      WHERE p.idRebanho = local_rebanho.idRebanho
+        AND COALESCE(p.deletado, 'NAO') != 'SIM'
+        AND COALESCE(p.dataPesagem, '') != ''
+      ORDER BY date(p.dataPesagem) DESC,
+               datetime(COALESCE(p.created_at, '1970-01-01'), 'localtime') DESC,
+               p.id DESC
+      LIMIT 1
+    ), '')
+WHERE idRebanho IN ($placeholders)
+''',
+          batch,
+        );
+      }
+    });
+  }
+
   Future<void> _syncUltimaPesagemNoRebanho(String? idRebanho) async {
     if (idRebanho == null || idRebanho.isEmpty) {
       return;
@@ -1776,6 +1934,7 @@ WHERE idRebanho = ?
     String? updatedat,
     String? idRebanho,
     String? dataEntradaLote,
+    String? expectedLoteID,
   }) =>
       performUPDTRebanhoLote(
         _database,
@@ -1784,6 +1943,31 @@ WHERE idRebanho = ?
         updatedat: updatedat,
         idRebanho: idRebanho,
         dataEntradaLote: dataEntradaLote,
+        expectedLoteID: expectedLoteID,
+      );
+
+  Future<RebanhoLoteReconcileResult> reconcileRebanhoLote({
+    required List<String> appliedIds,
+    required List<String> removedIds,
+    required String loteNome,
+    required String loteID,
+    required String updatedat,
+    required String dataEntradaLote,
+    required bool vendido,
+    String? dataVenda,
+    double? valorVenda,
+  }) =>
+      performReconcileRebanhoLote(
+        _database,
+        appliedIds: appliedIds,
+        removedIds: removedIds,
+        loteNome: loteNome,
+        loteID: loteID,
+        updatedat: updatedat,
+        dataEntradaLote: dataEntradaLote,
+        vendido: vendido,
+        dataVenda: dataVenda,
+        valorVenda: valorVenda,
       );
 
   Future deleteAllLotes() => performDeleteAllLotes(
@@ -1900,6 +2084,36 @@ WHERE idRebanho = ?
         _database,
         idReproducao: idReproducao,
         updatedat: updatedat,
+      );
+
+  Future<List<BuscarReproducaoParaPartoRow>> buscarReproducaoParaParto({
+    String? idPropriedade,
+    String? idRebanhoMatriz,
+    String? dataInicio,
+    String? dataFim,
+    bool incluirMontaNatural = true,
+  }) =>
+      performBuscarReproducaoParaParto(
+        _database,
+        idPropriedade: idPropriedade,
+        idRebanhoMatriz: idRebanhoMatriz,
+        dataInicio: dataInicio,
+        dataFim: dataFim,
+        incluirMontaNatural: incluirMontaNatural,
+      );
+
+  Future confirmarPartoReproducao({
+    String? idReproducao,
+    String? dataParto,
+    String? statusReproducao,
+    String? updatedAt,
+  }) =>
+      performConfirmarPartoReproducao(
+        _database,
+        idReproducao: idReproducao,
+        dataParto: dataParto,
+        statusReproducao: statusReproducao,
+        updatedAt: updatedAt,
       );
 
   Future uPDTReproducao({

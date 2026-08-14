@@ -1,5 +1,6 @@
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
+import '/components/bastao_leitura_button.dart';
 import '/components/empty_rebanho_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -191,9 +192,12 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                 color: FlutterFlowTheme.of(context).accent3,
                                 size: 24.0,
                               ),
-                              suffixIcon: _model
-                                      .pesquisarTextController1!.text.isNotEmpty
-                                  ? InkWell(
+                              suffixIcon: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (_model.pesquisarTextController1!.text
+                                      .isNotEmpty)
+                                    InkWell(
                                       onTap: () async {
                                         _model.pesquisarTextController1
                                             ?.clear();
@@ -206,8 +210,17 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                             .accent3,
                                         size: 22,
                                       ),
-                                    )
-                                  : null,
+                                    ),
+                                  BastaoLeituraButton(
+                                    controller:
+                                        _model.pesquisarTextController1!,
+                                    aoLer: (_) {
+                                      _model.invalidateBuscaCache();
+                                      safeSetState(() {});
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
@@ -677,9 +690,12 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                             color: FlutterFlowTheme.of(context).accent3,
                             size: 24.0,
                           ),
-                          suffixIcon: _model
-                                  .pesquisarTextController2!.text.isNotEmpty
-                              ? InkWell(
+                          suffixIcon: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (_model
+                                  .pesquisarTextController2!.text.isNotEmpty)
+                                InkWell(
                                   onTap: () async {
                                     _model.pesquisarTextController2?.clear();
                                     _model.invalidateBuscaCache();
@@ -690,8 +706,16 @@ class _PopupRebanhosWidgetState extends State<PopupRebanhosWidget> {
                                     color: FlutterFlowTheme.of(context).accent3,
                                     size: 22,
                                   ),
-                                )
-                              : null,
+                                ),
+                              BastaoLeituraButton(
+                                controller: _model.pesquisarTextController2!,
+                                aoLer: (_) {
+                                  _model.invalidateBuscaCache();
+                                  safeSetState(() {});
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily:

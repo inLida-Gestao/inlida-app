@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '/backend/utils/rebanho_natural_sort.dart';
 import '/backend/utils/rebanho_status_utils.dart';
 
 import 'package:sqflite/sqflite.dart';
@@ -167,6 +168,7 @@ Future<Database> initializeDatabaseFromDbFile(
   // Antes de qualquer query nova, garanta colunas adicionadas em versões
   // recentes para evitar crash na splash por "no such column".
   await _ensureLocalSchemaCompatibility(database);
+  await _backfillLocalRebanhoNumeroSortKeys(database);
   await _normalizeInvalidRebanhoStatuses(database);
   await _backfillLocalRebanhoDirtyFlags(database, prefs);
   await _backfillLocalPesagemKeys(database, prefs);
@@ -263,9 +265,11 @@ Future<void> _ensureLocalSchemaCompatibility(Database db) async {
       'data_morte': 'TEXT',
       'motivo_morte': 'TEXT',
       'categoria_matriz': 'TEXT',
+      'numeroAnimalSortKey': 'TEXT',
       'sync_dirty': 'INTEGER',
       'sync_op': 'TEXT',
       'sync_updated_at': 'TEXT',
+      'sync_lote_dirty': 'INTEGER NOT NULL DEFAULT 0',
     },
     'local_lotes': {
       'sync_dirty': 'INTEGER',
@@ -305,6 +309,52 @@ Future<void> _ensureLocalSchemaCompatibility(Database db) async {
       debugPrint(
           '[SQLite] Erro ao garantir compatibilidade de ${tableEntry.key}: $e');
     }
+  }
+}
+
+Future<void> _backfillLocalRebanhoNumeroSortKeys(Database db) async {
+  try {
+    if (!await _tableExists(db, 'local_rebanho')) return;
+    final columns = await _tableColumns(db, 'local_rebanho');
+    if (!columns.contains('numeroAnimalSortKey')) return;
+
+    final rows = await db.rawQuery('''
+SELECT rowid, numeroAnimal
+FROM local_rebanho
+WHERE numeroAnimalSortKey IS NULL OR numeroAnimalSortKey = ''
+ORDER BY rowid ASC
+''');
+    if (rows.isEmpty) return;
+
+    const batchSize = 500;
+    var updated = 0;
+    for (var start = 0; start < rows.length; start += batchSize) {
+      final end =
+          (start + batchSize < rows.length) ? start + batchSize : rows.length;
+      final batchRows = rows.sublist(start, end);
+      await db.transaction((txn) async {
+        final batch = txn.batch();
+        for (final row in batchRows) {
+          final rowid = row['rowid'];
+          if (rowid == null) continue;
+          batch.update(
+            'local_rebanho',
+            {
+              'numeroAnimalSortKey': buildRebanhoNumeroSortKey(
+                row['numeroAnimal']?.toString(),
+              ),
+            },
+            where: 'rowid = ?',
+            whereArgs: [rowid],
+          );
+        }
+        await batch.commit(noResult: true);
+      });
+      updated += batchRows.length;
+    }
+    debugPrint('[SQLite] Chaves naturais do rebanho preenchidas: $updated.');
+  } catch (e) {
+    debugPrint('[SQLite] Erro no backfill de chaves naturais do rebanho: $e');
   }
 }
 
@@ -599,6 +649,12 @@ Future<void> _ensureRebanhoIndexes(
       sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_numero_animal
        ON local_rebanho (idPropriedade, deletado, numeroAnimal)''',
     ),
+    (
+      name: 'idx_rebanho_prop_deletado_numero_sort',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_prop_deletado_numero_sort
+       ON local_rebanho (idPropriedade, deletado, numeroAnimalSortKey, idRebanho)''',
+    ),
     // Índice para busca por nome (LIKE prefix)
     (
       name: 'idx_rebanho_nome',
@@ -639,6 +695,12 @@ Future<void> _ensureRebanhoIndexes(
        ON local_rebanho (idPropriedade, deletado, statusRebanho, numeroAnimal)''',
     ),
     (
+      name: 'idx_rebanho_prop_status_numero_sort',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_prop_status_numero_sort
+       ON local_rebanho (idPropriedade, deletado, statusRebanho, numeroAnimalSortKey, idRebanho)''',
+    ),
+    (
       name: 'idx_rebanho_prop_status_nome',
       heavy: false,
       sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_prop_status_nome
@@ -649,6 +711,12 @@ Future<void> _ensureRebanhoIndexes(
       heavy: false,
       sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_prop_status_nascimento
        ON local_rebanho (idPropriedade, deletado, statusRebanho, dataNascimento)''',
+    ),
+    (
+      name: 'idx_rebanho_prop_status_ultima_pesagem',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_rebanho_prop_status_ultima_pesagem
+       ON local_rebanho (idPropriedade, deletado, statusRebanho, dataUltimaPesagem)''',
     ),
     (
       name: 'idx_rebanho_sync_created',
@@ -894,7 +962,10 @@ Future<void> _ensureSyncErrorLogTable(Database db) async {
         ultima_ocorrencia TEXT NOT NULL,
         tentativas INTEGER NOT NULL DEFAULT 1,
         resolvido INTEGER NOT NULL DEFAULT 0,
-        resolvido_em TEXT
+        resolvido_em TEXT,
+        codigo TEXT,
+        causa_provavel TEXT,
+        acao_sugerida TEXT
       )''',
     '''CREATE INDEX IF NOT EXISTS idx_sync_error_modulo
        ON sync_error_log (modulo, resolvido)''',
@@ -909,6 +980,22 @@ Future<void> _ensureSyncErrorLogTable(Database db) async {
       await db.execute(stmt);
     } catch (e) {
       debugPrint('[SQLite] Erro ao criar sync_error_log: $e');
+    }
+  }
+
+  // Migração incremental: bancos criados antes da adição de codigo/causa/ação
+  // não têm essas colunas — ALTER TABLE ADD COLUMN falha silenciosamente
+  // (capturado pelo catch) quando a coluna já existe.
+  const alterStmts = <String>[
+    'ALTER TABLE sync_error_log ADD COLUMN codigo TEXT',
+    'ALTER TABLE sync_error_log ADD COLUMN causa_provavel TEXT',
+    'ALTER TABLE sync_error_log ADD COLUMN acao_sugerida TEXT',
+  ];
+  for (final stmt in alterStmts) {
+    try {
+      await db.execute(stmt);
+    } catch (_) {
+      // Coluna já existe — ignora.
     }
   }
   debugPrint('[SQLite] Tabela sync_error_log verificada/criada.');

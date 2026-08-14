@@ -1,5 +1,6 @@
 // Automatic FlutterFlow imports
 import '/backend/sqlite/sqlite_manager.dart';
+import '/backend/utils/rebanho_natural_sort.dart';
 import '/backend/utils/rebanho_status_utils.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 // Imports other custom actions
@@ -33,6 +34,9 @@ Future<Map<String, dynamic>> batchInsertLocalRebanho(
       if (source['numeroAnimal'] != null) {
         mapped['numeroAnimal'] = _cleanNull(source['numeroAnimal']);
       }
+      mapped['numeroAnimalSortKey'] = buildRebanhoNumeroSortKey(
+        _cleanNull(source['numeroAnimal'])?.toString(),
+      );
       if (source['chip'] != null) mapped['chip'] = _cleanNull(source['chip']);
       if (source['codRegistro'] != null) {
         mapped['codRegistro'] = _cleanNull(source['codRegistro']);
@@ -161,6 +165,7 @@ Future<Map<String, dynamic>> batchInsertLocalRebanho(
       mapped['sync_dirty'] = 0;
       mapped['sync_op'] = null;
       mapped['sync_updated_at'] = null;
+      mapped['sync_lote_dirty'] = 0;
 
       mappedRecords.add(mapped);
     } catch (e) {

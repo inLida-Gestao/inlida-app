@@ -1,5 +1,7 @@
 import '/auth/supabase_auth/auth_util.dart';
+import '/backend/bluetooth/bastao_reader_service.dart';
 import '/backend/supabase/supabase.dart';
+import '/components/bastao_conectar_widget.dart';
 import '/components/politica_privacidade_widget.dart';
 import '/components/sync_diagnostic_dialog.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -376,6 +378,9 @@ class _MinhaContaWidgetState extends State<MinhaContaWidget> {
                             ),
                           ),
                         ),
+                        _BastaoMenuItem(
+                          onTap: () => BastaoConectarWidget.abrir(context),
+                        ),
                         _SyncErrorsMenuItem(
                           onTap: () async {
                             await Navigator.push(
@@ -718,7 +723,6 @@ class _SyncErrorsMenuItem extends StatelessWidget {
 class _SyncDiagnosticMenuItem extends StatelessWidget {
   final VoidCallback onTap;
   const _SyncDiagnosticMenuItem({required this.onTap});
-
   @override
   Widget build(BuildContext context) {
     final theme = FlutterFlowTheme.of(context);
@@ -782,6 +786,97 @@ class _SyncDiagnosticMenuItem extends StatelessWidget {
                 size: 24,
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Atalho para conectar o bastão de leitura de brincos via Bluetooth.
+class _BastaoMenuItem extends StatelessWidget {
+  final VoidCallback onTap;
+  const _BastaoMenuItem({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = FlutterFlowTheme.of(context);
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(color: theme.secondaryBackground),
+      child: InkWell(
+        splashColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: ValueListenableBuilder<BastaoStatus>(
+            valueListenable: BastaoReaderService.instance.status,
+            builder: (context, status, _) {
+              final conectado = status == BastaoStatus.conectado;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: theme.primary.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          conectado ? Icons.sensors : Icons.sensors_off,
+                          color:
+                              conectado ? theme.primary : theme.secondaryText,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Bastão de leitura',
+                            style: FlutterFlowTheme.of(context)
+                                .bodyMedium
+                                .override(
+                                  font: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w500),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                          ),
+                          Text(
+                            conectado
+                                ? BastaoReaderService
+                                        .instance.nomeDispositivo ??
+                                    'Conectado'
+                                : 'Conectar via Bluetooth',
+                            style:
+                                FlutterFlowTheme.of(context).bodySmall.override(
+                                      font: GoogleFonts.poppins(),
+                                      color: conectado
+                                          ? theme.primary
+                                          : theme.secondaryText,
+                                      fontSize: 12,
+                                    ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    Icons.chevron_right_outlined,
+                    color: theme.secondaryText,
+                    size: 24,
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),

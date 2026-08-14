@@ -742,7 +742,9 @@ class _AddRebanhoSemenWidgetState extends State<AddRebanhoSemenWidget> {
                                     try {
                                       if (await action_blocks
                                           .blockIfAccountCanceled(context,
-                                              refreshFromServer: true)) return;
+                                              refreshFromServer: true)) {
+                                        return;
+                                      }
                                       if (!(FFAppState()
                                               .dataDadosNaoSyncRebanho !=
                                           null)) {

@@ -6,6 +6,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '/backend/sqlite/sqlite_manager.dart';
+import '/backend/supabase/supabase.dart' show PostgrestException;
 // Begin custom action code
 // DO NOT REMOVE OR MODIFY THE CODE ABOVE!
 
@@ -39,8 +40,7 @@ class SyncErrorLog {
     try {
       final db = SQLiteManager.instance.database;
       final mensagemBruta = _extractRawMessage(erro);
-      final campo = _inferirCampo(mensagemBruta);
-      final amigavel = _mensagemAmigavel(mensagemBruta, campo);
+      final classificacao = classificarErro(erro, mensagemBruta);
       final agora = DateTime.now().toIso8601String();
 
       // Verifica se há um erro ativo idêntico (mesma operação + mesmo registro)
@@ -58,8 +58,11 @@ class SyncErrorLog {
           'sync_error_log',
           {
             'mensagem_erro': mensagemBruta,
-            'mensagem_amigavel': amigavel,
-            'campo_problema': campo,
+            'mensagem_amigavel': classificacao.titulo,
+            'campo_problema': classificacao.campoProblema,
+            'codigo': classificacao.codigo,
+            'causa_provavel': classificacao.causaProvavel,
+            'acao_sugerida': classificacao.acaoSugerida,
             'ultima_ocorrencia': agora,
             'tentativas': (existentes.first['tentativas'] as int? ?? 1) + 1,
             if (payload != null) 'payload_json': jsonEncode(payload),
@@ -75,9 +78,12 @@ class SyncErrorLog {
           'operacao': operacao,
           'registro_id': registroId,
           'registro_descricao': registroDescricao,
-          'campo_problema': campo,
+          'campo_problema': classificacao.campoProblema,
           'mensagem_erro': mensagemBruta,
-          'mensagem_amigavel': amigavel,
+          'mensagem_amigavel': classificacao.titulo,
+          'codigo': classificacao.codigo,
+          'causa_provavel': classificacao.causaProvavel,
+          'acao_sugerida': classificacao.acaoSugerida,
           'payload_json': payload != null ? jsonEncode(payload) : null,
           'primeira_ocorrencia': agora,
           'ultima_ocorrencia': agora,
@@ -205,7 +211,7 @@ class SyncErrorLog {
   }
 
   // ============================================================
-  // Inferência de campo + mensagens amigáveis
+  // Classificação de erros: código + causa provável + ação sugerida
   // ============================================================
 
   static String _extractRawMessage(Object erro) {
@@ -268,53 +274,244 @@ class SyncErrorLog {
     return _campoLabels[raw] ?? raw;
   }
 
-  /// Traduz uma mensagem técnica do Postgres para algo legível ao usuário.
-  static String _mensagemAmigavel(String bruta, String? campo) {
+  /// Classifica um erro de sincronização em um código estável +
+  /// explicação em PT-BR para o usuário leigo + ação sugerida.
+  ///
+  /// Prioriza o `code` do `PostgrestException` (estável, não depende de
+  /// texto que pode mudar entre versões do Postgres); cai para regex na
+  /// mensagem bruta quando o erro não é um PostgrestException (timeouts,
+  /// erros de rede, exceções internas do sync engine como stale conflict).
+  static SyncErrorClassification classificarErro(Object erro, String bruta) {
+    final campo = _inferirCampo(bruta);
     final label = labelCampo(campo);
 
-    if (RegExp(r'null value in column').hasMatch(bruta) ||
-        RegExp(r'not-null').hasMatch(bruta)) {
-      return campo == null
-          ? 'Um campo obrigatório está em branco.'
-          : 'O campo "$label" está em branco e é obrigatório.';
+    // Exceções internas do sync engine (tipos privados de lib/actions/actions.dart,
+    // não visíveis aqui — identificadas pelo texto estável do toString()).
+    if (bruta.contains('stale recusado') ||
+        bruta.contains('STALE_REBANHO_UPDATE')) {
+      return const SyncErrorClassification(
+        codigo: 'STALE_CONFLICT',
+        titulo: 'Conflito com uma edição mais recente',
+        causaProvavel:
+            'Este registro foi alterado em outro dispositivo (ou pelo servidor) depois da sua última edição local.',
+        acaoSugerida:
+            'Abra o registro, confira os dados atuais e edite novamente para reenviar.',
+      );
     }
-    if (RegExp(r'foreign key constraint').hasMatch(bruta)) {
-      return campo == null
-          ? 'Há uma referência inválida (item vinculado não existe).'
-          : 'O "$label" informado não existe ou foi removido.';
+    if (bruta.contains('não afetou nenhuma linha')) {
+      return SyncErrorClassification(
+        codigo: 'RLS_DENIED',
+        titulo: 'Sem permissão para gravar este registro',
+        causaProvavel:
+            'Sua conta pode não ter mais acesso a esta propriedade, ou o registro foi removido por outro usuário.',
+        acaoSugerida:
+            'Verifique se você ainda tem acesso à propriedade. Se deveria ter acesso, contate o suporte.',
+        campoProblema: campo,
+      );
     }
-    if (RegExp(r'duplicate key value').hasMatch(bruta)) {
-      return campo == null
-          ? 'Registro duplicado.'
-          : 'Já existe um registro com este "$label".';
+
+    final code = erro is PostgrestException ? erro.code : null;
+    switch (code) {
+      case '23502': // not_null_violation
+        return SyncErrorClassification(
+          codigo: 'CAMPO_OBRIGATORIO',
+          titulo: 'Campo obrigatório em branco',
+          causaProvavel: campo == null
+              ? 'Um campo obrigatório deste registro não foi preenchido.'
+              : 'O campo "$label" está em branco e é obrigatório.',
+          acaoSugerida: 'Edite o registro, preencha "$label" e salve novamente.',
+          campoProblema: campo,
+        );
+      case '23503': // foreign_key_violation
+        return SyncErrorClassification(
+          codigo: 'FK_MISSING',
+          titulo: 'Referência a um item que não existe',
+          causaProvavel: campo == null
+              ? 'Este registro referencia outro item (ex.: lote, animal) que não existe mais no servidor.'
+              : 'O "$label" informado não existe (ou foi removido) no servidor.',
+          acaoSugerida:
+              'Edite o registro e selecione novamente o "$label" antes de sincronizar.',
+          campoProblema: campo,
+        );
+      case '23505': // unique_violation
+        return SyncErrorClassification(
+          codigo: 'DUPLICADO',
+          titulo: 'Registro duplicado',
+          causaProvavel: campo == null
+              ? 'Já existe um registro igual a este no servidor.'
+              : 'Já existe um registro com o mesmo "$label".',
+          acaoSugerida:
+              'Verifique se este registro já foi cadastrado em outro dispositivo antes de reenviar.',
+          campoProblema: campo,
+        );
+      case '23514': // check_violation
+        return const SyncErrorClassification(
+          codigo: 'REGRA_SERVIDOR',
+          titulo: 'Valor não permitido pelo servidor',
+          causaProvavel:
+              'Um valor deste registro não passa em uma validação do servidor (ex.: data ou status incompatível).',
+          acaoSugerida:
+              'Revise as datas e o status do registro e salve novamente.',
+        );
+      case '22007':
+      case '22008':
+      case '22P02':
+        return SyncErrorClassification(
+          codigo: 'FORMATO_INVALIDO',
+          titulo: 'Formato de dado inválido',
+          causaProvavel: campo == null
+              ? 'Um valor deste registro está em um formato que o servidor não aceita.'
+              : 'O campo "$label" está em um formato que o servidor não aceita.',
+          acaoSugerida: 'Edite o registro e corrija o valor de "$label".',
+          campoProblema: campo,
+        );
+      case '42501':
+        return const SyncErrorClassification(
+          codigo: 'RLS_DENIED',
+          titulo: 'Sem permissão para gravar este registro',
+          causaProvavel:
+              'Sua conta não tem permissão para alterar este registro nesta propriedade.',
+          acaoSugerida:
+              'Verifique seu vínculo com a propriedade. Se deveria ter acesso, contate o suporte.',
+        );
+      case '55006':
+        return const SyncErrorClassification(
+          codigo: 'STALE_CONFLICT',
+          titulo: 'Conflito com uma edição mais recente',
+          causaProvavel:
+              'Este registro foi alterado em outro dispositivo (ou pelo servidor) depois da sua última edição local.',
+          acaoSugerida:
+              'Abra o registro, confira os dados atuais e edite novamente para reenviar.',
+        );
+      case 'PGRST301':
+        return const SyncErrorClassification(
+          codigo: 'SESSAO_EXPIRADA',
+          titulo: 'Sessão expirada',
+          causaProvavel: 'Seu login expirou e o servidor recusou a operação.',
+          acaoSugerida:
+              'Saia e entre novamente no aplicativo, depois sincronize outra vez.',
+        );
     }
-    if (RegExp(r'value too long').hasMatch(bruta)) {
-      return campo == null
-          ? 'Valor muito longo para o campo.'
-          : 'O valor do campo "$label" é muito longo.';
-    }
-    if (RegExp(r'invalid input syntax').hasMatch(bruta)) {
-      return campo == null
-          ? 'Formato inválido.'
-          : 'O campo "$label" está em formato inválido.';
-    }
-    if (RegExp(r'check constraint').hasMatch(bruta)) {
-      return 'Valor não atende a uma regra do servidor.';
-    }
-    if (RegExp(r'permission denied|RLS|row-level security').hasMatch(bruta)) {
-      return 'Sem permissão para gravar este registro.';
+
+    if (RegExp(r'permission denied|row-level security|\bRLS\b').hasMatch(bruta)) {
+      return const SyncErrorClassification(
+        codigo: 'RLS_DENIED',
+        titulo: 'Sem permissão para gravar este registro',
+        causaProvavel:
+            'Sua conta não tem permissão para alterar este registro nesta propriedade.',
+        acaoSugerida:
+            'Verifique seu vínculo com a propriedade. Se deveria ter acesso, contate o suporte.',
+      );
     }
     if (RegExp(r'TimeoutException|deadline|timed out|Read timed out')
         .hasMatch(bruta)) {
-      return 'O servidor demorou demais para responder.';
+      return const SyncErrorClassification(
+        codigo: 'TIMEOUT',
+        titulo: 'O servidor demorou para responder',
+        causaProvavel:
+            'A conexão ficou lenta ou o servidor demorou demais para concluir a operação.',
+        acaoSugerida:
+            'Tente sincronizar novamente com uma conexão melhor. Se persistir, contate o suporte.',
+      );
     }
     if (RegExp(
             r'SocketException|Network|Failed host lookup|HandshakeException|TLS handshake|ClientException|Connection closed|Connection reset|Connection refused|Broken pipe|HttpException|os error|errno = (?:50|51|52|53|54|60|61|65|101)')
         .hasMatch(bruta)) {
-      return 'Falha de conexão durante o envio.';
+      return const SyncErrorClassification(
+        codigo: 'SEM_CONEXAO',
+        titulo: 'Falha de conexão durante o envio',
+        causaProvavel: 'O dispositivo perdeu a conexão com a internet durante o envio.',
+        acaoSugerida: 'Verifique sua internet/Wi-Fi e sincronize novamente.',
+      );
     }
-    return 'Erro ao enviar para o servidor.';
+
+    // Fallback por regex na mensagem bruta (erros sem PostgrestException,
+    // ex.: repassados como String simples).
+    if (RegExp(r'null value in column').hasMatch(bruta) ||
+        RegExp(r'not-null').hasMatch(bruta)) {
+      return SyncErrorClassification(
+        codigo: 'CAMPO_OBRIGATORIO',
+        titulo: 'Campo obrigatório em branco',
+        causaProvavel: campo == null
+            ? 'Um campo obrigatório deste registro não foi preenchido.'
+            : 'O campo "$label" está em branco e é obrigatório.',
+        acaoSugerida: 'Edite o registro, preencha "$label" e salve novamente.',
+        campoProblema: campo,
+      );
+    }
+    if (RegExp(r'foreign key constraint').hasMatch(bruta)) {
+      return SyncErrorClassification(
+        codigo: 'FK_MISSING',
+        titulo: 'Referência a um item que não existe',
+        causaProvavel: campo == null
+            ? 'Este registro referencia outro item que não existe mais no servidor.'
+            : 'O "$label" informado não existe (ou foi removido) no servidor.',
+        acaoSugerida:
+            'Edite o registro e selecione novamente o "$label" antes de sincronizar.',
+        campoProblema: campo,
+      );
+    }
+    if (RegExp(r'duplicate key value').hasMatch(bruta)) {
+      return SyncErrorClassification(
+        codigo: 'DUPLICADO',
+        titulo: 'Registro duplicado',
+        causaProvavel: campo == null
+            ? 'Já existe um registro igual a este no servidor.'
+            : 'Já existe um registro com o mesmo "$label".',
+        acaoSugerida:
+            'Verifique se este registro já foi cadastrado em outro dispositivo antes de reenviar.',
+        campoProblema: campo,
+      );
+    }
+    if (RegExp(r'value too long|invalid input syntax').hasMatch(bruta)) {
+      return SyncErrorClassification(
+        codigo: 'FORMATO_INVALIDO',
+        titulo: 'Formato de dado inválido',
+        causaProvavel: campo == null
+            ? 'Um valor deste registro está em um formato que o servidor não aceita.'
+            : 'O campo "$label" está em um formato que o servidor não aceita.',
+        acaoSugerida: 'Edite o registro e corrija o valor de "$label".',
+        campoProblema: campo,
+      );
+    }
+    if (RegExp(r'check constraint').hasMatch(bruta)) {
+      return const SyncErrorClassification(
+        codigo: 'REGRA_SERVIDOR',
+        titulo: 'Valor não permitido pelo servidor',
+        causaProvavel:
+            'Um valor deste registro não passa em uma validação do servidor.',
+        acaoSugerida: 'Revise os campos do registro e salve novamente.',
+      );
+    }
+
+    return SyncErrorClassification(
+      codigo: 'DESCONHECIDO',
+      titulo: 'Erro ao enviar para o servidor',
+      causaProvavel:
+          'Não foi possível identificar automaticamente a causa deste erro.',
+      acaoSugerida:
+          'Tente sincronizar novamente. Se persistir, abra os detalhes técnicos e envie ao suporte.',
+      campoProblema: campo,
+    );
   }
+}
+
+/// Resultado da classificação de um erro de sync: código estável +
+/// explicação/ação em PT-BR para o usuário leigo.
+class SyncErrorClassification {
+  const SyncErrorClassification({
+    required this.codigo,
+    required this.titulo,
+    required this.causaProvavel,
+    required this.acaoSugerida,
+    this.campoProblema,
+  });
+
+  final String codigo;
+  final String titulo;
+  final String causaProvavel;
+  final String acaoSugerida;
+  final String? campoProblema;
 }
 
 class SyncErrorEntry {
@@ -331,6 +528,9 @@ class SyncErrorEntry {
   final DateTime ultimaOcorrencia;
   final int tentativas;
   final int resolvido;
+  final String? codigo;
+  final String? causaProvavel;
+  final String? acaoSugerida;
 
   const SyncErrorEntry({
     required this.id,
@@ -346,6 +546,9 @@ class SyncErrorEntry {
     required this.ultimaOcorrencia,
     required this.tentativas,
     required this.resolvido,
+    this.codigo,
+    this.causaProvavel,
+    this.acaoSugerida,
   });
 
   factory SyncErrorEntry.fromRow(Map<String, Object?> r) => SyncErrorEntry(
@@ -366,7 +569,16 @@ class SyncErrorEntry {
                 DateTime.now(),
         tentativas: (r['tentativas'] as int?) ?? 1,
         resolvido: (r['resolvido'] as int?) ?? 0,
+        codigo: r['codigo'] as String?,
+        causaProvavel: r['causa_provavel'] as String?,
+        acaoSugerida: r['acao_sugerida'] as String?,
       );
 
   String get campoLabel => SyncErrorLog.labelCampo(campoProblema);
+
+  /// Título curto para exibição — usa a classificação nova quando disponível
+  /// e cai para a mensagem amigável legada (registros antigos, pré-migração).
+  String get tituloExibicao =>
+      mensagemAmigavel ?? 'Erro ao enviar para o servidor.';
 }
+

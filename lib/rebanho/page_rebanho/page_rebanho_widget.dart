@@ -1,6 +1,8 @@
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
 import '/backend/utils/lote_dropdown_utils.dart';
+import '/backend/utils/rebanho_status_utils.dart';
+import '/components/bastao_leitura_button.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -37,6 +39,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
   ];
 
   late PageRebanhoModel _model;
+
+  /// Evita empilhar fichas quando várias leituras chegam em sequência.
+  bool _abrindoFichaPorChip = false;
 
   @override
   void setState(VoidCallback callback) {
@@ -109,6 +114,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
       _statusFilterValue(),
       _dataNascInicioFilterValue(),
       _dataNascFimFilterValue(),
+      _dataUltPesagemInicioFilterValue(),
+      _dataUltPesagemFimFilterValue(),
       state.rebanhosChangeDateTime?.millisecondsSinceEpoch,
       state.rebanhoListRefreshRevision,
     ].join('|');
@@ -132,6 +139,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
         statusReb: _statusFilterValue(),
         dataNascInicio: _dataNascInicioFilterValue(),
         dataNascFim: _dataNascFimFilterValue(),
+        dataUltPesagemInicio: _dataUltPesagemInicioFilterValue(),
+        dataUltPesagemFim: _dataUltPesagemFimFilterValue(),
       );
     }
     return _model.buscaRebanhoPaginadaFuture!;
@@ -152,6 +161,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
       _statusFilterValue(),
       _dataNascInicioFilterValue(),
       _dataNascFimFilterValue(),
+      _dataUltPesagemInicioFilterValue(),
+      _dataUltPesagemFimFilterValue(),
       state.rebanhosChangeDateTime?.millisecondsSinceEpoch,
       state.rebanhoListRefreshRevision,
     ].join('|');
@@ -174,6 +185,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
         statusReb: _statusFilterValue(),
         dataNascInicio: _dataNascInicioFilterValue(),
         dataNascFim: _dataNascFimFilterValue(),
+        dataUltPesagemInicio: _dataUltPesagemInicioFilterValue(),
+        dataUltPesagemFim: _dataUltPesagemFimFilterValue(),
       );
     }
     return _model.buscaRebanhoPesquisaFuture!;
@@ -194,6 +207,8 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
       _statusFilterValue(),
       _dataNascInicioFilterValue(),
       _dataNascFimFilterValue(),
+      _dataUltPesagemInicioFilterValue(),
+      _dataUltPesagemFimFilterValue(),
       state.rebanhosChangeDateTime?.millisecondsSinceEpoch,
       state.rebanhoListRefreshRevision,
     ].join('|');
@@ -233,6 +248,153 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
     _model.buscaRebanhoPesquisaFuture = null;
   }
 
+  /// Chamado a cada leitura do bastão feita na barra de pesquisa.
+  ///
+  /// O [BastaoLeituraButton] já escreveu o chip no campo, mas isso não dispara
+  /// o `onChanged` do TextFormField — então a busca precisa ser invalidada
+  /// aqui. A pesquisa em si continua encontrando animais de qualquer status;
+  /// apenas a abertura automática da ficha se restringe aos animais com
+  /// status 'Na propriedade'.
+  Future<void> _aoLerChipNaPesquisa(String chip) async {
+    _model.pageNum = 1;
+    _model.offset = 0;
+    _invalidateBuscaRebanhoPesquisaCache();
+    safeSetState(() {});
+
+    if (_abrindoFichaPorChip) {
+      return;
+    }
+    _abrindoFichaPorChip = true;
+    try {
+      final animal = await SQLiteManager.instance.buscarRebanhoPorChip(
+        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+        chip: chip,
+        statusRebanho: defaultRebanhoStatus,
+      );
+      if (!mounted) {
+        return;
+      }
+
+      final idRebanho = animal?['idRebanho']?.toString() ?? '';
+      if (idRebanho.isEmpty) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(
+                'Nenhum animal com status "$defaultRebanhoStatus" para o chip $chip.',
+              ),
+              duration: const Duration(seconds: 3),
+              backgroundColor: FlutterFlowTheme.of(context).secondaryText,
+            ),
+          );
+        return;
+      }
+
+      await _abrirFichaAnimal(idRebanho);
+    } finally {
+      _abrindoFichaPorChip = false;
+    }
+  }
+
+  /// Carrega em `FFAppState` os dados que a ficha do animal espera (crias,
+  /// histórico de pesagens e lotes) e abre a `ViewRebanhoWidget`.
+  Future<void> _abrirFichaAnimal(String idRebanho) async {
+    final criasFemea = await SQLiteManager.instance.buscarCriasRebanhoMatriz(
+      idRebanho: idRebanho,
+    );
+    final criasMacho =
+        await SQLiteManager.instance.buscarCriasRebanhoReprodutor(
+      idRebanho: idRebanho,
+    );
+    final pesagens = await SQLiteManager.instance.buscaHistPesagens(
+      idRebanho: idRebanho,
+    );
+    final lotes = await SQLiteManager.instance.buscarLotes(
+      idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+    );
+    if (!mounted) {
+      return;
+    }
+
+    FFAppState().crias = [
+      ...criasFemea.map((cria) => AnimaisStruct(
+            idRebanho: cria.idRebanho,
+            sexo: cria.sexo,
+            numeroAnimal: cria.numeroAnimal,
+            nome: cria.nome,
+            dataNascimento: cria.dataNascimento,
+            categoria: cria.categoria,
+            raca: cria.raca,
+            loteNome: cria.loteNome,
+            rebanhoIdMatriz: cria.rebanhoIdMatriz,
+            rebanhoIdReprodutor: cria.rebanhoIdReprodutor,
+            numeroMatriz: cria.numeroMatriz,
+            nomeMatriz: cria.nomeMatriz,
+            dataNascMatriz: cria.dataNascMatriz,
+            racaMatriz: cria.racaMatriz,
+            numeroReprodutor: cria.numeroReprodutor,
+            nomeReprodutor: cria.nomeReprodutor,
+            dataNascReprodutor: cria.dataNascReprodutor,
+            racaReprodutor: cria.racaReprodutor,
+          )),
+      ...criasMacho.map((cria) => AnimaisStruct(
+            idRebanho: cria.idRebanho,
+            sexo: cria.sexo,
+            numeroAnimal: cria.numeroAnimal,
+            nome: cria.nome,
+            dataNascimento: cria.dataNascimento,
+            categoria: cria.categoria,
+            raca: cria.raca,
+            loteNome: cria.loteNome,
+            rebanhoIdMatriz: cria.rebanhoIdMatriz,
+            rebanhoIdReprodutor: cria.rebanhoIdReprodutor,
+            numeroMatriz: cria.numeroMatriz,
+            nomeMatriz: cria.nomeMatriz,
+            dataNascMatriz: cria.dataNascMatriz,
+            racaMatriz: cria.racaMatriz,
+            numeroReprodutor: cria.numeroReprodutor,
+            nomeReprodutor: cria.nomeReprodutor,
+            dataNascReprodutor: cria.dataNascReprodutor,
+            racaReprodutor: cria.racaReprodutor,
+          )),
+    ];
+    FFAppState().histPesagens = pesagens
+        .map((pesagem) => HistoricoPesagensStruct(
+              idRebanho: pesagem.idRebanho,
+              dataPesagem: pesagem.dataPesagem,
+              tipo: pesagem.tipo,
+              deletado: pesagem.deletado,
+              createdAt: pesagem.createdAt,
+              id: pesagem.id,
+              peso: pesagem.peso,
+            ))
+        .toList();
+    FFAppState().rebanhoLotesSelecionar = buildRebanhoLoteOptions(lotes);
+    safeSetState(() {});
+
+    await showDialog(
+      barrierColor: Colors.transparent,
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          elevation: 0,
+          insetPadding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          alignment: const AlignmentDirectional(0.0, 0.0)
+              .resolve(Directionality.of(context)),
+          child: ViewRebanhoWidget(
+            idRebanho: idRebanho,
+          ),
+        );
+      },
+    );
+
+    if (mounted) {
+      safeSetState(() {});
+    }
+  }
+
   String _dataNascInicioFilterValue() {
     final d = FFAppState().filtroDataNascimentoInicio;
     if (d == null) return '';
@@ -243,6 +405,39 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
     final d = FFAppState().filtroDataNascimentoFim;
     if (d == null) return '';
     return dateTimeFormat('yyyy-MM-dd', d);
+  }
+
+  String _dataUltPesagemInicioFilterValue() {
+    final d = FFAppState().filtroDataUltimaPesagemInicio;
+    if (d == null) return '';
+    return dateTimeFormat('yyyy-MM-dd', d);
+  }
+
+  String _dataUltPesagemFimFilterValue() {
+    final d = FFAppState().filtroDataUltimaPesagemFim;
+    if (d == null) return '';
+    return dateTimeFormat('yyyy-MM-dd', d);
+  }
+
+  /// Rótulo da data da última pesagem exibido no card do animal.
+  ///
+  /// A coluna aceita três formas de "sem pesagem": `null`, string vazia
+  /// (gravada quando o cache de peso é recalculado e não há pesagens) e o
+  /// literal `'null'` deixado pelos INSERTs legados.
+  String _ultimaPesagemLabel(String? data) {
+    final valor = (data ?? '').trim();
+    if (valor.isEmpty || valor.toLowerCase() == 'null') {
+      return 'Sem pesagem';
+    }
+    final parsed = functions.converterParaData(valor);
+    if (parsed == null) {
+      return 'Sem pesagem';
+    }
+    return 'Última pesagem: ${dateTimeFormat(
+      'd/M/y',
+      parsed,
+      locale: FFLocalizations.of(context).languageCode,
+    )}';
   }
 
   Future<void> _openEditRebanho(BuildContext ctx, String? idRebanho) async {
@@ -670,23 +865,34 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                         color: FlutterFlowTheme.of(context).accent3,
                         size: 24.0,
                       ),
-                      suffixIcon:
-                          _model.pesquisarTextController!.text.isNotEmpty
-                              ? InkWell(
-                                  onTap: () async {
-                                    _model.pesquisarTextController?.clear();
-                                    _model.pageNum = 1;
-                                    _model.offset = 0;
-                                    _invalidateBuscaRebanhoPesquisaCache();
-                                    safeSetState(() {});
-                                  },
-                                  child: Icon(
-                                    Icons.clear,
-                                    color: FlutterFlowTheme.of(context).accent3,
-                                    size: 22,
-                                  ),
-                                )
-                              : null,
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_model.pesquisarTextController!.text.isNotEmpty)
+                            InkWell(
+                              onTap: () async {
+                                _model.pesquisarTextController?.clear();
+                                _model.pageNum = 1;
+                                _model.offset = 0;
+                                _invalidateBuscaRebanhoPesquisaCache();
+                                safeSetState(() {});
+                              },
+                              child: Icon(
+                                Icons.clear,
+                                color: FlutterFlowTheme.of(context).accent3,
+                                size: 22,
+                              ),
+                            ),
+                          BastaoLeituraButton(
+                            // A key mantém o State (e a assinatura do stream de
+                            // leituras) vivo quando o ícone de limpar aparece
+                            // ou some, evitando perder uma leitura do bastão.
+                            key: const ValueKey('bastaoPesquisaRebanho'),
+                            controller: _model.pesquisarTextController!,
+                            aoLer: _aoLerChipNaPesquisa,
+                          ),
+                        ],
+                      ),
                     ),
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily:
@@ -876,6 +1082,43 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                 ),
                               ),
                             ),
+                          if (FFAppState().filtroDataUltimaPesagemInicio !=
+                                  null ||
+                              FFAppState().filtroDataUltimaPesagemFim != null)
+                            Container(
+                              decoration: BoxDecoration(
+                                color: FlutterFlowTheme.of(context)
+                                    .secondaryBackground,
+                                borderRadius: BorderRadius.circular(24.0),
+                                shape: BoxShape.rectangle,
+                                border: Border.all(
+                                  color: const Color(0xFFBEBEBE),
+                                ),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                    16.0, 8.0, 16.0, 8.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Última pesagem: ${FFAppState().filtroDataUltimaPesagemInicio != null ? dateTimeFormat('d/M/y', FFAppState().filtroDataUltimaPesagemInicio!, locale: FFLocalizations.of(context).languageCode) : '...'} - ${FFAppState().filtroDataUltimaPesagemFim != null ? dateTimeFormat('d/M/y', FFAppState().filtroDataUltimaPesagemFim!, locale: FFLocalizations.of(context).languageCode) : '...'}',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMediumFamily,
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts:
+                                                !FlutterFlowTheme.of(context)
+                                                    .bodyMediumIsCustom,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                         ].divide(const SizedBox(width: 8.0)),
                       ),
                     ),
@@ -1021,6 +1264,10 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                               .ordenacaoRebanhoTipo ==
                                           'nascimento') {
                                         return 'Data de nascimento';
+                                      } else if (FFAppState()
+                                              .ordenacaoRebanhoTipo ==
+                                          'ultimaPesagem') {
+                                        return 'Data da última pesagem';
                                       } else {
                                         return 'N/A';
                                       }
@@ -1815,6 +2062,18 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                           ].divide(const SizedBox(width: 4.0)),
                                                                         ),
                                                                       ),
+                                                                      Text(
+                                                                        _ultimaPesagemLabel(animaisItem
+                                                                            .dataUltimaPesagem),
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                              color: const Color(0xFF5F5F5F),
+                                                                              letterSpacing: 0.0,
+                                                                              useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                            ),
+                                                                      ),
                                                                     ].divide(const SizedBox(
                                                                         height:
                                                                             2.0)),
@@ -1917,6 +2176,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                           statusReb: _statusFilterValue(),
                           dataNascInicio: _dataNascInicioFilterValue(),
                           dataNascFim: _dataNascFimFilterValue(),
+                          dataUltPesagemInicio:
+                              _dataUltPesagemInicioFilterValue(),
+                          dataUltPesagemFim: _dataUltPesagemFimFilterValue(),
                         ),
                       ),
                       builder: (context, snapshot) {
@@ -2728,6 +2990,24 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         ].divide(const SizedBox(width: 4.0)),
                                                                       ),
                                                                     ),
+                                                                    Text(
+                                                                      _ultimaPesagemLabel(
+                                                                          animaisItem
+                                                                              .dataUltimaPesagem),
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                            color:
+                                                                                const Color(0xFF5F5F5F),
+                                                                            letterSpacing:
+                                                                                0.0,
+                                                                            useGoogleFonts:
+                                                                                !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                          ),
+                                                                    ),
                                                                   ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
@@ -2829,6 +3109,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                           statusReb: _statusFilterValue(),
                           dataNascInicio: _dataNascInicioFilterValue(),
                           dataNascFim: _dataNascFimFilterValue(),
+                          dataUltPesagemInicio:
+                              _dataUltPesagemInicioFilterValue(),
+                          dataUltPesagemFim: _dataUltPesagemFimFilterValue(),
                         ),
                       ),
                       builder: (context, snapshot) {
@@ -3640,6 +3923,24 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         ].divide(const SizedBox(width: 4.0)),
                                                                       ),
                                                                     ),
+                                                                    Text(
+                                                                      _ultimaPesagemLabel(
+                                                                          animaisItem
+                                                                              .dataUltimaPesagem),
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                            color:
+                                                                                const Color(0xFF5F5F5F),
+                                                                            letterSpacing:
+                                                                                0.0,
+                                                                            useGoogleFonts:
+                                                                                !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                          ),
+                                                                    ),
                                                                   ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
@@ -3741,6 +4042,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                           statusReb: _statusFilterValue(),
                           dataNascInicio: _dataNascInicioFilterValue(),
                           dataNascFim: _dataNascFimFilterValue(),
+                          dataUltPesagemInicio:
+                              _dataUltPesagemInicioFilterValue(),
+                          dataUltPesagemFim: _dataUltPesagemFimFilterValue(),
                         ),
                       ),
                       builder: (context, snapshot) {
@@ -4552,6 +4856,24 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         ].divide(const SizedBox(width: 4.0)),
                                                                       ),
                                                                     ),
+                                                                    Text(
+                                                                      _ultimaPesagemLabel(
+                                                                          animaisItem
+                                                                              .dataUltimaPesagem),
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                            color:
+                                                                                const Color(0xFF5F5F5F),
+                                                                            letterSpacing:
+                                                                                0.0,
+                                                                            useGoogleFonts:
+                                                                                !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                          ),
+                                                                    ),
                                                                   ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
@@ -4653,6 +4975,9 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                           statusReb: _statusFilterValue(),
                           dataNascInicio: _dataNascInicioFilterValue(),
                           dataNascFim: _dataNascFimFilterValue(),
+                          dataUltPesagemInicio:
+                              _dataUltPesagemInicioFilterValue(),
+                          dataUltPesagemFim: _dataUltPesagemFimFilterValue(),
                         ),
                       ),
                       builder: (context, snapshot) {
@@ -5464,6 +5789,24 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         ].divide(const SizedBox(width: 4.0)),
                                                                       ),
                                                                     ),
+                                                                    Text(
+                                                                      _ultimaPesagemLabel(
+                                                                          animaisItem
+                                                                              .dataUltimaPesagem),
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                            color:
+                                                                                const Color(0xFF5F5F5F),
+                                                                            letterSpacing:
+                                                                                0.0,
+                                                                            useGoogleFonts:
+                                                                                !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                          ),
+                                                                    ),
                                                                   ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
@@ -5546,26 +5889,62 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                     );
                   } else if ((_searchTerm().isEmpty) &&
                       (FFAppState().ordenacaoRebanho == 'crescente') &&
-                      (FFAppState().ordenacaoRebanhoTipo == 'nascimento')) {
+                      (FFAppState().ordenacaoRebanhoTipo == 'nascimento' ||
+                          FFAppState().ordenacaoRebanhoTipo ==
+                              'ultimaPesagem')) {
+                    final porUltimaPesagem =
+                        FFAppState().ordenacaoRebanhoTipo == 'ultimaPesagem';
+                    final ordenacaoKey = porUltimaPesagem
+                        ? 'ord_pesagem_cres'
+                        : 'ord_data_cres';
                     return FutureBuilder<List<RebanhoPagOrdDataCresRow>>(
-                      key: const ValueKey('ord_data_cres'),
+                      key: ValueKey(ordenacaoKey),
                       future:
                           _buscaRebanhoOrdenadaFuture<RebanhoPagOrdDataCresRow>(
-                        'ord_data_cres',
-                        () => SQLiteManager.instance.rebanhoPagOrdDataCres(
-                          idPropriedade:
-                              FFAppState().propriedadeSelecionada.idPropriedade,
-                          limitReb: _model.limit,
-                          offsetReb: _model.offset,
-                          sexo: FFAppState().filtroSexoRebanho,
-                          categoria: FFAppState().filtroCategoriasRebanho,
-                          raca: FFAppState().filtroRaca,
-                          origem: FFAppState().filtroOrigemRebanho,
-                          loteId: FFAppState().filtroLoteRebanho,
-                          statusReb: _statusFilterValue(),
-                          dataNascInicio: _dataNascInicioFilterValue(),
-                          dataNascFim: _dataNascFimFilterValue(),
-                        ),
+                        ordenacaoKey,
+                        () => porUltimaPesagem
+                            ? SQLiteManager.instance.rebanhoPagOrdPesagem(
+                                RebanhoPagOrdDataCresRow.new,
+                                idPropriedade: FFAppState()
+                                    .propriedadeSelecionada
+                                    .idPropriedade,
+                                limitReb: _model.limit,
+                                offsetReb: _model.offset,
+                                sexo: FFAppState().filtroSexoRebanho,
+                                categoria:
+                                    FFAppState().filtroCategoriasRebanho,
+                                raca: FFAppState().filtroRaca,
+                                origem: FFAppState().filtroOrigemRebanho,
+                                loteId: FFAppState().filtroLoteRebanho,
+                                statusReb: _statusFilterValue(),
+                                dataNascInicio: _dataNascInicioFilterValue(),
+                                dataNascFim: _dataNascFimFilterValue(),
+                                dataUltPesagemInicio:
+                                    _dataUltPesagemInicioFilterValue(),
+                                dataUltPesagemFim:
+                                    _dataUltPesagemFimFilterValue(),
+                                ordenacaoDirecao: 'crescente',
+                              )
+                            : SQLiteManager.instance.rebanhoPagOrdDataCres(
+                                idPropriedade: FFAppState()
+                                    .propriedadeSelecionada
+                                    .idPropriedade,
+                                limitReb: _model.limit,
+                                offsetReb: _model.offset,
+                                sexo: FFAppState().filtroSexoRebanho,
+                                categoria:
+                                    FFAppState().filtroCategoriasRebanho,
+                                raca: FFAppState().filtroRaca,
+                                origem: FFAppState().filtroOrigemRebanho,
+                                loteId: FFAppState().filtroLoteRebanho,
+                                statusReb: _statusFilterValue(),
+                                dataNascInicio: _dataNascInicioFilterValue(),
+                                dataNascFim: _dataNascFimFilterValue(),
+                                dataUltPesagemInicio:
+                                    _dataUltPesagemInicioFilterValue(),
+                                dataUltPesagemFim:
+                                    _dataUltPesagemFimFilterValue(),
+                              ),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -6376,6 +6755,24 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                         ].divide(const SizedBox(width: 4.0)),
                                                                       ),
                                                                     ),
+                                                                    Text(
+                                                                      _ultimaPesagemLabel(
+                                                                          animaisItem
+                                                                              .dataUltimaPesagem),
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                            color:
+                                                                                const Color(0xFF5F5F5F),
+                                                                            letterSpacing:
+                                                                                0.0,
+                                                                            useGoogleFonts:
+                                                                                !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                          ),
+                                                                    ),
                                                                   ].divide(const SizedBox(
                                                                       height:
                                                                           2.0)),
@@ -6458,26 +6855,62 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                     );
                   } else if ((_searchTerm().isEmpty) &&
                       (FFAppState().ordenacaoRebanho == 'decrescente') &&
-                      (FFAppState().ordenacaoRebanhoTipo == 'nascimento')) {
+                      (FFAppState().ordenacaoRebanhoTipo == 'nascimento' ||
+                          FFAppState().ordenacaoRebanhoTipo ==
+                              'ultimaPesagem')) {
+                    final porUltimaPesagem =
+                        FFAppState().ordenacaoRebanhoTipo == 'ultimaPesagem';
+                    final ordenacaoKey = porUltimaPesagem
+                        ? 'ord_pesagem_desc'
+                        : 'ord_data_desc';
                     return FutureBuilder<List<RebanhoPagOrdDataDescRow>>(
-                      key: const ValueKey('ord_data_desc'),
+                      key: ValueKey(ordenacaoKey),
                       future:
                           _buscaRebanhoOrdenadaFuture<RebanhoPagOrdDataDescRow>(
-                        'ord_data_desc',
-                        () => SQLiteManager.instance.rebanhoPagOrdDataDesc(
-                          idPropriedade:
-                              FFAppState().propriedadeSelecionada.idPropriedade,
-                          limitReb: _model.limit,
-                          offsetReb: _model.offset,
-                          sexo: FFAppState().filtroSexoRebanho,
-                          categoria: FFAppState().filtroCategoriasRebanho,
-                          raca: FFAppState().filtroRaca,
-                          origem: FFAppState().filtroOrigemRebanho,
-                          loteId: FFAppState().filtroLoteRebanho,
-                          statusReb: _statusFilterValue(),
-                          dataNascInicio: _dataNascInicioFilterValue(),
-                          dataNascFim: _dataNascFimFilterValue(),
-                        ),
+                        ordenacaoKey,
+                        () => porUltimaPesagem
+                            ? SQLiteManager.instance.rebanhoPagOrdPesagem(
+                                RebanhoPagOrdDataDescRow.new,
+                                idPropriedade: FFAppState()
+                                    .propriedadeSelecionada
+                                    .idPropriedade,
+                                limitReb: _model.limit,
+                                offsetReb: _model.offset,
+                                sexo: FFAppState().filtroSexoRebanho,
+                                categoria:
+                                    FFAppState().filtroCategoriasRebanho,
+                                raca: FFAppState().filtroRaca,
+                                origem: FFAppState().filtroOrigemRebanho,
+                                loteId: FFAppState().filtroLoteRebanho,
+                                statusReb: _statusFilterValue(),
+                                dataNascInicio: _dataNascInicioFilterValue(),
+                                dataNascFim: _dataNascFimFilterValue(),
+                                dataUltPesagemInicio:
+                                    _dataUltPesagemInicioFilterValue(),
+                                dataUltPesagemFim:
+                                    _dataUltPesagemFimFilterValue(),
+                                ordenacaoDirecao: 'decrescente',
+                              )
+                            : SQLiteManager.instance.rebanhoPagOrdDataDesc(
+                                idPropriedade: FFAppState()
+                                    .propriedadeSelecionada
+                                    .idPropriedade,
+                                limitReb: _model.limit,
+                                offsetReb: _model.offset,
+                                sexo: FFAppState().filtroSexoRebanho,
+                                categoria:
+                                    FFAppState().filtroCategoriasRebanho,
+                                raca: FFAppState().filtroRaca,
+                                origem: FFAppState().filtroOrigemRebanho,
+                                loteId: FFAppState().filtroLoteRebanho,
+                                statusReb: _statusFilterValue(),
+                                dataNascInicio: _dataNascInicioFilterValue(),
+                                dataNascFim: _dataNascFimFilterValue(),
+                                dataUltPesagemInicio:
+                                    _dataUltPesagemInicioFilterValue(),
+                                dataUltPesagemFim:
+                                    _dataUltPesagemFimFilterValue(),
+                              ),
                       ),
                       builder: (context, snapshot) {
                         // Customize what your widget looks like when it's loading.
@@ -7287,6 +7720,24 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                           ),
                                                                         ].divide(const SizedBox(width: 4.0)),
                                                                       ),
+                                                                    ),
+                                                                    Text(
+                                                                      _ultimaPesagemLabel(
+                                                                          animaisItem
+                                                                              .dataUltimaPesagem),
+                                                                      style: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .bodyMedium
+                                                                          .override(
+                                                                            fontFamily:
+                                                                                FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                            color:
+                                                                                const Color(0xFF5F5F5F),
+                                                                            letterSpacing:
+                                                                                0.0,
+                                                                            useGoogleFonts:
+                                                                                !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                          ),
                                                                     ),
                                                                   ].divide(const SizedBox(
                                                                       height:
@@ -8210,6 +8661,18 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                                                                     ].divide(const SizedBox(
                                                                         width:
                                                                             4.0)),
+                                                                  ),
+                                                                  Text(
+                                                                    _ultimaPesagemLabel(animaisItem
+                                                                        .dataUltimaPesagem),
+                                                                    style: FlutterFlowTheme.of(context)
+                                                                        .bodyMedium
+                                                                        .override(
+                                                                          fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                          color: const Color(0xFF5F5F5F),
+                                                                          letterSpacing: 0.0,
+                                                                          useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                        ),
                                                                   ),
                                                                 ].divide(
                                                                     const SizedBox(

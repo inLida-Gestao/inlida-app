@@ -35,6 +35,10 @@
 		</array>
 		<key>FlutterDeepLinkingEnabled</key>
 		<true/>
+		<key>NSBluetoothAlwaysUsageDescription</key>
+		<string>O inLida usa Bluetooth para se conectar ao bastão de leitura e preencher automaticamente o chip dos animais.</string>
+		<key>NSBluetoothPeripheralUsageDescription</key>
+		<string>O inLida usa Bluetooth para se conectar ao bastão de leitura e preencher automaticamente o chip dos animais.</string>
 		<key>CFBundleVersion</key>
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>LSRequiresIPhoneOS</key>

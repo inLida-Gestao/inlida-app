@@ -230,7 +230,9 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                               if (confirmDialogResponse) {
                                 if (await action_blocks.blockIfAccountCanceled(
                                     context,
-                                    refreshFromServer: true)) return;
+                                    refreshFromServer: true)) {
+                                  return;
+                                }
                                 if (!(FFAppState().dataDadosNaoSyncProp !=
                                     null)) {
                                   FFAppState().dataDadosNaoSyncProp =
@@ -2200,8 +2202,9 @@ class _EditSanidadeLoteWidgetState extends State<EditSanidadeLoteWidget> {
                                       if (confirmDialogResponse) {
                                         if (await action_blocks
                                             .blockIfAccountCanceled(context,
-                                                refreshFromServer: true))
+                                                refreshFromServer: true)) {
                                           return;
+                                        }
                                         if (!(FFAppState()
                                                 .dataDadosNaoSyncSanidade !=
                                             null)) {

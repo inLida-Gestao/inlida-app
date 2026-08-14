@@ -81,14 +81,10 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
       _model.partidaSemen =
           _model.editReproducao?.firstOrNull?.partidaSemen ?? 1;
       final dataParto = _model.editReproducao?.firstOrNull?.dataParto;
-      _model.parida = (_model.editReproducao?.firstOrNull?.parida == 'SIM' ||
-              _model.editReproducao?.firstOrNull?.parida == 'Sim' ||
-              (dataParto != null &&
-                  dataParto.isNotEmpty &&
-                  dataParto != '-' &&
-                  dataParto.toLowerCase() != 'null'))
-          ? true
-          : false;
+      _model.parida = functions.exibirPartoConfirmado(
+        _model.editReproducao?.firstOrNull?.parida,
+        dataParto,
+      );
       safeSetState(() {});
     });
 
@@ -1264,7 +1260,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 onTap: () async {
                                                   final datePicked1Date =
                                                       await showDatePicker(
-                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                    initialEntryMode:
+                                                        DatePickerEntryMode
+                                                            .calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -1781,7 +1779,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 onTap: () async {
                                                   final datePicked2Date =
                                                       await showDatePicker(
-                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                    initialEntryMode:
+                                                        DatePickerEntryMode
+                                                            .calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -1852,13 +1852,6 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                         datePicked2Date.month,
                                                         datePicked2Date.day,
                                                       );
-                                                    });
-                                                  } else if (_model
-                                                          .datePicked2 !=
-                                                      null) {
-                                                    safeSetState(() {
-                                                      _model.datePicked2 =
-                                                          getCurrentTimestamp;
                                                     });
                                                   }
                                                 },
@@ -2384,7 +2377,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 onTap: () async {
                                                   final datePicked3Date =
                                                       await showDatePicker(
-                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                    initialEntryMode:
+                                                        DatePickerEntryMode
+                                                            .calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -2607,7 +2602,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 onTap: () async {
                                                   final datePicked4Date =
                                                       await showDatePicker(
-                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                    initialEntryMode:
+                                                        DatePickerEntryMode
+                                                            .calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -2847,7 +2844,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                 onTap: () async {
                                                   final datePicked5Date =
                                                       await showDatePicker(
-                                                    initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                    initialEntryMode:
+                                                        DatePickerEntryMode
+                                                            .calendarOnly,
                                                     context: context,
                                                     initialDate:
                                                         getCurrentTimestamp,
@@ -3097,7 +3096,12 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                       TextCapitalization
                                                           .characters,
                                                   inputFormatters: [
-                                                    TextInputFormatter.withFunction((old, val) => val.copyWith(text: val.text.toUpperCase())),
+                                                    TextInputFormatter
+                                                        .withFunction((old,
+                                                                val) =>
+                                                            val.copyWith(
+                                                                text: val.text
+                                                                    .toUpperCase())),
                                                   ],
                                                   decoration: InputDecoration(
                                                     isDense: true,
@@ -3402,7 +3406,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                                           onTap: () async {
                                                             final datePicked6Date =
                                                                 await showDatePicker(
-                                                              initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                              initialEntryMode:
+                                                                  DatePickerEntryMode
+                                                                      .calendarOnly,
                                                               context: context,
                                                               initialDate:
                                                                   getCurrentTimestamp,
@@ -3710,7 +3716,9 @@ class _EditReproducaoLoteWidgetState extends State<EditReproducaoLoteWidget> {
                                             onTap: () async {
                                               final datePicked7Date =
                                                   await showDatePicker(
-                                                initialEntryMode: DatePickerEntryMode.calendarOnly,
+                                                initialEntryMode:
+                                                    DatePickerEntryMode
+                                                        .calendarOnly,
                                                 context: context,
                                                 initialDate:
                                                     getCurrentTimestamp,

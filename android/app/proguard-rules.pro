@@ -10,6 +10,9 @@
 -dontwarn org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider
 -keep class org.xmlpull.v1.** { *; }
 
+# flutter_blue_plus (leitura de brincos via bastao BLE)
+-keep class com.lib.flutter_blue_plus.* { *; }
+
 
 
 

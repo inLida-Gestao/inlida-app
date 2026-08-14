@@ -111,6 +111,12 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
+    final hasSelectedProperty = FFAppState()
+            .propriedadeSelecionada
+            .idPropriedade
+            .trim()
+            .isNotEmpty ||
+        FFAppState().propriedadeSelecionada.nome.trim().isNotEmpty;
 
     return Column(
       mainAxisSize: MainAxisSize.max,
@@ -595,7 +601,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                     thickness: 1.0,
                     color: Color(0xFFEDEDED),
                   ),
-                  if (FFAppState().propriedadeSelecionada.idPropriedade != '')
+                  if (hasSelectedProperty)
                     Flexible(
                       child: FutureBuilder<List<ListarLotesRow>>(
                         future: SQLiteManager.instance.listarLotes(
@@ -915,7 +921,7 @@ class _PageLotesWidgetState extends State<PageLotesWidget> {
                         },
                       ),
                     ),
-                  if (FFAppState().propriedadeSelecionada.idPropriedade == '')
+                  if (!hasSelectedProperty)
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(
                           0.0, 24.0, 0.0, 0.0),

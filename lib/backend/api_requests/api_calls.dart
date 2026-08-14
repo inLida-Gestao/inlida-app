@@ -89,7 +89,7 @@ class SupabaseFunctionsGroup {
   static BuscarSanidadesIncCall buscarSanidadesIncCall =
       BuscarSanidadesIncCall();
   static QTDRebanhosIncCall qTDRebanhosIncCall = QTDRebanhosIncCall();
-  static QTDReproducoesIncCall qTDReproducoesIncCall =
+    static QTDReproducoesIncCall qTDReproducoesIncCall =
       QTDReproducoesIncCall();
   static QTDSanidadeIncCall qTDSanidadeIncCall = QTDSanidadeIncCall();
   static BuscarPropriedadesUserIncCall buscarPropriedadesUserIncCall =
@@ -728,7 +728,8 @@ class CidadesCall {
 
 class DeleteUserCall {
   static Future<ApiCallResponse> call({
-    String? userId = '',
+    required String userId,
+    required String authToken,
   }) async {
     final ffApiRequestBody = '''
 {
@@ -742,8 +743,7 @@ class DeleteUserCall {
       headers: {
         'apikey':
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
+        'Authorization': 'Bearer $authToken',
       },
       params: {},
       body: ffApiRequestBody,

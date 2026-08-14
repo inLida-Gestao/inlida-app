@@ -11,7 +11,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
   IF NEW.updated_at IS NOT NULL
-     AND OLD.updated_at IS NOT NULLa
+    AND OLD.updated_at IS NOT NULL
      AND NEW.updated_at < OLD.updated_at THEN
     RAISE LOG
       'Skipping stale rebanho update for idRebanho=%, incoming updated_at=%, current updated_at=%',

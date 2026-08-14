@@ -74,6 +74,94 @@ class _LoteGmdCalculationResult {
   final double? pesoMedioFinal;
 }
 
+class LoteCategoriaResumo {
+  const LoteCategoriaResumo({
+    required this.categoria,
+    required this.quantidade,
+    required this.proporcao,
+  });
+
+  final String categoria;
+  final int quantidade;
+  final double proporcao;
+}
+
+const _categoriasResumoLote = [
+  'Bezerra',
+  'Bezerro',
+  'Boi Gordo',
+  'Boi Magro',
+  'Garrote',
+  'Novilha',
+  'Rufião',
+  'Touro',
+  'Vaca Multipara',
+  'Vaca Primipara',
+];
+
+String _normalizarCategoriaResumoLote(String? categoria) {
+  final value = (categoria ?? '').trim().toLowerCase();
+  return value
+      .replaceAll('á', 'a')
+      .replaceAll('ã', 'a')
+      .replaceAll('â', 'a')
+      .replaceAll('à', 'a')
+      .replaceAll('é', 'e')
+      .replaceAll('ê', 'e')
+      .replaceAll('í', 'i')
+      .replaceAll('ó', 'o')
+      .replaceAll('ô', 'o')
+      .replaceAll('õ', 'o')
+      .replaceAll('ú', 'u')
+      .replaceAll('ç', 'c');
+}
+
+String _rotuloCategoriaResumoLote(String categoria) {
+  switch (_normalizarCategoriaResumoLote(categoria)) {
+    case 'vaca multipara':
+      return 'Vaca multípara';
+    case 'vaca primipara':
+      return 'Vaca primípara';
+    default:
+      return categoria;
+  }
+}
+
+List<LoteCategoriaResumo> buildLoteCategoriaResumo(
+  List<RebanhoStruct> animais, {
+  List<String>? categorias,
+}) {
+  final categoriasBase = categorias == null || categorias.isEmpty
+      ? _categoriasResumoLote
+      : categorias;
+  final categoriasNormalizadas = <String, String>{};
+  for (final categoria in categoriasBase) {
+    final chave = _normalizarCategoriaResumoLote(categoria);
+    if (chave.isNotEmpty && !categoriasNormalizadas.containsKey(chave)) {
+      categoriasNormalizadas[chave] = _rotuloCategoriaResumoLote(categoria);
+    }
+  }
+
+  final contagens = <String, int>{};
+  for (final animal in animais) {
+    final chave = _normalizarCategoriaResumoLote(animal.categoria);
+    if (categoriasNormalizadas.containsKey(chave)) {
+      contagens[chave] = (contagens[chave] ?? 0) + 1;
+    }
+  }
+
+  final total = animais.length;
+  return categoriasNormalizadas.entries.map((entry) {
+    final quantidade = contagens[entry.key] ?? 0;
+    final proporcao = total == 0 ? 0.0 : quantidade / total;
+    return LoteCategoriaResumo(
+      categoria: entry.value,
+      quantidade: quantidade,
+      proporcao: proporcao.clamp(0.0, 1.0),
+    );
+  }).toList();
+}
+
 class ViewLoteWidget extends StatefulWidget {
   const ViewLoteWidget({
     super.key,
@@ -350,6 +438,127 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
     final list = values.whereType<double>().toList();
     if (list.isEmpty) return null;
     return list.reduce((a, b) => a + b) / list.length;
+  }
+
+  Widget _buildLoteCategoriaResumo(List<RebanhoStruct> animais) {
+    final resumo = buildLoteCategoriaResumo(
+      animais,
+      categorias: FFAppState().categoriasRebanho,
+    );
+    final total = animais.length;
+
+    TextStyle textStyle({
+      Color? color,
+      double? fontSize,
+      FontWeight? fontWeight,
+    }) {
+      return FlutterFlowTheme.of(context).bodyMedium.override(
+            fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+            color: color,
+            fontSize: fontSize,
+            letterSpacing: 0.0,
+            fontWeight: fontWeight,
+            useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+          );
+    }
+
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: FlutterFlowTheme.of(context).secondaryBackground,
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(color: const Color(0xFFEDEDED)),
+        ),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Animais no lote por categoria',
+              style: textStyle(
+                color: FlutterFlowTheme.of(context).primaryText,
+                fontSize: 18.0,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 4.0),
+            Text(
+              'Total: $total ${total == 1 ? 'animal' : 'animais'}',
+              style: textStyle(
+                color: FlutterFlowTheme.of(context).secondaryText,
+                fontSize: 14.0,
+              ),
+            ),
+            const SizedBox(height: 20.0),
+            ...resumo.map(
+              (item) => Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Semantics(
+                  label:
+                      '${item.categoria}: ${item.quantidade} ${item.quantidade == 1 ? 'animal' : 'animais'}',
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.categoria,
+                              style: textStyle(
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12.0),
+                          Text(
+                            item.quantidade.toString(),
+                            textAlign: TextAlign.end,
+                            style: textStyle(
+                              color: FlutterFlowTheme.of(context).primaryText,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 7.0),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: SizedBox(
+                          height: 8.0,
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Container(color: const Color(0xFFEAEAEA)),
+                              FractionallySizedBox(
+                                alignment: Alignment.centerLeft,
+                                widthFactor: item.proporcao,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   String _animalGmdLabel(RebanhoStruct animal) {
@@ -4254,6 +4463,8 @@ class _ViewLoteWidgetState extends State<ViewLoteWidget>
                                                   const SizedBox(height: 16.0)),
                                             ),
                                           ),
+                                          _buildLoteCategoriaResumo(
+                                              FFAppState().rebanhosLote),
                                           Padding(
                                             padding: const EdgeInsetsDirectional
                                                 .fromSTEB(

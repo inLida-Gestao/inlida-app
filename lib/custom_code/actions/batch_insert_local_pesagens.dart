@@ -166,15 +166,12 @@ Future<void> _syncPesoAtualRebanhosAfetados(
       .where((id) => id.isNotEmpty)
       .toSet();
 
-  for (final idRebanho in ids) {
-    try {
-      await SQLiteManager.instance.syncUltimaPesagemNoRebanho(
-        idRebanho: idRebanho,
-      );
-    } catch (e) {
-      debugPrint(
-          '[SYNC][pesagens] Erro ao recalcular peso atual de $idRebanho: $e');
-    }
+  try {
+    await SQLiteManager.instance.syncUltimasPesagensNosRebanhos(
+      idsRebanho: ids,
+    );
+  } catch (e) {
+    debugPrint('[SYNC][pesagens] Erro ao recalcular pesos atuais em lote: $e');
   }
 }
 

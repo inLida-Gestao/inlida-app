@@ -45,6 +45,25 @@ dynamic supaSerialize<T>(T? value) {
 
   switch (T) {
     case DateTime:
+      // NÃO converter para UTC aqui.
+      //
+      // Os campos de data do app (data_inseminacao, data_parto, data_inicial,
+      // previsao_parto, dataNascimento, ...) nascem como data pura
+      // ('yyyy-MM-dd') no SQLite e viram DateTime LOCAL à meia-noite. Serializar
+      // como horário local naive ('2026-06-01T00:00:00.000', sem sufixo de
+      // fuso) é a convenção usada por TODO o histórico já gravado no Supabase e
+      // pelo dashboard web que agrupa por período.
+      //
+      // Converter para UTC antes de serializar (`.toUtc()`) desloca o instante
+      // pelo offset do dispositivo (ex.: -03:00 => +3h) e faz os registros
+      // NOVOS ficarem em uma convenção diferente dos ANTIGOS. Isso quebra os
+      // gráficos por período (taxa de prenhez, taxa de natalidade, partos por
+      // categoria), pois registros próximos da virada do dia caem no dia/mês
+      // errado e passam a conviver com dados na convenção antiga.
+      //
+      // Qualquer normalização de fuso precisa ser uma migração coordenada
+      // entre app, web e os dados já existentes — nunca uma mudança
+      // unilateral no app.
       return (value as DateTime).toIso8601String();
     case PostgresTime:
       return (value as PostgresTime).toIso8601String();

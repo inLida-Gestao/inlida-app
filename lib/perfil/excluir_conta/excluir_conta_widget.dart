@@ -140,13 +140,22 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
                       onPressed: () async {
                         Function() navigate = () {};
                         _model.apiResultrak = await DeleteUserCall.call(
-                          userId: widget.user?.userID,
+                          userId: currentUserUid,
+                          authToken: SupaFlow
+                                  .client.auth.currentSession?.accessToken ??
+                              '',
                         );
+                        if (!context.mounted) {
+                          return;
+                        }
 
-                        if ((_model.apiResultrak?.succeeded ?? true)) {
+                        if (_model.apiResultrak?.succeeded ?? false) {
                           FFAppState().clearUserData();
                           GoRouter.of(context).prepareAuthEvent();
                           await authManager.signOut();
+                          if (!context.mounted) {
+                            return;
+                          }
                           GoRouter.of(context).clearRedirectLocation();
 
                           navigate = () => context.goNamedAuth(
@@ -163,6 +172,20 @@ class _ExcluirContaWidgetState extends State<ExcluirContaWidget> {
                               duration: const Duration(milliseconds: 4000),
                               backgroundColor:
                                   FlutterFlowTheme.of(context).secondary,
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Não foi possível excluir sua conta. Tente novamente.',
+                                style: TextStyle(
+                                  color: FlutterFlowTheme.of(context)
+                                      .secondaryBackground,
+                                ),
+                              ),
+                              duration: const Duration(milliseconds: 4000),
+                              backgroundColor: const Color(0xFFA32C21),
                             ),
                           );
                         }

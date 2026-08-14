@@ -47,6 +47,7 @@ class SyncResult {
   final bool lotesOk;
   final bool reproOk;
   final bool sanidadeOk;
+  final bool pesagensOk;
   final bool cancelled;
   final bool skipped; // sync já em andamento ou intervalo mínimo
 
@@ -56,12 +57,19 @@ class SyncResult {
     this.lotesOk = true,
     this.reproOk = true,
     this.sanidadeOk = true,
+    this.pesagensOk = true,
     this.cancelled = false,
     this.skipped = false,
   });
 
   bool get allSuccess =>
-      propOk && rebanhoOk && lotesOk && reproOk && sanidadeOk && !cancelled;
+      propOk &&
+      rebanhoOk &&
+      lotesOk &&
+      reproOk &&
+      sanidadeOk &&
+      pesagensOk &&
+      !cancelled;
 }
 
 /// Tempo máximo de PUSH por módulo antes de abortar (watchdog individual).
@@ -183,6 +191,7 @@ class SyncEngine {
         lotesOk: false,
         reproOk: false,
         sanidadeOk: false,
+        pesagensOk: false,
       );
     } finally {
       watchdog?.cancel();
@@ -238,6 +247,7 @@ class SyncEngine {
     var lotesOk = true;
     var reproOk = true;
     var sanidadeOk = true;
+    var pesagensOk = true;
 
     if (hasAnyPending) {
       emit(5, 'Enviando dados...');
@@ -422,12 +432,26 @@ class SyncEngine {
     }
 
     emit(85, 'Baixando pesagens...');
-    await _guard(
-      () => action_blocks.refreshPesagens(context),
+    pesagensOk = await _guard(
+      () async {
+        await action_blocks.refreshPesagens(context);
+        return true;
+      },
       'PULL pesagens',
       _pullModuleTimeout,
-      null,
+      false,
     );
+    if (state.syncCancelRequested) {
+      return SyncResult(
+        cancelled: true,
+        propOk: propOk,
+        rebanhoOk: rebanhoOk,
+        lotesOk: lotesOk,
+        reproOk: reproOk,
+        sanidadeOk: sanidadeOk,
+        pesagensOk: pesagensOk,
+      );
+    }
 
     emit(95, 'Finalizando...');
     try {
@@ -442,6 +466,7 @@ class SyncEngine {
       lotesOk: lotesOk,
       reproOk: reproOk,
       sanidadeOk: sanidadeOk,
+      pesagensOk: pesagensOk,
     );
   }
 
@@ -467,6 +492,10 @@ class SyncEngine {
         task().timeout(timeout, onTimeout: () {
           debugPrint(
               '[SYNC][engine][watchdog] $label estourou após ${timeout.inSeconds}s.');
+          // Future.timeout não cancela o Future original. Sinalizar o token
+          // cooperativo faz os loops internos encerrarem na próxima fronteira
+          // de página e evita uma sincronização órfã continuar em background.
+          FFAppState().syncCancelRequested = true;
           throw TimeoutException('$label timeout');
         }),
         cancelCompleter.future,

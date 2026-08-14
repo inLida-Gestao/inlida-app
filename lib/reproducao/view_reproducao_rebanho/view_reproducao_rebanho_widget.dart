@@ -2151,23 +2151,21 @@ class _ViewReproducaoRebanhoWidgetState
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                if (valueOrDefault<String>(
-                                      rAddInseminacaoBuscarReproducaoRowList
-                                          .firstOrNull?.parida,
-                                      'N/A',
-                                    ) ==
-                                    'Sim')
+                                if (functions.exibirPartoConfirmado(
+                                  rAddInseminacaoBuscarReproducaoRowList
+                                    .firstOrNull?.parida,
+                                  rAddInseminacaoBuscarReproducaoRowList
+                                    .firstOrNull?.dataParto))
                                   Icon(
                                     Icons.check_box_rounded,
                                     color: FlutterFlowTheme.of(context).primary,
                                     size: 24.0,
                                   ),
-                                if (valueOrDefault<String>(
-                                      rAddInseminacaoBuscarReproducaoRowList
-                                          .firstOrNull?.parida,
-                                      'N/A',
-                                    ) !=
-                                    'Sim')
+                                if (!functions.exibirPartoConfirmado(
+                                  rAddInseminacaoBuscarReproducaoRowList
+                                    .firstOrNull?.parida,
+                                  rAddInseminacaoBuscarReproducaoRowList
+                                    .firstOrNull?.dataParto))
                                   Icon(
                                     Icons.check_box_outline_blank,
                                     color: FlutterFlowTheme.of(context).accent3,
@@ -2191,18 +2189,11 @@ class _ViewReproducaoRebanhoWidgetState
                               ].divide(const SizedBox(width: 8.0)),
                             ),
                           ),
-                          if (valueOrDefault<String>(
-                                    rAddInseminacaoBuscarReproducaoRowList
-                                        .firstOrNull?.parida,
-                                    'N/A',
-                                  ) ==
-                                  'SIM' ||
-                              valueOrDefault<String>(
-                                    rAddInseminacaoBuscarReproducaoRowList
-                                        .firstOrNull?.parida,
-                                    'N/A',
-                                  ) ==
-                                  'Sim')
+                            if (functions.exibirPartoConfirmado(
+                              rAddInseminacaoBuscarReproducaoRowList
+                                .firstOrNull?.parida,
+                              rAddInseminacaoBuscarReproducaoRowList
+                                .firstOrNull?.dataParto))
                             Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(
                                   24.0, 0.0, 24.0, 0.0),

@@ -1111,6 +1111,18 @@ class FFAppState extends ChangeNotifier {
     _filtroDataNascimentoFim = value;
   }
 
+  DateTime? _filtroDataUltimaPesagemInicio;
+  DateTime? get filtroDataUltimaPesagemInicio => _filtroDataUltimaPesagemInicio;
+  set filtroDataUltimaPesagemInicio(DateTime? value) {
+    _filtroDataUltimaPesagemInicio = value;
+  }
+
+  DateTime? _filtroDataUltimaPesagemFim;
+  DateTime? get filtroDataUltimaPesagemFim => _filtroDataUltimaPesagemFim;
+  set filtroDataUltimaPesagemFim(DateTime? value) {
+    _filtroDataUltimaPesagemFim = value;
+  }
+
   List<String> _origemRebanho = ['Compra', 'Movimentação', 'Nascimento'];
   List<String> get origemRebanho => _origemRebanho;
   set origemRebanho(List<String> value) {
@@ -2445,6 +2457,18 @@ class FFAppState extends ChangeNotifier {
   String get ordenacaoPropTipo => _ordenacaoPropTipo;
   set ordenacaoPropTipo(String value) {
     _ordenacaoPropTipo = value;
+  }
+
+  String _ordenacaoLoteAnimais = '';
+  String get ordenacaoLoteAnimais => _ordenacaoLoteAnimais;
+  set ordenacaoLoteAnimais(String value) {
+    _ordenacaoLoteAnimais = value;
+  }
+
+  String _ordenacaoLoteAnimaisTipo = '';
+  String get ordenacaoLoteAnimaisTipo => _ordenacaoLoteAnimaisTipo;
+  set ordenacaoLoteAnimaisTipo(String value) {
+    _ordenacaoLoteAnimaisTipo = value;
   }
 
   int _totalSanidades = 0;

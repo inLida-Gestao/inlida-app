@@ -1,4 +1,5 @@
 import 'package:sqflite/sqflite.dart';
+import '/backend/utils/rebanho_natural_sort.dart';
 import '/backend/utils/rebanho_status_utils.dart';
 
 /// BEGIN INSERTPROPRIEDADE
@@ -197,11 +198,13 @@ Future performInsertRebanho(
 }) {
   final syncUpdatedAt =
       DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  final numeroAnimalSortKey = buildRebanhoNumeroSortKey(numeroAnimal);
   final safeStatusRebanho = normalizeRebanhoStatus(statusRebanho);
   final query = '''
 INSERT INTO local_rebanho (
     idPropriedade,
     numeroAnimal,
+    numeroAnimalSortKey,
     chip,
     codRegistro,
     nome,
@@ -248,10 +251,12 @@ INSERT INTO local_rebanho (
     rebanhoIdReprodutor,
     sync_dirty,
     sync_op,
+    sync_lote_dirty,
     sync_updated_at
 ) VALUES (
     '$idPropriedade',
     '$numeroAnimal',
+    '$numeroAnimalSortKey',
     '$chip',
     '$codRegistro',
     '$nome',
@@ -298,6 +303,7 @@ INSERT INTO local_rebanho (
     '$rebanhoIdReprodutor',
     1,
     'insert',
+    1,
     '$syncUpdatedAt'
 );
 ''';
@@ -378,11 +384,13 @@ Future performInsertRebanhoNascimento(
 }) {
   final syncUpdatedAt =
       DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  final numeroAnimalSortKey = buildRebanhoNumeroSortKey(numeroAnimal);
   final safeStatusRebanho = normalizeRebanhoStatus(statusRebanho);
   final query = '''
 INSERT INTO local_rebanho (
     idPropriedade,
     numeroAnimal,
+    numeroAnimalSortKey,
     chip,
     codRegistro,
     nome,
@@ -425,6 +433,7 @@ INSERT INTO local_rebanho (
 ) VALUES (
     '$idPropriedade',
     '$numeroAnimal',
+    '$numeroAnimalSortKey',
     '$chip',
     '$codRegistro',
     '$nome',
@@ -492,11 +501,13 @@ Future performInsertRebanhoSemen(
 }) {
   final syncUpdatedAt =
       DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+  final numeroAnimalSortKey = buildRebanhoNumeroSortKey(numeroAnimal);
   final safeStatusRebanho = normalizeRebanhoStatus(statusRebanho);
   final query = '''
 INSERT INTO local_rebanho (
     idPropriedade,
     numeroAnimal,
+    numeroAnimalSortKey,
     codRegistro,
     nome,
     raca,
@@ -516,6 +527,7 @@ INSERT INTO local_rebanho (
 ) VALUES (
     '$idPropriedade',
     '$numeroAnimal',
+    '$numeroAnimalSortKey',
     '$codRegistro',
     '$nome',
     '$raca',
@@ -643,7 +655,7 @@ Future performUPDTRebanho(
 }) {
   const query = '''
 UPDATE local_rebanho
-SET numeroAnimal = ?, chip = ?, codRegistro = ?, nome = ?, sexo = ?,
+SET numeroAnimal = ?, numeroAnimalSortKey = ?, chip = ?, codRegistro = ?, nome = ?, sexo = ?,
 categoria = ?, dataNascimento = ?, pesoNascimento = ?, porte = ?,
 raca = ?, dataEntradaLote = ?,
 dataDesmama = ?, pesoDesmama = ?, statusRebanho = ?,
@@ -654,6 +666,13 @@ valorVenda = ?, numeroMatriz = ?, nomeMatriz = ?, dataNascMatriz = ?,
 racaMatriz = ?, numeroReprodutor = ?, nomeReprodutor = ?, dataNascReprodutor = ?,
 racaReprodutor = ?, movimentacao_saida = ?, data_morte = ?, motivo_morte = ?,
 categoria_matriz = ?, rebanhoIdMatriz = ?, rebanhoIdReprodutor = ?,
+sync_lote_dirty = CASE
+  WHEN COALESCE(loteID, '') IS NOT COALESCE(?, '')
+    OR COALESCE(loteNome, '') IS NOT COALESCE(?, '')
+    OR COALESCE(dataEntradaLote, '') IS NOT COALESCE(?, '')
+    THEN 1
+  ELSE COALESCE(sync_lote_dirty, 0)
+END,
 sync_dirty = 1,
 sync_op = CASE WHEN sync_op = 'insert' THEN 'insert' ELSE 'update' END,
 sync_updated_at = ?
@@ -662,8 +681,10 @@ WHERE idRebanho = ?
   final syncUpdatedAt =
       DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
   final safeStatusRebanho = normalizeRebanhoStatus(statusRebanho);
+  final numeroAnimalSortKey = buildRebanhoNumeroSortKey(numeroAnimal);
   return database.rawUpdate(query, [
     numeroAnimal,
+    numeroAnimalSortKey,
     chip,
     codRegistro,
     nome,
@@ -702,6 +723,9 @@ WHERE idRebanho = ?
     categoriamatriz,
     rebanhoIdMatriz,
     rebanhoIdReprodutor,
+    loteID,
+    loteNome,
+    dataEntradaLote,
     syncUpdatedAt,
     idRebanho,
   ]);
@@ -813,21 +837,121 @@ Future performUPDTRebanhoLote(
   String? updatedat,
   String? idRebanho,
   String? dataEntradaLote,
+  String? expectedLoteID,
 }) {
   final syncUpdatedAt =
       DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
-  final query = '''
+  const query = '''
 UPDATE local_rebanho
-SET loteID = '$loteID',
-    loteNome = '$loteNome',
-    updated_at = '$updatedat',
-    dataEntradaLote = '$dataEntradaLote',
+SET loteID = ?,
+    loteNome = ?,
+    updated_at = ?,
+    dataEntradaLote = ?,
+    sync_lote_dirty = 1,
     sync_dirty = 1,
     sync_op = CASE WHEN sync_op = 'insert' THEN 'insert' ELSE 'update' END,
-    sync_updated_at = '$syncUpdatedAt'
-WHERE idRebanho = '$idRebanho'
+    sync_updated_at = ?
+WHERE idRebanho = ?
+  AND (? IS NULL OR loteID = ?)
 ''';
-  return database.rawQuery(query);
+  return database.rawUpdate(query, [
+    loteID,
+    loteNome,
+    updatedat,
+    dataEntradaLote,
+    syncUpdatedAt,
+    idRebanho,
+    expectedLoteID,
+    expectedLoteID,
+  ]);
+}
+
+/// Resultado de [performReconcileRebanhoLote]: quais idRebanho passados NÃO
+/// afetaram nenhuma linha local (ex.: já haviam sido movidos para outro lote
+/// ou removidos entre a seleção na UI e a gravação). Usado para reportar ao
+/// usuário quando a contagem do lote não bate com o que foi selecionado.
+class RebanhoLoteReconcileResult {
+  const RebanhoLoteReconcileResult({
+    required this.appliedMissing,
+    required this.removedMissing,
+  });
+
+  final List<String> appliedMissing;
+  final List<String> removedMissing;
+
+  bool get hasMissing => appliedMissing.isNotEmpty || removedMissing.isNotEmpty;
+}
+
+Future<RebanhoLoteReconcileResult> performReconcileRebanhoLote(
+  Database database, {
+  required List<String> appliedIds,
+  required List<String> removedIds,
+  required String loteNome,
+  required String loteID,
+  required String updatedat,
+  required String dataEntradaLote,
+  required bool vendido,
+  String? dataVenda,
+  double? valorVenda,
+}) async {
+  final syncUpdatedAt =
+      DateTime.now().toIso8601String().substring(0, 19).replaceFirst('T', ' ');
+
+  final appliedMissing = <String>[];
+  final removedMissing = <String>[];
+
+  await database.transaction((transaction) async {
+    for (final idRebanho in appliedIds) {
+      final values = <Object?>[
+        loteID,
+        loteNome,
+        updatedat,
+        dataEntradaLote,
+      ];
+      final saleClause = vendido
+          ? ', dataVenda = ?, valorVenda = ?, statusRebanho = \'Vendido\''
+          : '';
+      if (vendido) {
+        values.addAll([dataVenda, valorVenda]);
+      }
+      values.addAll([syncUpdatedAt, idRebanho]);
+      final affected = await transaction.rawUpdate('''
+UPDATE local_rebanho
+SET loteID = ?,
+    loteNome = ?,
+    updated_at = ?,
+    dataEntradaLote = ?$saleClause,
+    sync_lote_dirty = 1,
+    sync_dirty = 1,
+    sync_op = CASE WHEN sync_op = 'insert' THEN 'insert' ELSE 'update' END,
+    sync_updated_at = ?
+WHERE idRebanho = ?
+''', values);
+      if (affected == 0) appliedMissing.add(idRebanho);
+    }
+
+    for (final idRebanho in removedIds) {
+      final affected = await transaction.rawUpdate('''
+UPDATE local_rebanho
+SET loteID = NULL,
+    loteNome = NULL,
+    dataEntradaLote = NULL,
+    updated_at = ?,
+    sync_lote_dirty = 1,
+    sync_dirty = 1,
+    sync_op = CASE WHEN sync_op = 'insert' THEN 'insert' ELSE 'update' END,
+    sync_updated_at = ?
+WHERE idRebanho = ?
+  AND loteID = ?
+''', [updatedat, syncUpdatedAt, idRebanho, loteID]);
+      if (affected == 0) removedMissing.add(idRebanho);
+    }
+  });
+
+  return RebanhoLoteReconcileResult(
+    appliedMissing: appliedMissing,
+    removedMissing: removedMissing,
+  );
 }
 
 /// END UPDT REBANHO LOTE
@@ -933,6 +1057,14 @@ Future performInsertReproducao(
           previsaoParto == 'null'
       ? 'NULL'
       : "'$previsaoParto'";
+  // NUNCA gravar a string literal 'null' em data_partida_semen: isso impede o
+  // sync de identificar que o campo está vazio, fazendo a data reaparecer
+  // após sincronizar (ver _buildReproducaoPayload em actions.dart).
+  final dataPartidaSemenSql = dataPartidaSemen == null ||
+          dataPartidaSemen.trim().isEmpty ||
+          dataPartidaSemen == 'null'
+      ? 'NULL'
+      : "'$dataPartidaSemen'";
   final query = '''
 INSERT INTO local_reproducao (
     id_propriedade, 
@@ -977,7 +1109,7 @@ INSERT INTO local_reproducao (
     '$tipoReproducao',
     $scoreCorporal,
     '$dataInseminacao',
-    '$dataPartidaSemen',
+    $dataPartidaSemenSql,
     $partidaSemen,
     $previsaoPartoSql,
     '$idLote',
@@ -1033,6 +1165,35 @@ WHERE id_reproducao = '$idReproducao'
 
 /// END DELETE REPRODUCAO REB
 
+/// BEGIN CONFIRMAR PARTO REPRODUCAO
+/// UPDATE parcial: usado pela auto-confirmação de parto ao cadastrar um
+/// animal Nascimento. Toca APENAS estas 4 colunas — nunca usar
+/// performUPDTReproducao aqui, pois ele sobrescreve todo o registro.
+Future performConfirmarPartoReproducao(
+  Database database, {
+  String? idReproducao,
+  String? dataParto,
+  String? statusReproducao,
+  String? updatedAt,
+}) {
+  const query = '''
+UPDATE local_reproducao SET
+    parida = 'SIM',
+    data_parto = ?,
+    status_reproducao = ?,
+    updated_at = ?
+WHERE id_reproducao = ?
+''';
+  return database.rawUpdate(query, [
+    dataParto,
+    statusReproducao,
+    updatedAt,
+    idReproducao,
+  ]);
+}
+
+/// END CONFIRMAR PARTO REPRODUCAO
+
 /// BEGIN UPDT REPRODUCAO
 Future performUPDTReproducao(
   Database database, {
@@ -1076,12 +1237,20 @@ Future performUPDTReproducao(
           previsaoParto == 'null'
       ? 'NULL'
       : "'$previsaoParto'";
+  // NUNCA gravar a string literal 'null' em data_partida_semen: isso impede o
+  // sync de identificar que o campo está vazio, fazendo a data reaparecer
+  // após sincronizar (ver _buildReproducaoPayload em actions.dart).
+  final dataPartidaSemenSql = dataPartidaSemen == null ||
+          dataPartidaSemen.trim().isEmpty ||
+          dataPartidaSemen == 'null'
+      ? 'NULL'
+      : "'$dataPartidaSemen'";
   final query = '''
 UPDATE local_reproducao SET
     tipo_reproducao = '$tipoReproducao',
     score_corporal = $scoreCorporal,
     data_inseminacao = '$dataInseminacao',
-    data_partida_semen = '$dataPartidaSemen',
+    data_partida_semen = $dataPartidaSemenSql,
     partida_semen = $partidaSemen,
     previsao_parto = $previsaoPartoSql,
     data_inicial = '$dataInicial',
@@ -1763,6 +1932,7 @@ Future performUPDTRebanhoLoteVenda(
 UPDATE local_rebanho
 SET loteID = '$loteID', loteNome = '$loteNome', updated_at = '$updatedat', dataEntradaLote = '$dataEntradaLote',
 dataVenda = '$dataVenda', valorVenda = $valorVenda, statusRebanho = 'Vendido',
+sync_lote_dirty = 1,
 sync_dirty = 1,
 sync_op = CASE WHEN sync_op = 'insert' THEN 'insert' ELSE 'update' END,
 sync_updated_at = '$syncUpdatedAt'
@@ -1814,11 +1984,20 @@ Future performUPDTReproducaoMonta(
           previsaoParto == 'null'
       ? 'NULL'
       : "'$previsaoParto'";
+  // NUNCA gravar a string literal 'null' em data_partida_semen: isso impede o
+  // sync de identificar que o campo está vazio, fazendo a data reaparecer
+  // após sincronizar (ver _buildReproducaoPayload em actions.dart). Além
+  // disso, Monta Natural não deveria ter partida de sêmen preenchida.
+  final dataPartidaSemenSql = dataPartidaSemen == null ||
+          dataPartidaSemen.trim().isEmpty ||
+          dataPartidaSemen == 'null'
+      ? 'NULL'
+      : "'$dataPartidaSemen'";
   final query = '''
 UPDATE local_reproducao SET
     tipo_reproducao = '$tipoReproducao',
     score_corporal = $scoreCorporal,
-    data_partida_semen = '$dataPartidaSemen',
+    data_partida_semen = $dataPartidaSemenSql,
     id_lote = '$idLote',
     loteNome = '$loteNome',
     partida_semen = $partidaSemen,

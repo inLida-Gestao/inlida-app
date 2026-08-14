@@ -1319,36 +1319,17 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                 Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    if (valueOrDefault<String>(
-                                              _model.reproducao?.firstOrNull
-                                                  ?.parida,
-                                              'N/A',
-                                            ) ==
-                                            'SIM' ||
-                                        valueOrDefault<String>(
-                                              _model.reproducao?.firstOrNull
-                                                  ?.parida,
-                                              'N/A',
-                                            ) ==
-                                            'Sim')
+                                    if (functions.partoConfirmado(
+                                      _model.reproducao?.firstOrNull?.parida))
                                       Icon(
                                         Icons.check_box_rounded,
                                         color: FlutterFlowTheme.of(context)
                                             .primary,
                                         size: 24.0,
                                       ),
-                                    if (valueOrDefault<String>(
-                                              _model.reproducao?.firstOrNull
-                                                  ?.parida,
-                                              'N/A',
-                                            ) ==
-                                            'NAO' ||
-                                        valueOrDefault<String>(
-                                              _model.reproducao?.firstOrNull
-                                                  ?.parida,
-                                              'N/A',
-                                            ) ==
-                                            'Não')
+                                    if (!functions.exibirPartoConfirmado(
+                                      _model.reproducao?.firstOrNull?.parida,
+                                      _model.reproducao?.firstOrNull?.dataParto))
                                       Icon(
                                         Icons.check_box_outline_blank,
                                         color: FlutterFlowTheme.of(context)
@@ -1373,18 +1354,9 @@ class _ViewReproducaoLoteWidgetState extends State<ViewReproducaoLoteWidget> {
                                     ),
                                   ].divide(const SizedBox(width: 8.0)),
                                 ),
-                                if (valueOrDefault<String>(
-                                          _model
-                                              .reproducao?.firstOrNull?.parida,
-                                          'N/A',
-                                        ) ==
-                                        'SIM' ||
-                                    valueOrDefault<String>(
-                                          _model
-                                              .reproducao?.firstOrNull?.parida,
-                                          'N/A',
-                                        ) ==
-                                        'Sim')
+                                if (functions.exibirPartoConfirmado(
+                                    _model.reproducao?.firstOrNull?.parida,
+                                    _model.reproducao?.firstOrNull?.dataParto))
                                   Expanded(
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,

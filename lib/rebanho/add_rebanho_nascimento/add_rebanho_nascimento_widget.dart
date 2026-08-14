@@ -1,6 +1,8 @@
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
 import '/backend/utils/lote_dropdown_utils.dart';
+import '/backend/utils/reproducao_parto_utils.dart';
+import '/components/bastao_leitura_button.dart';
 import '/components/saiba_mais_b_t_widget.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -9,6 +11,7 @@ import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
 import '/flutter_flow/instant_timer.dart';
 import '/rebanho/popup_rebanhos/popup_rebanhos_widget.dart';
+import '/rebanho/popup_selecionar_reproducao/popup_selecionar_reproducao_widget.dart';
 import '/actions/actions.dart' as action_blocks;
 import '/custom_code/widgets/index.dart' as custom_widgets;
 import '/flutter_flow/custom_functions.dart' as functions;
@@ -93,6 +96,163 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
     _model.maybeDispose();
 
     super.dispose();
+  }
+
+  /// Chave que identifica a combinação matriz + data de nascimento atual,
+  /// usada para saber se uma escolha manual do popup ainda é válida ou se
+  /// precisa ser recalculada (matriz ou data mudaram).
+  String _chaveVinculoAtual(String? idRebanhoMatriz, DateTime? dataNascimento) {
+    final dataIso = dataNascimento == null
+        ? ''
+        : dateTimeFormat('yyyy-MM-dd', dataNascimento);
+    return '${idRebanhoMatriz ?? ''}|$dataIso';
+  }
+
+  /// Aplica o reprodutor de [candidato] ao bezerro, se ainda vazio ou se já
+  /// tiver sido preenchido por esta mesma automação, reenriquecendo os dados
+  /// via cadastro do rebanho quando disponível. Retorna `true` se o
+  /// reprodutor foi de fato aplicado.
+  Future<bool> _preencherReprodutorDoCandidato(
+      CandidatoReproducao candidato) async {
+    final reprodutorVazio = !functions
+        .temReprodutorSelecionado(FFAppState().reprodutorSelecionado.idRebanho);
+    if (!(reprodutorVazio || _model.reprodutorPreenchidoAutomaticamente) ||
+        !functions.temReprodutorSelecionado(candidato.idRebanhoReprodutor)) {
+      return false;
+    }
+
+    var numAnimal = candidato.numReprodutor;
+    var nomeAnimal = candidato.nomeReprodutor;
+    var dataNascAnimal = candidato.nascimentoReprodutor;
+    var racaAnimal = candidato.racaReprodutor;
+    var chip = candidato.chipReprodutor;
+
+    final reprodutorCadastrado = await SQLiteManager.instance
+        .buscarRebanho(idRebanho: candidato.idRebanhoReprodutor);
+    final reprodutor = reprodutorCadastrado.firstOrNull;
+    if (reprodutor != null) {
+      numAnimal = reprodutor.numeroAnimal ?? numAnimal;
+      nomeAnimal = reprodutor.nome ?? nomeAnimal;
+      dataNascAnimal = reprodutor.dataNascimento ?? dataNascAnimal;
+      racaAnimal = reprodutor.raca ?? racaAnimal;
+      chip = reprodutor.chip ?? chip;
+    }
+
+    FFAppState().reprodutorSelecionado = AnimalSelecionadoStruct(
+      numAnimal: numAnimal,
+      nomeAnimal: nomeAnimal,
+      dataNascAnimal: dataNascAnimal,
+      racaAnimal: racaAnimal,
+      idRebanho: candidato.idRebanhoReprodutor,
+      chip: chip,
+    );
+    _model.reprodutorPreenchidoAutomaticamente = true;
+    return true;
+  }
+
+  /// Localiza a reprodução da matriz selecionada cuja concepção caia na
+  /// janela de gestação automática (275-305 dias antes de `datePicked1`,
+  /// somente Inseminação) e, se encontrada e ainda não parida, guarda o
+  /// vínculo para confirmação no Salvar e pré-preenche o reprodutor (se
+  /// ainda vazio ou preenchido por esta mesma automação).
+  ///
+  /// Se nada for encontrado na janela automática mas houver candidatas na
+  /// janela estendida (306-350 dias, Inseminação e Monta Natural), abre um
+  /// popup para o usuário escolher manualmente qual reprodução vincular (ou
+  /// nenhuma). Nunca lança: qualquer falha apenas limpa o vínculo e o
+  /// cadastro segue normalmente.
+  Future<void> _autoVincularReproducao({bool silencioso = false}) async {
+    try {
+      final idRebanhoMatriz = FFAppState().matrizSelecionada.idRebanho;
+      final dataNascimento = _model.datePicked1;
+      final chaveAtual = _chaveVinculoAtual(idRebanhoMatriz, dataNascimento);
+
+      if (!functions.temMatrizSelecionada(idRebanhoMatriz) ||
+          dataNascimento == null) {
+        _model.idReproducaoVinculada = null;
+        _model.vinculoEscolhidoManualmente = false;
+        _model.chaveEscolhaManual = null;
+        return;
+      }
+
+      // No Salvar (silencioso), se o usuário já escolheu manualmente (ou
+      // optou por não vincular) para esta mesma matriz + data, não
+      // recalcular: preserva a decisão do usuário.
+      if (silencioso &&
+          _model.vinculoEscolhidoManualmente &&
+          _model.chaveEscolhaManual == chaveAtual) {
+        return;
+      }
+
+      final resultado = await localizarReproducaoDaMatriz(
+        idPropriedade: FFAppState().propriedadeSelecionada.idPropriedade,
+        idRebanhoMatriz: idRebanhoMatriz,
+        dataNascimento: dataNascimento,
+      );
+
+      final candidato = resultado.automatica;
+      if (candidato != null) {
+        _model.idReproducaoVinculada = candidato.idReproducao;
+        _model.vinculoEscolhidoManualmente = false;
+        _model.chaveEscolhaManual = null;
+
+        final aplicado = await _preencherReprodutorDoCandidato(candidato);
+
+        if (mounted && !silencioso && aplicado) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Reprodução encontrada: reprodutor vinculado automaticamente e o parto será confirmado ao salvar.',
+                style: TextStyle(
+                  color: FlutterFlowTheme.of(context).secondaryBackground,
+                ),
+              ),
+              duration: const Duration(milliseconds: 4000),
+              backgroundColor: FlutterFlowTheme.of(context).secondary,
+            ),
+          );
+        }
+        return;
+      }
+
+      _model.idReproducaoVinculada = null;
+
+      if (silencioso || resultado.candidatosManuais.isEmpty || !mounted) {
+        return;
+      }
+
+      final escolhido = await showDialog<CandidatoReproducao>(
+        context: context,
+        builder: (dialogContext) => PopupSelecionarReproducaoWidget(
+          candidatos: resultado.candidatosManuais,
+          dataNascimento: dataNascimento,
+        ),
+      );
+
+      _model.vinculoEscolhidoManualmente = true;
+      _model.chaveEscolhaManual = chaveAtual;
+
+      if (escolhido == null) {
+        // Usuário fechou o popup sem escolher: não vincula nada.
+        return;
+      }
+
+      _model.idReproducaoVinculada = escolhido.idReproducao;
+      if (functions.temReprodutorSelecionado(escolhido.idRebanhoReprodutor)) {
+        await _preencherReprodutorDoCandidato(escolhido);
+      } else {
+        // Reprodução escolhida sem reprodutor vinculado: limpa o campo.
+        FFAppState().reprodutorSelecionado =
+            AnimalSelecionadoStruct.fromSerializableMap(jsonDecode('{}'));
+        _model.reprodutorPreenchidoAutomaticamente = false;
+      }
+    } catch (_) {
+      // Falha na automação nunca deve bloquear o cadastro do nascimento.
+    } finally {
+      if (mounted) {
+        safeSetState(() {});
+      }
+    }
   }
 
   @override
@@ -487,6 +647,10 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                 filled: true,
                                                 fillColor:
                                                     const Color(0xFFF1F1F1),
+                                                suffixIcon: BastaoLeituraButton(
+                                                  controller: _model
+                                                      .nChipTextController!,
+                                                ),
                                               ),
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -1155,6 +1319,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       getCurrentTimestamp;
                                                 });
                                               }
+                                              await _autoVincularReproducao();
                                             },
                                             child: Container(
                                               width: double.infinity,
@@ -2145,6 +2310,7 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           );
                                                         },
                                                       );
+                                                      await _autoVincularReproducao();
                                                     },
                                                     child: Container(
                                                       width: double.infinity,
@@ -2257,6 +2423,23 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       AnimalSelecionadoStruct
                                                           .fromSerializableMap(
                                                               jsonDecode('{}'));
+                                                  _model.idReproducaoVinculada =
+                                                      null;
+                                                  _model.vinculoEscolhidoManualmente =
+                                                      false;
+                                                  _model.chaveEscolhaManual =
+                                                      null;
+                                                  if (_model
+                                                      .reprodutorPreenchidoAutomaticamente) {
+                                                    FFAppState()
+                                                            .reprodutorSelecionado =
+                                                        AnimalSelecionadoStruct
+                                                            .fromSerializableMap(
+                                                                jsonDecode(
+                                                                    '{}'));
+                                                    _model.reprodutorPreenchidoAutomaticamente =
+                                                        false;
+                                                  }
                                                   safeSetState(() {});
                                                 },
                                                 child: Icon(
@@ -2354,6 +2537,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           );
                                                         },
                                                       );
+                                                      _model.reprodutorPreenchidoAutomaticamente =
+                                                          false;
                                                     },
                                                     child: Container(
                                                       width: double.infinity,
@@ -2466,6 +2651,8 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       AnimalSelecionadoStruct
                                                           .fromSerializableMap(
                                                               jsonDecode('{}'));
+                                                  _model.reprodutorPreenchidoAutomaticamente =
+                                                      false;
                                                   safeSetState(() {});
                                                 },
                                                 child: Icon(
@@ -3724,7 +3911,9 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                     .blockIfAccountCanceled(
                                                         context,
                                                         refreshFromServer:
-                                                            true)) return;
+                                                            true)) {
+                                                  return;
+                                                }
                                                 if (!await sanitizePesoControllersBeforeSave(
                                                     context, [
                                                   _model
@@ -3805,6 +3994,13 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                       getCurrentTimestamp;
                                                   safeSetState(() {});
                                                 }
+                                                // Revalida o vínculo com a reprodução ANTES de
+                                                // gravar: garante que o reprodutor seja
+                                                // preenchido mesmo que a matriz ou a data tenham
+                                                // vindo prontas da tela anterior (nesse caso
+                                                // nenhum dos gatilhos de seleção chegou a rodar).
+                                                await _autoVincularReproducao(
+                                                    silencioso: true);
                                                 await SQLiteManager.instance
                                                     .insertRebanhoNascimento(
                                                   idPropriedade: FFAppState()
@@ -3971,6 +4167,33 @@ class _AddRebanhoNascimentoWidgetState extends State<AddRebanhoNascimentoWidget>
                                                           .reprodutorSelecionado
                                                           .idRebanho,
                                                 );
+                                                final idReproducaoParaConfirmar =
+                                                    _model
+                                                        .idReproducaoVinculada;
+                                                if (idReproducaoParaConfirmar !=
+                                                        null &&
+                                                    idReproducaoParaConfirmar
+                                                        .isNotEmpty &&
+                                                    _model.datePicked1 !=
+                                                        null) {
+                                                  try {
+                                                    await confirmarPartoAutomatico(
+                                                      idReproducao:
+                                                          idReproducaoParaConfirmar,
+                                                      dataNascimento:
+                                                          _model.datePicked1!,
+                                                      dataDadosNaoSyncReproAtual:
+                                                          FFAppState()
+                                                              .dataDadosNaoSyncRepro,
+                                                      marcarPendenciaSyncRepro:
+                                                          (v) => FFAppState()
+                                                              .dataDadosNaoSyncRepro = v,
+                                                    );
+                                                  } catch (_) {
+                                                    // Falha ao confirmar o parto automaticamente
+                                                    // nunca deve bloquear o cadastro do nascimento.
+                                                  }
+                                                }
                                                 if (_model
                                                         .pesonascimentoTextController
                                                         .text !=

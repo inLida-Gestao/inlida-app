@@ -180,6 +180,28 @@ class _EditReproducaoRebanhoWidgetState
     return '$numero • $nome • $nascimento';
   }
 
+  String _buildMatrizLabel(
+      BuildContext context, BuscarReproducaoRow? reproducao) {
+    final matrizSelecionada = FFAppState().matrizSelecionada;
+    final temNovaSelecao = functions.temMatrizSelecionada(
+          matrizSelecionada.idRebanho,
+        ) &&
+        matrizSelecionada.idRebanho.trim() !=
+            reproducao?.idRebanhoMatriz?.trim();
+
+    final numero = temNovaSelecao
+        ? _normalizeDisplayText(matrizSelecionada.numAnimal, 'S/N')
+        : _normalizeDisplayText(reproducao?.numMatriz, 'S/N');
+    final nome = temNovaSelecao
+        ? _normalizeDisplayText(matrizSelecionada.nomeAnimal, 'S/N')
+        : _normalizeDisplayText(reproducao?.nomeMatriz, 'S/N');
+    final nascimento = temNovaSelecao
+        ? _formatDisplayDate(context, matrizSelecionada.dataNascAnimal)
+        : _formatDisplayDate(context, reproducao?.nascimentoMatriz);
+
+    return '$numero • $nome • $nascimento';
+  }
+
   DateTime? _resolveDataInseminacao(BuscarReproducaoRow? reproducao) {
     return _model.datePicked1 ??
         functions.converterParaData(reproducao?.dataInseminacao);
@@ -195,13 +217,10 @@ class _EditReproducaoRebanhoWidgetState
       return _model.checkboxParidaValue!;
     }
 
-    final parida = reproducao?.parida?.trim().toLowerCase();
-    if (parida == 'sim') {
-      return true;
-    }
-
-    final dataParto = reproducao?.dataParto?.trim().toLowerCase();
-    return dataParto != null && dataParto.isNotEmpty && dataParto != '-';
+    return functions.exibirPartoConfirmado(
+      reproducao?.parida,
+      reproducao?.dataParto,
+    );
   }
 
   int? _resolveDiasEntreInseminacaoEParto(BuscarReproducaoRow? reproducao) {
@@ -252,14 +271,10 @@ class _EditReproducaoRebanhoWidgetState
                         ? true
                         : false;
                 final dataParto = _model.editReproducao?.firstOrNull?.dataParto;
-                _model.parida = (_model.editReproducao?.firstOrNull?.parida ==
-                            'SIM' ||
-                        _model.editReproducao?.firstOrNull?.parida == 'Sim' ||
-                        (dataParto != null &&
-                            dataParto.isNotEmpty &&
-                            dataParto != '-'))
-                    ? true
-                    : false;
+                _model.parida = functions.exibirPartoConfirmado(
+                  _model.editReproducao?.firstOrNull?.parida,
+                  dataParto,
+                );
                 safeSetState(() {});
                 _model.refresh = _model.refresh + 1;
                 safeSetState(() {});
@@ -484,8 +499,9 @@ class _EditReproducaoRebanhoWidgetState
                                         if (confirmDialogResponse) {
                                           if (await action_blocks
                                               .blockIfAccountCanceled(context,
-                                                  refreshFromServer: true))
+                                                  refreshFromServer: true)) {
                                             return;
+                                          }
                                           if (!(FFAppState()
                                                   .dataDadosNaoSyncRepro !=
                                               null)) {
@@ -529,7 +545,7 @@ class _EditReproducaoRebanhoWidgetState
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Reprodução',
+                                      'Matriz*',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
@@ -546,58 +562,104 @@ class _EditReproducaoRebanhoWidgetState
                                                     .bodyMediumIsCustom,
                                           ),
                                     ),
-                                    Text(
-                                      '${valueOrDefault<String>(
-                                        containerBuscarReproducaoRowList
-                                            .firstOrNull?.numMatriz,
-                                        'S/N',
-                                      )} • ${valueOrDefault<String>(
-                                        valueOrDefault<String>(
-                                                  containerBuscarReproducaoRowList
-                                                      .firstOrNull?.nomeMatriz,
-                                                  'S/N',
-                                                ) ==
-                                                'null'
-                                            ? 'S/N'
-                                            : valueOrDefault<String>(
-                                                containerBuscarReproducaoRowList
-                                                    .firstOrNull?.nomeMatriz,
-                                                'S/N',
-                                              ),
-                                        'S/N',
-                                      )} • ${valueOrDefault<String>(
-                                        containerBuscarReproducaoRowList
-                                                    .firstOrNull
-                                                    ?.nascimentoMatriz ==
-                                                'null'
-                                            ? 'N/A'
-                                            : dateTimeFormat(
-                                                "d/M/y",
-                                                functions.converterParaData(
-                                                    containerBuscarReproducaoRowList
-                                                        .firstOrNull
-                                                        ?.nascimentoMatriz),
-                                                locale:
-                                                    FFLocalizations.of(context)
-                                                        .languageCode,
-                                              ),
-                                        'N/A',
-                                      )}',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                            fontFamily:
-                                                FlutterFlowTheme.of(context)
-                                                    .bodyMediumFamily,
+                                    Builder(
+                                      builder: (context) => InkWell(
+                                        splashColor: Colors.transparent,
+                                        focusColor: Colors.transparent,
+                                        hoverColor: Colors.transparent,
+                                        highlightColor: Colors.transparent,
+                                        onTap: () async {
+                                          await showAlignedDialog(
+                                            barrierColor: Colors.transparent,
+                                            context: context,
+                                            isGlobal: false,
+                                            avoidOverflow: true,
+                                            targetAnchor:
+                                                const AlignmentDirectional(
+                                                        0.0, 1.0)
+                                                    .resolve(Directionality.of(
+                                                        context)),
+                                            followerAnchor:
+                                                const AlignmentDirectional(
+                                                        0.0, -1.0)
+                                                    .resolve(Directionality.of(
+                                                        context)),
+                                            builder: (dialogContext) {
+                                              return Material(
+                                                color: Colors.transparent,
+                                                child: SizedBox(
+                                                  height: 450.0,
+                                                  width: double.infinity,
+                                                  child: PopupRebanhosWidget(
+                                                    sexo: 'Fêmea',
+                                                    tipoReproducao:
+                                                        _model.tipoReproducao,
+                                                    reproducao: true,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                          safeSetState(() {});
+                                        },
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: 56.0,
+                                          decoration: BoxDecoration(
                                             color: FlutterFlowTheme.of(context)
-                                                .secondaryText,
-                                            fontSize: 24.0,
-                                            letterSpacing: 0.0,
-                                            fontWeight: FontWeight.w500,
-                                            useGoogleFonts:
-                                                !FlutterFlowTheme.of(context)
-                                                    .bodyMediumIsCustom,
+                                                .customColor3,
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
+                                          child: Padding(
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16.0, 0.0, 16.0, 0.0),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  _buildMatrizLabel(
+                                                    context,
+                                                    reproducao,
+                                                  ),
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium
+                                                      .override(
+                                                        fontFamily:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMediumFamily,
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .secondaryText,
+                                                        fontSize: 16.0,
+                                                        letterSpacing: 0.0,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        useGoogleFonts:
+                                                            !FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyMediumIsCustom,
+                                                      ),
+                                                ),
+                                                Icon(
+                                                  Icons
+                                                      .keyboard_arrow_down_sharp,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryText,
+                                                  size: 24.0,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -1879,12 +1941,6 @@ class _EditReproducaoRebanhoWidgetState
                                                 datePicked2Date.day,
                                               );
                                             });
-                                          } else if (_model.datePicked2 !=
-                                              null) {
-                                            safeSetState(() {
-                                              _model.datePicked2 =
-                                                  getCurrentTimestamp;
-                                            });
                                           }
                                         },
                                         child: Container(
@@ -2656,22 +2712,25 @@ class _EditReproducaoRebanhoWidgetState
                                               ),
                                               optionsBuilder:
                                                   (textEditingValue) {
-                                                if (textEditingValue.text ==
-                                                    '') {
-                                                  return const Iterable<
-                                                      String>.empty();
+                                                final inseminadores =
+                                                    previsaodePartoListaInseminadoresRowList
+                                                        .map((e) =>
+                                                            e.inseminador)
+                                                        .withoutNulls
+                                                        .toList();
+                                                final pesquisa =
+                                                    textEditingValue.text
+                                                        .trim()
+                                                        .toLowerCase();
+                                                if (pesquisa.isEmpty) {
+                                                  return inseminadores;
                                                 }
-                                                return previsaodePartoListaInseminadoresRowList
-                                                    .map((e) => e.inseminador)
-                                                    .withoutNulls
-                                                    .toList()
+                                                return inseminadores
                                                     .where((option) {
                                                   final lowercaseOption =
                                                       option.toLowerCase();
                                                   return lowercaseOption
-                                                      .contains(textEditingValue
-                                                          .text
-                                                          .toLowerCase());
+                                                      .contains(pesquisa);
                                                 });
                                               },
                                               optionsViewBuilder: (context,
@@ -4238,7 +4297,177 @@ class _EditReproducaoRebanhoWidgetState
                                                         .blockIfAccountCanceled(
                                                             context,
                                                             refreshFromServer:
-                                                                true)) return;
+                                                                true)) {
+                                                      return;
+                                                    }
+                                                    final reproducaoAtual =
+                                                        _model.editReproducao
+                                                            ?.firstOrNull;
+                                                    final matrizSelecionada =
+                                                        FFAppState()
+                                                            .matrizSelecionada;
+                                                    final temNovaSelecaoMatriz =
+                                                        functions
+                                                                .temMatrizSelecionada(
+                                                              matrizSelecionada
+                                                                  .idRebanho,
+                                                            ) &&
+                                                            matrizSelecionada
+                                                                    .idRebanho
+                                                                    .trim() !=
+                                                                reproducaoAtual
+                                                                    ?.idRebanhoMatriz
+                                                                    ?.trim();
+                                                    final idMatrizEfetivo =
+                                                        temNovaSelecaoMatriz
+                                                            ? matrizSelecionada
+                                                                .idRebanho
+                                                            : reproducaoAtual
+                                                                ?.idRebanhoMatriz;
+                                                    if (!functions
+                                                        .temMatrizSelecionada(
+                                                      idMatrizEfetivo,
+                                                    )) {
+                                                      await action_blocks
+                                                          .showInformationDialog(
+                                                        context,
+                                                        message:
+                                                            'Selecione a matriz da reprodução.',
+                                                      );
+                                                      return;
+                                                    }
+                                                    final numMatrizEfetivo =
+                                                        temNovaSelecaoMatriz
+                                                            ? matrizSelecionada
+                                                                .numAnimal
+                                                            : reproducaoAtual
+                                                                ?.numMatriz;
+                                                    final nomeMatrizEfetivo =
+                                                        temNovaSelecaoMatriz
+                                                            ? matrizSelecionada
+                                                                .nomeAnimal
+                                                            : reproducaoAtual
+                                                                ?.nomeMatriz;
+                                                    final nascimentoMatrizEfetivo =
+                                                        temNovaSelecaoMatriz
+                                                            ? matrizSelecionada
+                                                                .dataNascAnimal
+                                                            : reproducaoAtual
+                                                                ?.nascimentoMatriz;
+                                                    final racaMatrizEfetiva =
+                                                        temNovaSelecaoMatriz
+                                                            ? matrizSelecionada
+                                                                .racaAnimal
+                                                            : reproducaoAtual
+                                                                ?.racaMatriz;
+                                                    final chipMatrizEfetivo =
+                                                        temNovaSelecaoMatriz
+                                                            ? matrizSelecionada
+                                                                .chip
+                                                            : reproducaoAtual
+                                                                ?.chipMatriz;
+                                                    final reprodutorSelecionado =
+                                                        FFAppState()
+                                                            .reprodutorSelecionado;
+                                                    final temNovaSelecaoReprodutor =
+                                                        functions
+                                                            .temReprodutorSelecionado(
+                                                      reprodutorSelecionado
+                                                          .idRebanho,
+                                                    );
+                                                    final idReprodutorEfetivo =
+                                                        temNovaSelecaoReprodutor
+                                                            ? reprodutorSelecionado
+                                                                .idRebanho
+                                                            : reproducaoAtual
+                                                                ?.idRebanhoReprodutor;
+                                                    if (_model.tipoReproducao ==
+                                                            'Monta Natural' &&
+                                                        !functions
+                                                            .temReprodutorSelecionado(
+                                                          idReprodutorEfetivo,
+                                                        )) {
+                                                      await action_blocks
+                                                          .showInformationDialog(
+                                                        context,
+                                                        message:
+                                                            'Selecione o reprodutor da monta natural.',
+                                                      );
+                                                      return;
+                                                    }
+                                                    final numReprodutorEfetivo =
+                                                        temNovaSelecaoReprodutor
+                                                            ? reprodutorSelecionado
+                                                                .numAnimal
+                                                            : reproducaoAtual
+                                                                ?.numReprodutor;
+                                                    final nomeReprodutorEfetivo =
+                                                        temNovaSelecaoReprodutor
+                                                            ? reprodutorSelecionado
+                                                                .nomeAnimal
+                                                            : reproducaoAtual
+                                                                ?.nomeReprodutor;
+                                                    final nascimentoReprodutorEfetivo =
+                                                        temNovaSelecaoReprodutor
+                                                            ? reprodutorSelecionado
+                                                                .dataNascAnimal
+                                                            : reproducaoAtual
+                                                                ?.nascimentoReprodutor;
+                                                    final racaReprodutorEfetiva =
+                                                        temNovaSelecaoReprodutor
+                                                            ? reprodutorSelecionado
+                                                                .racaAnimal
+                                                            : reproducaoAtual
+                                                                ?.racaReprodutor;
+                                                    final chipReprodutorEfetivo =
+                                                        temNovaSelecaoReprodutor
+                                                            ? reprodutorSelecionado
+                                                                .chip
+                                                            : reproducaoAtual
+                                                                ?.chipReprodutor;
+                                                    final dataInicialMonta = _model
+                                                            .datePicked3 ??
+                                                        functions
+                                                            .converterParaData(
+                                                                reproducaoAtual
+                                                                    ?.dataInicial);
+                                                    if (_model.tipoReproducao ==
+                                                            'Monta Natural' &&
+                                                        dataInicialMonta ==
+                                                            null) {
+                                                      await action_blocks
+                                                          .showInformationDialog(
+                                                        context,
+                                                        message:
+                                                            'Informe a data inicial da monta natural.',
+                                                      );
+                                                      return;
+                                                    }
+                                                    final partoConfirmado =
+                                                        _model.checkboxParidaValue ??
+                                                            _model.parida;
+                                                    final dataPartoAtual = _dataPartoCleared
+                                                        ? null
+                                                        : (_model.datePicked7 ??
+                                                            functions.converterParaData(_model
+                                                                .editReproducao
+                                                                ?.firstOrNull
+                                                                ?.dataParto));
+                                                    if (partoConfirmado &&
+                                                        dataPartoAtual ==
+                                                            null) {
+                                                      await action_blocks
+                                                          .showInformationDialog(
+                                                        context,
+                                                        message:
+                                                            'Informe a data do parto para confirmar.',
+                                                      );
+                                                      return;
+                                                    }
+                                                    if (!partoConfirmado) {
+                                                      _dataPartoCleared = true;
+                                                      _model.datePicked7 = null;
+                                                    }
                                                     if (!(FFAppState()
                                                             .dataDadosNaoSyncRepro !=
                                                         null)) {
@@ -4395,26 +4624,18 @@ class _EditReproducaoRebanhoWidgetState
                                                                       context)
                                                                   .languageCode,
                                                         ),
-                                                        numMatriz: FFAppState()
-                                                            .matrizSelecionada
-                                                            .numAnimal,
-                                                        nomeMatriz: FFAppState()
-                                                            .matrizSelecionada
-                                                            .nomeAnimal,
+                                                        numMatriz:
+                                                            numMatrizEfetivo,
+                                                        nomeMatriz:
+                                                            nomeMatrizEfetivo,
                                                         nascimentoMatriz:
-                                                            FFAppState()
-                                                                .matrizSelecionada
-                                                                .dataNascAnimal,
-                                                        numReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .numAnimal,
-                                                        nomeReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .nomeAnimal,
+                                                            nascimentoMatrizEfetivo,
+                                                        numReprodutor:
+                                                            numReprodutorEfetivo,
+                                                        nomeReprodutor:
+                                                            nomeReprodutorEfetivo,
                                                         nascimentoReprodutor:
-                                                            FFAppState()
-                                                                .reprodutorSelecionado
-                                                                .dataNascAnimal,
+                                                            nascimentoReprodutorEfetivo,
                                                         statusReproducao:
                                                             valueOrDefault<
                                                                 String>(
@@ -4438,30 +4659,25 @@ class _EditReproducaoRebanhoWidgetState
                                                                         .editReproducao
                                                                         ?.firstOrNull
                                                                         ?.dataStatus,
-                                                        racaMatriz: FFAppState()
-                                                            .matrizSelecionada
-                                                            .racaAnimal,
-                                                        racaReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .racaAnimal,
-                                                        chipReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .chip,
-                                                        chipMatriz: FFAppState()
-                                                            .matrizSelecionada
-                                                            .chip,
+                                                        racaMatriz:
+                                                            racaMatrizEfetiva,
+                                                        racaReprodutor:
+                                                            racaReprodutorEfetiva,
+                                                        chipReprodutor:
+                                                            chipReprodutorEfetivo,
+                                                        chipMatriz:
+                                                            chipMatrizEfetivo,
                                                         ressinc: valueOrDefault<
                                                             String>(
                                                           _model
                                                               .dropdownRessincValue,
                                                           '-',
                                                         ),
-                                                        parida: (_model.checkboxParidaValue ??
-                                                                    _model
-                                                                        .parida) ==
-                                                                true
-                                                            ? 'Sim'
-                                                            : 'Não',
+                                                        parida: functions
+                                                            .normalizarParida(
+                                                          _model.checkboxParidaValue ??
+                                                              _model.parida,
+                                                        ),
                                                         dataParto:
                                                             _dataPartoCleared
                                                                 ? null
@@ -4479,13 +4695,9 @@ class _EditReproducaoRebanhoWidgetState
                                                                         ?.firstOrNull
                                                                         ?.dataParto,
                                                         idrebanhomatriz:
-                                                            FFAppState()
-                                                                .matrizSelecionada
-                                                                .idRebanho,
+                                                            idMatrizEfetivo,
                                                         idrebanhoreprodutor:
-                                                            FFAppState()
-                                                                .reprodutorSelecionado
-                                                                .idRebanho,
+                                                            idReprodutorEfetivo,
                                                         gnrh: valueOrDefault<
                                                             String>(
                                                           _model
@@ -4510,21 +4722,22 @@ class _EditReproducaoRebanhoWidgetState
                                                         loteNome: loteNomeRepro,
                                                         scoreCorporal:
                                                             _model.score,
-                                                        dataPartidaSemen: _model
-                                                                    .datePicked2 !=
-                                                                null
-                                                            ? dateTimeFormat(
-                                                                "yyyy-MM-dd",
-                                                                _model
-                                                                    .datePicked2,
-                                                                locale: FFLocalizations.of(
-                                                                        context)
-                                                                    .languageCode,
-                                                              )
-                                                            : _model
-                                                                .editReproducao
-                                                                ?.firstOrNull
-                                                                ?.dataPartidaSemen,
+                                                        dataPartidaSemen:
+                                                            _dataPartidaSemenCleared
+                                                                ? null
+                                                                : _model.datePicked2 !=
+                                                                        null
+                                                                    ? dateTimeFormat(
+                                                                        "yyyy-MM-dd",
+                                                                        _model
+                                                                            .datePicked2,
+                                                                        locale:
+                                                                            FFLocalizations.of(context).languageCode,
+                                                                      )
+                                                                    : _model
+                                                                        .editReproducao
+                                                                        ?.firstOrNull
+                                                                        ?.dataPartidaSemen,
                                                         partidaSemen:
                                                             _model.partidaSemen,
                                                         previsaoParto: !functions.permitePrevisaoParto(_model
@@ -4593,26 +4806,18 @@ class _EditReproducaoRebanhoWidgetState
                                                                       context)
                                                                   .languageCode,
                                                         ),
-                                                        numMatriz: FFAppState()
-                                                            .matrizSelecionada
-                                                            .numAnimal,
-                                                        nomeMatriz: FFAppState()
-                                                            .matrizSelecionada
-                                                            .nomeAnimal,
+                                                        numMatriz:
+                                                            numMatrizEfetivo,
+                                                        nomeMatriz:
+                                                            nomeMatrizEfetivo,
                                                         nascimentoMatriz:
-                                                            FFAppState()
-                                                                .matrizSelecionada
-                                                                .dataNascAnimal,
-                                                        numReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .numAnimal,
-                                                        nomeReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .nomeAnimal,
+                                                            nascimentoMatrizEfetivo,
+                                                        numReprodutor:
+                                                            numReprodutorEfetivo,
+                                                        nomeReprodutor:
+                                                            nomeReprodutorEfetivo,
                                                         nascimentoReprodutor:
-                                                            FFAppState()
-                                                                .reprodutorSelecionado
-                                                                .dataNascAnimal,
+                                                            nascimentoReprodutorEfetivo,
                                                         statusReproducao:
                                                             valueOrDefault<
                                                                 String>(
@@ -4635,30 +4840,25 @@ class _EditReproducaoRebanhoWidgetState
                                                                 .editReproducao
                                                                 ?.firstOrNull
                                                                 ?.dataStatus,
-                                                        racaMatriz: FFAppState()
-                                                            .matrizSelecionada
-                                                            .racaAnimal,
-                                                        racaReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .racaAnimal,
-                                                        chipReprodutor: FFAppState()
-                                                            .reprodutorSelecionado
-                                                            .chip,
-                                                        chipMatriz: FFAppState()
-                                                            .matrizSelecionada
-                                                            .chip,
+                                                        racaMatriz:
+                                                            racaMatrizEfetiva,
+                                                        racaReprodutor:
+                                                            racaReprodutorEfetiva,
+                                                        chipReprodutor:
+                                                            chipReprodutorEfetivo,
+                                                        chipMatriz:
+                                                            chipMatrizEfetivo,
                                                         ressinc: valueOrDefault<
                                                             String>(
                                                           _model
                                                               .dropdownRessincValue,
                                                           '-',
                                                         ),
-                                                        parida: (_model.checkboxParidaValue ??
-                                                                    _model
-                                                                        .parida) ==
-                                                                true
-                                                            ? 'Sim'
-                                                            : 'Não',
+                                                        parida: functions
+                                                            .normalizarParida(
+                                                          _model.checkboxParidaValue ??
+                                                              _model.parida,
+                                                        ),
                                                         dataParto: _model
                                                                     .datePicked7 !=
                                                                 null
@@ -4675,13 +4875,9 @@ class _EditReproducaoRebanhoWidgetState
                                                                 ?.firstOrNull
                                                                 ?.dataParto,
                                                         idrebanhomatriz:
-                                                            FFAppState()
-                                                                .matrizSelecionada
-                                                                .idRebanho,
+                                                            idMatrizEfetivo,
                                                         idrebanhoreprodutor:
-                                                            FFAppState()
-                                                                .reprodutorSelecionado
-                                                                .idRebanho,
+                                                            idReprodutorEfetivo,
                                                         gnrh: valueOrDefault<
                                                             String>(
                                                           _model
@@ -4701,30 +4897,17 @@ class _EditReproducaoRebanhoWidgetState
                                                         .qTDReproducoes(
                                                             context);
                                                     FFAppState().update(() {});
-                                                    Navigator.pop(context);
-
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      SnackBar(
-                                                        content: Text(
+                                                    await action_blocks
+                                                        .showInformationDialog(
+                                                      context,
+                                                      title: 'Sucesso',
+                                                      message:
                                                           'Reprodução em animal editada com sucesso.',
-                                                          style: TextStyle(
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .secondaryBackground,
-                                                          ),
-                                                        ),
-                                                        duration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    4000),
-                                                        backgroundColor:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .secondary,
-                                                      ),
                                                     );
+                                                    if (!context.mounted) {
+                                                      return;
+                                                    }
+                                                    Navigator.pop(context);
 
                                                     safeSetState(() {});
                                                   } finally {

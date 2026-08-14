@@ -9,6 +9,16 @@ class EditRebanhoModel extends FlutterFlowModel<EditRebanhoWidget> {
 
   String? idRebanho;
 
+  // Auto-vínculo com a reprodução que originou este nascimento, aplicado
+  // quando o usuário troca a matriz de um animal Bezerro/Bezerra (ver
+  // reproducao_parto_utils.dart e add_rebanho_nascimento_widget.dart para o
+  // mesmo padrão). idReproducaoVinculada é o registro que será confirmado
+  // (parida/data_parto/status) ao salvar.
+  String? idReproducaoVinculada;
+  bool reprodutorPreenchidoAutomaticamente = false;
+  bool vinculoEscolhidoManualmente = false;
+  String? chaveEscolhaManual;
+
   List<String> idAnimais = [];
   void addToIdAnimais(String item) => idAnimais.add(item);
   void removeFromIdAnimais(String item) => idAnimais.remove(item);

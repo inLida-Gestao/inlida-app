@@ -484,8 +484,9 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                                                   .secondary,
                                         ),
                                       );
-                                      if (context.mounted)
+                                      if (context.mounted) {
                                         Navigator.pop(context);
+                                      }
                                     }
 
                                     safeSetState(() {});
@@ -947,7 +948,8 @@ class _NavegacaoWidgetState extends State<NavegacaoWidget> {
                         )) {
                           return;
                         }
-                        FFAppState().navegacaoDashboard = 'rebanhos';                        _model.updatePage(() {});
+                        FFAppState().navegacaoDashboard = 'rebanhos';
+                        _model.updatePage(() {});
                         await action_blocks.animaisPropriedade(context);
                         await action_blocks.animaisRegistrados(context);
                         if (Scaffold.of(context).isDrawerOpen ||

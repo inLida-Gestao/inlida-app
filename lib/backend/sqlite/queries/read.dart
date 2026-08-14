@@ -1,4 +1,4 @@
-import '/backend/sqlite/queries/sqlite_row.dart';
+import 'sqlite_row.dart';
 import 'package:sqflite/sqflite.dart';
 
 Future<List<T>> _readQuery<T>(
@@ -14,6 +14,13 @@ String _escapeSqlLikeValue(String value) => _escapeSqlValue(value)
     .replaceAll('\\', '\\\\')
     .replaceAll('%', r'\%')
     .replaceAll('_', r'\_');
+
+/// Expressão SQL que devolve o valor de [coluna] ou NULL quando ela está
+/// vazia ou contém a string literal `'null'` — o INSERT legado interpola
+/// valores nulos como texto, o que quebra `COALESCE`/`date()`.
+String _sqlDataOuNulo(String coluna) =>
+    "CASE WHEN lower(trim(COALESCE($coluna, ''))) IN ('', 'null') "
+    "THEN NULL ELSE trim($coluna) END";
 
 String _buildSqlMultiValueCondition(String column, String? rawValue) {
   final values = (rawValue ?? '')
@@ -44,6 +51,8 @@ String _buildRebanhoFilterCondition({
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
+  String? dataUltPesagemInicio,
+  String? dataUltPesagemFim,
 }) {
   final sexoValue = sexo ?? '';
   final categoriaValue = categoria ?? '';
@@ -52,6 +61,8 @@ String _buildRebanhoFilterCondition({
   final loteIdValue = loteId ?? '';
   final dataNascInicioValue = dataNascInicio ?? '';
   final dataNascFimValue = dataNascFim ?? '';
+  final dataUltPesagemInicioValue = dataUltPesagemInicio ?? '';
+  final dataUltPesagemFimValue = dataUltPesagemFim ?? '';
   final statusCondition =
       _buildSqlMultiValueCondition('statusRebanho', statusReb);
 
@@ -63,6 +74,8 @@ AND ('$origemValue' = '' OR origem = '$origemValue')
 AND ('$loteIdValue' = '' OR ('$loteIdValue' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteIdValue' != '' AND '$loteIdValue' != 'SEM_LOTE' AND loteID = '$loteIdValue'))
 AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
 AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
+AND ('$dataUltPesagemInicioValue' = '' OR (dataUltimaPesagem IS NOT NULL AND dataUltimaPesagem != '' AND dataUltimaPesagem != 'null' AND dataUltimaPesagem >= '$dataUltPesagemInicioValue'))
+AND ('$dataUltPesagemFimValue' = '' OR (dataUltimaPesagem IS NOT NULL AND dataUltimaPesagem != '' AND dataUltimaPesagem != 'null' AND dataUltimaPesagem <= '$dataUltPesagemFimValue'))
 AND $statusCondition
 ''';
 }
@@ -371,6 +384,7 @@ class ListarRebanhosRow extends SqliteRow {
   String? get racaReprodutor => data['racaReprodutor'] as String?;
   String? get movimentacaoSaida => data['movimentacao_saida'] as String?;
   String? get dataMorte => data['data_morte'] as String?;
+  int? get syncLoteDirty => data['sync_lote_dirty'] as int?;
 }
 
 /// END LISTARREBANHOS
@@ -519,6 +533,7 @@ class BuscarRebanhoUPDATEDRow extends SqliteRow {
   String? get movimentacaoEntrada => data['movimentacao_entrada'] as String?;
   String? get movimentacaoSaida => data['movimentacao_saida'] as String?;
   String? get dataMorte => data['data_morte'] as String?;
+  int? get syncLoteDirty => data['sync_lote_dirty'] as int?;
 }
 
 /// END BUSCAR REBANHO UPDATED
@@ -615,6 +630,8 @@ Future<List<QTDAnimaisPropriedadeRow>> performQTDAnimaisPropriedade(
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
+  String? dataUltPesagemInicio,
+  String? dataUltPesagemFim,
 }) {
   final filterCondition = _buildRebanhoFilterCondition(
     sexo: sexo,
@@ -625,6 +642,8 @@ Future<List<QTDAnimaisPropriedadeRow>> performQTDAnimaisPropriedade(
     statusReb: statusReb,
     dataNascInicio: dataNascInicio,
     dataNascFim: dataNascFim,
+    dataUltPesagemInicio: dataUltPesagemInicio,
+    dataUltPesagemFim: dataUltPesagemFim,
   );
   final query = '''
 SELECT COUNT(*) AS total FROM local_rebanho
@@ -1307,6 +1326,8 @@ class ListarReproducoesRow extends SqliteRow {
   String? get loteNome => data['loteNome'] as String?;
   String? get dataStatus => data['data_status'] as String?;
   String? get ressinc => data['ressinc'] as String?;
+  String? get parida => data['parida'] as String?;
+  String? get dataParto => data['data_parto'] as String?;
   String? get gnrh => data['gnrh'] as String?;
   String? get cio => data['cio'] as String?;
 }
@@ -1801,6 +1822,114 @@ class BuscarReproducoesRebanhoRow extends SqliteRow {
 
 /// END BUSCAR REPRODUCOES REBANHO
 
+/// BEGIN BUSCAR REPRODUCAO PARA PARTO
+/// Localiza reproduções (Inseminação e, opcionalmente, Monta Natural) de uma
+/// matriz cuja data de referência (concepção) caia dentro da janela
+/// informada. Usado para auto-confirmar o parto ao cadastrar um animal
+/// Nascimento vinculado à matriz. Quando [incluirMontaNatural] é `false`
+/// (janela automática 275-305 dias), somente Inseminação é considerada; a
+/// janela estendida (306-350 dias, escolha manual do usuário) usa `true`.
+/// Retorna as mais recentes primeiro; o filtro de "já parida"
+/// (parida/data_parto) é feito em Dart por quem consome o resultado.
+Future<List<BuscarReproducaoParaPartoRow>> performBuscarReproducaoParaParto(
+  Database database, {
+  String? idPropriedade,
+  String? idRebanhoMatriz,
+  String? dataInicio,
+  String? dataFim,
+  bool incluirMontaNatural = true,
+}) {
+  final idPropriedadeSql = _escapeSqlValue(idPropriedade ?? '');
+  final idRebanhoMatrizSql = _escapeSqlValue(idRebanhoMatriz ?? '');
+  final dataInicioSql = _escapeSqlValue(dataInicio ?? '');
+  final dataFimSql = _escapeSqlValue(dataFim ?? '');
+  // As colunas de data podem conter a string literal 'null' ou vazia (o
+  // INSERT legado interpola valores nulos como texto). Sem normalizar,
+  // COALESCE devolveria 'null' e date() viraria NULL, descartando a linha.
+  final dataInseminacao = _sqlDataOuNulo('data_inseminacao');
+  final dataInicial = _sqlDataOuNulo('data_inicial');
+  final dataFinal = _sqlDataOuNulo('data_final');
+  final condicaoInseminacao = '''
+  (
+    tipo_reproducao = 'Inseminação' COLLATE NOCASE
+    AND date($dataInseminacao) BETWEEN date('$dataInicioSql') AND date('$dataFimSql')
+  )''';
+  final condicaoMontaNatural = '''
+  OR
+  (
+    tipo_reproducao = 'Monta Natural' COLLATE NOCASE
+    AND date(COALESCE($dataInicial, $dataFinal)) <= date('$dataFimSql')
+    AND date(COALESCE($dataFinal, $dataInicial)) >= date('$dataInicioSql')
+  )''';
+  final query = '''
+SELECT * FROM local_reproducao
+WHERE id_propriedade = '$idPropriedadeSql'
+AND id_rebanho_matriz = '$idRebanhoMatrizSql'
+AND COALESCE(deletado, 'NAO') != 'SIM'
+AND (
+$condicaoInseminacao${incluirMontaNatural ? condicaoMontaNatural : ''}
+)
+ORDER BY date(COALESCE($dataInseminacao, $dataInicial, $dataFinal)) DESC,
+         datetime(COALESCE(updated_at, created_at, '1970-01-01')) DESC
+''';
+  return _readQuery(database, query, (d) => BuscarReproducaoParaPartoRow(d));
+}
+
+class BuscarReproducaoParaPartoRow extends SqliteRow {
+  BuscarReproducaoParaPartoRow(super.data);
+
+  String? get idReproducao => data['id_reproducao'] as String?;
+  String? get tipoReproducao => data['tipo_reproducao'] as String?;
+  String? get dataInseminacao => data['data_inseminacao'] as String?;
+  String? get dataInicial => data['data_inicial'] as String?;
+  String? get dataFinal => data['data_final'] as String?;
+  String? get parida => data['parida'] as String?;
+  String? get dataParto => data['data_parto'] as String?;
+  String? get statusReproducao => data['status_reproducao'] as String?;
+  String? get idRebanhoReprodutor => data['id_rebanho_reprodutor'] as String?;
+  String? get numReprodutor => data['numReprodutor'] as String?;
+  String? get nomeReprodutor => data['nomeReprodutor'] as String?;
+  String? get nascimentoReprodutor => data['nascimentoReprodutor'] as String?;
+  String? get racaReprodutor => data['racaReprodutor'] as String?;
+  String? get chipReprodutor => data['chipReprodutor'] as String?;
+}
+
+/// END BUSCAR REPRODUCAO PARA PARTO
+
+/// BEGIN BUSCAR REBANHO POR CHIP
+/// Localiza um animal ativo da propriedade pelo código do brinco eletrônico.
+///
+/// O código chega do bastão sem formatação, por isso o `chip` gravado é
+/// normalizado (espaços, pontos e hífens) antes da comparação.
+///
+/// Informe [statusRebanho] para restringir a um status específico (ex.: a
+/// abertura automática da ficha após a leitura só considera animais
+/// 'Na propriedade'). Quando omitido, qualquer status é aceito.
+Future<Map<String, Object?>?> performBuscarRebanhoPorChip(
+  Database database, {
+  required String idPropriedade,
+  required String chip,
+  String? statusRebanho,
+}) async {
+  if (idPropriedade.trim().isEmpty || chip.trim().isEmpty) {
+    return null;
+  }
+  final statusFiltro = statusRebanho?.trim() ?? '';
+  final rows = await database.rawQuery('''
+SELECT idRebanho, numeroAnimal, nome, sexo, categoria, raca, loteNome,
+       chip, statusRebanho
+FROM local_rebanho
+WHERE idPropriedade = ?
+  AND COALESCE(deletado, 'NAO') != 'SIM'
+  AND (? = '' OR statusRebanho = ?)
+  AND REPLACE(REPLACE(REPLACE(COALESCE(chip, ''), ' ', ''), '.', ''), '-', '') = ?
+LIMIT 1
+''', [idPropriedade, statusFiltro, statusFiltro, chip.trim()]);
+  return rows.isEmpty ? null : rows.first;
+}
+
+/// END BUSCAR REBANHO POR CHIP
+
 /// BEGIN BUSCAR SANIDADES REBANHO
 Future<List<BuscarSanidadesRebanhoRow>> performBuscarSanidadesRebanho(
   Database database, {
@@ -1862,25 +1991,28 @@ Future<List<BuscaRebanhoPaginadaRow>> performBuscaRebanhoPaginada(
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
+  String? dataUltPesagemInicio,
+  String? dataUltPesagemFim,
 }) {
-  final dataNascInicioValue = dataNascInicio ?? '';
-  final dataNascFimValue = dataNascFim ?? '';
-  final statusCondition =
-      _buildSqlMultiValueCondition('statusRebanho', statusReb);
+  final filterCondition = _buildRebanhoFilterCondition(
+    sexo: sexo,
+    categoria: categoria,
+    raca: raca,
+    origem: origem,
+    loteId: loteId,
+    statusReb: statusReb,
+    dataNascInicio: dataNascInicio,
+    dataNascFim: dataNascFim,
+    dataUltPesagemInicio: dataUltPesagemInicio,
+    dataUltPesagemFim: dataUltPesagemFim,
+  );
   final query = '''
-SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome, dataUltimaPesagem
 FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
-AND ('$sexo' = '' OR sexo = '$sexo')
-AND ('$categoria' = '' OR categoria = '$categoria')
-AND ('$raca' = '' OR raca = '$raca')
-AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
-AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
-AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
-AND $statusCondition
+$filterCondition
 AND deletado = 'NAO'
-ORDER BY created_at DESC
+ORDER BY created_at DESC, idRebanho DESC
 LIMIT $limitReb OFFSET $offsetReb
 
 ''';
@@ -1946,6 +2078,8 @@ Future<List<QTDAnimaisTotalPropriedadeRow>> performQTDAnimaisTotalPropriedade(
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
+  String? dataUltPesagemInicio,
+  String? dataUltPesagemFim,
 }) {
   final filterCondition = _buildRebanhoFilterCondition(
     sexo: sexo,
@@ -1956,6 +2090,8 @@ Future<List<QTDAnimaisTotalPropriedadeRow>> performQTDAnimaisTotalPropriedade(
     statusReb: statusReb,
     dataNascInicio: dataNascInicio,
     dataNascFim: dataNascFim,
+    dataUltPesagemInicio: dataUltPesagemInicio,
+    dataUltPesagemFim: dataUltPesagemFim,
   );
   final query = '''
 SELECT COUNT(*) AS total FROM local_rebanho
@@ -2246,6 +2382,38 @@ class BuscarRebanhoNumRow extends SqliteRow {
 
 /// END BUSCAR REBANHO NUM
 
+/// Whitelisted ORDER BY clauses for [performBuscaRebanhoPaginadaPesquisa].
+///
+/// [ordenacaoTipo] is one of `''`, `'numero'` or `'nascimento'`.
+/// [ordenacaoDirecao] is one of `''`, `'crescente'` or `'decrescente'`.
+/// Any other value falls back to the default (created_at DESC).
+String _buscaRebanhoOrdenacaoClause(
+  String? ordenacaoTipo,
+  String? ordenacaoDirecao,
+) {
+  final direction = ordenacaoDirecao == 'decrescente' ? 'DESC' : 'ASC';
+  switch (ordenacaoTipo) {
+    case 'numero':
+      return '''
+CASE WHEN numeroAnimal IS NULL OR TRIM(numeroAnimal) = '' OR numeroAnimal = 'null' THEN 1 ELSE 0 END,
+  CASE WHEN numeroAnimalSortKey IS NULL OR numeroAnimalSortKey = '' THEN 1 ELSE 0 END,
+  numeroAnimalSortKey $direction,
+  idRebanho ASC''';
+    case 'nascimento':
+      return '''
+CASE WHEN dataNascimento IS NULL OR dataNascimento = '' OR dataNascimento = 'null' THEN 1 ELSE 0 END,
+  dataNascimento $direction,
+  idRebanho ASC''';
+    case 'ultimaPesagem':
+      return '''
+CASE WHEN dataUltimaPesagem IS NULL OR dataUltimaPesagem = '' OR dataUltimaPesagem = 'null' THEN 1 ELSE 0 END,
+  dataUltimaPesagem $direction,
+  idRebanho ASC''';
+    default:
+      return 'created_at DESC, idRebanho DESC';
+  }
+}
+
 /// BEGIN BUSCA REBANHO PAGINADA PESQUISA
 Future<List<BuscaRebanhoPaginadaPesquisaRow>>
     performBuscaRebanhoPaginadaPesquisa(
@@ -2260,26 +2428,33 @@ Future<List<BuscaRebanhoPaginadaPesquisaRow>>
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
+  String? dataUltPesagemInicio,
+  String? dataUltPesagemFim,
+  String? ordenacaoTipo,
+  String? ordenacaoDirecao,
 }) async {
-  final dataNascInicioValue = dataNascInicio ?? '';
-  final dataNascFimValue = dataNascFim ?? '';
   final pesquisaValue = (pesquisa ?? '').trim();
   final pesquisaSql = _escapeSqlValue(pesquisaValue);
   final pesquisaLikeSql = _escapeSqlLikeValue(pesquisaValue);
-  final statusCondition =
-      _buildSqlMultiValueCondition('statusRebanho', statusReb);
+  final filterCondition = _buildRebanhoFilterCondition(
+    sexo: sexo,
+    categoria: categoria,
+    raca: raca,
+    origem: origem,
+    loteId: loteId,
+    statusReb: statusReb,
+    dataNascInicio: dataNascInicio,
+    dataNascFim: dataNascFim,
+    dataUltPesagemInicio: dataUltPesagemInicio,
+    dataUltPesagemFim: dataUltPesagemFim,
+  );
+  final orderByClause =
+      _buscaRebanhoOrdenacaoClause(ordenacaoTipo, ordenacaoDirecao);
   const selectColumns =
-      'idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteID, loteNome, statusRebanho, created_at';
+      'idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteID, loteNome, statusRebanho, created_at, dataUltimaPesagem';
   final baseFilter = '''
 WHERE idPropriedade = '$idPropriedade'
-AND ('$sexo' = '' OR sexo = '$sexo')
-AND ('$categoria' = '' OR categoria = '$categoria')
-AND ('$raca' = '' OR raca = '$raca')
-AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
-AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
-AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
-AND $statusCondition
+$filterCondition
 AND deletado = 'NAO'
 ''';
   if (pesquisaValue.isNotEmpty) {
@@ -2304,7 +2479,7 @@ SELECT $selectColumns
 FROM local_rebanho
 $baseFilter
 AND $condition
-ORDER BY created_at DESC
+ORDER BY $orderByClause
 LIMIT ${100 - collectedRows.length}
 
 ''';
@@ -2337,7 +2512,7 @@ AND ('$pesquisaSql' = ''
   OR numeroAnimal LIKE '%$pesquisaLikeSql%' ESCAPE '\\'
   OR nome COLLATE NOCASE LIKE '%$pesquisaLikeSql%' ESCAPE '\\'
   OR chip LIKE '%$pesquisaLikeSql%' ESCAPE '\\')
-ORDER BY created_at DESC
+ORDER BY $orderByClause
 LIMIT 100
 
 ''';
@@ -2747,25 +2922,34 @@ Future<List<RebanhoPagOrdNumCresRow>> performRebanhoPagOrdNumCres(
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
+  String? dataUltPesagemInicio,
+  String? dataUltPesagemFim,
 }) {
-  final dataNascInicioValue = dataNascInicio ?? '';
-  final dataNascFimValue = dataNascFim ?? '';
-  final statusCondition =
-      _buildSqlMultiValueCondition('statusRebanho', statusReb);
+  final filterCondition = _buildRebanhoFilterCondition(
+    sexo: sexo,
+    categoria: categoria,
+    raca: raca,
+    origem: origem,
+    loteId: loteId,
+    statusReb: statusReb,
+    dataNascInicio: dataNascInicio,
+    dataNascFim: dataNascFim,
+    dataUltPesagemInicio: dataUltPesagemInicio,
+    dataUltPesagemFim: dataUltPesagemFim,
+  );
   final query = '''
-SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome, dataUltimaPesagem
 FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
-AND ('$sexo' = '' OR sexo = '$sexo')
-AND ('$categoria' = '' OR categoria = '$categoria')
-AND ('$raca' = '' OR raca = '$raca')
-AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
-AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
-AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
-AND $statusCondition
+$filterCondition
 AND deletado = 'NAO'
-ORDER BY numeroAnimal ASC
+ORDER BY
+  CASE WHEN numeroAnimal IS NULL OR TRIM(numeroAnimal) = '' OR numeroAnimal = 'null' THEN 1 ELSE 0 END,
+  CASE WHEN numeroAnimalSortKey IS NULL OR numeroAnimalSortKey = '' THEN 1 ELSE 0 END,
+  numeroAnimalSortKey ASC,
+  LENGTH(TRIM(numeroAnimal)) ASC,
+  TRIM(numeroAnimal) COLLATE NOCASE ASC,
+  idRebanho ASC
 LIMIT $limitReb OFFSET $offsetReb
 
 ''';
@@ -2833,25 +3017,34 @@ Future<List<RebanhoPagOrdNumDescRow>> performRebanhoPagOrdNumDesc(
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
+  String? dataUltPesagemInicio,
+  String? dataUltPesagemFim,
 }) {
-  final dataNascInicioValue = dataNascInicio ?? '';
-  final dataNascFimValue = dataNascFim ?? '';
-  final statusCondition =
-      _buildSqlMultiValueCondition('statusRebanho', statusReb);
+  final filterCondition = _buildRebanhoFilterCondition(
+    sexo: sexo,
+    categoria: categoria,
+    raca: raca,
+    origem: origem,
+    loteId: loteId,
+    statusReb: statusReb,
+    dataNascInicio: dataNascInicio,
+    dataNascFim: dataNascFim,
+    dataUltPesagemInicio: dataUltPesagemInicio,
+    dataUltPesagemFim: dataUltPesagemFim,
+  );
   final query = '''
-SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome, dataUltimaPesagem
 FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
-AND ('$sexo' = '' OR sexo = '$sexo')
-AND ('$categoria' = '' OR categoria = '$categoria')
-AND ('$raca' = '' OR raca = '$raca')
-AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
-AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
-AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
-AND $statusCondition
+$filterCondition
 AND deletado = 'NAO'
-ORDER BY numeroAnimal DESC
+ORDER BY
+  CASE WHEN numeroAnimal IS NULL OR TRIM(numeroAnimal) = '' OR numeroAnimal = 'null' THEN 1 ELSE 0 END,
+  CASE WHEN numeroAnimalSortKey IS NULL OR numeroAnimalSortKey = '' THEN 1 ELSE 0 END,
+  numeroAnimalSortKey DESC,
+  LENGTH(TRIM(numeroAnimal)) DESC,
+  TRIM(numeroAnimal) COLLATE NOCASE DESC,
+  idRebanho DESC
 LIMIT $limitReb OFFSET $offsetReb
 
 ''';
@@ -2919,25 +3112,31 @@ Future<List<RebanhoPagOrdNomCresRow>> performRebanhoPagOrdNomCres(
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
+  String? dataUltPesagemInicio,
+  String? dataUltPesagemFim,
 }) {
-  final dataNascInicioValue = dataNascInicio ?? '';
-  final dataNascFimValue = dataNascFim ?? '';
-  final statusCondition =
-      _buildSqlMultiValueCondition('statusRebanho', statusReb);
+  final filterCondition = _buildRebanhoFilterCondition(
+    sexo: sexo,
+    categoria: categoria,
+    raca: raca,
+    origem: origem,
+    loteId: loteId,
+    statusReb: statusReb,
+    dataNascInicio: dataNascInicio,
+    dataNascFim: dataNascFim,
+    dataUltPesagemInicio: dataUltPesagemInicio,
+    dataUltPesagemFim: dataUltPesagemFim,
+  );
   final query = '''
-SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome, dataUltimaPesagem
 FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
-AND ('$sexo' = '' OR sexo = '$sexo')
-AND ('$categoria' = '' OR categoria = '$categoria')
-AND ('$raca' = '' OR raca = '$raca')
-AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
-AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
-AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
-AND $statusCondition
+$filterCondition
 AND deletado = 'NAO'
-ORDER BY nome ASC
+ORDER BY
+  CASE WHEN nome IS NULL OR TRIM(nome) = '' OR nome = 'null' THEN 1 ELSE 0 END,
+  TRIM(nome) COLLATE NOCASE ASC,
+  idRebanho ASC
 LIMIT $limitReb OFFSET $offsetReb
 
 ''';
@@ -3005,25 +3204,31 @@ Future<List<RebanhoPagOrdNomDescRow>> performRebanhoPagOrdNomDesc(
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
+  String? dataUltPesagemInicio,
+  String? dataUltPesagemFim,
 }) {
-  final dataNascInicioValue = dataNascInicio ?? '';
-  final dataNascFimValue = dataNascFim ?? '';
-  final statusCondition =
-      _buildSqlMultiValueCondition('statusRebanho', statusReb);
+  final filterCondition = _buildRebanhoFilterCondition(
+    sexo: sexo,
+    categoria: categoria,
+    raca: raca,
+    origem: origem,
+    loteId: loteId,
+    statusReb: statusReb,
+    dataNascInicio: dataNascInicio,
+    dataNascFim: dataNascFim,
+    dataUltPesagemInicio: dataUltPesagemInicio,
+    dataUltPesagemFim: dataUltPesagemFim,
+  );
   final query = '''
-SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome, dataUltimaPesagem
 FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
-AND ('$sexo' = '' OR sexo = '$sexo')
-AND ('$categoria' = '' OR categoria = '$categoria')
-AND ('$raca' = '' OR raca = '$raca')
-AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
-AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
-AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
-AND $statusCondition
+$filterCondition
 AND deletado = 'NAO'
-ORDER BY nome DESC
+ORDER BY
+  CASE WHEN nome IS NULL OR TRIM(nome) = '' OR nome = 'null' THEN 1 ELSE 0 END,
+  TRIM(nome) COLLATE NOCASE DESC,
+  idRebanho DESC
 LIMIT $limitReb OFFSET $offsetReb
 
 ''';
@@ -3091,27 +3296,31 @@ Future<List<RebanhoPagOrdDataCresRow>> performRebanhoPagOrdDataCres(
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
+  String? dataUltPesagemInicio,
+  String? dataUltPesagemFim,
 }) {
-  final dataNascInicioValue = dataNascInicio ?? '';
-  final dataNascFimValue = dataNascFim ?? '';
-  final statusCondition =
-      _buildSqlMultiValueCondition('statusRebanho', statusReb);
+  final filterCondition = _buildRebanhoFilterCondition(
+    sexo: sexo,
+    categoria: categoria,
+    raca: raca,
+    origem: origem,
+    loteId: loteId,
+    statusReb: statusReb,
+    dataNascInicio: dataNascInicio,
+    dataNascFim: dataNascFim,
+    dataUltPesagemInicio: dataUltPesagemInicio,
+    dataUltPesagemFim: dataUltPesagemFim,
+  );
   final query = '''
-SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome, dataUltimaPesagem
 FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
-AND ('$sexo' = '' OR sexo = '$sexo')
-AND ('$categoria' = '' OR categoria = '$categoria')
-AND ('$raca' = '' OR raca = '$raca')
-AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
-AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
-AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
-AND $statusCondition
+$filterCondition
 AND deletado = 'NAO'
 ORDER BY 
   CASE WHEN dataNascimento IS NULL OR dataNascimento = '' OR dataNascimento = 'null' THEN 1 ELSE 0 END,
-  dataNascimento ASC
+  dataNascimento ASC,
+  idRebanho ASC
 LIMIT $limitReb OFFSET $offsetReb
 
 ''';
@@ -3179,27 +3388,31 @@ Future<List<RebanhoPagOrdDataDescRow>> performRebanhoPagOrdDataDesc(
   String? statusReb,
   String? dataNascInicio,
   String? dataNascFim,
+  String? dataUltPesagemInicio,
+  String? dataUltPesagemFim,
 }) {
-  final dataNascInicioValue = dataNascInicio ?? '';
-  final dataNascFimValue = dataNascFim ?? '';
-  final statusCondition =
-      _buildSqlMultiValueCondition('statusRebanho', statusReb);
+  final filterCondition = _buildRebanhoFilterCondition(
+    sexo: sexo,
+    categoria: categoria,
+    raca: raca,
+    origem: origem,
+    loteId: loteId,
+    statusReb: statusReb,
+    dataNascInicio: dataNascInicio,
+    dataNascFim: dataNascFim,
+    dataUltPesagemInicio: dataUltPesagemInicio,
+    dataUltPesagemFim: dataUltPesagemFim,
+  );
   final query = '''
-SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome, dataUltimaPesagem
 FROM local_rebanho
 WHERE idPropriedade = '$idPropriedade'
-AND ('$sexo' = '' OR sexo = '$sexo')
-AND ('$categoria' = '' OR categoria = '$categoria')
-AND ('$raca' = '' OR raca = '$raca')
-AND ('$origem' = '' OR origem = '$origem')
-AND ('$loteId' = '' OR ('$loteId' = 'SEM_LOTE' AND (loteID IS NULL OR loteID = '' OR loteID = 'null')) OR ('$loteId' != '' AND '$loteId' != 'SEM_LOTE' AND loteID = '$loteId'))
-AND ('$dataNascInicioValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento >= '$dataNascInicioValue'))
-AND ('$dataNascFimValue' = '' OR (dataNascimento IS NOT NULL AND dataNascimento != '' AND dataNascimento != 'null' AND dataNascimento <= '$dataNascFimValue'))
-AND $statusCondition
+$filterCondition
 AND deletado = 'NAO'
 ORDER BY 
   CASE WHEN dataNascimento IS NULL OR dataNascimento = '' OR dataNascimento = 'null' THEN 1 ELSE 0 END,
-  dataNascimento DESC
+  dataNascimento DESC,
+  idRebanho DESC
 LIMIT $limitReb OFFSET $offsetReb
 
 ''';
@@ -3252,6 +3465,64 @@ class RebanhoPagOrdDataDescRow extends SqliteRow {
 }
 
 /// END REBANHO PAG ORD DATA DESC
+
+/// BEGIN REBANHO PAG ORD PESAGEM
+///
+/// Ordena pela data da última pesagem. A direção é whitelisted:
+/// `'decrescente'` vira `DESC`, qualquer outro valor vira `ASC`.
+/// Animais sem pesagem (`NULL`, `''` ou o literal `'null'` gravado pelos
+/// INSERTs legados) sempre vão para o fim da lista.
+///
+/// Recebe [rowBuilder] para reaproveitar as classes de linha já existentes —
+/// todas as `RebanhoPagOrd*Row` expõem exatamente os mesmos campos.
+Future<List<T>> performRebanhoPagOrdPesagem<T>(
+  Database database,
+  T Function(Map<String, dynamic>) rowBuilder, {
+  String? idPropriedade,
+  int? limitReb,
+  int? offsetReb,
+  String? sexo,
+  String? categoria,
+  String? raca,
+  String? origem,
+  String? loteId,
+  String? statusReb,
+  String? dataNascInicio,
+  String? dataNascFim,
+  String? dataUltPesagemInicio,
+  String? dataUltPesagemFim,
+  String? ordenacaoDirecao,
+}) {
+  final filterCondition = _buildRebanhoFilterCondition(
+    sexo: sexo,
+    categoria: categoria,
+    raca: raca,
+    origem: origem,
+    loteId: loteId,
+    statusReb: statusReb,
+    dataNascInicio: dataNascInicio,
+    dataNascFim: dataNascFim,
+    dataUltPesagemInicio: dataUltPesagemInicio,
+    dataUltPesagemFim: dataUltPesagemFim,
+  );
+  final direction = ordenacaoDirecao == 'decrescente' ? 'DESC' : 'ASC';
+  final query = '''
+SELECT idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteNome, dataUltimaPesagem
+FROM local_rebanho
+WHERE idPropriedade = '$idPropriedade'
+$filterCondition
+AND deletado = 'NAO'
+ORDER BY
+  CASE WHEN dataUltimaPesagem IS NULL OR dataUltimaPesagem = '' OR dataUltimaPesagem = 'null' THEN 1 ELSE 0 END,
+  dataUltimaPesagem $direction,
+  idRebanho ASC
+LIMIT $limitReb OFFSET $offsetReb
+
+''';
+  return _readQuery(database, query, rowBuilder);
+}
+
+/// END REBANHO PAG ORD PESAGEM
 
 /// BEGIN LISTARPROPRIEDADES CRESC NOME
 Future<List<ListarPropriedadesCrescNomeRow>> performListarPropriedadesCrescNome(
@@ -3374,7 +3645,13 @@ Future<List<BuscaRebanhoPopupRow>> performBuscaRebanhoPopup(
 SELECT idRebanho, numeroAnimal, nome, dataNascimento, raca, chip, categoria, sexo, statusRebanho, loteNome
 FROM local_rebanho
 WHERE ${conditions.toString()}
-ORDER BY numeroAnimal ASC
+ORDER BY
+  CASE WHEN numeroAnimal IS NULL OR TRIM(numeroAnimal) = '' OR numeroAnimal = 'null' THEN 1 ELSE 0 END,
+  CASE WHEN numeroAnimalSortKey IS NULL OR numeroAnimalSortKey = '' THEN 1 ELSE 0 END,
+  numeroAnimalSortKey ASC,
+  LENGTH(TRIM(numeroAnimal)) ASC,
+  TRIM(numeroAnimal) COLLATE NOCASE ASC,
+  idRebanho ASC
 LIMIT $limit
 ''';
   return _readQuery(database, query, (d) => BuscaRebanhoPopupRow(d));
@@ -3494,10 +3771,17 @@ Future<List<ListaInseminadoresRow>> performListaInseminadores(
   Database database, {
   String? propriedade,
 }) {
+  final propriedadeSql = _escapeSqlValue(propriedade ?? '');
   final query = '''
-select distinct(inseminador) from local_reproducao
-where id_propriedade = '$propriedade'
-order by inseminador desc
+SELECT MIN(TRIM(inseminador)) AS inseminador
+FROM local_reproducao
+WHERE id_propriedade = '$propriedadeSql'
+  AND COALESCE(UPPER(TRIM(deletado)), 'NAO') <> 'SIM'
+  AND inseminador IS NOT NULL
+  AND TRIM(inseminador) <> ''
+  AND LOWER(TRIM(inseminador)) <> 'null'
+GROUP BY TRIM(inseminador) COLLATE NOCASE
+ORDER BY inseminador COLLATE NOCASE ASC
 ''';
   return _readQuery(database, query, (d) => ListaInseminadoresRow(d));
 }

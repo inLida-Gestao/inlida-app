@@ -95,6 +95,22 @@ DateTime? converterParaData(String? data) {
   }
 }
 
+/// Normaliza um valor de data opcional vindo do SQLite/FlutterFlow.
+///
+/// Retorna `null` quando o campo não foi informado (`null`, string vazia,
+/// literal `'null'`) ou quando a string não representa uma data válida.
+/// Usado para evitar que campos de data vazios sejam confundidos com um
+/// valor "sentinela" (ex.: data de partida do sêmen sendo preenchida
+/// automaticamente com uma data default ao sincronizar).
+String? normalizarDataOpcional(String? data) {
+  if (data == null) return null;
+  final trimmed = data.trim();
+  if (trimmed.isEmpty || trimmed == 'null') return null;
+  final parsed = DateTime.tryParse(trimmed);
+  if (parsed == null) return null;
+  return trimmed;
+}
+
 String? converterLista(List<String>? lista) {
   if (lista == null || lista.isEmpty) {
     return '';
@@ -146,6 +162,45 @@ bool permitePrevisaoParto(String? diagnostico) {
       diagnosticoNormalizado.isEmpty ||
       diagnosticoNormalizado == 'Não diagnosticado' ||
       diagnosticoNormalizado == 'Prenhez';
+}
+
+bool partoConfirmado(String? parida) {
+  return parida?.trim().toLowerCase() == 'sim';
+}
+
+String normalizarParida(bool confirmado) {
+  return confirmado ? 'SIM' : 'NAO';
+}
+
+bool temDataParto(String? dataParto) {
+  final valor = dataParto?.trim().toLowerCase();
+  if (valor == null || valor.isEmpty || valor == '-' || valor == 'null') {
+    return false;
+  }
+
+  final data = converterParaData(dataParto);
+  if (data == null) return false;
+
+  final partes = RegExp(r'^(\d{4})-(\d{2})-(\d{2})').firstMatch(valor);
+  if (partes == null) return true;
+
+  return data.year == int.parse(partes.group(1)!) &&
+      data.month == int.parse(partes.group(2)!) &&
+      data.day == int.parse(partes.group(3)!);
+}
+
+bool exibirPartoConfirmado(String? parida, String? dataParto) {
+  return partoConfirmado(parida) || temDataParto(dataParto);
+}
+
+bool temReprodutorSelecionado(String? idRebanho) {
+  final id = idRebanho?.trim().toLowerCase();
+  return id != null && id.isNotEmpty && id != 'null' && id != '-';
+}
+
+bool temMatrizSelecionada(String? idRebanho) {
+  final id = idRebanho?.trim().toLowerCase();
+  return id != null && id.isNotEmpty && id != 'null' && id != '-';
 }
 
 bool? ultimos30Dias(DateTime? data) {

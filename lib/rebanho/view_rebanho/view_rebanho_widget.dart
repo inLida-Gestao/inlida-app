@@ -4106,10 +4106,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                       onTap:
                                                                           () async {
                                                                         // Salvar crias e pesagens atuais antes de navegar
-                                                                        final savedCrias =
-                                                                            FFAppState().crias.toList();
-                                                                        final savedHistPesagens =
-                                                                            FFAppState().histPesagens.toList();
+                                                                        final savedCrias = FFAppState()
+                                                                            .crias
+                                                                            .toList();
+                                                                        final savedHistPesagens = FFAppState()
+                                                                            .histPesagens
+                                                                            .toList();
                                                                         if ((containerBuscarRebanhoRowList.firstOrNull?.numeroMatriz != null && containerBuscarRebanhoRowList.firstOrNull?.numeroMatriz != '') &&
                                                                             (containerBuscarRebanhoRowList.firstOrNull?.numeroMatriz !=
                                                                                 'null')) {
@@ -4583,10 +4585,12 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                       onTap:
                                                                           () async {
                                                                         // Salvar crias e pesagens atuais antes de navegar
-                                                                        final savedCrias =
-                                                                            FFAppState().crias.toList();
-                                                                        final savedHistPesagens =
-                                                                            FFAppState().histPesagens.toList();
+                                                                        final savedCrias = FFAppState()
+                                                                            .crias
+                                                                            .toList();
+                                                                        final savedHistPesagens = FFAppState()
+                                                                            .histPesagens
+                                                                            .toList();
                                                                         if ((containerBuscarRebanhoRowList.firstOrNull?.numeroReprodutor != null && containerBuscarRebanhoRowList.firstOrNull?.numeroReprodutor != '') &&
                                                                             (containerBuscarRebanhoRowList.firstOrNull?.numeroReprodutor !=
                                                                                 'null')) {
@@ -5703,39 +5707,25 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                           child: SizedBox(
                                                             width:
                                                                 double.infinity,
-                                                            child:
-                                                                TextFormField(
-                                                              controller: _model
-                                                                      .nAnimalTextController15 ??=
-                                                                  TextEditingController(
-                                                                text:
-                                                                    valueOrDefault<
-                                                                        String>(
+                                                            child: Align(
+                                                              alignment:
+                                                                  AlignmentDirectional
+                                                                      .centerStart,
+                                                              child: Text(
+                                                                valueOrDefault<
+                                                                    String>(
                                                                   containerBuscarRebanhoRowList
                                                                       .firstOrNull
                                                                       ?.statusRebanho,
                                                                   'N/A',
                                                                 ),
-                                                              ),
-                                                              focusNode: _model
-                                                                  .nAnimalFocusNode15,
-                                                              autofocus: true,
-                                                              readOnly: true,
-                                                              obscureText:
-                                                                  false,
-                                                              decoration:
-                                                                  InputDecoration(
-                                                                hintText:
-                                                                    'Status',
-                                                                hintStyle: FlutterFlowTheme.of(
+                                                                style: FlutterFlowTheme.of(
                                                                         context)
                                                                     .bodyMedium
                                                                     .override(
                                                                       fontFamily:
                                                                           FlutterFlowTheme.of(context)
                                                                               .bodyMediumFamily,
-                                                                      color: const Color(
-                                                                          0xFFBEBEBE),
                                                                       fontSize:
                                                                           16.0,
                                                                       letterSpacing:
@@ -5747,83 +5737,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                                                           !FlutterFlowTheme.of(context)
                                                                               .bodyMediumIsCustom,
                                                                     ),
-                                                                enabledBorder:
-                                                                    UnderlineInputBorder(
-                                                                  borderSide:
-                                                                      const BorderSide(
-                                                                    color: Color(
-                                                                        0x00E0E3E7),
-                                                                    width: 2.0,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0),
-                                                                ),
-                                                                focusedBorder:
-                                                                    UnderlineInputBorder(
-                                                                  borderSide:
-                                                                      const BorderSide(
-                                                                    color: Color(
-                                                                        0x004B39EF),
-                                                                    width: 2.0,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0),
-                                                                ),
-                                                                errorBorder:
-                                                                    UnderlineInputBorder(
-                                                                  borderSide:
-                                                                      BorderSide(
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .error,
-                                                                    width: 2.0,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0),
-                                                                ),
-                                                                focusedErrorBorder:
-                                                                    UnderlineInputBorder(
-                                                                  borderSide:
-                                                                      BorderSide(
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .error,
-                                                                    width: 2.0,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0),
-                                                                ),
                                                               ),
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyMedium
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        FlutterFlowTheme.of(context)
-                                                                            .bodyMediumFamily,
-                                                                    fontSize:
-                                                                        16.0,
-                                                                    letterSpacing:
-                                                                        0.0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    useGoogleFonts:
-                                                                        !FlutterFlowTheme.of(context)
-                                                                            .bodyMediumIsCustom,
-                                                                  ),
-                                                              validator: _model
-                                                                  .nAnimalTextController15Validator
-                                                                  .asValidator(
-                                                                      context),
                                                             ),
                                                           ),
                                                         ),
@@ -8554,709 +8468,640 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                                         final containerBuscarSanidadesRebanhoRowList =
                                             snapshot.data!;
 
-                                  return Container(
-                                    decoration: const BoxDecoration(),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        Flexible(
-                                          child: Builder(
-                                            builder: (context) {
-                                              final sanidades =
-                                                  containerBuscarSanidadesRebanhoRowList
-                                                      .where((e) =>
-                                                          e.deletado == 'NAO')
-                                                      .toList()
-                                                      .sortedList(
-                                                          keyOf: (e) =>
-                                                              e.createdAt ?? '',
-                                                          desc: true)
-                                                      .toList();
-                                              if (sanidades.isEmpty) {
-                                                return const Center(
-                                                  child: SizedBox(
-                                                    height: 200.0,
-                                                    child:
-                                                        EmptySanidadeWidget(),
-                                                  ),
-                                                );
-                                              }
+                                        return Container(
+                                          decoration: const BoxDecoration(),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              Flexible(
+                                                child: Builder(
+                                                  builder: (context) {
+                                                    final sanidades =
+                                                        containerBuscarSanidadesRebanhoRowList
+                                                            .where((e) =>
+                                                                e.deletado ==
+                                                                'NAO')
+                                                            .toList()
+                                                            .sortedList(
+                                                                keyOf: (e) =>
+                                                                    e.createdAt ??
+                                                                    '',
+                                                                desc: true)
+                                                            .toList();
+                                                    if (sanidades.isEmpty) {
+                                                      return const Center(
+                                                        child: SizedBox(
+                                                          height: 200.0,
+                                                          child:
+                                                              EmptySanidadeWidget(),
+                                                        ),
+                                                      );
+                                                    }
 
-                                              return ListView.builder(
-                                                padding: EdgeInsets.zero,
-                                                shrinkWrap: true,
-                                                scrollDirection: Axis.vertical,
-                                                itemCount: sanidades.length,
-                                                itemBuilder:
-                                                    (context, sanidadesIndex) {
-                                                  final sanidadesItem =
-                                                      sanidades[sanidadesIndex];
-                                                  return Container(
-                                                    width: double.infinity,
-                                                    decoration: BoxDecoration(
-                                                      color: FlutterFlowTheme
-                                                              .of(context)
-                                                          .secondaryBackground,
-                                                    ),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(24.0),
-                                                          child: Row(
+                                                    return ListView.builder(
+                                                      padding: EdgeInsets.zero,
+                                                      shrinkWrap: true,
+                                                      scrollDirection:
+                                                          Axis.vertical,
+                                                      itemCount:
+                                                          sanidades.length,
+                                                      itemBuilder: (context,
+                                                          sanidadesIndex) {
+                                                        final sanidadesItem =
+                                                            sanidades[
+                                                                sanidadesIndex];
+                                                        return Container(
+                                                          width:
+                                                              double.infinity,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .secondaryBackground,
+                                                          ),
+                                                          child: Column(
                                                             mainAxisSize:
                                                                 MainAxisSize
                                                                     .max,
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
                                                             children: [
-                                                              Expanded(
-                                                                child: Builder(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          InkWell(
-                                                                    splashColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    focusColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    hoverColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    highlightColor:
-                                                                        Colors
-                                                                            .transparent,
-                                                                    onTap:
-                                                                        () async {
-                                                                      FFAppState()
-                                                                              .sanidadeSelecionada =
-                                                                          SanidadeStruct(
-                                                                        idPropriedade:
-                                                                            sanidadesItem.idPropriedade,
-                                                                        idRebanho:
-                                                                            sanidadesItem.idRebanho,
-                                                                        dataSanidade:
-                                                                            sanidadesItem.dataSanidade,
-                                                                        idLote:
-                                                                            sanidadesItem.idLote,
-                                                                        porcentagemLote:
-                                                                            sanidadesItem.porcentagemLote,
-                                                                        idSanidade:
-                                                                            sanidadesItem.idSanidade,
-                                                                        updatedAt:
-                                                                            sanidadesItem.updatedAt,
-                                                                        deletado:
-                                                                            sanidadesItem.deletado,
-                                                                        vacinacao:
-                                                                            sanidadesItem.vacinacao,
-                                                                        vacOutros:
-                                                                            sanidadesItem.vacinacaoOutros,
-                                                                        vacObs:
-                                                                            sanidadesItem.vacinacaoObs,
-                                                                        antiparasitario:
-                                                                            sanidadesItem.antiparasitario,
-                                                                        antiOutros:
-                                                                            sanidadesItem.antiparasitarioOutros,
-                                                                        antiObs:
-                                                                            sanidadesItem.antiparasitarioObs,
-                                                                        tratamento:
-                                                                            sanidadesItem.tratamento,
-                                                                        tratOutros:
-                                                                            sanidadesItem.tratamentoOutros,
-                                                                        tratObs:
-                                                                            sanidadesItem.tratamentoObs,
-                                                                        protocoloReprodutivo:
-                                                                            sanidadesItem.protocoloReprodutivo,
-                                                                        reproOutros:
-                                                                            sanidadesItem.protocoloReprodutivoOutros,
-                                                                        reproObs:
-                                                                            sanidadesItem.protocoloReprodutivoObs,
-                                                                        createdAt:
-                                                                            sanidadesItem.createdAt,
-                                                                      );
-                                                                      safeSetState(
-                                                                          () {});
-                                                                      await showDialog(
-                                                                        barrierColor:
-                                                                            Colors.transparent,
-                                                                        barrierDismissible:
-                                                                            false,
-                                                                        context:
-                                                                            context,
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        24.0),
+                                                                child: Row(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .max,
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child:
+                                                                          Builder(
                                                                         builder:
-                                                                            (dialogContext) {
-                                                                          return Dialog(
-                                                                            elevation:
-                                                                                0,
-                                                                            insetPadding:
-                                                                                EdgeInsets.zero,
-                                                                            backgroundColor:
-                                                                                Colors.transparent,
-                                                                            alignment:
-                                                                                const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
-                                                                            child:
-                                                                                const EditSanidadeAnimalWidget(),
-                                                                          );
-                                                                        },
-                                                                      );
-                                                                    },
-                                                                    child:
-                                                                        Column(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .min,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children:
-                                                                          [
-                                                                        if (sanidadesItem.vacinacao != null &&
-                                                                            sanidadesItem.vacinacao !=
-                                                                                '' &&
-                                                                            sanidadesItem.vacinacao !=
-                                                                                'null')
-                                                                          SingleChildScrollView(
-                                                                            scrollDirection:
-                                                                                Axis.horizontal,
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisSize: MainAxisSize.max,
-                                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                                              children: [
-                                                                                Text(
-                                                                                  'Vacinação:',
-                                                                                  style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                        font: GoogleFonts.plusJakartaSans(
-                                                                                          fontWeight: FontWeight.normal,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                        ),
-                                                                                        color: const Color(0xFF474747),
-                                                                                        fontSize: 14.0,
-                                                                                        letterSpacing: 0.0,
-                                                                                        fontWeight: FontWeight.normal,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                      ),
-                                                                                ),
-                                                                                Builder(
-                                                                                  builder: (context) {
-                                                                                    final vacinas = functions.converterJSONparaLista(sanidadesItem.vacinacao!).toList();
-
-                                                                                    return SingleChildScrollView(
-                                                                                      scrollDirection: Axis.horizontal,
-                                                                                      child: Row(
-                                                                                        mainAxisSize: MainAxisSize.max,
-                                                                                        children: List.generate(vacinas.length, (vacinasIndex) {
-                                                                                          final vacinasItem = vacinas[vacinasIndex];
-                                                                                          return Align(
-                                                                                            alignment: const AlignmentDirectional(-1.0, 0.0),
-                                                                                            child: Container(
-                                                                                              height: 23.0,
-                                                                                              decoration: BoxDecoration(
-                                                                                                color: const Color(0xFFB1CC29),
-                                                                                                borderRadius: BorderRadius.circular(4.0),
-                                                                                              ),
-                                                                                              child: Align(
-                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
-                                                                                                child: Padding(
-                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
-                                                                                                  child: Text(
-                                                                                                    vacinasItem,
-                                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                          fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                                          color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                          fontSize: 10.0,
-                                                                                                          letterSpacing: 0.0,
-                                                                                                          useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
-                                                                                                        ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          );
-                                                                                        }).divide(const SizedBox(width: 8.0)),
-                                                                                      ),
-                                                                                    );
-                                                                                  },
-                                                                                ),
-                                                                              ].divide(const SizedBox(width: 3.0)),
-                                                                            ),
-                                                                          ),
-                                                                        if (sanidadesItem.antiparasitario != null &&
-                                                                            sanidadesItem.antiparasitario !=
-                                                                                '' &&
-                                                                            sanidadesItem.antiparasitario !=
-                                                                                'null')
-                                                                          SingleChildScrollView(
-                                                                            scrollDirection:
-                                                                                Axis.horizontal,
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisSize: MainAxisSize.max,
-                                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                                              children: [
-                                                                                Text(
-                                                                                  'Antiparasitário:',
-                                                                                  style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                        font: GoogleFonts.plusJakartaSans(
-                                                                                          fontWeight: FontWeight.normal,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                        ),
-                                                                                        color: const Color(0xFF474747),
-                                                                                        fontSize: 14.0,
-                                                                                        letterSpacing: 0.0,
-                                                                                        fontWeight: FontWeight.normal,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                      ),
-                                                                                ),
-                                                                                Builder(
-                                                                                  builder: (context) {
-                                                                                    final antiparasitario = functions.converterJSONparaLista(sanidadesItem.antiparasitario!).toList();
-
-                                                                                    return SingleChildScrollView(
-                                                                                      scrollDirection: Axis.horizontal,
-                                                                                      child: Row(
-                                                                                        mainAxisSize: MainAxisSize.max,
-                                                                                        children: List.generate(antiparasitario.length, (antiparasitarioIndex) {
-                                                                                          final antiparasitarioItem = antiparasitario[antiparasitarioIndex];
-                                                                                          return Align(
-                                                                                            alignment: const AlignmentDirectional(-1.0, 0.0),
-                                                                                            child: Container(
-                                                                                              height: 23.0,
-                                                                                              decoration: BoxDecoration(
-                                                                                                color: const Color(0xFFB1CC29),
-                                                                                                borderRadius: BorderRadius.circular(4.0),
-                                                                                              ),
-                                                                                              child: Align(
-                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
-                                                                                                child: Padding(
-                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
-                                                                                                  child: Text(
-                                                                                                    antiparasitarioItem,
-                                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                          fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                                          color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                          fontSize: 10.0,
-                                                                                                          letterSpacing: 0.0,
-                                                                                                          useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
-                                                                                                        ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          );
-                                                                                        }).divide(const SizedBox(width: 8.0)),
-                                                                                      ),
-                                                                                    );
-                                                                                  },
-                                                                                ),
-                                                                              ].divide(const SizedBox(width: 3.0)),
-                                                                            ),
-                                                                          ),
-                                                                        if (sanidadesItem.protocoloReprodutivo !=
-                                                                                null &&
-                                                                            sanidadesItem.protocoloReprodutivo !=
-                                                                                '' &&
-                                                                            sanidadesItem.protocoloReprodutivo !=
-                                                                                'null' &&
-                                                                            responsiveVisibility(
+                                                                            (context) =>
+                                                                                InkWell(
+                                                                          splashColor:
+                                                                              Colors.transparent,
+                                                                          focusColor:
+                                                                              Colors.transparent,
+                                                                          hoverColor:
+                                                                              Colors.transparent,
+                                                                          highlightColor:
+                                                                              Colors.transparent,
+                                                                          onTap:
+                                                                              () async {
+                                                                            FFAppState().sanidadeSelecionada =
+                                                                                SanidadeStruct(
+                                                                              idPropriedade: sanidadesItem.idPropriedade,
+                                                                              idRebanho: sanidadesItem.idRebanho,
+                                                                              dataSanidade: sanidadesItem.dataSanidade,
+                                                                              idLote: sanidadesItem.idLote,
+                                                                              porcentagemLote: sanidadesItem.porcentagemLote,
+                                                                              idSanidade: sanidadesItem.idSanidade,
+                                                                              updatedAt: sanidadesItem.updatedAt,
+                                                                              deletado: sanidadesItem.deletado,
+                                                                              vacinacao: sanidadesItem.vacinacao,
+                                                                              vacOutros: sanidadesItem.vacinacaoOutros,
+                                                                              vacObs: sanidadesItem.vacinacaoObs,
+                                                                              antiparasitario: sanidadesItem.antiparasitario,
+                                                                              antiOutros: sanidadesItem.antiparasitarioOutros,
+                                                                              antiObs: sanidadesItem.antiparasitarioObs,
+                                                                              tratamento: sanidadesItem.tratamento,
+                                                                              tratOutros: sanidadesItem.tratamentoOutros,
+                                                                              tratObs: sanidadesItem.tratamentoObs,
+                                                                              protocoloReprodutivo: sanidadesItem.protocoloReprodutivo,
+                                                                              reproOutros: sanidadesItem.protocoloReprodutivoOutros,
+                                                                              reproObs: sanidadesItem.protocoloReprodutivoObs,
+                                                                              createdAt: sanidadesItem.createdAt,
+                                                                            );
+                                                                            safeSetState(() {});
+                                                                            await showDialog(
+                                                                              barrierColor: Colors.transparent,
+                                                                              barrierDismissible: false,
                                                                               context: context,
-                                                                              phone: false,
-                                                                            ))
-                                                                          SingleChildScrollView(
-                                                                            scrollDirection:
-                                                                                Axis.horizontal,
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisSize: MainAxisSize.max,
-                                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                                              children: [
-                                                                                Text(
-                                                                                  'Protocolo:',
-                                                                                  style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                        font: GoogleFonts.plusJakartaSans(
-                                                                                          fontWeight: FontWeight.normal,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                        ),
-                                                                                        color: const Color(0xFF474747),
-                                                                                        fontSize: 14.0,
-                                                                                        letterSpacing: 0.0,
-                                                                                        fontWeight: FontWeight.normal,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                      ),
-                                                                                ),
-                                                                                Builder(
-                                                                                  builder: (context) {
-                                                                                    final protocolo = functions.converterJSONparaLista(sanidadesItem.protocoloReprodutivo!).toList();
-
-                                                                                    return SingleChildScrollView(
-                                                                                      scrollDirection: Axis.horizontal,
-                                                                                      child: Row(
-                                                                                        mainAxisSize: MainAxisSize.max,
-                                                                                        children: List.generate(protocolo.length, (protocoloIndex) {
-                                                                                          final protocoloItem = protocolo[protocoloIndex];
-                                                                                          return Align(
-                                                                                            alignment: const AlignmentDirectional(-1.0, 0.0),
-                                                                                            child: Container(
-                                                                                              height: 23.0,
-                                                                                              decoration: BoxDecoration(
-                                                                                                color: const Color(0xFFB1CC29),
-                                                                                                borderRadius: BorderRadius.circular(4.0),
+                                                                              builder: (dialogContext) {
+                                                                                return Dialog(
+                                                                                  elevation: 0,
+                                                                                  insetPadding: EdgeInsets.zero,
+                                                                                  backgroundColor: Colors.transparent,
+                                                                                  alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+                                                                                  child: const EditSanidadeAnimalWidget(),
+                                                                                );
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                          child:
+                                                                              Column(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.min,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children:
+                                                                                [
+                                                                              if (sanidadesItem.vacinacao != null && sanidadesItem.vacinacao != '' && sanidadesItem.vacinacao != 'null')
+                                                                                SingleChildScrollView(
+                                                                                  scrollDirection: Axis.horizontal,
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.max,
+                                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        'Vacinação:',
+                                                                                        style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                              font: GoogleFonts.plusJakartaSans(
+                                                                                                fontWeight: FontWeight.normal,
+                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                               ),
-                                                                                              child: Align(
-                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
-                                                                                                child: Padding(
-                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
-                                                                                                  child: Text(
-                                                                                                    protocoloItem,
-                                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                          fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                                          color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                          fontSize: 10.0,
-                                                                                                          letterSpacing: 0.0,
-                                                                                                          useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                              color: const Color(0xFF474747),
+                                                                                              fontSize: 14.0,
+                                                                                              letterSpacing: 0.0,
+                                                                                              fontWeight: FontWeight.normal,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                            ),
+                                                                                      ),
+                                                                                      Builder(
+                                                                                        builder: (context) {
+                                                                                          final vacinas = functions.converterJSONparaLista(sanidadesItem.vacinacao!).toList();
+
+                                                                                          return SingleChildScrollView(
+                                                                                            scrollDirection: Axis.horizontal,
+                                                                                            child: Row(
+                                                                                              mainAxisSize: MainAxisSize.max,
+                                                                                              children: List.generate(vacinas.length, (vacinasIndex) {
+                                                                                                final vacinasItem = vacinas[vacinasIndex];
+                                                                                                return Align(
+                                                                                                  alignment: const AlignmentDirectional(-1.0, 0.0),
+                                                                                                  child: Container(
+                                                                                                    height: 23.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: const Color(0xFFB1CC29),
+                                                                                                      borderRadius: BorderRadius.circular(4.0),
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: const AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Padding(
+                                                                                                        padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
+                                                                                                        child: Text(
+                                                                                                          vacinasItem,
+                                                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                                                color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                fontSize: 10.0,
+                                                                                                                letterSpacing: 0.0,
+                                                                                                                useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                                              ),
                                                                                                         ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                );
+                                                                                              }).divide(const SizedBox(width: 8.0)),
+                                                                                            ),
+                                                                                          );
+                                                                                        },
+                                                                                      ),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
+                                                                                  ),
+                                                                                ),
+                                                                              if (sanidadesItem.antiparasitario != null && sanidadesItem.antiparasitario != '' && sanidadesItem.antiparasitario != 'null')
+                                                                                SingleChildScrollView(
+                                                                                  scrollDirection: Axis.horizontal,
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.max,
+                                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        'Antiparasitário:',
+                                                                                        style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                              font: GoogleFonts.plusJakartaSans(
+                                                                                                fontWeight: FontWeight.normal,
+                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                              ),
+                                                                                              color: const Color(0xFF474747),
+                                                                                              fontSize: 14.0,
+                                                                                              letterSpacing: 0.0,
+                                                                                              fontWeight: FontWeight.normal,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                            ),
+                                                                                      ),
+                                                                                      Builder(
+                                                                                        builder: (context) {
+                                                                                          final antiparasitario = functions.converterJSONparaLista(sanidadesItem.antiparasitario!).toList();
+
+                                                                                          return SingleChildScrollView(
+                                                                                            scrollDirection: Axis.horizontal,
+                                                                                            child: Row(
+                                                                                              mainAxisSize: MainAxisSize.max,
+                                                                                              children: List.generate(antiparasitario.length, (antiparasitarioIndex) {
+                                                                                                final antiparasitarioItem = antiparasitario[antiparasitarioIndex];
+                                                                                                return Align(
+                                                                                                  alignment: const AlignmentDirectional(-1.0, 0.0),
+                                                                                                  child: Container(
+                                                                                                    height: 23.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: const Color(0xFFB1CC29),
+                                                                                                      borderRadius: BorderRadius.circular(4.0),
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: const AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Padding(
+                                                                                                        padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                        child: Text(
+                                                                                                          antiparasitarioItem,
+                                                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                                                color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                fontSize: 10.0,
+                                                                                                                letterSpacing: 0.0,
+                                                                                                                useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                                              ),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                );
+                                                                                              }).divide(const SizedBox(width: 8.0)),
+                                                                                            ),
+                                                                                          );
+                                                                                        },
+                                                                                      ),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
+                                                                                  ),
+                                                                                ),
+                                                                              if (sanidadesItem.protocoloReprodutivo != null &&
+                                                                                  sanidadesItem.protocoloReprodutivo != '' &&
+                                                                                  sanidadesItem.protocoloReprodutivo != 'null' &&
+                                                                                  responsiveVisibility(
+                                                                                    context: context,
+                                                                                    phone: false,
+                                                                                  ))
+                                                                                SingleChildScrollView(
+                                                                                  scrollDirection: Axis.horizontal,
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.max,
+                                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        'Protocolo:',
+                                                                                        style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                              font: GoogleFonts.plusJakartaSans(
+                                                                                                fontWeight: FontWeight.normal,
+                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                              ),
+                                                                                              color: const Color(0xFF474747),
+                                                                                              fontSize: 14.0,
+                                                                                              letterSpacing: 0.0,
+                                                                                              fontWeight: FontWeight.normal,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                            ),
+                                                                                      ),
+                                                                                      Builder(
+                                                                                        builder: (context) {
+                                                                                          final protocolo = functions.converterJSONparaLista(sanidadesItem.protocoloReprodutivo!).toList();
+
+                                                                                          return SingleChildScrollView(
+                                                                                            scrollDirection: Axis.horizontal,
+                                                                                            child: Row(
+                                                                                              mainAxisSize: MainAxisSize.max,
+                                                                                              children: List.generate(protocolo.length, (protocoloIndex) {
+                                                                                                final protocoloItem = protocolo[protocoloIndex];
+                                                                                                return Align(
+                                                                                                  alignment: const AlignmentDirectional(-1.0, 0.0),
+                                                                                                  child: Container(
+                                                                                                    height: 23.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: const Color(0xFFB1CC29),
+                                                                                                      borderRadius: BorderRadius.circular(4.0),
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: const AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Padding(
+                                                                                                        padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                        child: Text(
+                                                                                                          protocoloItem,
+                                                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                                                color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                fontSize: 10.0,
+                                                                                                                letterSpacing: 0.0,
+                                                                                                                useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                                              ),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                );
+                                                                                              }).divide(const SizedBox(width: 8.0)),
+                                                                                            ),
+                                                                                          );
+                                                                                        },
+                                                                                      ),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
+                                                                                  ),
+                                                                                ),
+                                                                              if (sanidadesItem.tratamento != null && sanidadesItem.tratamento != '' && sanidadesItem.tratamento != 'null')
+                                                                                SingleChildScrollView(
+                                                                                  scrollDirection: Axis.horizontal,
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.max,
+                                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        'Tratamento:',
+                                                                                        style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                              font: GoogleFonts.plusJakartaSans(
+                                                                                                fontWeight: FontWeight.normal,
+                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                              ),
+                                                                                              color: const Color(0xFF474747),
+                                                                                              fontSize: 14.0,
+                                                                                              letterSpacing: 0.0,
+                                                                                              fontWeight: FontWeight.normal,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                            ),
+                                                                                      ),
+                                                                                      Builder(
+                                                                                        builder: (context) {
+                                                                                          final tratamenteSanidade = functions.converterJSONparaLista(sanidadesItem.tratamento!).toList();
+
+                                                                                          return SingleChildScrollView(
+                                                                                            scrollDirection: Axis.horizontal,
+                                                                                            child: Row(
+                                                                                              mainAxisSize: MainAxisSize.max,
+                                                                                              children: List.generate(tratamenteSanidade.length, (tratamenteSanidadeIndex) {
+                                                                                                final tratamenteSanidadeItem = tratamenteSanidade[tratamenteSanidadeIndex];
+                                                                                                return Align(
+                                                                                                  alignment: const AlignmentDirectional(-1.0, 0.0),
+                                                                                                  child: Container(
+                                                                                                    height: 23.0,
+                                                                                                    decoration: BoxDecoration(
+                                                                                                      color: const Color(0xFFB1CC29),
+                                                                                                      borderRadius: BorderRadius.circular(4.0),
+                                                                                                    ),
+                                                                                                    child: Align(
+                                                                                                      alignment: const AlignmentDirectional(0.0, 0.0),
+                                                                                                      child: Padding(
+                                                                                                        padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                        child: Text(
+                                                                                                          tratamenteSanidadeItem,
+                                                                                                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                                fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                                                color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                                fontSize: 10.0,
+                                                                                                                letterSpacing: 0.0,
+                                                                                                                useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                                              ),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                );
+                                                                                              }).divide(const SizedBox(width: 8.0)),
+                                                                                            ),
+                                                                                          );
+                                                                                        },
+                                                                                      ),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
+                                                                                  ),
+                                                                                ),
+                                                                              if (sanidadesItem.protocoloReprodutivo != null && sanidadesItem.protocoloReprodutivo != '' && sanidadesItem.protocoloReprodutivo != 'null')
+                                                                                SingleChildScrollView(
+                                                                                  scrollDirection: Axis.horizontal,
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.max,
+                                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        'Protocolo:',
+                                                                                        style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                              font: GoogleFonts.plusJakartaSans(
+                                                                                                fontWeight: FontWeight.normal,
+                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                              ),
+                                                                                              color: const Color(0xFF474747),
+                                                                                              fontSize: 14.0,
+                                                                                              letterSpacing: 0.0,
+                                                                                              fontWeight: FontWeight.normal,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                            ),
+                                                                                      ),
+                                                                                      SingleChildScrollView(
+                                                                                        scrollDirection: Axis.horizontal,
+                                                                                        child: Row(
+                                                                                          mainAxisSize: MainAxisSize.max,
+                                                                                          children: [
+                                                                                            Align(
+                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
+                                                                                              child: Container(
+                                                                                                height: 23.0,
+                                                                                                decoration: BoxDecoration(
+                                                                                                  color: const Color(0xFFB1CC29),
+                                                                                                  borderRadius: BorderRadius.circular(4.0),
+                                                                                                ),
+                                                                                                child: Align(
+                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
+                                                                                                  child: Padding(
+                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                    child: Text(
+                                                                                                      valueOrDefault<String>(
+                                                                                                        sanidadesItem.protocoloReprodutivo,
+                                                                                                        'N/A',
+                                                                                                      ),
+                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                            fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                                            color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                            fontSize: 10.0,
+                                                                                                            letterSpacing: 0.0,
+                                                                                                            useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                                          ),
+                                                                                                    ),
                                                                                                   ),
                                                                                                 ),
                                                                                               ),
                                                                                             ),
-                                                                                          );
-                                                                                        }).divide(const SizedBox(width: 8.0)),
-                                                                                      ),
-                                                                                    );
-                                                                                  },
-                                                                                ),
-                                                                              ].divide(const SizedBox(width: 3.0)),
-                                                                            ),
-                                                                          ),
-                                                                        if (sanidadesItem.tratamento != null &&
-                                                                            sanidadesItem.tratamento !=
-                                                                                '' &&
-                                                                            sanidadesItem.tratamento !=
-                                                                                'null')
-                                                                          SingleChildScrollView(
-                                                                            scrollDirection:
-                                                                                Axis.horizontal,
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisSize: MainAxisSize.max,
-                                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                                              children: [
-                                                                                Text(
-                                                                                  'Tratamento:',
-                                                                                  style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                        font: GoogleFonts.plusJakartaSans(
-                                                                                          fontWeight: FontWeight.normal,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                          ].divide(const SizedBox(width: 8.0)),
                                                                                         ),
-                                                                                        color: const Color(0xFF474747),
-                                                                                        fontSize: 14.0,
-                                                                                        letterSpacing: 0.0,
-                                                                                        fontWeight: FontWeight.normal,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
+                                                                                  ),
                                                                                 ),
-                                                                                Builder(
-                                                                                  builder: (context) {
-                                                                                    final tratamenteSanidade = functions.converterJSONparaLista(sanidadesItem.tratamento!).toList();
-
-                                                                                    return SingleChildScrollView(
-                                                                                      scrollDirection: Axis.horizontal,
-                                                                                      child: Row(
-                                                                                        mainAxisSize: MainAxisSize.max,
-                                                                                        children: List.generate(tratamenteSanidade.length, (tratamenteSanidadeIndex) {
-                                                                                          final tratamenteSanidadeItem = tratamenteSanidade[tratamenteSanidadeIndex];
-                                                                                          return Align(
-                                                                                            alignment: const AlignmentDirectional(-1.0, 0.0),
-                                                                                            child: Container(
-                                                                                              height: 23.0,
-                                                                                              decoration: BoxDecoration(
-                                                                                                color: const Color(0xFFB1CC29),
-                                                                                                borderRadius: BorderRadius.circular(4.0),
+                                                                              if ((sanidadesItem.protocoloD0 != 'null') || (sanidadesItem.protocoloD0 == null || sanidadesItem.protocoloD0 == ''))
+                                                                                SingleChildScrollView(
+                                                                                  scrollDirection: Axis.horizontal,
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.max,
+                                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        'Protocolo D0:',
+                                                                                        style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                              font: GoogleFonts.plusJakartaSans(
+                                                                                                fontWeight: FontWeight.normal,
+                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                               ),
-                                                                                              child: Align(
-                                                                                                alignment: const AlignmentDirectional(0.0, 0.0),
-                                                                                                child: Padding(
-                                                                                                  padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
-                                                                                                  child: Text(
-                                                                                                    tratamenteSanidadeItem,
-                                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                          fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                                          color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                          fontSize: 10.0,
-                                                                                                          letterSpacing: 0.0,
-                                                                                                          useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
-                                                                                                        ),
+                                                                                              color: const Color(0xFF474747),
+                                                                                              fontSize: 14.0,
+                                                                                              letterSpacing: 0.0,
+                                                                                              fontWeight: FontWeight.normal,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                            ),
+                                                                                      ),
+                                                                                      SingleChildScrollView(
+                                                                                        scrollDirection: Axis.horizontal,
+                                                                                        child: Row(
+                                                                                          mainAxisSize: MainAxisSize.max,
+                                                                                          children: [
+                                                                                            Align(
+                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
+                                                                                              child: Container(
+                                                                                                height: 23.0,
+                                                                                                decoration: BoxDecoration(
+                                                                                                  color: const Color(0xFFB1CC29),
+                                                                                                  borderRadius: BorderRadius.circular(4.0),
+                                                                                                ),
+                                                                                                child: Align(
+                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
+                                                                                                  child: Padding(
+                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                    child: Text(
+                                                                                                      valueOrDefault<String>(
+                                                                                                        sanidadesItem.protocoloD0,
+                                                                                                        'N/A',
+                                                                                                      ),
+                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                            fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                                            color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                            fontSize: 10.0,
+                                                                                                            letterSpacing: 0.0,
+                                                                                                            useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                                          ),
+                                                                                                    ),
                                                                                                   ),
                                                                                                 ),
                                                                                               ),
                                                                                             ),
-                                                                                          );
-                                                                                        }).divide(const SizedBox(width: 8.0)),
-                                                                                      ),
-                                                                                    );
-                                                                                  },
-                                                                                ),
-                                                                              ].divide(const SizedBox(width: 3.0)),
-                                                                            ),
-                                                                          ),
-                                                                        if (sanidadesItem.protocoloReprodutivo != null &&
-                                                                            sanidadesItem.protocoloReprodutivo !=
-                                                                                '' &&
-                                                                            sanidadesItem.protocoloReprodutivo !=
-                                                                                'null')
-                                                                          SingleChildScrollView(
-                                                                            scrollDirection:
-                                                                                Axis.horizontal,
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisSize: MainAxisSize.max,
-                                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                                              children: [
-                                                                                Text(
-                                                                                  'Protocolo:',
-                                                                                  style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                        font: GoogleFonts.plusJakartaSans(
-                                                                                          fontWeight: FontWeight.normal,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                          ].divide(const SizedBox(width: 8.0)),
                                                                                         ),
-                                                                                        color: const Color(0xFF474747),
-                                                                                        fontSize: 14.0,
-                                                                                        letterSpacing: 0.0,
-                                                                                        fontWeight: FontWeight.normal,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
+                                                                                  ),
                                                                                 ),
+                                                                              if ((sanidadesItem.protocoloRetirada != 'null') || (sanidadesItem.protocoloRetirada == null || sanidadesItem.protocoloRetirada == ''))
                                                                                 SingleChildScrollView(
                                                                                   scrollDirection: Axis.horizontal,
                                                                                   child: Row(
                                                                                     mainAxisSize: MainAxisSize.max,
+                                                                                    mainAxisAlignment: MainAxisAlignment.start,
                                                                                     children: [
-                                                                                      Align(
-                                                                                        alignment: const AlignmentDirectional(-1.0, 0.0),
-                                                                                        child: Container(
-                                                                                          height: 23.0,
-                                                                                          decoration: BoxDecoration(
-                                                                                            color: const Color(0xFFB1CC29),
-                                                                                            borderRadius: BorderRadius.circular(4.0),
-                                                                                          ),
-                                                                                          child: Align(
-                                                                                            alignment: const AlignmentDirectional(0.0, 0.0),
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
-                                                                                              child: Text(
-                                                                                                valueOrDefault<String>(
-                                                                                                  sanidadesItem.protocoloReprodutivo,
-                                                                                                  'N/A',
+                                                                                      Text(
+                                                                                        'Protocolo retirada:',
+                                                                                        style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                              font: GoogleFonts.plusJakartaSans(
+                                                                                                fontWeight: FontWeight.normal,
+                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                              ),
+                                                                                              color: const Color(0xFF474747),
+                                                                                              fontSize: 14.0,
+                                                                                              letterSpacing: 0.0,
+                                                                                              fontWeight: FontWeight.normal,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                            ),
+                                                                                      ),
+                                                                                      SingleChildScrollView(
+                                                                                        scrollDirection: Axis.horizontal,
+                                                                                        child: Row(
+                                                                                          mainAxisSize: MainAxisSize.max,
+                                                                                          children: [
+                                                                                            Align(
+                                                                                              alignment: const AlignmentDirectional(-1.0, 0.0),
+                                                                                              child: Container(
+                                                                                                height: 23.0,
+                                                                                                decoration: BoxDecoration(
+                                                                                                  color: const Color(0xFFB1CC29),
+                                                                                                  borderRadius: BorderRadius.circular(4.0),
                                                                                                 ),
-                                                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                      fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                      fontSize: 10.0,
-                                                                                                      letterSpacing: 0.0,
-                                                                                                      useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                                child: Align(
+                                                                                                  alignment: const AlignmentDirectional(0.0, 0.0),
+                                                                                                  child: Padding(
+                                                                                                    padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
+                                                                                                    child: Text(
+                                                                                                      valueOrDefault<String>(
+                                                                                                        sanidadesItem.protocoloRetirada,
+                                                                                                        'N/A',
+                                                                                                      ),
+                                                                                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                                            fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                                                            color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                                                            fontSize: 10.0,
+                                                                                                            letterSpacing: 0.0,
+                                                                                                            useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                                                          ),
                                                                                                     ),
+                                                                                                  ),
+                                                                                                ),
                                                                                               ),
                                                                                             ),
-                                                                                          ),
+                                                                                          ].divide(const SizedBox(width: 8.0)),
                                                                                         ),
                                                                                       ),
-                                                                                    ].divide(const SizedBox(width: 8.0)),
+                                                                                    ].divide(const SizedBox(width: 3.0)),
                                                                                   ),
                                                                                 ),
-                                                                              ].divide(const SizedBox(width: 3.0)),
-                                                                            ),
-                                                                          ),
-                                                                        if ((sanidadesItem.protocoloD0 !=
-                                                                                'null') ||
-                                                                            (sanidadesItem.protocoloD0 == null ||
-                                                                                sanidadesItem.protocoloD0 == ''))
-                                                                          SingleChildScrollView(
-                                                                            scrollDirection:
-                                                                                Axis.horizontal,
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisSize: MainAxisSize.max,
-                                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                                              children: [
+                                                                              if (responsiveVisibility(
+                                                                                context: context,
+                                                                                phone: false,
+                                                                              ))
                                                                                 Text(
-                                                                                  'Protocolo D0:',
-                                                                                  style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                        font: GoogleFonts.plusJakartaSans(
-                                                                                          fontWeight: FontWeight.normal,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                        ),
-                                                                                        color: const Color(0xFF474747),
-                                                                                        fontSize: 14.0,
-                                                                                        letterSpacing: 0.0,
-                                                                                        fontWeight: FontWeight.normal,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                      ),
-                                                                                ),
-                                                                                SingleChildScrollView(
-                                                                                  scrollDirection: Axis.horizontal,
-                                                                                  child: Row(
-                                                                                    mainAxisSize: MainAxisSize.max,
-                                                                                    children: [
-                                                                                      Align(
-                                                                                        alignment: const AlignmentDirectional(-1.0, 0.0),
-                                                                                        child: Container(
-                                                                                          height: 23.0,
-                                                                                          decoration: BoxDecoration(
-                                                                                            color: const Color(0xFFB1CC29),
-                                                                                            borderRadius: BorderRadius.circular(4.0),
-                                                                                          ),
-                                                                                          child: Align(
-                                                                                            alignment: const AlignmentDirectional(0.0, 0.0),
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
-                                                                                              child: Text(
-                                                                                                valueOrDefault<String>(
-                                                                                                  sanidadesItem.protocoloD0,
-                                                                                                  'N/A',
-                                                                                                ),
-                                                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                      fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                      fontSize: 10.0,
-                                                                                                      letterSpacing: 0.0,
-                                                                                                      useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
-                                                                                                    ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ].divide(const SizedBox(width: 8.0)),
+                                                                                  dateTimeFormat(
+                                                                                    "d/M/y",
+                                                                                    functions.converterParaData(sanidadesItem.dataSanidade),
+                                                                                    locale: FFLocalizations.of(context).languageCode,
                                                                                   ),
-                                                                                ),
-                                                                              ].divide(const SizedBox(width: 3.0)),
-                                                                            ),
-                                                                          ),
-                                                                        if ((sanidadesItem.protocoloRetirada !=
-                                                                                'null') ||
-                                                                            (sanidadesItem.protocoloRetirada == null ||
-                                                                                sanidadesItem.protocoloRetirada == ''))
-                                                                          SingleChildScrollView(
-                                                                            scrollDirection:
-                                                                                Axis.horizontal,
-                                                                            child:
-                                                                                Row(
-                                                                              mainAxisSize: MainAxisSize.max,
-                                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                                              children: [
-                                                                                Text(
-                                                                                  'Protocolo retirada:',
-                                                                                  style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                                                                        font: GoogleFonts.plusJakartaSans(
-                                                                                          fontWeight: FontWeight.normal,
-                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                                                                        ),
-                                                                                        color: const Color(0xFF474747),
-                                                                                        fontSize: 14.0,
+                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                        fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
                                                                                         letterSpacing: 0.0,
-                                                                                        fontWeight: FontWeight.normal,
-                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                        useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                                       ),
                                                                                 ),
-                                                                                SingleChildScrollView(
-                                                                                  scrollDirection: Axis.horizontal,
-                                                                                  child: Row(
-                                                                                    mainAxisSize: MainAxisSize.max,
-                                                                                    children: [
-                                                                                      Align(
-                                                                                        alignment: const AlignmentDirectional(-1.0, 0.0),
-                                                                                        child: Container(
-                                                                                          height: 23.0,
-                                                                                          decoration: BoxDecoration(
-                                                                                            color: const Color(0xFFB1CC29),
-                                                                                            borderRadius: BorderRadius.circular(4.0),
-                                                                                          ),
-                                                                                          child: Align(
-                                                                                            alignment: const AlignmentDirectional(0.0, 0.0),
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsetsDirectional.fromSTEB(8.0, 4.0, 8.0, 4.0),
-                                                                                              child: Text(
-                                                                                                valueOrDefault<String>(
-                                                                                                  sanidadesItem.protocoloRetirada,
-                                                                                                  'N/A',
-                                                                                                ),
-                                                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                                      fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                                      color: FlutterFlowTheme.of(context).primaryBackground,
-                                                                                                      fontSize: 10.0,
-                                                                                                      letterSpacing: 0.0,
-                                                                                                      useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
-                                                                                                    ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ].divide(const SizedBox(width: 8.0)),
-                                                                                  ),
-                                                                                ),
-                                                                              ].divide(const SizedBox(width: 3.0)),
-                                                                            ),
+                                                                            ].divide(const SizedBox(height: 8.0)),
                                                                           ),
-                                                                        if (responsiveVisibility(
-                                                                          context:
-                                                                              context,
-                                                                          phone:
-                                                                              false,
-                                                                        ))
-                                                                          Text(
-                                                                            dateTimeFormat(
-                                                                              "d/M/y",
-                                                                              functions.converterParaData(sanidadesItem.dataSanidade),
-                                                                              locale: FFLocalizations.of(context).languageCode,
-                                                                            ),
-                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
-                                                                                  letterSpacing: 0.0,
-                                                                                  useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
-                                                                                ),
-                                                                          ),
-                                                                      ].divide(const SizedBox(
-                                                                              height: 8.0)),
+                                                                        ),
+                                                                      ),
                                                                     ),
-                                                                  ),
+                                                                    const Icon(
+                                                                      Icons
+                                                                          .chevron_right,
+                                                                      color: Color(
+                                                                          0xFF5F5F5F),
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
+                                                                  ].divide(
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8.0)),
                                                                 ),
                                                               ),
-                                                              const Icon(
-                                                                Icons
-                                                                    .chevron_right,
-                                                                color: Color(
-                                                                    0xFF5F5F5F),
-                                                                size: 24.0,
+                                                              Divider(
+                                                                thickness: 1.0,
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .alternate,
                                                               ),
-                                                            ].divide(
-                                                                const SizedBox(
-                                                                    width:
-                                                                        8.0)),
+                                                            ],
                                                           ),
-                                                        ),
-                                                        Divider(
-                                                          thickness: 1.0,
-                                                          color: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .alternate,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            },
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
+                                        );
                                       },
                                     ),
                                   ),

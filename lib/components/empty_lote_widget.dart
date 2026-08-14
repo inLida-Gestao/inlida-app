@@ -73,7 +73,7 @@ class _EmptyLoteWidgetState extends State<EmptyLoteWidget> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'Nenhum lote foi cadastrado nesta propriedade.',
+                      text: 'Nenhum lote cadastrado.',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                             fontFamily:
                                 FlutterFlowTheme.of(context).bodyMediumFamily,

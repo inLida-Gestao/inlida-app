@@ -1,9 +1,12 @@
 import '/backend/sqlite/sqlite_manager.dart';
+import '/backend/utils/lote_animal_sort.dart';
+import '/components/bastao_leitura_button.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
+import '/lotes/ordenacao_animais_lote/ordenacao_animais_lote_widget.dart';
 import '/rebanho/filtros_rebanho/filtros_rebanho_widget.dart';
 import '/actions/actions.dart' as action_blocks;
 import '/custom_code/widgets/index.dart' as custom_widgets;
@@ -1605,6 +1608,10 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                 _model.textController3.text,
                                             statusReb: FFAppState()
                                                 .filtroStatusRebanho,
+                                            ordenacaoTipo: FFAppState()
+                                                .ordenacaoLoteAnimaisTipo,
+                                            ordenacaoDirecao: FFAppState()
+                                                .ordenacaoLoteAnimais,
                                           ),
                                           builder: (context, snapshot) {
                                             // Customize what your widget looks like when it's loading.
@@ -2003,6 +2010,132 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                 ),
                                                               ),
                                                             ),
+                                                            InkWell(
+                                                              splashColor: Colors
+                                                                  .transparent,
+                                                              focusColor: Colors
+                                                                  .transparent,
+                                                              hoverColor: Colors
+                                                                  .transparent,
+                                                              highlightColor:
+                                                                  Colors
+                                                                      .transparent,
+                                                              onTap: () async {
+                                                                await showModalBottomSheet(
+                                                                  isScrollControlled:
+                                                                      true,
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  enableDrag:
+                                                                      false,
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (context) {
+                                                                    return Padding(
+                                                                      padding: MediaQuery
+                                                                          .viewInsetsOf(
+                                                                              context),
+                                                                      child:
+                                                                          const OrdenacaoAnimaisLoteWidget(),
+                                                                    );
+                                                                  },
+                                                                ).then((value) =>
+                                                                    safeSetState(
+                                                                        () {}));
+                                                              },
+                                                              child: Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: FFAppState().ordenacaoLoteAnimaisTipo ==
+                                                                          ''
+                                                                      ? FlutterFlowTheme.of(context)
+                                                                          .secondaryBackground
+                                                                      : const Color(
+                                                                          0xFFD6F5E5),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              24.0),
+                                                                  shape: BoxShape
+                                                                      .rectangle,
+                                                                  border: Border
+                                                                      .all(
+                                                                    color: FFAppState().ordenacaoLoteAnimaisTipo ==
+                                                                            ''
+                                                                        ? const Color(
+                                                                            0xFFBEBEBE)
+                                                                        : FlutterFlowTheme.of(context)
+                                                                            .secondary,
+                                                                  ),
+                                                                ),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
+                                                                          16.0,
+                                                                          8.0,
+                                                                          16.0,
+                                                                          8.0),
+                                                                  child: Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .max,
+                                                                    children: [
+                                                                      Text(
+                                                                        'Ordenar',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              fontFamily: FlutterFlowTheme.of(context).bodyMediumFamily,
+                                                                              letterSpacing: 0.0,
+                                                                              useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
+                                                                            ),
+                                                                      ),
+                                                                      if (FFAppState().ordenacaoLoteAnimais ==
+                                                                          'crescente')
+                                                                        Icon(
+                                                                          Icons
+                                                                              .arrow_upward,
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).secondary,
+                                                                          size:
+                                                                              16.0,
+                                                                        ),
+                                                                      if (FFAppState().ordenacaoLoteAnimais ==
+                                                                          'decrescente')
+                                                                        Icon(
+                                                                          Icons
+                                                                              .arrow_downward,
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).secondary,
+                                                                          size:
+                                                                              16.0,
+                                                                        ),
+                                                                      if (FFAppState().ordenacaoLoteAnimaisTipo ==
+                                                                          '')
+                                                                        ClipRRect(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(8.0),
+                                                                          child:
+                                                                              Image.asset(
+                                                                            'assets/images/Filter78978.png',
+                                                                            width:
+                                                                                16.0,
+                                                                            height:
+                                                                                16.0,
+                                                                            fit:
+                                                                                BoxFit.cover,
+                                                                          ),
+                                                                        ),
+                                                                    ].divide(const SizedBox(
+                                                                        width:
+                                                                            6.0)),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
                                                           ].divide(
                                                               const SizedBox(
                                                                   width: 8.0)),
@@ -2199,19 +2332,23 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                     Builder(
                                                       builder: (context) {
                                                         final rebanhosSelect =
-                                                            animaisForaLoteBuscaRebanhoPaginadaPesquisaRowList
-                                                                .where((e) =>
-                                                                    e.statusRebanho ==
-                                                                    'Na propriedade')
-                                                                .toList()
-                                                                .sortedList(
-                                                                    keyOf: (e) =>
-                                                                        e.createdAt ??
-                                                                        '',
-                                                                    desc: true)
-                                                                .toList()
-                                                                .take(20)
-                                                                .toList();
+                                                            sortAnimaisLote(
+                                                          animaisForaLoteBuscaRebanhoPaginadaPesquisaRowList
+                                                              .where((e) =>
+                                                                  e.statusRebanho ==
+                                                                  'Na propriedade')
+                                                              .toList(),
+                                                          numeroOf: (e) =>
+                                                              e.numeroAnimal,
+                                                          nascimentoOf: (e) =>
+                                                              e.dataNascimento,
+                                                          createdAtOf: (e) =>
+                                                              e.createdAt,
+                                                          tipo: FFAppState()
+                                                              .ordenacaoLoteAnimaisTipo,
+                                                          direcao: FFAppState()
+                                                              .ordenacaoLoteAnimais,
+                                                        ).take(20).toList();
 
                                                         return ListView.builder(
                                                           padding:
@@ -2775,11 +2912,15 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                 .accent3,
                                                         size: 24.0,
                                                       ),
-                                                      suffixIcon: _model
+                                                      suffixIcon: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          if (_model
                                                               .pesquisarTextController!
                                                               .text
-                                                              .isNotEmpty
-                                                          ? InkWell(
+                                                              .isNotEmpty)
+                                                            InkWell(
                                                               onTap: () async {
                                                                 _model
                                                                     .pesquisarTextController
@@ -2794,8 +2935,16 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                     .accent3,
                                                                 size: 22,
                                                               ),
-                                                            )
-                                                          : null,
+                                                            ),
+                                                          BastaoLeituraButton(
+                                                            controller: _model
+                                                                .pesquisarTextController!,
+                                                            aoLer: (_) =>
+                                                                safeSetState(
+                                                                    () {}),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                     style: FlutterFlowTheme.of(
                                                             context)
@@ -2977,27 +3126,38 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                     .isNotEmpty)
                                                   Builder(
                                                     builder: (context) {
-                                                      final rebanhoAplicado = _model
-                                                          .rebanhosAplicados
-                                                          .where((e) =>
-                                                              (_model.pesquisarTextController.text ==
-                                                                  '') ||
-                                                              ((e.numeroAnimal!)
-                                                                      .toLowerCase()
-                                                                      .contains(_model
-                                                                          .pesquisarTextController
-                                                                          .text
-                                                                          .toLowerCase()) ||
-                                                                  (e.nome!)
-                                                                      .toLowerCase()
-                                                                      .contains(_model
-                                                                          .pesquisarTextController
-                                                                          .text
-                                                                          .toLowerCase()) ||
-                                                                  (e.chip!)
-                                                                      .toLowerCase()
-                                                                      .contains(_model.pesquisarTextController.text.toLowerCase())))
-                                                          .toList()
+                                                      final rebanhoAplicado = sortAnimaisLote(
+                                                        _model.rebanhosAplicados
+                                                            .where((e) =>
+                                                                (_model.pesquisarTextController.text ==
+                                                                    '') ||
+                                                                ((e.numeroAnimal!)
+                                                                        .toLowerCase()
+                                                                        .contains(_model
+                                                                            .pesquisarTextController
+                                                                            .text
+                                                                            .toLowerCase()) ||
+                                                                    (e.nome!)
+                                                                        .toLowerCase()
+                                                                        .contains(_model
+                                                                            .pesquisarTextController
+                                                                            .text
+                                                                            .toLowerCase()) ||
+                                                                    (e.chip!)
+                                                                        .toLowerCase()
+                                                                        .contains(_model.pesquisarTextController.text.toLowerCase())))
+                                                            .toList(),
+                                                        numeroOf: (e) =>
+                                                            e.numeroAnimal,
+                                                        nascimentoOf: (e) =>
+                                                            e.dataNascimento,
+                                                        createdAtOf: (e) =>
+                                                            e.createdAt,
+                                                        tipo: FFAppState()
+                                                            .ordenacaoLoteAnimaisTipo,
+                                                        direcao: FFAppState()
+                                                            .ordenacaoLoteAnimais,
+                                                      )
                                                           .take(_model.mostrarAdicionados)
                                                           .toList();
 
@@ -3577,8 +3737,9 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                 .blockIfAccountCanceled(
                                                                     context,
                                                                     refreshFromServer:
-                                                                        true))
+                                                                        true)) {
                                                               return;
+                                                            }
                                                             if (!(FFAppState()
                                                                     .dataDadosNaoSyncLotes !=
                                                                 null)) {

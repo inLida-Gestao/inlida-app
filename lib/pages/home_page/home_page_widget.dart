@@ -2,6 +2,7 @@ import '/auth/supabase_auth/auth_util.dart';
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
 import '/backend/supabase/supabase.dart';
+import '/components/bastao_conectar_widget.dart';
 import '/components/navegacao_widget.dart';
 import '/components/navegar_bottom_widget.dart';
 import '/components/pesquisa_geral_widget.dart';
@@ -136,8 +137,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         acesso: _model.userLogadoON?.firstOrNull?.acesso,
       );
       safeSetState(() {});
-      final _userExists = (_model.userLogadoON?.isNotEmpty ?? false);
-      if (!_userExists) {
+      final userExists = (_model.userLogadoON?.isNotEmpty ?? false);
+      if (!userExists) {
         // Usuário autenticado mas sem registro na tabela users ainda
         // (ex: cadastro incompleto). Redireciona sem mensagem de erro.
         FFAppState().clearUserData();
@@ -659,6 +660,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                 ),
                               ].divide(const SizedBox(width: 8.0)),
                             ),
+                          ),
+                          BastaoConectarIconButton(
+                            corDesconectado:
+                                FlutterFlowTheme.of(context).customColor4,
                           ),
                           if (responsiveVisibility(
                             context: context,

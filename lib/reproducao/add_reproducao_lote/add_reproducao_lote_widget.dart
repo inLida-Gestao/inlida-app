@@ -1412,11 +1412,6 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                               datePicked2Date.day,
                                             );
                                           });
-                                        } else if (_model.datePicked2 != null) {
-                                          safeSetState(() {
-                                            _model.datePicked2 =
-                                                getCurrentTimestamp;
-                                          });
                                         }
                                       },
                                       child: Container(
@@ -2138,22 +2133,25 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                   const TextEditingValue(),
                                               optionsBuilder:
                                                   (textEditingValue) {
-                                                if (textEditingValue.text ==
-                                                    '') {
-                                                  return const Iterable<
-                                                      String>.empty();
+                                                final inseminadores =
+                                                    containerListaInseminadoresRowList
+                                                        .map((e) =>
+                                                            e.inseminador)
+                                                        .withoutNulls
+                                                        .toList();
+                                                final pesquisa =
+                                                    textEditingValue.text
+                                                        .trim()
+                                                        .toLowerCase();
+                                                if (pesquisa.isEmpty) {
+                                                  return inseminadores;
                                                 }
-                                                return containerListaInseminadoresRowList
-                                                    .map((e) => e.inseminador)
-                                                    .withoutNulls
-                                                    .toList()
+                                                return inseminadores
                                                     .where((option) {
                                                   final lowercaseOption =
                                                       option.toLowerCase();
                                                   return lowercaseOption
-                                                      .contains(textEditingValue
-                                                          .text
-                                                          .toLowerCase());
+                                                      .contains(pesquisa);
                                                 });
                                               },
                                               optionsViewBuilder: (context,
@@ -3669,6 +3667,68 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                               true)) {
                                                     return;
                                                   }
+                                                  if (_model.tipoReproducao ==
+                                                          'Monta Natural' &&
+                                                      !functions
+                                                          .temReprodutorSelecionado(
+                                                        FFAppState()
+                                                            .reprodutorSelecionado
+                                                            .idRebanho,
+                                                      )) {
+                                                    await action_blocks
+                                                        .showInformationDialog(
+                                                      context,
+                                                      message:
+                                                          'Selecione o reprodutor da monta natural.',
+                                                    );
+                                                    return;
+                                                  }
+                                                  if (_model.tipoReproducao ==
+                                                          'Monta Natural' &&
+                                                      _model.datePicked3 ==
+                                                          null) {
+                                                    await action_blocks
+                                                        .showInformationDialog(
+                                                      context,
+                                                      message:
+                                                          'Informe a data inicial da monta natural.',
+                                                    );
+                                                    return;
+                                                  }
+                                                  final partoConfirmado = _model
+                                                          .checkboxParidaValue ==
+                                                      true;
+                                                  if (partoConfirmado &&
+                                                      !functions.temDataParto(_model
+                                                                  .datePicked7 ==
+                                                              null
+                                                          ? null
+                                                          : dateTimeFormat(
+                                                              "yyyy-MM-dd",
+                                                              _model
+                                                                  .datePicked7,
+                                                              locale: FFLocalizations
+                                                                      .of(context)
+                                                                  .languageCode))) {
+                                                    await action_blocks
+                                                        .showInformationDialog(
+                                                      context,
+                                                      message:
+                                                          'Informe a data do parto para confirmar.',
+                                                    );
+                                                    return;
+                                                  }
+                                                  if (!partoConfirmado &&
+                                                      _model.datePicked7 !=
+                                                          null) {
+                                                    await action_blocks
+                                                        .showInformationDialog(
+                                                      context,
+                                                      message:
+                                                          'Marque parto confirmado para informar a data.',
+                                                    );
+                                                    return;
+                                                  }
                                                   _model.animaisLote =
                                                       await SQLiteManager
                                                           .instance
@@ -3860,11 +3920,10 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                               ?.chip,
                                                           ressinc: _model
                                                               .dropdownRessincValue,
-                                                          parida:
-                                                              _model.checkboxParidaValue ==
-                                                                      true
-                                                                  ? 'Sim'
-                                                                  : 'Não',
+                                                          parida: functions
+                                                              .normalizarParida(
+                                                            partoConfirmado,
+                                                          ),
                                                           dataParto:
                                                               dateTimeFormat(
                                                             "yyyy-MM-dd",
@@ -4031,11 +4090,10 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                               : null,
                                                           ressinc: _model
                                                               .dropdownRessincValue,
-                                                          parida:
-                                                              _model.checkboxParidaValue ==
-                                                                      true
-                                                                  ? 'Sim'
-                                                                  : 'Não',
+                                                          parida: functions
+                                                              .normalizarParida(
+                                                            partoConfirmado,
+                                                          ),
                                                           dataParto:
                                                               dateTimeFormat(
                                                             "yyyy-MM-dd",
@@ -4068,29 +4126,17 @@ class _AddReproducaoLoteWidgetState extends State<AddReproducaoLoteWidget> {
                                                         .qTDReproducoes(
                                                             context);
                                                     FFAppState().update(() {});
-                                                    Navigator.pop(context);
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      SnackBar(
-                                                        content: Text(
+                                                    await action_blocks
+                                                        .showInformationDialog(
+                                                      context,
+                                                      title: 'Sucesso',
+                                                      message:
                                                           'Reprodução em lote adicionada com sucesso.',
-                                                          style: TextStyle(
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .secondaryBackground,
-                                                          ),
-                                                        ),
-                                                        duration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    4000),
-                                                        backgroundColor:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .secondary,
-                                                      ),
                                                     );
+                                                    if (!context.mounted) {
+                                                      return;
+                                                    }
+                                                    Navigator.pop(context);
                                                   } else {
                                                     await showDialog(
                                                       context: context,

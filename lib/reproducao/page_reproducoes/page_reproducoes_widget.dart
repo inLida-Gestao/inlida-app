@@ -1514,7 +1514,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                 children: [
                                                                                   Text(
                                                                                     valueOrDefault<String>(
-                                                                                      '${reproducaoItem.statusReproducao}',
+                                                                                      functions.exibirPartoConfirmado(reproducaoItem.parida, reproducaoItem.dataParto)
+                                                                                          ? 'Parida em (${functions.converterParaData(reproducaoItem.dataParto) != null ? dateTimeFormat("dd/MM/yy", functions.converterParaData(reproducaoItem.dataParto), locale: FFLocalizations.of(context).languageCode) : 'S/D'})'
+                                                                                          : '${reproducaoItem.statusReproducao}',
                                                                                       '--',
                                                                                     ),
                                                                                     textAlign: TextAlign.center,
@@ -1541,7 +1543,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                           fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                         ),
                                                                                   ),
-                                                                                  if ((reproducaoItem.statusReproducao != null && reproducaoItem.statusReproducao != '' && reproducaoItem.statusReproducao != 'Não diagnosticado') && (functions.converterParaData(reproducaoItem.dataStatus) != null))
+                                                                                  if (!functions.exibirPartoConfirmado(reproducaoItem.parida, reproducaoItem.dataParto) && (reproducaoItem.statusReproducao != null && reproducaoItem.statusReproducao != '' && reproducaoItem.statusReproducao != 'Não diagnosticado') && (functions.converterParaData(reproducaoItem.dataStatus) != null))
                                                                                     Text(
                                                                                       valueOrDefault<String>(
                                                                                         ' (${dateTimeFormat(
@@ -1575,9 +1577,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                       ].divide(const SizedBox(
                                                                               width: 8.0)),
                                                                     ),
-                                                                    if (reproducaoItem
-                                                                            .parida ==
-                                                                        'SIM')
+                                                                    if (reproducaoItem.parida == 'SIM' &&
+                                                                      !functions.exibirPartoConfirmado(
+                                                                        reproducaoItem.parida,
+                                                                        reproducaoItem.dataParto))
                                                                       Row(
                                                                         mainAxisSize:
                                                                             MainAxisSize.max,
@@ -2589,7 +2592,9 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                   children: [
                                                                                     Text(
                                                                                       valueOrDefault<String>(
-                                                                                        '${reproducaoItem.statusReproducao}',
+                                                                                        functions.exibirPartoConfirmado(reproducaoItem.parida, reproducaoItem.dataParto)
+                                                                                            ? 'Parida em (${functions.converterParaData(reproducaoItem.dataParto) != null ? dateTimeFormat("dd/MM/yy", functions.converterParaData(reproducaoItem.dataParto), locale: FFLocalizations.of(context).languageCode) : 'S/D'})'
+                                                                                            : '${reproducaoItem.statusReproducao}',
                                                                                         '--',
                                                                                       ),
                                                                                       textAlign: TextAlign.center,
@@ -2616,7 +2621,7 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                           ),
                                                                                     ),
-                                                                                    if ((reproducaoItem.statusReproducao != null && reproducaoItem.statusReproducao != '' && reproducaoItem.statusReproducao != 'Não diagnosticado') && (functions.converterParaData(reproducaoItem.dataStatus) != null))
+                                                                                    if (!functions.exibirPartoConfirmado(reproducaoItem.parida, reproducaoItem.dataParto) && (reproducaoItem.statusReproducao != null && reproducaoItem.statusReproducao != '' && reproducaoItem.statusReproducao != 'Não diagnosticado') && (functions.converterParaData(reproducaoItem.dataStatus) != null))
                                                                                       Text(
                                                                                         valueOrDefault<String>(
                                                                                           ' (${dateTimeFormat(
@@ -2649,9 +2654,10 @@ class _PageReproducoesWidgetState extends State<PageReproducoesWidget> {
                                                                           ),
                                                                         ].divide(const SizedBox(width: 8.0)),
                                                                       ),
-                                                                    if (reproducaoItem
-                                                                            .parida ==
-                                                                        'SIM')
+                                                                    if (reproducaoItem.parida == 'SIM' &&
+                                                                      !functions.exibirPartoConfirmado(
+                                                                        reproducaoItem.parida,
+                                                                        reproducaoItem.dataParto))
                                                                       Row(
                                                                         mainAxisSize:
                                                                             MainAxisSize.max,

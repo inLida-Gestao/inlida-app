@@ -103,6 +103,12 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
   @override
   Widget build(BuildContext context) {
     context.watch<FFAppState>();
+    final hasSelectedProperty = FFAppState()
+            .propriedadeSelecionada
+            .idPropriedade
+            .trim()
+            .isNotEmpty ||
+        FFAppState().propriedadeSelecionada.nome.trim().isNotEmpty;
 
     return Container(
       width: double.infinity,
@@ -2021,10 +2027,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                 thickness: 1.0,
                                 color: Color(0xFFEDEDED),
                               ),
-                              if (FFAppState()
-                                      .propriedadeSelecionada
-                                      .idPropriedade !=
-                                  '')
+                                if (hasSelectedProperty)
                                 Flexible(
                                   child: FutureBuilder<List<ListarLotesRow>>(
                                     future: SQLiteManager.instance.listarLotes(
@@ -2370,10 +2373,7 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                     },
                                   ),
                                 ),
-                              if (FFAppState()
-                                      .propriedadeSelecionada
-                                      .idPropriedade ==
-                                  '')
+                                if (!hasSelectedProperty)
                                 Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(
                                       0.0, 24.0, 0.0, 0.0),
@@ -3189,11 +3189,13 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                   padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                                   child: Text(
                                                                                                     valueOrDefault<String>(
-                                                                                                      '${reproducaoItem.statusReproducao} (${dateTimeFormat(
-                                                                                                        "dd/MM/yy",
-                                                                                                        functions.converterParaData(reproducaoItem.dataStatus),
-                                                                                                        locale: FFLocalizations.of(context).languageCode,
-                                                                                                      )})',
+                                                                                                      functions.exibirPartoConfirmado(reproducaoItem.parida, reproducaoItem.dataParto)
+                                                                                                          ? 'Parida em (${functions.converterParaData(reproducaoItem.dataParto) != null ? dateTimeFormat("dd/MM/yy", functions.converterParaData(reproducaoItem.dataParto), locale: FFLocalizations.of(context).languageCode) : 'S/D'})'
+                                                                                                          : '${reproducaoItem.statusReproducao} (${dateTimeFormat(
+                                                                                                              "dd/MM/yy",
+                                                                                                              functions.converterParaData(reproducaoItem.dataStatus),
+                                                                                                              locale: FFLocalizations.of(context).languageCode,
+                                                                                                            )})',
                                                                                                       '--',
                                                                                                     ),
                                                                                                     textAlign: TextAlign.center,
@@ -3715,11 +3717,13 @@ class _PesquisaGeralWidgetState extends State<PesquisaGeralWidget>
                                                                                                   padding: const EdgeInsetsDirectional.fromSTEB(8.0, 0.0, 8.0, 0.0),
                                                                                                   child: Text(
                                                                                                     valueOrDefault<String>(
-                                                                                                      '${reproducaoItem.statusReproducao} (${dateTimeFormat(
-                                                                                                        "dd/MM/yy",
-                                                                                                        functions.converterParaData(reproducaoItem.dataStatus),
-                                                                                                        locale: FFLocalizations.of(context).languageCode,
-                                                                                                      )})',
+                                                                                                      functions.exibirPartoConfirmado(reproducaoItem.parida, reproducaoItem.dataParto)
+                                                                                                          ? 'Parida em (${functions.converterParaData(reproducaoItem.dataParto) != null ? dateTimeFormat("dd/MM/yy", functions.converterParaData(reproducaoItem.dataParto), locale: FFLocalizations.of(context).languageCode) : 'S/D'})'
+                                                                                                          : '${reproducaoItem.statusReproducao} (${dateTimeFormat(
+                                                                                                              "dd/MM/yy",
+                                                                                                              functions.converterParaData(reproducaoItem.dataStatus),
+                                                                                                              locale: FFLocalizations.of(context).languageCode,
+                                                                                                            )})',
                                                                                                       '--',
                                                                                                     ),
                                                                                                     textAlign: TextAlign.center,

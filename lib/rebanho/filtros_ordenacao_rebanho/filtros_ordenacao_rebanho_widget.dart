@@ -550,6 +550,99 @@ class _FiltrosOrdenacaoRebanhoWidgetState
                         ),
                       ),
                     ),
+                    Container(
+                      width: double.infinity,
+                      height: 74.0,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F1F1),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(6.0),
+                          bottomRight: Radius.circular(6.0),
+                          topLeft: Radius.circular(6.0),
+                          topRight: Radius.circular(6.0),
+                        ),
+                        border: Border.all(
+                          color: FFAppState().ordenacaoRebanhoTipo ==
+                                  'ultimaPesagem'
+                              ? FlutterFlowTheme.of(context).secondary
+                              : const Color(0x00000000),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                            24.0, 0.0, 24.0, 0.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            if (FFAppState().ordenacaoRebanhoTipo ==
+                                'ultimaPesagem')
+                              InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  FFAppState().ordenacaoRebanhoTipo = '';
+                                  FFAppState().ordenacaoRebanho = '';
+                                  safeSetState(() {});
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Image.asset(
+                                    'assets/images/Radio_button.png',
+                                    width: 24.0,
+                                    height: 24.0,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            if ((FFAppState().ordenacaoRebanhoTipo !=
+                                    'ultimaPesagem') ||
+                                (FFAppState().ordenacaoRebanhoTipo == ''))
+                              InkWell(
+                                splashColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onTap: () async {
+                                  FFAppState().ordenacaoRebanhoTipo =
+                                      'ultimaPesagem';
+                                  if (FFAppState().ordenacaoRebanho == '') {
+                                    FFAppState().ordenacaoRebanho =
+                                        'decrescente';
+                                  }
+                                  safeSetState(() {});
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Image.asset(
+                                    'assets/images/Radio_button78.png',
+                                    width: 24.0,
+                                    height: 24.0,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            Text(
+                              'Data da última pesagem',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    fontFamily: FlutterFlowTheme.of(context)
+                                        .bodyMediumFamily,
+                                    color: const Color(0xFF474747),
+                                    fontSize: 18.0,
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.w500,
+                                    useGoogleFonts:
+                                        !FlutterFlowTheme.of(context)
+                                            .bodyMediumIsCustom,
+                                  ),
+                            ),
+                          ].divide(const SizedBox(width: 10.0)),
+                        ),
+                      ),
+                    ),
                   ].divide(const SizedBox(height: 16.0)),
                 ),
               ),

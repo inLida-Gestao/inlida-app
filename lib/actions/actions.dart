@@ -4,6 +4,7 @@ import '/backend/api_requests/api_manager.dart';
 import '/backend/schema/structs/index.dart';
 import '/backend/sqlite/sqlite_manager.dart';
 import '/backend/supabase/supabase.dart';
+import '/backend/utils/sync_client_timestamp.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/actions/actions.dart' as action_blocks;
 import '/custom_code/actions/index.dart' as actions;
@@ -56,14 +57,18 @@ Future<String?> refreshCurrentUserAccess() async {
   return user.acesso;
 }
 
-Future<void> showAccountBlockedInformationDialog(BuildContext context) async {
+Future<void> showInformationDialog(
+  BuildContext context, {
+  required String message,
+  String title = 'Informação',
+}) async {
   if (!context.mounted) return;
   await showDialog<void>(
     context: context,
     builder: (alertDialogContext) {
       return AlertDialog(
-        title: const Text('Informação'),
-        content: const Text(_accountBlockedMessage),
+        title: Text(title),
+        content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(alertDialogContext),
@@ -72,6 +77,13 @@ Future<void> showAccountBlockedInformationDialog(BuildContext context) async {
         ],
       );
     },
+  );
+}
+
+Future<void> showAccountBlockedInformationDialog(BuildContext context) async {
+  await showInformationDialog(
+    context,
+    message: _accountBlockedMessage,
   );
 }
 
@@ -216,6 +228,32 @@ class SyncCancelledException implements Exception {
   String toString() => 'SyncCancelledException: $reason';
 }
 
+class _StaleRebanhoUpdateException implements Exception {
+  const _StaleRebanhoUpdateException(this.idRebanho);
+
+  final String idRebanho;
+
+  @override
+  String toString() =>
+      'Update de rebanho stale recusado para idRebanho=$idRebanho. '
+      'Outro dispositivo/o servidor atualizou este animal depois da sua edição local; '
+      'sincronize novamente para reenviar com a versão mais recente.';
+}
+
+/// Indica que o UPDATE não encontrou/afetou a linha e não há como saber com
+/// certeza se é RLS (sem permissão) ou a linha foi removida entre o precheck
+/// e o UPDATE. Diferente de stale: aqui não há conflito de versão detectado.
+class _RebanhoUpdateNoRowException implements Exception {
+  const _RebanhoUpdateNoRowException(this.idRebanho);
+
+  final String idRebanho;
+
+  @override
+  String toString() =>
+      'UPDATE de rebanho idRebanho=$idRebanho não afetou nenhuma linha '
+      '(possível bloqueio de permissão/RLS ou remoção concorrente).';
+}
+
 void _throwIfCancelled(String flow) {
   if (FFAppState().syncCancelRequested) {
     _syncLog(flow, 'Cancelamento solicitado — interrompendo loop.');
@@ -255,6 +293,12 @@ Future<void> _batchUpsertSupabase({
 /// Usado para edição de animal existente: não deve tentar INSERT. Retorna
 /// `true` quando o Supabase atualizou ao menos uma linha e `false` quando o
 /// idRebanho não foi encontrado no servidor.
+///
+/// Concorrência: o servidor é a autoridade sobre `updated_at` (trigger grava
+/// `NOW()`); o app não envia esse campo no UPDATE. Em vez disso, envia
+/// `client_updated_at` (UTC real, com offset) apenas para o guard de stale
+/// update no Postgres (`prevent_stale_rebanho_update`, migração 012), que
+/// agora recusa explicitamente (erro 55006) em vez de descartar em silêncio.
 Future<bool> _updateRebanhoSupabaseById(
   Map<String, dynamic> payload, {
   required String label,
@@ -268,48 +312,76 @@ Future<bool> _updateRebanhoSupabaseById(
     ..remove('idRebanho')
     ..remove('created_at');
 
-  final localUpdatedAt = _parseSyncDate(updatePayload['updated_at']);
-  if (localUpdatedAt != null) {
-    final current = await _withTimeout(
+  List<dynamic> updated;
+  try {
+    updated = await _withTimeout(
       () => SupaFlow.client
           .from('rebanho')
-          .select('idRebanho,updated_at')
+          .update(updatePayload)
           .eq('idRebanho', idRebanho)
-          .limit(1),
-      label: '$label.precheck(idRebanho=$idRebanho)',
+          .select('idRebanho'),
+      label: '$label.update(idRebanho=$idRebanho)',
       timeout: kSyncPageTimeout,
     );
-    final remoteUpdatedAt = current.isEmpty
-        ? null
-        : _parseSyncDate((current.first as Map)['updated_at']);
-    if (remoteUpdatedAt != null &&
-        remoteUpdatedAt.toUtc().isAfter(localUpdatedAt.toUtc())) {
+  } on PostgrestException catch (e) {
+    if (e.code == '55006') {
       _syncLog(
         label,
-        'UPDATE rebanho ignorado: idRebanho=$idRebanho tem updated_at remoto mais recente ($remoteUpdatedAt > $localUpdatedAt).',
+        'UPDATE rebanho recusado pelo servidor (stale): idRebanho=$idRebanho — $e',
       );
-      return true;
+      throw _StaleRebanhoUpdateException(idRebanho);
+    }
+    rethrow;
+  }
+  if (updated.isEmpty) {
+    final stillExists = await _withTimeout(
+      () => SupaFlow.client
+          .from('rebanho')
+          .select('idRebanho')
+          .eq('idRebanho', idRebanho)
+          .limit(1),
+      label: '$label.confirm(idRebanho=$idRebanho)',
+      timeout: kSyncPageTimeout,
+    );
+    if (stillExists.isNotEmpty) {
+      // A linha existe mas o UPDATE não retornou — provável bloqueio de RLS
+      // (o trigger de stale já teria lançado 55006 antes de chegar aqui).
+      throw _RebanhoUpdateNoRowException(idRebanho);
     }
   }
-
-  final updated = await _withTimeout(
-    () => SupaFlow.client
-        .from('rebanho')
-        .update(updatePayload)
-        .eq('idRebanho', idRebanho)
-        .select('idRebanho'),
-    label: '$label.update(idRebanho=$idRebanho)',
-    timeout: kSyncPageTimeout,
-  );
   return updated.isNotEmpty;
 }
 
-DateTime? _parseSyncDate(dynamic value) {
-  if (value == null) return null;
-  if (value is DateTime) return value;
-  final raw = value.toString().trim();
-  if (raw.isEmpty || raw == 'null') return null;
-  return DateTime.tryParse(raw);
+/// UPDATE explícito de propriedade por idPropriedade.
+///
+/// Edições existentes não podem usar UPSERT: o PostgreSQL avalia a política
+/// RLS de INSERT antes de resolver o conflito, e o payload de UPDATE não leva
+/// `userID`. Retorna `false` quando nenhuma linha visível foi atualizada.
+Future<bool> _updatePropriedadeSupabaseById(
+  Map<String, dynamic> payload, {
+  required String label,
+}) async {
+  final idPropriedade = payload['idPropriedade']?.toString();
+  if (idPropriedade == null || idPropriedade.isEmpty) {
+    throw ArgumentError(
+        'Payload de propriedade sem idPropriedade para UPDATE.');
+  }
+
+  final updatePayload = Map<String, dynamic>.from(payload)
+    ..remove('idPropriedade')
+    ..remove('created_at')
+    ..remove('userID');
+
+  final updated = await _withTimeout(
+    () => SupaFlow.client
+        .from('propriedades')
+        .update(updatePayload)
+        .eq('idPropriedade', idPropriedade)
+        .select('idPropriedade'),
+    label: '$label.update(idPropriedade=$idPropriedade)',
+    timeout: kSyncPageTimeout,
+  );
+  return updated.isNotEmpty;
 }
 
 Future<Set<String>> _buscarRebanhoIdsRemotos(
@@ -613,6 +685,7 @@ Future<void> _clearLocalRebanhoSyncDirtyByIds(
       UPDATE local_rebanho
       SET sync_dirty = 0,
           sync_op = NULL,
+          sync_lote_dirty = 0,
           sync_updated_at = ?
       WHERE idRebanho IN ($placeholders)
       ''',
@@ -825,6 +898,10 @@ Future<T> _retry<T>(
     } catch (e, s) {
       lastError = e;
       lastStack = s;
+      if (e is _StaleRebanhoUpdateException ||
+          e is _RebanhoUpdateNoRowException) {
+        break;
+      }
       // Heurística simples: 4xx ou erros de payload não devem ser retriados.
       final msg = e.toString().toLowerCase();
       final isClientError = msg.contains('status 4') ||
@@ -1033,6 +1110,7 @@ Future<ApiCallResponse> _buscarPesagensDireto({
           'id_propriedade': 'in.${_buildSupabaseInFilter(propertyIds)}',
           'idRebanho': 'not.is.null',
           'dataPesagem': 'not.is.null',
+          'tipo': 'not.is.null',
           'peso': 'not.is.null',
           'deletado': 'not.eq.SIM',
           if (updatedAfter != null) 'updated_at': 'gt.$updatedAfter',
@@ -1073,78 +1151,6 @@ Future<ApiCallResponse> _buscarPesagensSemPropriedade({
           'idRebanho': 'in.${_buildSupabaseInFilter(rebanhoIds)}',
           'deletado': 'not.eq.SIM',
           if (updatedAfter != null) 'updated_at': 'gt.$updatedAfter',
-          'order': 'id.asc',
-          'limit': limit,
-          'offset': offset,
-        },
-        returnBody: true,
-        encodeBodyUtf8: false,
-        decodeUtf8: false,
-        cache: false,
-        isStreamingApi: false,
-        alwaysAllowBody: false,
-      )
-      .timeout(timeout);
-}
-
-Future<ApiCallResponse> _buscarPesagensTipoVazioDireto({
-  required List<String> propertyIds,
-  required int limit,
-  required int offset,
-  String? updatedAfter,
-  Duration timeout = const Duration(seconds: 25),
-}) {
-  return ApiManager.instance
-      .makeApiCall(
-        callName: 'Buscar Pesagens Tipo Vazio',
-        apiUrl:
-            '${SupabaseFunctionsGroup.getBaseUrl().replaceFirst('/rpc', '')}/historico_pesagens',
-        callType: ApiCallType.GET,
-        headers: SupabaseFunctionsGroup.headers,
-        params: {
-          'select':
-              'id,id_pesagem,idRebanho,dataPesagem,tipo,peso,deletado,created_at,updated_at,id_propriedade',
-          'id_propriedade': 'in.${_buildSupabaseInFilter(propertyIds)}',
-          'idRebanho': 'not.is.null',
-          'dataPesagem': 'not.is.null',
-          'peso': 'not.is.null',
-          'or': '(tipo.is.null,tipo.eq.)',
-          if (updatedAfter != null) 'updated_at': 'gt.$updatedAfter',
-          'order': 'id.asc',
-          'limit': limit,
-          'offset': offset,
-        },
-        returnBody: true,
-        encodeBodyUtf8: false,
-        decodeUtf8: false,
-        cache: false,
-        isStreamingApi: false,
-        alwaysAllowBody: false,
-      )
-      .timeout(timeout);
-}
-
-Future<ApiCallResponse> _buscarPesagensTipoVazioSemPropriedade({
-  required List<String> rebanhoIds,
-  required int limit,
-  required int offset,
-  Duration timeout = const Duration(seconds: 25),
-}) {
-  return ApiManager.instance
-      .makeApiCall(
-        callName: 'Buscar Pesagens Tipo Vazio sem Propriedade',
-        apiUrl:
-            '${SupabaseFunctionsGroup.getBaseUrl().replaceFirst('/rpc', '')}/historico_pesagens',
-        callType: ApiCallType.GET,
-        headers: SupabaseFunctionsGroup.headers,
-        params: {
-          'select':
-              'id,id_pesagem,idRebanho,dataPesagem,tipo,peso,deletado,created_at,updated_at,id_propriedade',
-          'id_propriedade': 'is.null',
-          'idRebanho': 'in.${_buildSupabaseInFilter(rebanhoIds)}',
-          'dataPesagem': 'not.is.null',
-          'peso': 'not.is.null',
-          'or': '(tipo.is.null,tipo.eq.)',
           'order': 'id.asc',
           'limit': limit,
           'offset': offset,
@@ -1376,89 +1382,6 @@ Future<_PesagensSyncPageResult> _syncPesagensKeysetPages({
     if (records.length < limit) break;
   }
 
-  return _PesagensSyncPageResult(inserted: totalInserted, errors: errors);
-}
-
-Future<_PesagensSyncPageResult> _syncPesagensTipoVazioRestPages({
-  required List<String> propertyIds,
-  required String? updatedAfter,
-}) async {
-  final errors = <Map<String, String>>[];
-  var totalInserted = 0;
-  var fetchedCount = 0;
-  var totalFetched = 0;
-  const pageSize = 999;
-
-  while (true) {
-    _throwIfCancelled('refreshPesagens.tipoVazio');
-    final resp = await _buscarPesagensTipoVazioDireto(
-      propertyIds: propertyIds,
-      limit: pageSize,
-      offset: fetchedCount,
-      updatedAfter: updatedAfter,
-    );
-    final records = _safeRecordsFromApi(resp.jsonBody);
-    _syncLog('pesagens',
-        'Backfill tipo vazio: offset=$fetchedCount, ${records.length} registro(s).');
-    if (records.isEmpty) break;
-
-    final result = await actions.batchInsertLocalPesagens(records);
-    totalInserted += result['inserted'] as int? ?? 0;
-    totalFetched += records.length;
-    final pageErrors = result['errors'] as List<Map<String, String>>? ?? [];
-    if (pageErrors.isNotEmpty) errors.addAll(pageErrors);
-
-    fetchedCount += records.length;
-    if (records.length < pageSize) break;
-  }
-
-  _syncLog('pesagens',
-      'Backfill tipo vazio por propriedade finalizado: $totalFetched encontrado(s), $totalInserted upsert(s).');
-  return _PesagensSyncPageResult(inserted: totalInserted, errors: errors);
-}
-
-Future<_PesagensSyncPageResult> _syncPesagensTipoVazioSemPropriedadePages({
-  required List<String> rebanhoIds,
-}) async {
-  final errors = <Map<String, String>>[];
-  var totalInserted = 0;
-  var totalFetched = 0;
-  const pageSize = 999;
-  const batchSize = 50;
-
-  for (var i = 0; i < rebanhoIds.length; i += batchSize) {
-    _throwIfCancelled('refreshPesagens.tipoVazioSemPropriedade');
-    final batch = rebanhoIds.sublist(
-      i,
-      i + batchSize > rebanhoIds.length ? rebanhoIds.length : i + batchSize,
-    );
-    var offset = 0;
-
-    while (true) {
-      _throwIfCancelled('refreshPesagens.tipoVazioSemPropriedade');
-      final resp = await _buscarPesagensTipoVazioSemPropriedade(
-        rebanhoIds: batch,
-        limit: pageSize,
-        offset: offset,
-      );
-      final records = _safeRecordsFromApi(resp.jsonBody);
-      _syncLog('pesagens',
-          'Backfill tipo vazio sem propriedade: batch=${i ~/ batchSize}, offset=$offset, ${records.length} registro(s).');
-      if (records.isEmpty) break;
-
-      final result = await actions.batchInsertLocalPesagens(records);
-      totalInserted += result['inserted'] as int? ?? 0;
-      totalFetched += records.length;
-      final pageErrors = result['errors'] as List<Map<String, String>>? ?? [];
-      if (pageErrors.isNotEmpty) errors.addAll(pageErrors);
-
-      offset += records.length;
-      if (records.length < pageSize) break;
-    }
-  }
-
-  _syncLog('pesagens',
-      'Backfill tipo vazio sem propriedade finalizado: $totalFetched encontrado(s), $totalInserted upsert(s).');
   return _PesagensSyncPageResult(inserted: totalInserted, errors: errors);
 }
 
@@ -1717,35 +1640,33 @@ Future<bool> putUpdtPropriedades(BuildContext context) async {
       }
     }
 
-    final payloads = <Map<String, dynamic>>[];
+    final inserts = <Map<String, dynamic>>[];
     for (final row in localPut) {
       _throwIfCancelled('putUpdtPropriedades');
-      payloads.add(_buildPropriedadePayload(row.data, isInsert: true));
-    }
-    for (final row in localUpd) {
-      _throwIfCancelled('putUpdtPropriedades');
-      payloads.add(_buildPropriedadePayload(row.data, isInsert: false));
+      inserts.add(_buildPropriedadePayload(row.data, isInsert: true));
     }
 
-    if (payloads.isEmpty) {
+    if (inserts.isEmpty && localUpd.isEmpty) {
       _syncLog('putUpdtPropriedades', 'Nada para enviar.');
       return true;
     }
 
     _syncLog('putUpdtPropriedades',
-        'Upsert propriedade: ${payloads.length} registro(s) (INSERT=${localPut.length}, UPDATE=${localUpd.length}).');
+        'Upload de propriedades: INSERT=${localPut.length}, UPDATE=${localUpd.length}.');
 
-    await _retry(
-      () => _batchUpsertSupabase(
-        tableName: 'propriedades',
-        rows: payloads,
-        onConflict: 'idPropriedade',
-        chunkSize: 200,
-        label: 'putUpdtPropriedades',
-      ),
-      label: 'putUpdtPropriedades.batchUpsert',
-      maxAttempts: 3,
-    );
+    if (inserts.isNotEmpty) {
+      await _retry(
+        () => _batchUpsertSupabase(
+          tableName: 'propriedades',
+          rows: inserts,
+          onConflict: 'idPropriedade',
+          chunkSize: 200,
+          label: 'putUpdtPropriedades.insert',
+        ),
+        label: 'putUpdtPropriedades.insert.batchUpsert',
+        maxAttempts: 3,
+      );
+    }
 
     for (final row in localPut) {
       _markSyncOk('propriedade', row.idPropriedade);
@@ -1753,13 +1674,57 @@ Future<bool> putUpdtPropriedades(BuildContext context) async {
       actions.SyncErrorLog.autoResolverPorRegistro(
           'propriedade', row.idPropriedade);
     }
+
     for (final row in localUpd) {
-      _markSyncOk('propriedade', row.idPropriedade);
-      // ignore: discarded_futures
-      actions.SyncErrorLog.autoResolverPorRegistro(
-          'propriedade', row.idPropriedade);
+      _throwIfCancelled('putUpdtPropriedades.update');
+      final payload = _buildPropriedadePayload(row.data, isInsert: false);
+      try {
+        final matched = await _retry(
+          () => _updatePropriedadeSupabaseById(
+            payload,
+            label: 'putUpdtPropriedades.propriedade',
+          ),
+          label: 'putUpdtPropriedades.propriedade.update.${row.idPropriedade}',
+          maxAttempts: 3,
+        );
+
+        if (!matched) {
+          allSuccess = false;
+          final error = StateError(
+              'UPDATE propriedade não encontrou idPropriedade=${row.idPropriedade} no Supabase ou o usuário não possui acesso ao registro.');
+          _recordSyncError(
+            flow: 'putUpdtPropriedades',
+            modulo: 'propriedade',
+            operacao: 'update',
+            erro: error,
+            registroId: row.idPropriedade,
+            registroDescricao: row.nome,
+          );
+          continue;
+        }
+
+        _markSyncOk('propriedade', row.idPropriedade);
+        // ignore: discarded_futures
+        actions.SyncErrorLog.autoResolverPorRegistro(
+            'propriedade', row.idPropriedade);
+      } catch (e) {
+        allSuccess = false;
+        _recordSyncError(
+          flow: 'putUpdtPropriedades',
+          modulo: 'propriedade',
+          operacao: 'update',
+          erro: e,
+          registroId: row.idPropriedade,
+          registroDescricao: row.nome,
+        );
+      }
     }
-    _syncLog('putUpdtPropriedades', 'Upload concluído com sucesso.');
+    _syncLog(
+      'putUpdtPropriedades',
+      allSuccess
+          ? 'Upload concluído com sucesso.'
+          : 'Upload finalizado com falhas registradas.',
+    );
   } on SyncCancelledException catch (e) {
     allSuccess = false;
     _syncLog('putUpdtPropriedades', 'CANCELADO: $e');
@@ -1907,6 +1872,10 @@ Future animaisRegistrados(BuildContext context) async {
         aplicarFiltros ? _dataNascimentoFiltroCards(inicio: true) : '',
     dataNascFim:
         aplicarFiltros ? _dataNascimentoFiltroCards(inicio: false) : '',
+    dataUltPesagemInicio:
+        aplicarFiltros ? _dataUltimaPesagemFiltroCards(inicio: true) : '',
+    dataUltPesagemFim:
+        aplicarFiltros ? _dataUltimaPesagemFiltroCards(inicio: false) : '',
   );
   FFAppState().animaisRegistrados = valueOrDefault<int>(
     qtdAnimais.firstOrNull?.total,
@@ -1930,6 +1899,10 @@ Future animaisPropriedade(BuildContext context) async {
         aplicarFiltros ? _dataNascimentoFiltroCards(inicio: true) : '',
     dataNascFim:
         aplicarFiltros ? _dataNascimentoFiltroCards(inicio: false) : '',
+    dataUltPesagemInicio:
+        aplicarFiltros ? _dataUltimaPesagemFiltroCards(inicio: true) : '',
+    dataUltPesagemFim:
+        aplicarFiltros ? _dataUltimaPesagemFiltroCards(inicio: false) : '',
   );
   final qtdAnimaisPropriedade = valueOrDefault<int>(
     animais.firstOrNull?.total,
@@ -1948,6 +1921,8 @@ bool _hasFiltrosRebanhoCardsAtivos() {
       FFAppState().filtroLoteRebanho != '' ||
       FFAppState().filtroDataNascimentoInicio != null ||
       FFAppState().filtroDataNascimentoFim != null ||
+      FFAppState().filtroDataUltimaPesagemInicio != null ||
+      FFAppState().filtroDataUltimaPesagemFim != null ||
       _statusRebanhoFiltroCardsEhReal();
 }
 
@@ -1978,6 +1953,14 @@ String _dataNascimentoFiltroCards({required bool inicio}) {
   final data = inicio
       ? FFAppState().filtroDataNascimentoInicio
       : FFAppState().filtroDataNascimentoFim;
+  if (data == null) return '';
+  return dateTimeFormat('yyyy-MM-dd', data);
+}
+
+String _dataUltimaPesagemFiltroCards({required bool inicio}) {
+  final data = inicio
+      ? FFAppState().filtroDataUltimaPesagemInicio
+      : FFAppState().filtroDataUltimaPesagemFim;
   if (data == null) return '';
   return dateTimeFormat('yyyy-MM-dd', data);
 }
@@ -2728,6 +2711,16 @@ Map<String, dynamic> _buildRebanhoPayload(
     return supaSerialize<DateTime>(dt);
   }
 
+  // Timestamp de concorrência (guard `prevent_stale_rebanho_update`, migração
+  // 012). Diferente das demais datas do payload, aqui queremos o INSTANTE
+  // real em UTC (não uma "data pura") — ver lib/backend/utils/
+  // sync_client_timestamp.dart para o porquê. Preferimos `sync_updated_at`
+  // (gravado no momento exato do UPDATE local) e caímos para `updated_at`.
+  final clientUpdatedAt = resolveClientUpdatedAtUtc([
+    raw['sync_updated_at'],
+    raw['updated_at'],
+  ]);
+
   final createdAt = serializeDate(raw['created_at']);
   final updatedAt = serializeDate(raw['updated_at']) ??
       createdAt ??
@@ -2776,21 +2769,34 @@ Map<String, dynamic> _buildRebanhoPayload(
     'movimentacao_saida': serializeDate(raw['movimentacao_saida']),
     'data_morte': serializeDate(raw['data_morte']),
     'motivo_morte': normalizeNullableText(raw['motivo_morte']),
-    'updated_at': updatedAt,
+    'client_updated_at': clientUpdatedAt,
   };
+  final loteDirty = isInsert ||
+      raw['sync_lote_dirty'] == 1 ||
+      raw['sync_lote_dirty']?.toString() == '1';
   if (isInsert) {
+    // No INSERT, `updated_at`/`created_at` continuam naive em horário local
+    // (convenção existente — ver /memories/repo/sync.md item 6). O trigger
+    // `set_updated_at_rebanho` sobrescreve `updated_at` no primeiro UPDATE
+    // subsequente de qualquer forma.
+    payload['updated_at'] = updatedAt;
     payload['created_at'] = createdAt ?? updatedAt;
     // Campo que só faz sentido no INSERT (presente em PUTRow apenas).
     payload['categoria_matriz'] = raw['categoria_matriz'];
   }
-  const keepNullOnUpdate = {
-    'loteID',
-    'loteNome',
-    'dataEntradaLote',
-  };
-  payload.removeWhere(
-    (key, v) => v == null && (isInsert || !keepNullOnUpdate.contains(key)),
-  );
+  // No UPDATE, NÃO enviamos `updated_at`: o servidor é a autoridade (trigger
+  // `set_updated_at_rebanho` grava NOW()). Enviar um valor naive em horário
+  // local aqui é o que causava o guard de stale recusar edições em silêncio
+  // por até ~3h (fuso BRT vs UTC).
+  if (!loteDirty) {
+    payload.remove('loteID');
+    payload.remove('loteNome');
+    payload.remove('dataEntradaLote');
+  } else if (isInsert) {
+    payload.removeWhere((key, v) =>
+        v == null &&
+        (key == 'loteID' || key == 'loteNome' || key == 'dataEntradaLote'));
+  }
   return payload;
 }
 
@@ -3656,17 +3662,44 @@ Map<String, dynamic> _buildReproducaoPayload(
     return s;
   }
 
+  /// `ressinc` NÃO é um campo Sim/Não: guarda o TIPO do protocolo de
+  /// ressincronização ('Tradicional' | 'Precoce' | 'Superprecoce'), ou `null`
+  /// quando a reprodução não é uma ressincronização.
+  ///
+  /// O default `?? 'NAO'` usado antes (copiado do padrão de `parida`) gravava
+  /// um valor inválido em TODA reprodução sem protocolo — e como a coluna foi
+  /// adicionada depois, a maioria dos registros tem `ressinc` nulo. O
+  /// dashboard web considera "tem ressinc" qualquer valor não vazio, então
+  /// todos apareciam marcados como ressincronizados.
+  ///
+  /// Enviamos `null` explicitamente (exceção no removeWhere abaixo) para
+  /// limpar os registros já gravados com o valor inválido.
+  String? normalizeRessinc(dynamic v) {
+    if (v == null) return null;
+    final s = v.toString().trim().toLowerCase();
+    if (s.isEmpty || s == 'null' || s == '-') return null;
+    if (s == 'tradicional') return 'Tradicional';
+    if (s == 'precoce') return 'Precoce';
+    if (s == 'superprecoce') return 'Superprecoce';
+    return null;
+  }
+
   final dataInseminacaoStr = parseDate(raw['data_inseminacao']);
   final statusReproducao = nullableStr(raw['status_reproducao']);
+  final dataParto = parseDate(raw['data_parto']);
+  final partoConfirmado = functions.partoConfirmado(
+        raw['parida']?.toString(),
+      ) ||
+      dataParto != null;
   final previsaoPartoPermitida =
       functions.permitePrevisaoParto(statusReproducao);
-  final partidaDefault = FFAppState().dateDefault;
-  final dataPartidaSemen = (raw['data_partida_semen'] != null &&
-          raw['data_partida_semen'].toString().isNotEmpty)
-      ? parseDate(raw['data_partida_semen'])
-      : (partidaDefault != null
-          ? supaSerialize<DateTime>(partidaDefault)
-          : null);
+  // NUNCA usar um valor default/sentinela quando o campo não foi informado
+  // (bug antigo enviava FFAppState().dateDefault ~01/01/2200, fazendo a data
+  // de partida do sêmen aparecer preenchida sozinha). `null` aqui é o valor
+  // correto e é sempre enviado explicitamente (ver exceção no removeWhere
+  // abaixo), tanto para não inventar dado quanto para permitir limpar um
+  // valor previamente salvo no Supabase.
+  final dataPartidaSemen = parseDate(raw['data_partida_semen']);
 
   final payload = <String, dynamic>{
     'id_reproducao': raw['id_reproducao'],
@@ -3697,9 +3730,9 @@ Map<String, dynamic> _buildReproducaoPayload(
     'chipMatriz': nullableStr(raw['chipMatriz']),
     'racaMatriz': nullableStr(raw['racaMatriz']),
     'racaReprodutor': nullableStr(raw['racaReprodutor']),
-    'ressinc': nullableStr(raw['ressinc']) ?? 'NAO',
-    'parida': nullableStr(raw['parida']) ?? 'NAO',
-    'data_parto': parseDate(raw['data_parto']),
+    'ressinc': normalizeRessinc(raw['ressinc']),
+    'parida': functions.normalizarParida(partoConfirmado),
+    'data_parto': dataParto,
     'gnrh': nullableStr(raw['gnrh']) ?? 'Não',
     'cio': nullableStr(raw['cio']) ?? 'Não',
     'id_rebanho_matriz': nullableFk(raw['id_rebanho_matriz']),
@@ -3712,12 +3745,19 @@ Map<String, dynamic> _buildReproducaoPayload(
 
   // Remove chaves null para não sobrescrever valores remotos com null
   // em campos que não foram alterados off-line (comportamento conservador
-  // em upsert).
+  // em upsert). `data_partida_semen` é exceção: precisa ir sempre, mesmo
+  // null, para nunca inventar uma data e para permitir limpar um valor
+  // previamente salvo (ver comentário acima). `ressinc` é exceção pelo mesmo
+  // motivo: precisa ir como null para limpar o valor inválido 'NAO' que
+  // versões anteriores gravaram em toda reprodução sem protocolo.
   payload.removeWhere((key, value) =>
       value == null &&
       key != 'id_rebanho_matriz' &&
       key != 'id_rebanho_reprodutor' &&
-      !(key == 'previsao_parto' && !previsaoPartoPermitida));
+      key != 'data_partida_semen' &&
+      key != 'ressinc' &&
+      !(key == 'previsao_parto' && !previsaoPartoPermitida) &&
+      !(key == 'data_parto' && !isInsert));
   return payload;
 }
 
@@ -4671,14 +4711,18 @@ Future<void> _refreshPesagensInternal(BuildContext context) async {
     // Verificar change tracker antes de sincronizar (como os outros módulos)
     List<HistoricoPesagensChangeTrackerRow>? lastChangeResult;
     try {
-      lastChangeResult = await HistoricoPesagensChangeTrackerTable().queryRows(
-        queryFn: (q) => q,
+      lastChangeResult = await _withTimeout(
+        () => HistoricoPesagensChangeTrackerTable().queryRows(
+          queryFn: (q) => q,
+        ),
+        label: 'pesagens.changeTracker.queryRows',
+        timeout: kSyncLightTimeout,
       );
     } catch (e, s) {
       _syncLog('pesagens', 'ERRO ao consultar change tracker: $e\n$s');
       lastChangeResult = [];
     }
-    final remoteLastChange = lastChangeResult.firstOrNull?.lastChange;
+    final remoteLastChange = lastChangeResult?.firstOrNull?.lastChange;
     final localLastChange = FFAppState().pesagensChangeDateTime;
     final shouldSync = remoteLastChange == null ||
         localLastChange == null ||
@@ -4688,8 +4732,8 @@ Future<void> _refreshPesagensInternal(BuildContext context) async {
         'shouldSync=$shouldSync  remoteLastChange=$remoteLastChange  localLastChange=$localLastChange');
 
     if (!shouldSync) {
-      _syncLog('pesagens',
-          'Sem alterações incrementais; verificando backfill de pesagens com tipo vazio.');
+      _syncLog('pesagens', 'Sem necessidade de sincronização.');
+      return;
     }
 
     final localPesagensEmpty =
@@ -4705,22 +4749,22 @@ Future<void> _refreshPesagensInternal(BuildContext context) async {
         ? effectiveLocalLastChange.toUtc().toIso8601String()
         : null;
 
-    _syncLog(
-        'pesagens',
-        shouldSync
-            ? 'Iniciando sincronização ${isFirst ? "COMPLETA (primeiro sync)" : "INCREMENTAL desde $updatedAfter"}.'
-            : 'Sincronização incremental pulada; backfill de tipo vazio será completo.');
+    _syncLog('pesagens',
+        'Iniciando sincronização ${isFirst ? "COMPLETA (primeiro sync)" : "INCREMENTAL desde $updatedAfter"}.');
     var syncOk = true;
     final List<Map<String, String>> syncErrors = [];
     int totalInserted = 0;
 
     try {
-      propriedadessO =
-          await SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
-        pUserId: currentUserUid,
+      propriedadessO = await _withTimeout(
+        () => SupabaseFunctionsGroup.buscarPropriedadesUserCall.call(
+          pUserId: currentUserUid,
+        ),
+        label: 'pesagens.buscarPropriedadesUser',
+        timeout: kSyncPageTimeout,
       );
 
-      final propertyIds = _safePropertyIds(propriedadessO.jsonBody);
+      final propertyIds = _safePropertyIds(propriedadessO?.jsonBody);
       _syncLog('pesagens', 'Propriedades encontradas: ${propertyIds.length}.');
 
       if (propertyIds.isEmpty) {
@@ -4855,35 +4899,13 @@ Future<void> _refreshPesagensInternal(BuildContext context) async {
                 'id': 'página offset=$offsetAtual',
                 'error': 'Erro na requisição ou processamento: $e',
               });
-              fetchedCount += 999;
-              FFAppState().indexPesagens = fetchedCount;
+              // Não avançar o OFFSET após falha. Continuar faria o loop
+              // crescer indefinidamente em indisponibilidade persistente e
+              // ainda pularia registros não baixados.
+              break;
             }
           }
         }
-      }
-
-      final tipoVazioResult = await _syncPesagensTipoVazioRestPages(
-        propertyIds: propertyIds,
-        updatedAfter: null,
-      );
-      totalInserted += tipoVazioResult.inserted;
-      syncErrors.addAll(tipoVazioResult.errors);
-
-      try {
-        final localRebIds = await _getLocalRebanhoIds();
-        if (localRebIds.isNotEmpty) {
-          _syncLog('pesagens',
-              'Backfill tipo vazio: verificando id_propriedade NULL para ${localRebIds.length} animais locais.');
-          final tipoVazioSemPropriedadeResult =
-              await _syncPesagensTipoVazioSemPropriedadePages(
-            rebanhoIds: localRebIds,
-          );
-          totalInserted += tipoVazioSemPropriedadeResult.inserted;
-          syncErrors.addAll(tipoVazioSemPropriedadeResult.errors);
-        }
-      } catch (e, s) {
-        _syncLog('pesagens',
-            'Erro no backfill de tipo vazio sem propriedade: $e\n$s');
       }
 
       // ── Catch-up: buscar pesagens com id_propriedade NULL ──────────
@@ -4959,6 +4981,10 @@ Future<void> _refreshPesagensInternal(BuildContext context) async {
       } catch (e, s) {
         _syncLog(
             'pesagens', 'Erro no catch-up de pesagens sem propriedade: $e\n$s');
+        syncErrors.add({
+          'id': 'catch-up sem propriedade',
+          'error': e.toString(),
+        });
       }
       // ── Fim catch-up ──────────────────────────────────────────────
 
@@ -4967,11 +4993,17 @@ Future<void> _refreshPesagensInternal(BuildContext context) async {
         _syncLog(
             'pesagens', 'Total de erros acumulados: ${syncErrors.length}.');
       }
-      // Sempre atualiza o timestamp para evitar re-sync infinito
-      // Usa o remoteLastChange do change tracker para precisão
-      FFAppState().pesagensChangeDateTime = remoteLastChange ?? DateTime.now();
-      _syncLog('pesagens',
-          'Timestamp atualizado para: ${FFAppState().pesagensChangeDateTime}. $totalInserted registros inseridos.');
+      if (syncOk) {
+        // Só avança o marcador quando todas as páginas terminaram. Caso
+        // contrário, a próxima tentativa precisa buscar novamente o intervalo.
+        FFAppState().pesagensChangeDateTime =
+            remoteLastChange ?? DateTime.now();
+        _syncLog('pesagens',
+            'Timestamp atualizado para: ${FFAppState().pesagensChangeDateTime}. $totalInserted registros inseridos.');
+      } else {
+        _syncLog('pesagens',
+            'Timestamp mantido após falha parcial para permitir nova tentativa.');
+      }
       if (syncOk) {
         _syncLog('pesagens',
             'Sincronização finalizada com sucesso. $totalInserted registros inseridos.');
