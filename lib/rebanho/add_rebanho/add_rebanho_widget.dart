@@ -211,7 +211,7 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
             color: FlutterFlowTheme.of(context).secondaryBackground,
           ),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
@@ -266,12 +266,13 @@ class _AddRebanhoWidgetState extends State<AddRebanhoWidget>
                       ),
                 ),
               ),
-              Flexible(
+              // Expanded (e não Flexible) + sem cap de altura: o container das abas
+              // precisa ocupar toda a sobra vertical. Com maxHeight 700 ele travava
+              // nos 700pt, cortando os campos e deixando uma faixa branca no rodapé
+              // em telas altas (iPad/tablet).
+              Expanded(
                 child: Container(
                   width: double.infinity,
-                  constraints: const BoxConstraints(
-                    maxHeight: 700.0,
-                  ),
                   decoration: BoxDecoration(
                     color: FlutterFlowTheme.of(context).secondaryBackground,
                   ),
