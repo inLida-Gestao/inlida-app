@@ -1768,14 +1768,43 @@ class BuscarSanidadeUPDTRow extends SqliteRow {
 /// END BUSCAR SANIDADE UPDT
 
 /// BEGIN BUSCAR REPRODUCOES REBANHO
+/// Reproduções exibidas na aba "Reproduções" da ficha do animal.
+///
+/// Espelha a regra da web (`pg_rebanho_view_widget.dart`), que faz DUAS
+/// consultas separadas e escolhe uma pelo sexo:
+///
+/// - Fêmea  -> reproduções em que ela é a **matriz**
+/// - Macho  -> reproduções em que ele é o **reprodutor**
+///
+/// O código antigo unia as duas com `OR`, então a ficha de uma fêmea que
+/// aparecesse como reprodutor exibia as reproduções de outras matrizes como se
+/// fossem dela — com prenhez e previsão de parto da gestação alheia. Era o bug
+/// das "reproduções aleatórias" (FAZ BARREIRINHO).
+///
+/// Sexo e propriedade são resolvidos aqui no SQL, e não recebidos por
+/// parâmetro, porque o widget da aba só conhece o `idRebanho` — plumbar isso
+/// exigiria mexer em construtor gerado pelo FlutterFlow.
+///
+/// Quando o animal não é encontrado (ou está sem sexo) a cláusula cai em
+/// matriz, que é o comportamento mais útil: a web não renderiza seção alguma
+/// nesse caso.
 Future<List<BuscarReproducoesRebanhoRow>> performBuscarReproducoesRebanho(
   Database database, {
   String? idRebanho,
 }) {
+  final idSql = _escapeSqlValue(idRebanho ?? '');
+  final sexoDoAlvo =
+      "(SELECT sexo FROM local_rebanho WHERE idRebanho = '$idSql' LIMIT 1)";
+  final propriedadeDoAlvo =
+      "(SELECT idPropriedade FROM local_rebanho WHERE idRebanho = '$idSql' LIMIT 1)";
   final query = '''
-SELECT * FROM local_reproducao
-WHERE (id_rebanho_matriz = '$idRebanho' OR id_rebanho_reprodutor = '$idRebanho')
-AND deletado = 'NAO'
+SELECT lr.* FROM local_reproducao lr
+WHERE CASE WHEN $sexoDoAlvo = 'Macho'
+           THEN lr.id_rebanho_reprodutor = '$idSql'
+           ELSE lr.id_rebanho_matriz = '$idSql'
+      END
+AND ($propriedadeDoAlvo IS NULL OR lr.id_propriedade = $propriedadeDoAlvo)
+AND COALESCE(lr.deletado, 'NAO') != 'SIM'
 ''';
   return _readQuery(database, query, (d) => BuscarReproducoesRebanhoRow(d));
 }
