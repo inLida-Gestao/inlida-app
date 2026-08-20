@@ -150,23 +150,22 @@ class _OrdenacaoAnimaisLoteWidgetState
                     const SizedBox(width: 40.0),
                     Text(
                       'Ordenar',
-                      style: FlutterFlowTheme.of(context)
-                          .headlineSmall
-                          .override(
-                            font: GoogleFonts.outfit(
-                              fontWeight: FontWeight.w500,
-                              fontStyle: FlutterFlowTheme.of(context)
-                                  .headlineSmall
-                                  .fontStyle,
-                            ),
-                            color: const Color(0xFF2F2F2F),
-                            fontSize: 24.0,
-                            letterSpacing: 0.0,
-                            fontWeight: FontWeight.w500,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .headlineSmall
-                                .fontStyle,
-                          ),
+                      style:
+                          FlutterFlowTheme.of(context).headlineSmall.override(
+                                font: GoogleFonts.outfit(
+                                  fontWeight: FontWeight.w500,
+                                  fontStyle: FlutterFlowTheme.of(context)
+                                      .headlineSmall
+                                      .fontStyle,
+                                ),
+                                color: const Color(0xFF2F2F2F),
+                                fontSize: 24.0,
+                                letterSpacing: 0.0,
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FlutterFlowTheme.of(context)
+                                    .headlineSmall
+                                    .fontStyle,
+                              ),
                     ),
                     InkWell(
                       splashColor: Colors.transparent,
@@ -231,8 +230,7 @@ class _OrdenacaoAnimaisLoteWidgetState
                       hoverColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () async {
-                        if (FFAppState().ordenacaoLoteAnimais ==
-                            'crescente') {
+                        if (FFAppState().ordenacaoLoteAnimais == 'crescente') {
                           FFAppState().ordenacaoLoteAnimais = 'decrescente';
                         } else if (FFAppState().ordenacaoLoteAnimais ==
                             'decrescente') {
@@ -310,16 +308,14 @@ class _OrdenacaoAnimaisLoteWidgetState
                                   'crescente')
                                 Icon(
                                   Icons.keyboard_arrow_up_rounded,
-                                  color:
-                                      FlutterFlowTheme.of(context).secondary,
+                                  color: FlutterFlowTheme.of(context).secondary,
                                   size: 24.0,
                                 ),
                               if (FFAppState().ordenacaoLoteAnimais ==
                                   'decrescente')
                                 Icon(
                                   Icons.keyboard_arrow_down,
-                                  color:
-                                      FlutterFlowTheme.of(context).secondary,
+                                  color: FlutterFlowTheme.of(context).secondary,
                                   size: 24.0,
                                 ),
                             ].divide(const SizedBox(width: 8.0)),

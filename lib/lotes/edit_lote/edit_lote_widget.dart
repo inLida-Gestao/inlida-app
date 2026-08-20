@@ -2771,8 +2771,7 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                             .rectangle,
                                                                         border:
                                                                             Border.all(
-                                                                          color: FFAppState().ordenacaoLoteAnimaisTipo ==
-                                                                                  ''
+                                                                          color: FFAppState().ordenacaoLoteAnimaisTipo == ''
                                                                               ? const Color(0xFFBEBEBE)
                                                                               : FlutterFlowTheme.of(context).secondary,
                                                                         ),
@@ -3053,7 +3052,8 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                           ),
                                                           Builder(
                                                             builder: (context) {
-                                                              final rebanhosSelect = sortAnimaisLote(
+                                                              final rebanhosSelect =
+                                                                  sortAnimaisLote(
                                                                 animaisForaLoteBuscaRebanhoPaginadaPesquisaRowList
                                                                     .where((e) =>
                                                                         e.statusRebanho ==
@@ -3061,18 +3061,20 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                     .toList(),
                                                                 numeroOf: (e) =>
                                                                     e.numeroAnimal,
-                                                                nascimentoOf: (e) =>
-                                                                    e.dataNascimento,
+                                                                nascimentoOf:
+                                                                    (e) => e
+                                                                        .dataNascimento,
                                                                 createdAtOf: (e) =>
                                                                     e.createdAt,
                                                                 tipo: FFAppState()
                                                                     .ordenacaoLoteAnimaisTipo,
-                                                                direcao: FFAppState()
-                                                                    .ordenacaoLoteAnimais,
+                                                                direcao:
+                                                                    FFAppState()
+                                                                        .ordenacaoLoteAnimais,
                                                               )
-                                                                  .take(_model
-                                                                      .mostrarFora)
-                                                                  .toList();
+                                                                      .take(_model
+                                                                          .mostrarFora)
+                                                                      .toList();
 
                                                               return ListView
                                                                   .builder(
@@ -3941,7 +3943,8 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                           .isNotEmpty)
                                                         Builder(
                                                           builder: (context) {
-                                                            final rebanhoAplicado = sortAnimaisLote(
+                                                            final rebanhoAplicado =
+                                                                sortAnimaisLote(
                                                               _model
                                                                   .rebanhosAplicados
                                                                   .where((e) =>
@@ -3958,8 +3961,8 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                               .text
                                                                               .toLowerCase())))
                                                                   .toList(),
-                                                              numeroOf: (e) =>
-                                                                  e.numeroAnimal,
+                                                              numeroOf: (e) => e
+                                                                  .numeroAnimal,
                                                               nascimentoOf: (e) =>
                                                                   e.dataNascimento,
                                                               tipo: FFAppState()
@@ -3967,9 +3970,9 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                               direcao: FFAppState()
                                                                   .ordenacaoLoteAnimais,
                                                             )
-                                                                .take(
-                                                                    _model.mostrarAdicionados)
-                                                                .toList();
+                                                                    .take(_model
+                                                                        .mostrarAdicionados)
+                                                                    .toList();
 
                                                             return ListView
                                                                 .separated(
@@ -4573,8 +4576,8 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                   );
                                                                   final reconcileResult =
                                                                       await SQLiteManager
-                                                                      .instance
-                                                                      .reconcileRebanhoLote(
+                                                                          .instance
+                                                                          .reconcileRebanhoLote(
                                                                     appliedIds:
                                                                         appliedRebanhoIds,
                                                                     removedIds:
@@ -4609,8 +4612,7 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                         in reconcileResult
                                                                             .appliedMissing) {
                                                                       // ignore: discarded_futures
-                                                                      actions
-                                                                          .SyncErrorLog
+                                                                      actions.SyncErrorLog
                                                                           .registrar(
                                                                         modulo:
                                                                             'lote',
@@ -4628,8 +4630,7 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                                         in reconcileResult
                                                                             .removedMissing) {
                                                                       // ignore: discarded_futures
-                                                                      actions
-                                                                          .SyncErrorLog
+                                                                      actions.SyncErrorLog
                                                                           .registrar(
                                                                         modulo:
                                                                             'lote',

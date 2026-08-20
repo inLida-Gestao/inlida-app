@@ -28,8 +28,8 @@ void main() {
       direcao: 'crescente',
     );
 
-    expect(sorted.map((e) => e.numero).toList(),
-        ['2', '13', '100', 'A2', 'A10']);
+    expect(
+        sorted.map((e) => e.numero).toList(), ['2', '13', '100', 'A2', 'A10']);
   });
 
   test('ordem decrescente inverte a ordem numérica natural', () {
@@ -76,12 +76,14 @@ void main() {
 
     expect(crescente.map((e) => e.numero).take(2).toList(), ['1', '5']);
     expect(decrescente.map((e) => e.numero).take(2).toList(), ['5', '1']);
-    expect(crescente.skip(2).every((e) => e.numero == null ||
-        e.numero == '' ||
-        e.numero == 'null'), isTrue);
-    expect(decrescente.skip(2).every((e) => e.numero == null ||
-        e.numero == '' ||
-        e.numero == 'null'), isTrue);
+    expect(
+        crescente.skip(2).every(
+            (e) => e.numero == null || e.numero == '' || e.numero == 'null'),
+        isTrue);
+    expect(
+        decrescente.skip(2).every(
+            (e) => e.numero == null || e.numero == '' || e.numero == 'null'),
+        isTrue);
   });
 
   test('ordena por data de nascimento (ISO yyyy-MM-dd)', () {

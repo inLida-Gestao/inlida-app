@@ -2048,9 +2048,11 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                               child: Container(
                                                                 decoration:
                                                                     BoxDecoration(
-                                                                  color: FFAppState().ordenacaoLoteAnimaisTipo ==
+                                                                  color: FFAppState()
+                                                                              .ordenacaoLoteAnimaisTipo ==
                                                                           ''
-                                                                      ? FlutterFlowTheme.of(context)
+                                                                      ? FlutterFlowTheme.of(
+                                                                              context)
                                                                           .secondaryBackground
                                                                       : const Color(
                                                                           0xFFD6F5E5),
@@ -2093,7 +2095,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                               useGoogleFonts: !FlutterFlowTheme.of(context).bodyMediumIsCustom,
                                                                             ),
                                                                       ),
-                                                                      if (FFAppState().ordenacaoLoteAnimais ==
+                                                                      if (FFAppState()
+                                                                              .ordenacaoLoteAnimais ==
                                                                           'crescente')
                                                                         Icon(
                                                                           Icons
@@ -2103,7 +2106,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                           size:
                                                                               16.0,
                                                                         ),
-                                                                      if (FFAppState().ordenacaoLoteAnimais ==
+                                                                      if (FFAppState()
+                                                                              .ordenacaoLoteAnimais ==
                                                                           'decrescente')
                                                                         Icon(
                                                                           Icons
@@ -2113,7 +2117,8 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                           size:
                                                                               16.0,
                                                                         ),
-                                                                      if (FFAppState().ordenacaoLoteAnimaisTipo ==
+                                                                      if (FFAppState()
+                                                                              .ordenacaoLoteAnimaisTipo ==
                                                                           '')
                                                                         ClipRRect(
                                                                           borderRadius:
@@ -3126,10 +3131,12 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                     .isNotEmpty)
                                                   Builder(
                                                     builder: (context) {
-                                                      final rebanhoAplicado = sortAnimaisLote(
+                                                      final rebanhoAplicado =
+                                                          sortAnimaisLote(
                                                         _model.rebanhosAplicados
                                                             .where((e) =>
-                                                                (_model.pesquisarTextController.text ==
+                                                                (_model.pesquisarTextController
+                                                                        .text ==
                                                                     '') ||
                                                                 ((e.numeroAnimal!)
                                                                         .toLowerCase()
@@ -3145,7 +3152,10 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                                             .toLowerCase()) ||
                                                                     (e.chip!)
                                                                         .toLowerCase()
-                                                                        .contains(_model.pesquisarTextController.text.toLowerCase())))
+                                                                        .contains(_model
+                                                                            .pesquisarTextController
+                                                                            .text
+                                                                            .toLowerCase())))
                                                             .toList(),
                                                         numeroOf: (e) =>
                                                             e.numeroAnimal,
@@ -3158,8 +3168,9 @@ class _AddLoteWidgetState extends State<AddLoteWidget>
                                                         direcao: FFAppState()
                                                             .ordenacaoLoteAnimais,
                                                       )
-                                                          .take(_model.mostrarAdicionados)
-                                                          .toList();
+                                                              .take(_model
+                                                                  .mostrarAdicionados)
+                                                              .toList();
 
                                                       return ListView.separated(
                                                         padding:
