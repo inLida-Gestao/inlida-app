@@ -1271,7 +1271,7 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
           child: Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
@@ -1442,10 +1442,13 @@ class _ViewRebanhoWidgetState extends State<ViewRebanhoWidget>
                     ),
                   ),
                 ),
-                Flexible(
+                // Expanded (e não Flexible) + sem altura fixa: o container das
+                // abas precisa ocupar toda a sobra vertical. Com `height: 700`
+                // ele travava em 700pt, cortando a lista no meio e deixando
+                // uma faixa branca no rodapé em telas altas (iPad/tablet).
+                Expanded(
                   child: Container(
                     width: double.infinity,
-                    height: 700.0,
                     decoration: BoxDecoration(
                       color: FlutterFlowTheme.of(context).secondaryBackground,
                     ),
