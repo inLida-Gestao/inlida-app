@@ -2085,8 +2085,23 @@ class _ViewPropriedadesWidgetState extends State<ViewPropriedadesWidget>
                                           .isNotEmpty)
                                         Flexible(
                                           child: Container(
-                                            constraints: const BoxConstraints(
-                                              maxHeight: 600.0,
+                                            // Cap proporcional à tela, com piso
+                                            // no valor antigo: em tablet a
+                                            // lista mostra mais itens antes de
+                                            // rolar, sem reduzir nada no
+                                            // celular. Não dá para usar
+                                            // Expanded aqui — esta Column está
+                                            // dentro de um SingleChildScrollView
+                                            // (altura ilimitada) e o
+                                            // ListView.builder abaixo precisa
+                                            // de um limite.
+                                            constraints: BoxConstraints(
+                                              maxHeight: (MediaQuery.sizeOf(
+                                                          context)
+                                                      .height *
+                                                  0.6)
+                                                  .clamp(600.0,
+                                                      double.infinity),
                                             ),
                                             decoration: const BoxDecoration(),
                                             child: Builder(
