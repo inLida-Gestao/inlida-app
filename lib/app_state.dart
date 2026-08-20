@@ -2447,6 +2447,20 @@ class FFAppState extends ChangeNotifier {
     _ordenacaoRebanhoTipo = value;
   }
 
+  /// Direção da ordenação da aba Sanidade: '', 'crescente' ou 'decrescente'.
+  String _ordenacaoSanidade = '';
+  String get ordenacaoSanidade => _ordenacaoSanidade;
+  set ordenacaoSanidade(String value) {
+    _ordenacaoSanidade = value;
+  }
+
+  /// Campo da ordenação da aba Sanidade: '', 'data', 'numero' ou 'lote'.
+  String _ordenacaoSanidadeTipo = '';
+  String get ordenacaoSanidadeTipo => _ordenacaoSanidadeTipo;
+  set ordenacaoSanidadeTipo(String value) {
+    _ordenacaoSanidadeTipo = value;
+  }
+
   String _ordenacaoPropriedade = '';
   String get ordenacaoPropriedade => _ordenacaoPropriedade;
   set ordenacaoPropriedade(String value) {

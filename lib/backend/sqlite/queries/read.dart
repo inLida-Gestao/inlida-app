@@ -2650,6 +2650,61 @@ class ListarReproducoesPesqRow extends SqliteRow {
 
 /// END LISTARREPRODUCOES PESQ
 
+/// Cláusulas ORDER BY permitidas para as buscas de sanidade.
+///
+/// [ordenacaoTipo] é um de `''`, `'data'`, `'numero'` ou `'lote'`.
+/// [ordenacaoDirecao] é um de `''`, `'crescente'` ou `'decrescente'`.
+/// Qualquer outro valor cai no padrão: data da sanidade decrescente.
+///
+/// O padrão ordena pela data do EVENTO (`data_sanidade`), não pela data de
+/// lançamento (`created_at`) — as duas divergem em ~89% dos registros, e
+/// ordenar por `created_at` fazia a primeira página esconder as sanidades mais
+/// recentes. Dentro da mesma data, `created_at DESC` mantém o lançamento mais
+/// novo primeiro.
+///
+/// Valores vazios do campo escolhido vão sempre para o fim, independente da
+/// direção. `ls.id_sanidade` fecha a ordenação para manter as páginas estáveis
+/// entre LIMIT/OFFSET.
+String _buscaSanidadeOrdenacaoClause(
+  String? ordenacaoTipo,
+  String? ordenacaoDirecao,
+) {
+  final direction = ordenacaoDirecao == 'decrescente' ? 'DESC' : 'ASC';
+  final dataOuNulo = _sqlDataOuNulo('ls.data_sanidade');
+  switch (ordenacaoTipo) {
+    case 'numero':
+      // Duas guardas, como no rebanho: `buildRebanhoNumeroSortKey('')` devolve
+      // '2' (não-vazio), então checar só a sortKey deixaria animais sem número
+      // no meio da ordenação. O LEFT JOIN sem correspondência cai aqui também.
+      return '''
+CASE WHEN lr.numeroAnimal IS NULL OR TRIM(lr.numeroAnimal) = '' OR lr.numeroAnimal = 'null' THEN 1 ELSE 0 END,
+  CASE WHEN lr.numeroAnimalSortKey IS NULL OR lr.numeroAnimalSortKey = '' THEN 1 ELSE 0 END,
+  lr.numeroAnimalSortKey $direction,
+  ls.id_sanidade ASC''';
+    case 'lote':
+      // O card mostra o lote da própria sanidade quando ela tem `id_lote`, e
+      // cai no lote atual do animal (`local_rebanho.loteNome`) quando não tem.
+      // A ordenação segue a mesma regra para não divergir do que está na tela.
+      const loteNome = "COALESCE("
+          "NULLIF(TRIM(COALESCE(ll.nome, '')), ''), "
+          "NULLIF(TRIM(COALESCE(lr.loteNome, '')), ''))";
+      return '''
+CASE WHEN $loteNome IS NULL OR lower($loteNome) = 'null' THEN 1 ELSE 0 END,
+  $loteNome COLLATE NOCASE $direction,
+  ls.id_sanidade ASC''';
+    case 'data':
+    default:
+      // Também é o padrão (tipo vazio). Aqui a direção default é DESC — mais
+      // recente primeiro —, diferente de 'numero'/'lote', que sobem por ASC.
+      final dataDirection = ordenacaoDirecao == 'crescente' ? 'ASC' : 'DESC';
+      return '''
+CASE WHEN $dataOuNulo IS NULL THEN 1 ELSE 0 END,
+  $dataOuNulo $dataDirection,
+  ls.created_at $dataDirection,
+  ls.id_sanidade ASC''';
+  }
+}
+
 /// BEGIN BUSCA SANIDADES PESQ
 Future<List<BuscaSanidadesPesqRow>> performBuscaSanidadesPesq(
   Database database, {
@@ -2663,29 +2718,49 @@ Future<List<BuscaSanidadesPesqRow>> performBuscaSanidadesPesq(
   String? idLote,
   String? dataSanidade,
   String? dataSanidadeFim,
+  String? ordenacaoTipo,
+  String? ordenacaoDirecao,
 }) {
+  final idPropriedadeSql = _escapeSqlValue(idPropriedade ?? '');
+  final idLoteSql = _escapeSqlValue(idLote ?? '');
+  final idRebanhoSql = _escapeSqlValue(idRebanho ?? '');
+  final dataSanidadeSql = _escapeSqlValue(dataSanidade ?? '');
+  final dataSanidadeFimSql = _escapeSqlValue(dataSanidadeFim ?? '');
+  final pesquisaSql = _escapeSqlValue(pesquisa ?? '');
+  final pesquisaLikeSql = _escapeSqlLikeValue(pesquisa ?? '');
+  final vacinasSql = _escapeSqlValue(vacinas ?? '');
+  final vacinasLikeSql = _escapeSqlLikeValue(vacinas ?? '');
+  final antiparasitarioSql = _escapeSqlValue(antiparasitario ?? '');
+  final antiparasitarioLikeSql = _escapeSqlLikeValue(antiparasitario ?? '');
+  final tratamentosSql = _escapeSqlValue(tratamentos ?? '');
+  final tratamentosLikeSql = _escapeSqlLikeValue(tratamentos ?? '');
+  final protocoloSql = _escapeSqlValue(protocolo ?? '');
+  final protocoloLikeSql = _escapeSqlLikeValue(protocolo ?? '');
+  final orderByClause =
+      _buscaSanidadeOrdenacaoClause(ordenacaoTipo, ordenacaoDirecao);
   final query = '''
-SELECT ls.* 
+SELECT ls.*
 FROM local_sanidade ls
 LEFT JOIN local_rebanho lr ON ls.id_rebanho = lr.idRebanho
-WHERE ls.id_propriedade = '$idPropriedade'
-AND ('$idLote' = '' OR ls.id_lote = '$idLote')
-AND ('$pesquisa' = '' OR 
-     ls.vacinacao LIKE '%$pesquisa%' OR 
-     ls.antiparasitario LIKE '%$pesquisa%' OR 
-     ls.tratamento LIKE '%$pesquisa%' OR 
-     ls.protocolo_reprodutivo LIKE '%$pesquisa%' OR
-     lr.numeroAnimal LIKE '%$pesquisa%' OR
-     lr.nome LIKE '%$pesquisa%')
-AND ('$vacinas' = '' OR ls.vacinacao LIKE '%$vacinas%')
-AND ('$antiparasitario' = '' OR ls.antiparasitario LIKE '%$antiparasitario%')
-AND ('$tratamentos' = '' OR ls.tratamento LIKE '%$tratamentos%')
-AND ('$protocolo' = '' OR ls.protocolo_reprodutivo LIKE '%$protocolo%')
-AND ('$idRebanho' = '' OR ls.id_rebanho = '$idRebanho')
-AND ('$dataSanidade' = '' OR ls.data_sanidade >= '$dataSanidade')
-AND ('$dataSanidadeFim' = '' OR ls.data_sanidade <= '$dataSanidadeFim')
+LEFT JOIN local_lotes ll ON ls.id_lote = ll.id_lote
+WHERE ls.id_propriedade = '$idPropriedadeSql'
+AND ('$idLoteSql' = '' OR ls.id_lote = '$idLoteSql')
+AND ('$pesquisaSql' = ''
+  OR ls.vacinacao LIKE '%$pesquisaLikeSql%' ESCAPE '\\'
+  OR ls.antiparasitario LIKE '%$pesquisaLikeSql%' ESCAPE '\\'
+  OR ls.tratamento LIKE '%$pesquisaLikeSql%' ESCAPE '\\'
+  OR ls.protocolo_reprodutivo LIKE '%$pesquisaLikeSql%' ESCAPE '\\'
+  OR lr.numeroAnimal LIKE '%$pesquisaLikeSql%' ESCAPE '\\'
+  OR lr.nome LIKE '%$pesquisaLikeSql%' ESCAPE '\\')
+AND ('$vacinasSql' = '' OR ls.vacinacao LIKE '%$vacinasLikeSql%' ESCAPE '\\')
+AND ('$antiparasitarioSql' = '' OR ls.antiparasitario LIKE '%$antiparasitarioLikeSql%' ESCAPE '\\')
+AND ('$tratamentosSql' = '' OR ls.tratamento LIKE '%$tratamentosLikeSql%' ESCAPE '\\')
+AND ('$protocoloSql' = '' OR ls.protocolo_reprodutivo LIKE '%$protocoloLikeSql%' ESCAPE '\\')
+AND ('$idRebanhoSql' = '' OR ls.id_rebanho = '$idRebanhoSql')
+AND ('$dataSanidadeSql' = '' OR ls.data_sanidade >= '$dataSanidadeSql')
+AND ('$dataSanidadeFimSql' = '' OR ls.data_sanidade <= '$dataSanidadeFimSql')
 AND COALESCE(ls.deletado, 'NAO') != 'SIM'
-ORDER BY ls.created_at DESC
+ORDER BY $orderByClause
 ''';
   return _readQuery(database, query, (d) => BuscaSanidadesPesqRow(d));
 }
@@ -2738,20 +2813,43 @@ Future<List<BuscaSanidadesPaginadaRow>> performBuscaSanidadesPaginada(
   String? dataSanidadeFim,
   int? limitRows,
   int? offsetRows,
+  String? ordenacaoTipo,
+  String? ordenacaoDirecao,
 }) {
+  final idPropriedadeSql = _escapeSqlValue(idPropriedade ?? '');
+  final idLoteSql = _escapeSqlValue(idLote ?? '');
+  final idRebanhoSql = _escapeSqlValue(idRebanho ?? '');
+  final dataSanidadeSql = _escapeSqlValue(dataSanidade ?? '');
+  final dataSanidadeFimSql = _escapeSqlValue(dataSanidadeFim ?? '');
+  final vacinasSql = _escapeSqlValue(vacinas ?? '');
+  final vacinasLikeSql = _escapeSqlLikeValue(vacinas ?? '');
+  final antiparasitarioSql = _escapeSqlValue(antiparasitario ?? '');
+  final antiparasitarioLikeSql = _escapeSqlLikeValue(antiparasitario ?? '');
+  final tratamentosSql = _escapeSqlValue(tratamentos ?? '');
+  final tratamentosLikeSql = _escapeSqlLikeValue(tratamentos ?? '');
+  final protocoloSql = _escapeSqlValue(protocolo ?? '');
+  final protocoloLikeSql = _escapeSqlLikeValue(protocolo ?? '');
+  final orderByClause =
+      _buscaSanidadeOrdenacaoClause(ordenacaoTipo, ordenacaoDirecao);
+  // `SELECT ls.*` (e não `SELECT *`) é obrigatório: os JOINs abaixo trazem
+  // colunas homônimas (created_at, updated_at, deletado, nome) que
+  // sobrescreveriam as de local_sanidade no mapa da linha.
   final query = '''
-SELECT * FROM local_sanidade
-WHERE id_propriedade = '$idPropriedade'
-AND ('$idLote' = '' OR id_lote = '$idLote')
-AND ('$vacinas' = ''OR vacinacao LIKE '%$vacinas%')
-AND ('$antiparasitario' = '' OR antiparasitario LIKE '%$antiparasitario%')
-AND ('$tratamentos' = ''OR tratamento LIKE '%$tratamentos%')
-AND ('$protocolo' = '' OR protocolo_reprodutivo LIKE '%$protocolo%')
-AND ('$idRebanho' = '' OR id_rebanho = '$idRebanho')
-AND ('$dataSanidade' = '' OR data_sanidade >= '$dataSanidade')
-AND ('$dataSanidadeFim' = '' OR data_sanidade <= '$dataSanidadeFim')
-AND COALESCE(deletado, 'NAO') != 'SIM'
-ORDER BY created_at DESC
+SELECT ls.*
+FROM local_sanidade ls
+LEFT JOIN local_rebanho lr ON ls.id_rebanho = lr.idRebanho
+LEFT JOIN local_lotes ll ON ls.id_lote = ll.id_lote
+WHERE ls.id_propriedade = '$idPropriedadeSql'
+AND ('$idLoteSql' = '' OR ls.id_lote = '$idLoteSql')
+AND ('$vacinasSql' = '' OR ls.vacinacao LIKE '%$vacinasLikeSql%' ESCAPE '\\')
+AND ('$antiparasitarioSql' = '' OR ls.antiparasitario LIKE '%$antiparasitarioLikeSql%' ESCAPE '\\')
+AND ('$tratamentosSql' = '' OR ls.tratamento LIKE '%$tratamentosLikeSql%' ESCAPE '\\')
+AND ('$protocoloSql' = '' OR ls.protocolo_reprodutivo LIKE '%$protocoloLikeSql%' ESCAPE '\\')
+AND ('$idRebanhoSql' = '' OR ls.id_rebanho = '$idRebanhoSql')
+AND ('$dataSanidadeSql' = '' OR ls.data_sanidade >= '$dataSanidadeSql')
+AND ('$dataSanidadeFimSql' = '' OR ls.data_sanidade <= '$dataSanidadeFimSql')
+AND COALESCE(ls.deletado, 'NAO') != 'SIM'
+ORDER BY $orderByClause
 LIMIT $limitRows OFFSET $offsetRows
 ''';
   return _readQuery(database, query, (d) => BuscaSanidadesPaginadaRow(d));

@@ -742,6 +742,8 @@ class SQLiteManager {
     String? idLote,
     String? dataSanidade,
     String? dataSanidadeFim,
+    String? ordenacaoTipo,
+    String? ordenacaoDirecao,
   }) =>
       performBuscaSanidadesPesq(
         _database,
@@ -755,6 +757,8 @@ class SQLiteManager {
         idLote: idLote,
         dataSanidade: dataSanidade,
         dataSanidadeFim: dataSanidadeFim,
+        ordenacaoTipo: ordenacaoTipo,
+        ordenacaoDirecao: ordenacaoDirecao,
       );
 
   Future<List<BuscaSanidadesPaginadaRow>> buscaSanidadesPaginada({
@@ -769,6 +773,8 @@ class SQLiteManager {
     String? dataSanidadeFim,
     int? limitRows,
     int? offsetRows,
+    String? ordenacaoTipo,
+    String? ordenacaoDirecao,
   }) =>
       performBuscaSanidadesPaginada(
         _database,
@@ -783,6 +789,8 @@ class SQLiteManager {
         dataSanidadeFim: dataSanidadeFim,
         limitRows: limitRows,
         offsetRows: offsetRows,
+        ordenacaoTipo: ordenacaoTipo,
+        ordenacaoDirecao: ordenacaoDirecao,
       );
 
   Future<List<QTDSanidadesRow>> qTDSanidades({

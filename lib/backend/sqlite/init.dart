@@ -185,6 +185,9 @@ Future<Database> initializeDatabaseFromDbFile(
   // Criar índices para otimizar buscas no rebanho popup
   await _ensureRebanhoIndexes(database, allowHeavyIndexes: !largeStartupDb);
 
+  // Criar índices para a listagem/ordenação de sanidade
+  await _ensureSanidadeIndexes(database, allowHeavyIndexes: !largeStartupDb);
+
   final shouldRunStartupMaintenance =
       await _shouldRunStartupMaintenance(database, isDeferredDatabaseUpgrade);
 
@@ -753,6 +756,62 @@ Future<void> _ensureRebanhoIndexes(
     }
   }
   debugPrint('[SQLite] Índices de busca do rebanho verificados/criados.');
+}
+
+/// Índices que sustentam a listagem de sanidade com ordenação + LIMIT/OFFSET.
+///
+/// Sem eles cada troca de página faz full scan de `local_sanidade` seguido de
+/// sort — visível em propriedades com milhares de registros.
+Future<void> _ensureSanidadeIndexes(
+  Database db, {
+  required bool allowHeavyIndexes,
+}) async {
+  const indexes = <({String name, String sql, bool heavy})>[
+    // Filtro base de toda a listagem (propriedade + descarte de deletados)
+    // e ordenação padrão (created_at DESC).
+    (
+      name: 'idx_sanidade_prop_deletado_created',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_sanidade_prop_deletado_created
+       ON local_sanidade (id_propriedade, deletado, created_at DESC, id_sanidade)''',
+    ),
+    // Ordenação por data do evento.
+    (
+      name: 'idx_sanidade_prop_deletado_data',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_sanidade_prop_deletado_data
+       ON local_sanidade (id_propriedade, deletado, data_sanidade, id_sanidade)''',
+    ),
+    // Sustenta os JOINs de ordenação por número do animal e por lote.
+    (
+      name: 'idx_sanidade_rebanho',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_sanidade_rebanho
+       ON local_sanidade (id_rebanho)''',
+    ),
+    (
+      name: 'idx_sanidade_lote',
+      heavy: false,
+      sql: '''CREATE INDEX IF NOT EXISTS idx_sanidade_lote
+       ON local_sanidade (id_lote)''',
+    ),
+  ];
+
+  for (final index in indexes) {
+    try {
+      if (!allowHeavyIndexes &&
+          index.heavy &&
+          !await _indexExists(db, index.name)) {
+        debugPrint(
+            '[SQLite] Índice pesado ${index.name} adiado para preservar abertura.');
+        continue;
+      }
+      await db.execute(index.sql);
+    } catch (e) {
+      debugPrint('[SQLite] Erro ao criar índice: $e');
+    }
+  }
+  debugPrint('[SQLite] Índices de busca da sanidade verificados/criados.');
 }
 
 Future<void> _dedupLotesPorIdLote(Database db) async {

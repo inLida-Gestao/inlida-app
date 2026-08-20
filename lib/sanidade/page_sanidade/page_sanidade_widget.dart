@@ -7,6 +7,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/propriedade/selecionar_propriedade/selecionar_propriedade_widget.dart';
 import '/sanidade/edit_sanidade_animal/edit_sanidade_animal_widget.dart';
 import '/sanidade/filtro_sanidades/filtro_sanidades_widget.dart';
+import '/sanidade/filtros_ordenacao_sanidade/filtros_ordenacao_sanidade_widget.dart';
 import '/actions/actions.dart' as action_blocks;
 import '/flutter_flow/custom_functions.dart' as functions;
 import 'package:easy_debounce/easy_debounce.dart';
@@ -611,6 +612,183 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
               thickness: 1.0,
               color: Color(0xFFEDEDED),
             ),
+            Padding(
+              padding:
+                  const EdgeInsetsDirectional.fromSTEB(24.0, 8.0, 24.0, 8.0),
+              child: InkWell(
+                splashColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onTap: () async {
+                  await showModalBottomSheet(
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    enableDrag: false,
+                    context: context,
+                    builder: (context) {
+                      return Padding(
+                        padding: MediaQuery.viewInsetsOf(context),
+                        child: const FiltrosOrdenacaoSanidadeWidget(),
+                      );
+                    },
+                  ).then((value) {
+                    _model.pageNum = 1;
+                    _model.offset = 0;
+                    safeSetState(() {});
+                  });
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: 40.0,
+                  decoration: BoxDecoration(
+                    color: valueOrDefault<Color>(
+                      FFAppState().ordenacaoSanidade == ''
+                          ? FlutterFlowTheme.of(context).secondaryBackground
+                          : const Color(0xFFD6F5E5),
+                      FlutterFlowTheme.of(context).secondaryBackground,
+                    ),
+                    borderRadius: BorderRadius.circular(100.0),
+                    border: Border.all(
+                      color: valueOrDefault<Color>(
+                        FFAppState().ordenacaoSanidade == ''
+                            ? FlutterFlowTheme.of(context).tertiary
+                            : FlutterFlowTheme.of(context).secondary,
+                        FlutterFlowTheme.of(context).accent3,
+                      ),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            if (FFAppState().ordenacaoSanidade == 'crescente')
+                              Icon(
+                                Icons.arrow_upward,
+                                color: FlutterFlowTheme.of(context).accent3,
+                                size: 14.0,
+                              ),
+                            if (FFAppState().ordenacaoSanidade == 'decrescente')
+                              Icon(
+                                Icons.arrow_downward,
+                                color: FlutterFlowTheme.of(context).accent3,
+                                size: 14.0,
+                              ),
+                            Text(
+                              valueOrDefault<String>(
+                                () {
+                                  if (FFAppState().ordenacaoSanidade ==
+                                      'crescente') {
+                                    return 'Crescente';
+                                  } else if (FFAppState().ordenacaoSanidade ==
+                                      'decrescente') {
+                                    return 'Decrescente';
+                                  } else {
+                                    // Sem escolha explícita a lista já vem por
+                                    // data da sanidade, mais recente primeiro.
+                                    return 'Data da sanidade (padrão)';
+                                  }
+                                }(),
+                                'Data da sanidade (padrão)',
+                              ),
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    fontFamily: FlutterFlowTheme.of(context)
+                                        .bodyMediumFamily,
+                                    color: valueOrDefault<Color>(
+                                      FFAppState().ordenacaoSanidade == ''
+                                          ? FlutterFlowTheme.of(context)
+                                              .accent3
+                                          : FlutterFlowTheme.of(context)
+                                              .primaryText,
+                                      FlutterFlowTheme.of(context).accent3,
+                                    ),
+                                    fontSize: 13.0,
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.w500,
+                                    useGoogleFonts:
+                                        !FlutterFlowTheme.of(context)
+                                            .bodyMediumIsCustom,
+                                  ),
+                            ),
+                          ].divide(const SizedBox(width: 6.0)),
+                        ),
+                        if ((FFAppState().ordenacaoSanidade != '') &&
+                            (FFAppState().ordenacaoSanidadeTipo != ''))
+                          SizedBox(
+                            height: 100.0,
+                            child: VerticalDivider(
+                              thickness: 2.0,
+                              color: FlutterFlowTheme.of(context).accent4,
+                            ),
+                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            if ((FFAppState().ordenacaoSanidade != '') &&
+                                (FFAppState().ordenacaoSanidadeTipo != ''))
+                              Text(
+                                valueOrDefault<String>(
+                                  () {
+                                    if (FFAppState().ordenacaoSanidadeTipo ==
+                                        'data') {
+                                      return 'Data da sanidade';
+                                    } else if (FFAppState()
+                                            .ordenacaoSanidadeTipo ==
+                                        'numero') {
+                                      return 'Número do animal';
+                                    } else if (FFAppState()
+                                            .ordenacaoSanidadeTipo ==
+                                        'lote') {
+                                      return 'Lote';
+                                    } else {
+                                      return 'N/A';
+                                    }
+                                  }(),
+                                  'N/A',
+                                ),
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .override(
+                                      fontFamily: FlutterFlowTheme.of(context)
+                                          .bodyMediumFamily,
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondary,
+                                      fontSize: 13.0,
+                                      letterSpacing: 0.0,
+                                      fontWeight: FontWeight.w600,
+                                      useGoogleFonts:
+                                          !FlutterFlowTheme.of(context)
+                                              .bodyMediumIsCustom,
+                                    ),
+                              ),
+                            if (FFAppState().ordenacaoSanidade == 'crescente')
+                              Icon(
+                                Icons.keyboard_arrow_up_rounded,
+                                color: FlutterFlowTheme.of(context).secondary,
+                                size: 24.0,
+                              ),
+                            if (FFAppState().ordenacaoSanidade == 'decrescente')
+                              Icon(
+                                Icons.keyboard_arrow_down,
+                                color: FlutterFlowTheme.of(context).secondary,
+                                size: 24.0,
+                              ),
+                          ].divide(const SizedBox(width: 6.0)),
+                        ),
+                      ].divide(const SizedBox(width: 8.0)),
+                    ),
+                  ),
+                ),
+              ),
+            ),
             Flexible(
               child: Container(
                 decoration: const BoxDecoration(),
@@ -660,6 +838,10 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                       locale: FFLocalizations.of(context)
                                           .languageCode,
                                     ),
+                                    ordenacaoTipo:
+                                        FFAppState().ordenacaoSanidadeTipo,
+                                    ordenacaoDirecao:
+                                        FFAppState().ordenacaoSanidade,
                                   ),
                                   builder: (context, snapshot) {
                                     // Customize what your widget looks like when it's loading.
@@ -1133,20 +1315,43 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                   fit: BoxFit.scaleDown,
                                                                                 ),
                                                                               ),
+                                                                              Expanded(
+                                                                                child: Text(
+                                                                                  valueOrDefault<String>(
+                                                                                    containerBuscarRebanhoRowList.firstOrNull?.loteNome,
+                                                                                    'Sem lote',
+                                                                                  ),
+                                                                                  style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                        font: GoogleFonts.plusJakartaSans(
+                                                                                          fontWeight: FontWeight.normal,
+                                                                                          fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                        ),
+                                                                                        color: const Color(0xFF5F5F5F),
+                                                                                        fontSize: 14.0,
+                                                                                        letterSpacing: 0.0,
+                                                                                        fontWeight: FontWeight.normal,
+                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                      ),
+                                                                                ),
+                                                                              ),
                                                                               Text(
                                                                                 valueOrDefault<String>(
-                                                                                  containerBuscarRebanhoRowList.firstOrNull?.loteNome,
-                                                                                  'Sem lote',
+                                                                                  dateTimeFormat(
+                                                                                    "d/M/y",
+                                                                                    functions.converterParaData(sanidadesItem.dataSanidade),
+                                                                                    locale: FFLocalizations.of(context).languageCode,
+                                                                                  ),
+                                                                                  'Sem data',
                                                                                 ),
                                                                                 style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                                       font: GoogleFonts.plusJakartaSans(
-                                                                                        fontWeight: FontWeight.normal,
+                                                                                        fontWeight: FontWeight.w600,
                                                                                         fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                       ),
                                                                                       color: const Color(0xFF5F5F5F),
                                                                                       fontSize: 14.0,
                                                                                       letterSpacing: 0.0,
-                                                                                      fontWeight: FontWeight.normal,
+                                                                                      fontWeight: FontWeight.w600,
                                                                                       fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                     ),
                                                                               ),
@@ -1195,6 +1400,27 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                     ),
                                                                                   ],
                                                                                 ),
+                                                                              ),
+                                                                              Text(
+                                                                                valueOrDefault<String>(
+                                                                                  dateTimeFormat(
+                                                                                    "d/M/y",
+                                                                                    functions.converterParaData(sanidadesItem.dataSanidade),
+                                                                                    locale: FFLocalizations.of(context).languageCode,
+                                                                                  ),
+                                                                                  'Sem data',
+                                                                                ),
+                                                                                style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                      font: GoogleFonts.plusJakartaSans(
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                        fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                      ),
+                                                                                      color: const Color(0xFF5F5F5F),
+                                                                                      fontSize: 14.0,
+                                                                                      letterSpacing: 0.0,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                    ),
                                                                               ),
                                                                               const Icon(
                                                                                 Icons.chevron_right,
@@ -1741,6 +1967,10 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                     limitRows: _model.limit,
                                     offsetRows: functions.calcDeslocamento(
                                         _model.pageNum, _model.limit!),
+                                    ordenacaoTipo:
+                                        FFAppState().ordenacaoSanidadeTipo,
+                                    ordenacaoDirecao:
+                                        FFAppState().ordenacaoSanidade,
                                   ),
                                   builder: (context, snapshot) {
                                     // Customize what your widget looks like when it's loading.
@@ -2165,20 +2395,43 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                         fit: BoxFit.scaleDown,
                                                                                       ),
                                                                                     ),
+                                                                                    Expanded(
+                                                                                      child: Text(
+                                                                                        valueOrDefault<String>(
+                                                                                          containerBuscarRebanhoRowList.firstOrNull?.loteNome,
+                                                                                          'Sem lote',
+                                                                                        ),
+                                                                                        style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                              font: GoogleFonts.plusJakartaSans(
+                                                                                                fontWeight: FontWeight.normal,
+                                                                                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                              ),
+                                                                                              color: const Color(0xFF5F5F5F),
+                                                                                              fontSize: 14.0,
+                                                                                              letterSpacing: 0.0,
+                                                                                              fontWeight: FontWeight.normal,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                            ),
+                                                                                      ),
+                                                                                    ),
                                                                                     Text(
                                                                                       valueOrDefault<String>(
-                                                                                        containerBuscarRebanhoRowList.firstOrNull?.loteNome,
-                                                                                        'Sem lote',
+                                                                                        dateTimeFormat(
+                                                                                          "d/M/y",
+                                                                                          functions.converterParaData(sanidadesItem.dataSanidade),
+                                                                                          locale: FFLocalizations.of(context).languageCode,
+                                                                                        ),
+                                                                                        'Sem data',
                                                                                       ),
                                                                                       style: FlutterFlowTheme.of(context).bodyLarge.override(
                                                                                             font: GoogleFonts.plusJakartaSans(
-                                                                                              fontWeight: FontWeight.normal,
+                                                                                              fontWeight: FontWeight.w600,
                                                                                               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                             ),
                                                                                             color: const Color(0xFF5F5F5F),
                                                                                             fontSize: 14.0,
                                                                                             letterSpacing: 0.0,
-                                                                                            fontWeight: FontWeight.normal,
+                                                                                            fontWeight: FontWeight.w600,
                                                                                             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
                                                                                           ),
                                                                                     ),
@@ -2221,6 +2474,27 @@ class _PageSanidadeWidgetState extends State<PageSanidadeWidget> {
                                                                                           ),
                                                                                         ],
                                                                                       ),
+                                                                                    ),
+                                                                                    Text(
+                                                                                      valueOrDefault<String>(
+                                                                                        dateTimeFormat(
+                                                                                          "d/M/y",
+                                                                                          functions.converterParaData(sanidadesItem.dataSanidade),
+                                                                                          locale: FFLocalizations.of(context).languageCode,
+                                                                                        ),
+                                                                                        'Sem data',
+                                                                                      ),
+                                                                                      style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                                                                            font: GoogleFonts.plusJakartaSans(
+                                                                                              fontWeight: FontWeight.w600,
+                                                                                              fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                            ),
+                                                                                            color: const Color(0xFF5F5F5F),
+                                                                                            fontSize: 14.0,
+                                                                                            letterSpacing: 0.0,
+                                                                                            fontWeight: FontWeight.w600,
+                                                                                            fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                                                                          ),
                                                                                     ),
                                                                                     const Icon(
                                                                                       Icons.chevron_right,
