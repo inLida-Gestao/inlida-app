@@ -681,6 +681,8 @@ class SQLiteManager {
     String? dataUltPesagemFim,
     String? ordenacaoTipo,
     String? ordenacaoDirecao,
+    int? limitRows,
+    int? offsetRows,
   }) async {
     return performBuscaRebanhoPaginadaPesquisa(
       _database,
@@ -698,8 +700,41 @@ class SQLiteManager {
       dataUltPesagemFim: dataUltPesagemFim,
       ordenacaoTipo: ordenacaoTipo,
       ordenacaoDirecao: ordenacaoDirecao,
+      limitRows: limitRows,
+      offsetRows: offsetRows,
     );
   }
+
+  /// Total de animais que casam com a busca, para o paginador.
+  Future<int> contaRebanhoPesquisa({
+    String? idPropriedade,
+    String? sexo,
+    String? categoria,
+    String? raca,
+    String? origem,
+    String? loteId,
+    String? pesquisa,
+    String? statusReb,
+    String? dataNascInicio,
+    String? dataNascFim,
+    String? dataUltPesagemInicio,
+    String? dataUltPesagemFim,
+  }) =>
+      performContaRebanhoPesquisa(
+        _database,
+        idPropriedade: idPropriedade,
+        sexo: sexo,
+        categoria: categoria,
+        raca: raca,
+        origem: origem,
+        loteId: loteId,
+        pesquisa: pesquisa,
+        statusReb: statusReb,
+        dataNascInicio: dataNascInicio,
+        dataNascFim: dataNascFim,
+        dataUltPesagemInicio: dataUltPesagemInicio,
+        dataUltPesagemFim: dataUltPesagemFim,
+      );
 
   Future<List<ListarReproducoesPesqRow>> listarReproducoesPesq({
     String? idPropriedade,

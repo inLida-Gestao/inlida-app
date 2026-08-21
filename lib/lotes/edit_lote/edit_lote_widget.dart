@@ -2323,6 +2323,11 @@ class _EditLoteWidgetState extends State<EditLoteWidget>
                                                       .ordenacaoLoteAnimaisTipo,
                                                   ordenacaoDirecao: FFAppState()
                                                       .ordenacaoLoteAnimais,
+                                                      // Limite explícito para preservar o comportamento desta tela: a
+                                                      // query deixou de ter cap fixo de 100 (ver read.dart), mas aqui os
+                                                      // resultados são renderizados de uma vez, então manter o limite até
+                                                      // que esta tela também pagine.
+                                                      limitRows: 100,
                                                 ),
                                                 builder: (context, snapshot) {
                                                   // Customize what your widget looks like when it's loading.

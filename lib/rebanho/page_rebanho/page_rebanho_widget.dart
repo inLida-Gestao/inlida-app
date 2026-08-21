@@ -148,7 +148,16 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
 
   String _searchTerm() => _model.pesquisarTextController.text.trim();
 
-  String _buscaRebanhoPesquisaCacheKey() {
+  /// True quando a listagem usa o caminho de BUSCA (termo digitado ou
+  /// ordenação ativa) em vez da listagem paginada simples.
+  bool _usandoBusca() =>
+      _searchTerm().isNotEmpty ||
+      FFAppState().ordenacaoRebanho != '' ||
+      FFAppState().ordenacaoRebanhoTipo != '';
+
+  /// Chave só dos filtros, sem paginação — usada pela contagem total, que
+  /// não muda ao trocar de página.
+  String _pesquisaFiltrosCacheKey() {
     final state = FFAppState();
     return [
       state.propriedadeSelecionada.idPropriedade,
@@ -168,7 +177,43 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
     ].join('|');
   }
 
+  String _buscaRebanhoPesquisaCacheKey() =>
+      [_pesquisaFiltrosCacheKey(), _model.limit, _model.offset].join('|');
+
+  /// Total de resultados da busca, para o paginador saber quantas páginas
+  /// existem. Fica em estado porque a contagem é assíncrona e o paginador é
+  /// só um TextSpan.
+  int? _totalPesquisa;
+  String? _totalPesquisaCacheKey;
+
+  void _atualizaTotalPesquisa() {
+    final cacheKey = _pesquisaFiltrosCacheKey();
+    if (_totalPesquisaCacheKey == cacheKey) return;
+    _totalPesquisaCacheKey = cacheKey;
+    final state = FFAppState();
+    SQLiteManager.instance
+        .contaRebanhoPesquisa(
+      idPropriedade: state.propriedadeSelecionada.idPropriedade,
+      sexo: state.filtroSexoRebanho,
+      categoria: state.filtroCategoriasRebanho,
+      raca: state.filtroRaca,
+      origem: state.filtroOrigemRebanho,
+      loteId: state.filtroLoteRebanho,
+      pesquisa: _searchTerm(),
+      statusReb: _statusFilterValue(),
+      dataNascInicio: _dataNascInicioFilterValue(),
+      dataNascFim: _dataNascFimFilterValue(),
+      dataUltPesagemInicio: _dataUltPesagemInicioFilterValue(),
+      dataUltPesagemFim: _dataUltPesagemFimFilterValue(),
+    )
+        .then((total) {
+      if (!mounted || _totalPesquisaCacheKey != cacheKey) return;
+      safeSetState(() => _totalPesquisa = total);
+    });
+  }
+
   Future<List<BuscaRebanhoPaginadaPesquisaRow>> _buscaRebanhoPesquisaFuture() {
+    _atualizaTotalPesquisa();
     final cacheKey = _buscaRebanhoPesquisaCacheKey();
     if (_model.buscaRebanhoPesquisaCacheKey != cacheKey ||
         _model.buscaRebanhoPesquisaFuture == null) {
@@ -187,6 +232,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
         dataNascFim: _dataNascFimFilterValue(),
         dataUltPesagemInicio: _dataUltPesagemInicioFilterValue(),
         dataUltPesagemFim: _dataUltPesagemFimFilterValue(),
+        // A busca passa a paginar como a listagem sem busca. Antes ela
+        // devolvia no máximo 100 resultados, então um filtro com 132
+        // animais mostrava 100 (BUG-APP.URGENTE, FAZENDA ANNA JÚLIA).
+        limitRows: _model.limit,
+        offsetRows: _model.offset,
       );
     }
     return _model.buscaRebanhoPesquisaFuture!;
@@ -8754,8 +8804,11 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                   }
                 },
               ),
-              if (_searchTerm().isEmpty)
-                Padding(
+              // O paginador era escondido quando havia termo de busca, porque
+              // a busca devolvia tudo de uma vez (até o cap de 100). Agora ela
+              // pagina como a listagem, então precisa do controle — sem ele o
+              // usuário ficaria preso na primeira página de 20.
+              Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(
                       16.0, 0.0, 16.0, 0.0),
                   child: Row(
@@ -8817,7 +8870,12 @@ class _PageRebanhoWidgetState extends State<PageRebanhoWidget> {
                             ),
                             TextSpan(
                               text: valueOrDefault<String>(
-                                ((FFAppState().animaisRegistrados /
+                                (((_usandoBusca()
+                                                ? (_totalPesquisa ??
+                                                    FFAppState()
+                                                        .animaisRegistrados)
+                                                : FFAppState()
+                                                    .animaisRegistrados) /
                                             (_model.limit!))
                                         .ceil())
                                     .toString(),

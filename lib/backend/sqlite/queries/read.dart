@@ -2444,6 +2444,81 @@ CASE WHEN dataUltimaPesagem IS NULL OR dataUltimaPesagem = '' OR dataUltimaPesag
 }
 
 /// BEGIN BUSCA REBANHO PAGINADA PESQUISA
+/// Condição de correspondência da busca do rebanho — compartilhada entre a
+/// listagem e a contagem, para as duas nunca divergirem.
+String _buscaRebanhoPesquisaCondition(String pesquisaLikeSql) {
+  if (pesquisaLikeSql.isEmpty) return '1 = 1';
+  return '''(numeroAnimal LIKE '%$pesquisaLikeSql%' ESCAPE '\\'
+  OR nome COLLATE NOCASE LIKE '%$pesquisaLikeSql%' ESCAPE '\\'
+  OR chip LIKE '%$pesquisaLikeSql%' ESCAPE '\\')''';
+}
+
+/// Prioridade de exibição da busca: match exato primeiro, depois prefixo,
+/// depois o resto.
+///
+/// Antes isso era feito com consultas em estágios que **retornavam ao achar
+/// o primeiro match exato**, então quem buscava "117" via só o animal 117 e
+/// nunca o "117 F" (BUG-APP.URGENTE, FAZENDA ANNA JÚLIA). Como CASE no
+/// ORDER BY, a mesma prioridade é mantida sem excluir ninguém — e permite
+/// LIMIT/OFFSET sobre o conjunto inteiro.
+String _buscaRebanhoPesquisaRankClause(
+  String pesquisaSql,
+  String pesquisaLikeSql,
+) {
+  if (pesquisaSql.isEmpty) return '';
+  return '''CASE
+    WHEN chip = '$pesquisaSql' THEN 0
+    WHEN numeroAnimal = '$pesquisaSql' THEN 1
+    WHEN chip LIKE '$pesquisaLikeSql%' ESCAPE '\\' THEN 2
+    WHEN numeroAnimal LIKE '$pesquisaLikeSql%' ESCAPE '\\' THEN 3
+    WHEN nome COLLATE NOCASE LIKE '$pesquisaLikeSql%' ESCAPE '\\' THEN 4
+    ELSE 5
+  END,
+  ''';
+}
+
+/// Total de animais que casam com a busca, para o paginador saber quantas
+/// páginas existem. Usa a MESMA condição da listagem.
+Future<int> performContaRebanhoPesquisa(
+  Database database, {
+  String? idPropriedade,
+  String? sexo,
+  String? categoria,
+  String? raca,
+  String? origem,
+  String? loteId,
+  String? pesquisa,
+  String? statusReb,
+  String? dataNascInicio,
+  String? dataNascFim,
+  String? dataUltPesagemInicio,
+  String? dataUltPesagemFim,
+}) async {
+  final pesquisaLikeSql = _escapeSqlLikeValue((pesquisa ?? '').trim());
+  final filterCondition = _buildRebanhoFilterCondition(
+    sexo: sexo,
+    categoria: categoria,
+    raca: raca,
+    origem: origem,
+    loteId: loteId,
+    statusReb: statusReb,
+    dataNascInicio: dataNascInicio,
+    dataNascFim: dataNascFim,
+    dataUltPesagemInicio: dataUltPesagemInicio,
+    dataUltPesagemFim: dataUltPesagemFim,
+  );
+  final rows = await database.rawQuery('''
+SELECT COUNT(*) AS total
+FROM local_rebanho
+WHERE idPropriedade = '${_escapeSqlValue(idPropriedade ?? '')}'
+$filterCondition
+AND deletado = 'NAO'
+AND ${_buscaRebanhoPesquisaCondition(pesquisaLikeSql)}
+''');
+  final total = rows.isEmpty ? null : rows.first['total'];
+  return total is int ? total : int.tryParse('$total') ?? 0;
+}
+
 Future<List<BuscaRebanhoPaginadaPesquisaRow>>
     performBuscaRebanhoPaginadaPesquisa(
   Database database, {
@@ -2461,6 +2536,8 @@ Future<List<BuscaRebanhoPaginadaPesquisaRow>>
   String? dataUltPesagemFim,
   String? ordenacaoTipo,
   String? ordenacaoDirecao,
+  int? limitRows,
+  int? offsetRows,
 }) async {
   final pesquisaValue = (pesquisa ?? '').trim();
   final pesquisaSql = _escapeSqlValue(pesquisaValue);
@@ -2481,69 +2558,20 @@ Future<List<BuscaRebanhoPaginadaPesquisaRow>>
       _buscaRebanhoOrdenacaoClause(ordenacaoTipo, ordenacaoDirecao);
   const selectColumns =
       'idRebanho, tipo, numeroAnimal, chip, nome, sexo, categoria, dataNascimento, raca, loteID, loteNome, statusRebanho, created_at, dataUltimaPesagem';
-  final baseFilter = '''
-WHERE idPropriedade = '$idPropriedade'
-$filterCondition
-AND deletado = 'NAO'
-''';
-  if (pesquisaValue.isNotEmpty) {
-    final collectedRows = <Map<String, dynamic>>[];
-    final collectedIds = <String>{};
-
-    Future<void> addRows(String query) async {
-      final rows = await database.rawQuery(query);
-      for (final row in rows) {
-        final id = row['idRebanho']?.toString() ?? row.toString();
-        if (collectedIds.add(id)) {
-          collectedRows.add(row);
-        }
-        if (collectedRows.length >= 100) {
-          return;
-        }
-      }
-    }
-
-    String rankedQuery(String condition) => '''
-SELECT $selectColumns
-FROM local_rebanho
-$baseFilter
-AND $condition
-ORDER BY $orderByClause
-LIMIT ${100 - collectedRows.length}
-
-''';
-
-    await addRows(rankedQuery("chip = '$pesquisaSql'"));
-    await addRows(rankedQuery("numeroAnimal = '$pesquisaSql'"));
-    if (collectedRows.isNotEmpty) {
-      return collectedRows
-          .map((d) => BuscaRebanhoPaginadaPesquisaRow(d))
-          .toList();
-    }
-
-    await addRows(rankedQuery("chip LIKE '$pesquisaLikeSql%' ESCAPE '\\'"));
-    await addRows(
-        rankedQuery("numeroAnimal LIKE '$pesquisaLikeSql%' ESCAPE '\\'"));
-    await addRows(rankedQuery(
-        "nome COLLATE NOCASE LIKE '$pesquisaLikeSql%' ESCAPE '\\'"));
-    if (collectedRows.isNotEmpty) {
-      return collectedRows
-          .map((d) => BuscaRebanhoPaginadaPesquisaRow(d))
-          .toList();
-    }
-  }
-
+  // Sem limite quando limitRows é nulo. O cap fixo de 100 que existia aqui
+  // fazia a lista parar em 100 mesmo havendo mais resultados — era o outro
+  // sintoma do bug da FAZENDA ANNA JÚLIA (132 animais, 100 exibidos).
+  final paginacao =
+      limitRows == null ? '' : 'LIMIT $limitRows OFFSET ${offsetRows ?? 0}';
   final query = '''
 SELECT $selectColumns
 FROM local_rebanho
-$baseFilter
-AND ('$pesquisaSql' = ''
-  OR numeroAnimal LIKE '%$pesquisaLikeSql%' ESCAPE '\\'
-  OR nome COLLATE NOCASE LIKE '%$pesquisaLikeSql%' ESCAPE '\\'
-  OR chip LIKE '%$pesquisaLikeSql%' ESCAPE '\\')
-ORDER BY $orderByClause
-LIMIT 100
-
+WHERE idPropriedade = '${_escapeSqlValue(idPropriedade ?? '')}'
+$filterCondition
+AND deletado = 'NAO'
+AND ${_buscaRebanhoPesquisaCondition(pesquisaLikeSql)}
+ORDER BY ${_buscaRebanhoPesquisaRankClause(pesquisaSql, pesquisaLikeSql)}$orderByClause
+$paginacao
 ''';
   final rows = await database.rawQuery(query);
   return rows.map((d) => BuscaRebanhoPaginadaPesquisaRow(d)).toList();
