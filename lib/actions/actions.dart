@@ -2112,6 +2112,11 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
   List<BuscarRebanhoUPDATEDRow> localUpd = const [];
   List<BuscaHistPesagensPUTRow> pesPut = const [];
   List<BuscaHistPesagensUPDTRow> pesUpd = const [];
+  // Crias cujo vínculo saiu do payload porque o pai ainda não existe no
+  // servidor. Declarado fora do try porque a remarcação acontece depois do
+  // catch. Remarcadas como pendentes para um segundo sync gravar o vínculo
+  // depois que o pai subir.
+  final vinculoAdiado = <String>{};
 
   try {
     _throwIfCancelled('putUpdtRebanhos');
@@ -2180,7 +2185,12 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
     final rebanhoInserts = <Map<String, dynamic>>[];
     for (final row in localPut) {
       _throwIfCancelled('putUpdtRebanhos.insert');
-      rebanhoInserts.add(_buildRebanhoPayload(row.data, isInsert: true));
+      rebanhoInserts.add(_buildRebanhoPayload(
+        row.data,
+        isInsert: true,
+        idsAusentesNoServidor: putIds,
+        vinculoAdiado: vinculoAdiado,
+      ));
     }
     _syncLog('putUpdtRebanhos',
         'Payloads INSERT rebanho montados: ${rebanhoInserts.length}.');
@@ -2410,7 +2420,12 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
       final updatedIds = <String>[];
       for (final row in localUpd) {
         _throwIfCancelled('putUpdtRebanhos.update');
-        final payload = _buildRebanhoPayload(row.data, isInsert: false);
+        final payload = _buildRebanhoPayload(
+          row.data,
+          isInsert: false,
+          idsAusentesNoServidor: putIds,
+          vinculoAdiado: vinculoAdiado,
+        );
         final isDelete = payload['deletado'] == 'SIM';
         try {
           final matched = await _retry(
@@ -2424,7 +2439,12 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
 
           if (!matched && !isDelete) {
             final insertPayload =
-                _buildRebanhoPayload(row.data, isInsert: true);
+                _buildRebanhoPayload(
+                  row.data,
+                  isInsert: true,
+                  idsAusentesNoServidor: putIds,
+                  vinculoAdiado: vinculoAdiado,
+                );
             _syncLog('putUpdtRebanhos',
                 'UPDATE rebanho não encontrou idRebanho=${row.idRebanho}; recuperando com UPSERT INSERT idempotente.');
             await _retry(
@@ -2686,13 +2706,71 @@ Future<bool> putUpdtRebanhos(BuildContext context) async {
     allSuccess = false;
     _syncLog('putUpdtRebanhos', 'ERRO no upload de rebanhos: $e\n$s');
   }
+  if (vinculoAdiado.isNotEmpty) {
+    await _remarcarVinculoRebanhoPendente(vinculoAdiado);
+  }
   return allSuccess;
 }
 
+/// Remarca como pendentes as crias cujo vínculo de mãe/pai foi omitido do
+/// payload porque o animal-pai ainda não existia no servidor. O registro em
+/// si já subiu; falta só o vínculo, que vai no próximo sync — quando o pai
+/// já estará lá.
+///
+/// O CASE preserva `sync_op = 'insert'`: se a linha ainda não foi criada no
+/// servidor, ela precisa continuar sendo um INSERT.
+Future<void> _remarcarVinculoRebanhoPendente(Iterable<String> ids) async {
+  final validos =
+      ids.map((e) => e.trim()).where((e) => e.isNotEmpty).toSet().toList();
+  if (validos.isEmpty) return;
+  final db = SQLiteManager.instance.database;
+  final now = DateTime.now().toIso8601String();
+  const tamanhoLote = 200;
+  for (var start = 0; start < validos.length; start += tamanhoLote) {
+    final end = start + tamanhoLote > validos.length
+        ? validos.length
+        : start + tamanhoLote;
+    final chunk = validos.sublist(start, end);
+    final placeholders = List.filled(chunk.length, '?').join(',');
+    await db.rawUpdate(
+      '''
+      UPDATE local_rebanho
+      SET sync_dirty = 1,
+          sync_op = CASE WHEN sync_dirty = 1 AND sync_op = 'insert'
+                         THEN 'insert' ELSE 'update' END,
+          sync_updated_at = ?
+      WHERE idRebanho IN ($placeholders)
+      ''',
+      [now, ...chunk],
+    );
+  }
+  _syncLog('putUpdtRebanhos',
+      'Vínculo adiado: ${validos.length} cria(s) remarcada(s) para enviar o vínculo no próximo sync.');
+}
+
+/// [idsAusentesNoServidor] são idRebanho que ainda não existem no servidor
+/// (estão na fila como INSERT). Um vínculo apontando para um deles não pode
+/// ser enviado agora: o servidor receberia um id que não conhece — que é
+/// exatamente o órfão que estamos corrigindo. Nesses casos o vínculo sai do
+/// payload e o idRebanho da cria vai para [vinculoAdiado], para ser remarcado
+/// como pendente e enviado num segundo sync, quando o pai já existir. O
+/// gatilho do servidor religa pelo texto nesse intervalo.
 Map<String, dynamic> _buildRebanhoPayload(
   Map<String, dynamic> raw, {
   required bool isInsert,
+  Set<String> idsAusentesNoServidor = const {},
+  Set<String>? vinculoAdiado,
 }) {
+  final idProprio = raw['idRebanho']?.toString().trim();
+  String? vinculoEnviavel(dynamic bruto) {
+    final id = bruto?.toString().trim();
+    if (id == null || id.isEmpty || id.toLowerCase() == 'null') return null;
+    if (!idsAusentesNoServidor.contains(id)) return id;
+    if (idProprio != null && idProprio.isNotEmpty) {
+      vinculoAdiado?.add(idProprio);
+    }
+    return null;
+  }
   String? normalizeNullableText(dynamic v) {
     if (v == null) return null;
     final s = v.toString().trim();
@@ -2744,8 +2822,8 @@ Map<String, dynamic> _buildRebanhoPayload(
     // campos de texto do payload que não passavam pela normalização, então
     // uma string vazia local subia para o servidor como '' em vez de NULL.
     // Origem dos ~8.2k vínculos vazios em produção.
-    'rebanhoIdMatriz': normalizeNullableText(raw['rebanhoIdMatriz']),
-    'rebanhoIdReprodutor': normalizeNullableText(raw['rebanhoIdReprodutor']),
+    'rebanhoIdMatriz': vinculoEnviavel(raw['rebanhoIdMatriz']),
+    'rebanhoIdReprodutor': vinculoEnviavel(raw['rebanhoIdReprodutor']),
     'dataDesmama': serializeDate(raw['dataDesmama']),
     'pesoDesmama': raw['pesoDesmama'],
     'pesoAtual': raw['pesoAtual'],
