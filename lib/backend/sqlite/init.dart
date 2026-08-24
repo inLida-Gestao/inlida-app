@@ -1647,23 +1647,37 @@ Future<void> _dedupRebanhoLogicoDuplicadoV3(
               where: 'id_rebanho_reprodutor = ?',
               whereArgs: [dupId],
             );
-            final n4 = await txn.update(
-              'local_rebanho',
-              {
-                'rebanhoIdMatriz': canonicalId,
-                'updated_at': nowIso,
-              },
-              where: 'rebanhoIdMatriz = ?',
-              whereArgs: [dupId],
+            // rawUpdate (e não txn.update) para marcar a linha como pendente
+            // de envio junto com a reatribuição.
+            //
+            // A fila de PUSH do rebanho é por flag: `buscarRebanhoUPDATED`
+            // filtra `sync_dirty = 1 AND sync_op IN ('update','delete')`.
+            // Antes estes dois UPDATEs gravavam só `updated_at`, então a
+            // reatribuição para o canonicalId ficava SÓ no aparelho: o
+            // servidor seguia com o id do duplicado, que depois virava órfão
+            // no soft-delete. Era a origem dos vínculos apontando para
+            // idRebanho inexistente.
+            //
+            // O CASE preserva `sync_op = 'insert'`: se a linha ainda não foi
+            // criada no servidor, ela precisa continuar sendo um INSERT.
+            //
+            // local_sanidade e local_reproducao (n1..n3 acima) não têm essas
+            // colunas — a fila delas é por data, então `updated_at` basta.
+            const marcaPendente = '''
+    updated_at = ?,
+    sync_dirty = 1,
+    sync_op = CASE WHEN sync_dirty = 1 AND sync_op = 'insert'
+                   THEN 'insert' ELSE 'update' END,
+    sync_updated_at = ?''';
+            final n4 = await txn.rawUpdate(
+              'UPDATE local_rebanho SET rebanhoIdMatriz = ?, $marcaPendente '
+              'WHERE rebanhoIdMatriz = ?',
+              [canonicalId, nowIso, nowIso, dupId],
             );
-            final n5 = await txn.update(
-              'local_rebanho',
-              {
-                'rebanhoIdReprodutor': canonicalId,
-                'updated_at': nowIso,
-              },
-              where: 'rebanhoIdReprodutor = ?',
-              whereArgs: [dupId],
+            final n5 = await txn.rawUpdate(
+              'UPDATE local_rebanho SET rebanhoIdReprodutor = ?, $marcaPendente '
+              'WHERE rebanhoIdReprodutor = ?',
+              [canonicalId, nowIso, nowIso, dupId],
             );
 
             report['sanidadeReatribuidos'] =

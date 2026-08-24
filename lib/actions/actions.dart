@@ -2740,8 +2740,12 @@ Map<String, dynamic> _buildRebanhoPayload(
     'raca': raw['raca'],
     'loteID': normalizeNullableText(raw['loteID']),
     'dataEntradaLote': serializeDate(raw['dataEntradaLote']),
-    'rebanhoIdMatriz': raw['rebanhoIdMatriz'],
-    'rebanhoIdReprodutor': raw['rebanhoIdReprodutor'],
+    // normalizeNullableText (e não o valor cru): estes dois eram os únicos
+    // campos de texto do payload que não passavam pela normalização, então
+    // uma string vazia local subia para o servidor como '' em vez de NULL.
+    // Origem dos ~8.2k vínculos vazios em produção.
+    'rebanhoIdMatriz': normalizeNullableText(raw['rebanhoIdMatriz']),
+    'rebanhoIdReprodutor': normalizeNullableText(raw['rebanhoIdReprodutor']),
     'dataDesmama': serializeDate(raw['dataDesmama']),
     'pesoDesmama': raw['pesoDesmama'],
     'pesoAtual': raw['pesoAtual'],
