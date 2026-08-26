@@ -1,7 +1,10 @@
 // Automatic FlutterFlow imports
 import '/actions/actions.dart' as action_blocks;
 import '/auth/supabase_auth/auth_util.dart';
+import '/backend/api_requests/api_calls.dart';
 import '/backend/sqlite/sqlite_manager.dart';
+import '/backend/supabase/supabase.dart';
+import '/backend/utils/sync_auth_session.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 // Imports other custom actions
 // (none)
@@ -103,6 +106,60 @@ class SyncEngine {
     FFAppState().syncCancelRequested = true;
   }
 
+  Future<bool> _ensureValidSession(
+    BuildContext context,
+    SyncTrigger trigger,
+  ) async {
+    final auth = SupaFlow.client.auth;
+    var session = auth.currentSession;
+    final forceFullPullAfterRefresh = shouldForceFullPullAfterSessionRefresh(
+      session?.expiresAt,
+    );
+
+    if (session != null && !shouldRefreshSyncSession(session.expiresAt)) {
+      SupabaseFunctionsGroup.setAuthToken(session.accessToken);
+      return true;
+    }
+
+    try {
+      final response = await auth.refreshSession();
+      session = response.session;
+      if (session != null &&
+          !shouldRefreshSyncSession(
+            session.expiresAt,
+            refreshWindow: Duration.zero,
+          )) {
+        debugPrint('[SYNC][engine] Sessão Supabase renovada antes do PUSH.');
+        SupabaseFunctionsGroup.setAuthToken(session.accessToken);
+        if (forceFullPullAfterRefresh) {
+          FFAppState().propriedadesChangeDateTime = null;
+          FFAppState().rebanhosChangeDateTime = null;
+          debugPrint(
+            '[SYNC][engine] Sessão expirada recuperada; forçando PULL completo '
+            'de propriedades e rebanho.',
+          );
+        }
+        return true;
+      }
+    } catch (e, s) {
+      debugPrint('[SYNC][engine] Falha ao renovar sessão Supabase: $e\n$s');
+    }
+
+    debugPrint('[SYNC][engine] Sync bloqueado: sessão ausente ou expirada.');
+    SupabaseFunctionsGroup.setAuthToken(null);
+    if (trigger != SyncTrigger.autoReconnect && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Sua sessão expirou. Saia e entre novamente antes de sincronizar.',
+          ),
+          duration: Duration(seconds: 6),
+        ),
+      );
+    }
+    return false;
+  }
+
   /// Executa um sync completo (PUSH → PULL).
   ///
   /// Retorna [SyncResult]. Se outro sync estiver em andamento ou se o
@@ -125,6 +182,10 @@ class SyncEngine {
             '[SYNC][engine] Intervalo mínimo de auto-sync não atingido.');
         return const SyncResult(skipped: true);
       }
+    }
+
+    if (!await _ensureValidSession(context, trigger)) {
+      return const SyncResult(cancelled: true);
     }
 
     if (await action_blocks.blockIfAccountCanceled(

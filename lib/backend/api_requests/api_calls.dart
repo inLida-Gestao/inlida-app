@@ -65,11 +65,19 @@ class SupabaseFunctionsGroup {
   static String getBaseUrl() =>
       'https://eqrtgsqnxxnfjjzlxpuj.supabase.co/rest/v1/rpc';
   static Map<String, String> headers = {
-    'apikey':
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
-    'Authorization':
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
+    'apikey': _anonKey,
+    'Authorization': 'Bearer $_anonKey',
   };
+
+  static const _anonKey =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM';
+
+  static void setAuthToken(String? accessToken) {
+    final token = accessToken?.trim();
+    headers['Authorization'] =
+        'Bearer ${token == null || token.isEmpty ? _anonKey : token}';
+  }
+
   static BuscarRebanhosCall buscarRebanhosCall = BuscarRebanhosCall();
   static BuscarReproducoesCall buscarReproducoesCall = BuscarReproducoesCall();
   static BuscarSanidadesCall buscarSanidadesCall = BuscarSanidadesCall();
@@ -89,8 +97,7 @@ class SupabaseFunctionsGroup {
   static BuscarSanidadesIncCall buscarSanidadesIncCall =
       BuscarSanidadesIncCall();
   static QTDRebanhosIncCall qTDRebanhosIncCall = QTDRebanhosIncCall();
-    static QTDReproducoesIncCall qTDReproducoesIncCall =
-      QTDReproducoesIncCall();
+  static QTDReproducoesIncCall qTDReproducoesIncCall = QTDReproducoesIncCall();
   static QTDSanidadeIncCall qTDSanidadeIncCall = QTDSanidadeIncCall();
   static BuscarPropriedadesUserIncCall buscarPropriedadesUserIncCall =
       BuscarPropriedadesUserIncCall();
@@ -117,12 +124,7 @@ class BuscarRebanhosCall {
       callName: 'Buscar Rebanhos',
       apiUrl: '$baseUrl/rebanho_propriedade_mobile',
       callType: ApiCallType.POST,
-      headers: {
-        'apikey':
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
-      },
+      headers: SupabaseFunctionsGroup.headers,
       params: {},
       body: ffApiRequestBody,
       bodyType: BodyType.JSON,
@@ -157,12 +159,7 @@ class BuscarReproducoesCall {
       callName: 'Buscar Reproducoes',
       apiUrl: '$baseUrl/reproducao_mobile',
       callType: ApiCallType.POST,
-      headers: {
-        'apikey':
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
-      },
+      headers: SupabaseFunctionsGroup.headers,
       params: {},
       body: ffApiRequestBody,
       bodyType: BodyType.JSON,
@@ -197,12 +194,7 @@ class BuscarSanidadesCall {
       callName: 'Buscar Sanidades',
       apiUrl: '$baseUrl/sanidade_mobile',
       callType: ApiCallType.POST,
-      headers: {
-        'apikey':
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
-      },
+      headers: SupabaseFunctionsGroup.headers,
       params: {},
       body: ffApiRequestBody,
       bodyType: BodyType.JSON,
@@ -270,12 +262,7 @@ class QTDRebanhosCall {
       callName: 'QTD Rebanhos',
       apiUrl: '$baseUrl/contar_rebanho_prop_mob',
       callType: ApiCallType.POST,
-      headers: {
-        'apikey':
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
-      },
+      headers: SupabaseFunctionsGroup.headers,
       params: {},
       body: ffApiRequestBody,
       bodyType: BodyType.JSON,
@@ -447,12 +434,7 @@ class BuscarPropriedadesUserCall {
       callName: 'Buscar Propriedades User',
       apiUrl: '$baseUrl/propriedades_by_user',
       callType: ApiCallType.POST,
-      headers: {
-        'apikey':
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcnRnc3FueHhuZmpqemx4cHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjkwNjgsImV4cCI6MjA2MjgwNTA2OH0.OIpsBOdszJWSjFeeZeNTu4WQySocdJIygMWpYRYc-tM',
-      },
+      headers: SupabaseFunctionsGroup.headers,
       params: {},
       body: ffApiRequestBody,
       bodyType: BodyType.JSON,
